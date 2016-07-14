@@ -12,6 +12,7 @@ import (
 	"image/draw"
 	_ "image/png"
 	"log"
+	"math"
 	"os"
 	"runtime"
 	"time"
@@ -46,6 +47,13 @@ var nextBlinkChange = time.Now()
 var cursVisible = true
 var cursX = 0
 var cursY = 0
+
+// selection
+var selectionStartX = math.MaxUint32
+var selectionStartY = math.MaxUint32
+var selectionEndX = math.MaxUint32
+var selectionEndY = math.MaxUint32
+var selectingRangeOfText = false
 
 func main() {
 	if err := glfw.Init(); err != nil {
@@ -102,13 +110,62 @@ func doInput(window *glfw.Window) {
 	//}
 }
 
+// WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can get a
+// shift/alt/ctrl/super event through the "mods" variable,
+// (see the top of "action == glfw.Press" section for an example)
+// regardless of left/right key used.
+// BUT for RELEASE, the "mods" variable will NOT tell you what key it is!
+// you will have to find the specific left or right key that was released via
+// the "action" variable!
 func onKey(w *glfw.Window, key glfw.Key, scancode int,
 	action glfw.Action, mods glfw.ModifierKey) {
 	//func (w *Window) SetKeyCallback(cbfun func(w *Window,
 	//		key Key, scancode int, action Action, mods ModifierKey)) {
 
+	if action == glfw.Release {
+		switch key {
+		/////// ADD RIGHT KEY CODES!!!!!!!
+		case glfw.KeyLeftShift:
+			fallthrough
+		case glfw.KeyRightShift:
+			fmt.Println("done selecting")
+			selectingRangeOfText = false
+			// TODO?  possibly flip around if selectionStart comes after selectionEnd in the page flow?
+			break
+		case glfw.KeyLeftControl:
+			fallthrough
+		case glfw.KeyRightControl:
+			fmt.Println("Control RELEASED")
+			break
+		case glfw.KeyLeftAlt:
+			fallthrough
+		case glfw.KeyRightAlt:
+			fmt.Println("Alt RELEASED")
+			break
+		case glfw.KeyLeftSuper:
+			fallthrough
+		case glfw.KeyRightSuper:
+			fmt.Println("'Super' modifier key RELEASED")
+			break
+		}
+
+		switch key {
+		case glfw.KeyUp:
+			fmt.Println("UP released")
+			break
+		}
+	}
+
 	if action == glfw.Press {
-		//fmt.Printf("PRESSED: %s\n", key)
+		switch mods {
+		case glfw.ModShift:
+			fmt.Println("start selecting")
+			selectingRangeOfText = true
+			selectionStartX = cursX
+			selectionStartY = cursY
+			break
+		}
+
 		switch key {
 		case glfw.KeyEnter:
 			cursX = 0
@@ -122,6 +179,8 @@ func onKey(w *glfw.Window, key glfw.Key, scancode int,
 			cursX = len(document[cursY])
 			break
 		case glfw.KeyUp:
+			commonArrowKeyHandling()
+
 			if cursY > 0 {
 				cursY--
 
@@ -131,6 +190,8 @@ func onKey(w *glfw.Window, key glfw.Key, scancode int,
 			}
 			break
 		case glfw.KeyDown:
+			commonArrowKeyHandling()
+
 			if cursY < len(document)-1 {
 				cursY++
 
@@ -140,6 +201,8 @@ func onKey(w *glfw.Window, key glfw.Key, scancode int,
 			}
 			break
 		case glfw.KeyLeft:
+			commonArrowKeyHandling()
+
 			if cursX == 0 {
 				if cursY > 0 {
 					cursY--
@@ -150,15 +213,35 @@ func onKey(w *glfw.Window, key glfw.Key, scancode int,
 			}
 			break
 		case glfw.KeyRight:
+			commonArrowKeyHandling()
+
 			if cursX < len(document[cursY]) {
 				cursX++
 			}
+			break
+		case glfw.KeyBackspace:
+			removeCharacter(false)
+			break
+		case glfw.KeyDelete:
+			removeCharacter(true)
 			break
 		}
 	}
 
 	if key == glfw.KeyEscape && action == glfw.Release {
 		w.SetShouldClose(true)
+	}
+}
+
+func commonArrowKeyHandling() {
+	if selectingRangeOfText {
+		selectionEndX = cursX
+		selectionEndY = cursY
+	} else { // arrow keys without shift gets rid selection
+		selectionStartX = math.MaxUint32
+		selectionStartY = math.MaxUint32
+		selectionEndX = math.MaxUint32
+		selectionEndY = math.MaxUint32
 	}
 }
 
@@ -170,6 +253,39 @@ func onChar(w *glfw.Window, char rune) {
 	//document[len(document)-1] += string(char)
 	document[cursY] = document[cursY][:cursX] + string(char) + document[cursY][cursX:len(document[cursY])]
 	cursX++
+}
+
+func removeCharacter(fromUnderCursor bool) {
+	if fromUnderCursor {
+		if len(document[cursY]) > cursX {
+			document[cursY] = document[cursY][:cursX] + document[cursY][cursX+1:len(document[cursY])]
+		}
+	} else {
+		if cursX > 0 {
+			document[cursY] = document[cursY][:cursX-1] + document[cursY][cursX:len(document[cursY])]
+			cursX--
+		}
+	}
+}
+
+func onMouseBtn(window *glfw.Window, b glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {
+	/*
+		if action != glfw.Press {
+			return
+		}
+
+		// disable if event handlers are flagged off
+		if collided {
+			return
+		}
+
+		switch glfw.MouseButton(b) {
+		case glfw.MouseButtonLeft:
+			jump()
+		default:
+			return
+		}
+	*/
 }
 
 func newTexture(file string) uint32 {
