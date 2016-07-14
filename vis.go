@@ -22,6 +22,7 @@ import (
 )
 
 var (
+	// gl graphics
 	texture   uint32
 	rotationX float32
 	rotationY float32
@@ -33,6 +34,7 @@ func init() {
 	runtime.LockOSThread()
 }
 
+// character rendering
 var uvSpan = float32(1.0) / 16
 var rectRad = float32(3) // rectangular radius (distance to edge in the cardinal directions from the center, corners would be farther away)
 var curX = -rectRad
@@ -49,6 +51,10 @@ var cursX = 0
 var cursY = 0
 
 // selection
+// future consideration/fixme:
+// need to sanitize start/end poistions.  right before using them.
+// since they may be beyond the last line character of the line.
+// also, in addition to backspace/delete, typing any visible character should delete marked text
 var selectionStartX = math.MaxUint32
 var selectionStartY = math.MaxUint32
 var selectionEndX = math.MaxUint32
