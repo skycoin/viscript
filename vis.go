@@ -52,9 +52,15 @@ var cursY = 0
 
 // selection
 // future consideration/fixme:
-// need to sanitize start/end poistions.  right before using them.
+// need to sanitize start/end positions.
 // since they may be beyond the last line character of the line.
-// also, in addition to backspace/delete, typing any visible character should delete marked text
+// also, in addition to backspace/delete, typing any visible character should delete marked text.
+// complication:   if they start or end on invalid characters (of the line string),
+// the forward or backwards direction from there determines where the visible selection
+// range starts/ends....
+// will an end position always be defined (when value is NOT math.MaxUint32),
+// when a START is?  because that determines where the first VISIBLY marked
+// character starts
 var selectionStartX = math.MaxUint32
 var selectionStartY = math.MaxUint32
 var selectionEndX = math.MaxUint32
@@ -85,12 +91,11 @@ func main() {
 
 	// init
 	setupScene()
-	window.SetKeyCallback(onKey)
-	window.SetCharCallback(onChar)
 	initDoc()
+	initInputEvents(window)
 
 	for !window.ShouldClose() {
-		doInput(window)
+		pollEventsAndHandleAnInput(window)
 		drawScene()
 		window.SwapBuffers()
 	}
@@ -106,7 +111,15 @@ func initDoc() {
 	document = append(document, "testing init line")
 }
 
-func doInput(window *glfw.Window) {
+func initInputEvents(w *glfw.Window) {
+	w.SetCharCallback(onChar)
+	w.SetKeyCallback(onKey)
+	w.SetMouseButtonCallback(onMouseBtn)
+	w.SetScrollCallback(onMouseScroll)
+	w.SetCursorPosCallback(onMouseCursorPos)
+}
+
+func pollEventsAndHandleAnInput(window *glfw.Window) {
 	glfw.PollEvents()
 
 	// poll a particular key state
@@ -116,6 +129,30 @@ func doInput(window *glfw.Window) {
 	//}
 }
 
+func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
+	fmt.Printf("onMouseCursorMove() x: %.1f   y: %.1f\n", x, y)
+}
+
+func onMouseScroll(window *glfw.Window, xOff float64, yOff float64) {
+	fmt.Println("onScroll()")
+}
+
+func onMouseBtn(
+	window *glfw.Window,
+	b glfw.MouseButton,
+	action glfw.Action,
+	mods glfw.ModifierKey) {
+
+	fmt.Println("onMouseBtn()")
+
+	if action != glfw.Press {
+		switch glfw.MouseButton(b) {
+		case glfw.MouseButtonLeft:
+		default:
+		}
+	}
+}
+
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can get a
 // shift/alt/ctrl/super event through the "mods" variable,
 // (see the top of "action == glfw.Press" section for an example)
@@ -123,42 +160,33 @@ func doInput(window *glfw.Window) {
 // BUT for RELEASE, the "mods" variable will NOT tell you what key it is!
 // you will have to find the specific left or right key that was released via
 // the "action" variable!
-func onKey(w *glfw.Window, key glfw.Key, scancode int,
-	action glfw.Action, mods glfw.ModifierKey) {
-	//func (w *Window) SetKeyCallback(cbfun func(w *Window,
-	//		key Key, scancode int, action Action, mods ModifierKey)) {
+func onKey(
+	w *glfw.Window,
+	key glfw.Key,
+	scancode int,
+	action glfw.Action,
+	mods glfw.ModifierKey) {
 
 	if action == glfw.Release {
 		switch key {
-		/////// ADD RIGHT KEY CODES!!!!!!!
 		case glfw.KeyLeftShift:
 			fallthrough
 		case glfw.KeyRightShift:
 			fmt.Println("done selecting")
 			selectingRangeOfText = false
 			// TODO?  possibly flip around if selectionStart comes after selectionEnd in the page flow?
-			break
 		case glfw.KeyLeftControl:
 			fallthrough
 		case glfw.KeyRightControl:
 			fmt.Println("Control RELEASED")
-			break
 		case glfw.KeyLeftAlt:
 			fallthrough
 		case glfw.KeyRightAlt:
 			fmt.Println("Alt RELEASED")
-			break
 		case glfw.KeyLeftSuper:
 			fallthrough
 		case glfw.KeyRightSuper:
 			fmt.Println("'Super' modifier key RELEASED")
-			break
-		}
-
-		switch key {
-		case glfw.KeyUp:
-			fmt.Println("UP released")
-			break
 		}
 	}
 
@@ -169,7 +197,6 @@ func onKey(w *glfw.Window, key glfw.Key, scancode int,
 			selectingRangeOfText = true
 			selectionStartX = cursX
 			selectionStartY = cursY
-			break
 		}
 
 		switch key {
@@ -177,15 +204,14 @@ func onKey(w *glfw.Window, key glfw.Key, scancode int,
 			cursX = 0
 			cursY++
 			document = append(document, "")
-			break
 		case glfw.KeyHome:
+			commonMovementKeyHandling()
 			cursX = 0
-			break
 		case glfw.KeyEnd:
+			commonMovementKeyHandling()
 			cursX = len(document[cursY])
-			break
 		case glfw.KeyUp:
-			commonArrowKeyHandling()
+			commonMovementKeyHandling()
 
 			if cursY > 0 {
 				cursY--
@@ -194,9 +220,8 @@ func onKey(w *glfw.Window, key glfw.Key, scancode int,
 					cursX = len(document[cursY])
 				}
 			}
-			break
 		case glfw.KeyDown:
-			commonArrowKeyHandling()
+			commonMovementKeyHandling()
 
 			if cursY < len(document)-1 {
 				cursY++
@@ -205,9 +230,8 @@ func onKey(w *glfw.Window, key glfw.Key, scancode int,
 					cursX = len(document[cursY])
 				}
 			}
-			break
 		case glfw.KeyLeft:
-			commonArrowKeyHandling()
+			commonMovementKeyHandling()
 
 			if cursX == 0 {
 				if cursY > 0 {
@@ -217,20 +241,16 @@ func onKey(w *glfw.Window, key glfw.Key, scancode int,
 			} else {
 				cursX--
 			}
-			break
 		case glfw.KeyRight:
-			commonArrowKeyHandling()
+			commonMovementKeyHandling()
 
 			if cursX < len(document[cursY]) {
 				cursX++
 			}
-			break
 		case glfw.KeyBackspace:
 			removeCharacter(false)
-			break
 		case glfw.KeyDelete:
 			removeCharacter(true)
-			break
 		}
 	}
 
@@ -239,7 +259,7 @@ func onKey(w *glfw.Window, key glfw.Key, scancode int,
 	}
 }
 
-func commonArrowKeyHandling() {
+func commonMovementKeyHandling() {
 	if selectingRangeOfText {
 		selectionEndX = cursX
 		selectionEndY = cursY
@@ -272,26 +292,6 @@ func removeCharacter(fromUnderCursor bool) {
 			cursX--
 		}
 	}
-}
-
-func onMouseBtn(window *glfw.Window, b glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {
-	/*
-		if action != glfw.Press {
-			return
-		}
-
-		// disable if event handlers are flagged off
-		if collided {
-			return
-		}
-
-		switch glfw.MouseButton(b) {
-		case glfw.MouseButtonLeft:
-			jump()
-		default:
-			return
-		}
-	*/
 }
 
 func newTexture(file string) uint32 {
