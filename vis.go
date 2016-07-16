@@ -23,9 +23,10 @@ import (
 
 var (
 	// gl graphics
-	texture   uint32
-	rotationX float32
-	rotationY float32
+	resX, resY int = 800, 600
+	texture    uint32
+	rotationX  float32
+	rotationY  float32
 )
 
 func init() {
@@ -34,14 +35,18 @@ func init() {
 	runtime.LockOSThread()
 }
 
-// character rendering
+// character
 var uvSpan = float32(1.0) / 16
-var rectRad = float32(3) // rectangular radius (distance to edge in the cardinal directions from the center, corners would be farther away)
-var curX = -rectRad
+var rectRad = float32(3) // rectangular radius (distance to edge of app window
+// in the cardinal directions from the center, corners would be farther away)
+var curX = -rectRad // the current pos of the DRAWing cursor
 var curY = rectRad
-var lnHei = float32(0.25)
-var chWid = lnHei / 2
-var runes = []rune("aaa AAA Blah Blah fluffernutter sandwiches Blah Blah fluffernutter sandwiches")
+var chWid = float32(rectRad * 2 / 80) // char w
+var chHei = float32(rectRad * 2 / 25) // char h
+var pixelWid = int(float32(resX) / 80)
+var pixelHei = int(float32(resY) / 25)
+var mouseX int = 0 // char position of mouse pointer
+var mouseY int = 0
 var document = make([]string, 0)
 
 // cursor
@@ -76,7 +81,7 @@ func main() {
 	glfw.WindowHint(glfw.Resizable, glfw.False)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-	window, err := glfw.CreateWindow(800, 600, "V I S", nil, nil)
+	window, err := glfw.CreateWindow(resX, resY, "V I S", nil, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -102,12 +107,7 @@ func main() {
 }
 
 func initDoc() {
-	var line = make([]rune, 0)
-
-	for _, c := range runes {
-		line = append(line, c)
-	}
-
+	//var line = make([]rune, 0)
 	document = append(document, "testing init line")
 }
 
@@ -117,6 +117,47 @@ func initInputEvents(w *glfw.Window) {
 	w.SetMouseButtonCallback(onMouseBtn)
 	w.SetScrollCallback(onMouseScroll)
 	w.SetCursorPosCallback(onMouseCursorPos)
+}
+
+func drawScene() {
+	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+
+	gl.MatrixMode(gl.MODELVIEW)
+	gl.LoadIdentity()
+	gl.Translatef(0, 0, -3.0)
+	//gl.Rotatef(rotationX, 1, 0, 0)
+	//gl.Rotatef(rotationY, 0, 1, 0)
+
+	//rotationX += 0.5
+	//rotationY += 0.5
+
+	gl.BindTexture(gl.TEXTURE_2D, texture)
+
+	gl.Color4f(1, 1, 1, 1)
+
+	gl.Begin(gl.QUADS)
+
+	//makeCube()
+	makeChars()
+
+	gl.End()
+}
+
+func makeChars() {
+	for _, line := range document {
+		for _, c := range line {
+			drawCharAtCurrentPos(c)
+		}
+
+		curX = -rectRad
+		curY -= chHei
+	}
+
+	drawCursorMaybe()
+	drawCharAt('#', mouseX, mouseY)
+
+	curX = -rectRad
+	curY = rectRad
 }
 
 func pollEventsAndHandleAnInput(window *glfw.Window) {
@@ -130,7 +171,9 @@ func pollEventsAndHandleAnInput(window *glfw.Window) {
 }
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
-	fmt.Printf("onMouseCursorMove() x: %.1f   y: %.1f\n", x, y)
+	mouseX = int(x) / pixelWid
+	mouseY = int(y) / pixelHei
+	fmt.Printf("onMouseCursorPos() x: %.1f   y: %.1f\n", x, y)
 }
 
 func onMouseScroll(window *glfw.Window, xOff float64, yOff float64) {
@@ -363,46 +406,6 @@ func destroyScene() {
 
 }
 
-func drawScene() {
-	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-
-	gl.MatrixMode(gl.MODELVIEW)
-	gl.LoadIdentity()
-	gl.Translatef(0, 0, -3.0)
-	//gl.Rotatef(rotationX, 1, 0, 0)
-	//gl.Rotatef(rotationY, 0, 1, 0)
-
-	//rotationX += 0.5
-	//rotationY += 0.5
-
-	gl.BindTexture(gl.TEXTURE_2D, texture)
-
-	gl.Color4f(1, 1, 1, 1)
-
-	gl.Begin(gl.QUADS)
-
-	//makeCube()
-	makeChars()
-
-	gl.End()
-}
-
-func makeChars() {
-	for _, line := range document {
-		for _, c := range line {
-			drawCharAtCurrentPos(c)
-		}
-
-		curX = -rectRad
-		curY -= lnHei
-	}
-
-	drawCursorMaybe()
-
-	curX = -rectRad
-	curY = rectRad
-}
-
 func drawCursorMaybe() {
 	if nextBlinkChange.Before(time.Now()) {
 		nextBlinkChange = time.Now().Add(time.Millisecond * 170)
@@ -421,22 +424,22 @@ func drawCharAt(letter rune, posX int, posY int) {
 	gl.Normal3f(0, 0, 1)
 
 	gl.TexCoord2f(float32(x)*uvSpan, float32(y)*uvSpan+uvSpan) // bl  0, 1
-	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*lnHei-lnHei, 0)
+	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*chHei-chHei, 0)
 
 	gl.TexCoord2f(float32(x)*uvSpan+uvSpan, float32(y)*uvSpan+uvSpan) // br  1, 1
-	gl.Vertex3f(-rectRad+float32(posX)*chWid+chWid, rectRad-float32(posY)*lnHei-lnHei, 0)
+	gl.Vertex3f(-rectRad+float32(posX)*chWid+chWid, rectRad-float32(posY)*chHei-chHei, 0)
 
 	gl.TexCoord2f(float32(x)*uvSpan+uvSpan, float32(y)*uvSpan) // tr  1, 0
-	gl.Vertex3f(-rectRad+float32(posX)*chWid+chWid, rectRad-float32(posY)*lnHei, 0)
+	gl.Vertex3f(-rectRad+float32(posX)*chWid+chWid, rectRad-float32(posY)*chHei, 0)
 
 	gl.TexCoord2f(float32(x)*uvSpan, float32(y)*uvSpan) // tl  0, 0
-	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*lnHei, 0)
+	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*chHei, 0)
 
-	curX += lnHei / 2
+	curX += chWid
 
 	if curX >= rectRad {
 		curX = -rectRad
-		curY -= lnHei
+		curY -= chHei
 	}
 }
 
@@ -447,22 +450,22 @@ func drawCharAtCurrentPos(letter rune) {
 	gl.Normal3f(0, 0, 1)
 
 	gl.TexCoord2f(float32(x)*uvSpan, float32(y)*uvSpan+uvSpan) // bl  0, 1
-	gl.Vertex3f(curX, curY-lnHei, 0)
+	gl.Vertex3f(curX, curY-chHei, 0)
 
 	gl.TexCoord2f(float32(x)*uvSpan+uvSpan, float32(y)*uvSpan+uvSpan) // br  1, 1
-	gl.Vertex3f(curX+lnHei/2, curY-lnHei, 0)
+	gl.Vertex3f(curX+chWid, curY-chHei, 0)
 
 	gl.TexCoord2f(float32(x)*uvSpan+uvSpan, float32(y)*uvSpan) // tr  1, 0
-	gl.Vertex3f(curX+lnHei/2, curY, 0)
+	gl.Vertex3f(curX+chWid, curY, 0)
 
 	gl.TexCoord2f(float32(x)*uvSpan, float32(y)*uvSpan) // tl  0, 0
 	gl.Vertex3f(curX, curY, 0)
 
-	curX += lnHei / 2
+	curX += chWid
 
 	if curX >= rectRad {
 		curX = -rectRad
-		curY -= lnHei
+		curY -= chHei
 	}
 }
 
