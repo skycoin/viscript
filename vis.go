@@ -12,6 +12,7 @@ import (
 	"image/draw"
 	_ "image/png"
 	"log"
+	"math"
 	"os"
 	"runtime"
 	"time"
@@ -21,9 +22,11 @@ import (
 )
 
 var (
-	texture   uint32
-	rotationX float32
-	rotationY float32
+	// gl graphics
+	resX, resY int = 800, 600
+	texture    uint32
+	rotationX  float32
+	rotationY  float32
 )
 
 func init() {
@@ -32,13 +35,18 @@ func init() {
 	runtime.LockOSThread()
 }
 
+// character
 var uvSpan = float32(1.0) / 16
-var rectRad = float32(3) // rectangular radius (distance to edge in the cardinal directions from the center, corners would be farther away)
-var curX = -rectRad
+var rectRad = float32(3) // rectangular radius (distance to edge of app window
+// in the cardinal directions from the center, corners would be farther away)
+var curX = -rectRad // the current pos of the DRAWing cursor
 var curY = rectRad
-var lnHei = float32(0.25)
-var chWid = lnHei / 2
-var runes = []rune("aaa AAA Blah Blah fluffernutter sandwiches Blah Blah fluffernutter sandwiches")
+var chWid = float32(rectRad * 2 / 80) // char w
+var chHei = float32(rectRad * 2 / 25) // char h
+var pixelWid = int(float32(resX) / 80)
+var pixelHei = int(float32(resY) / 25)
+var mouseX int = 0 // char position of mouse pointer
+var mouseY int = 0
 var document = make([]string, 0)
 
 // cursor
@@ -46,6 +54,23 @@ var nextBlinkChange = time.Now()
 var cursVisible = true
 var cursX = 0
 var cursY = 0
+
+// selection
+// future consideration/fixme:
+// need to sanitize start/end positions.
+// since they may be beyond the last line character of the line.
+// also, in addition to backspace/delete, typing any visible character should delete marked text.
+// complication:   if they start or end on invalid characters (of the line string),
+// the forward or backwards direction from there determines where the visible selection
+// range starts/ends....
+// will an end position always be defined (when value is NOT math.MaxUint32),
+// when a START is?  because that determines where the first VISIBLY marked
+// character starts
+var selectionStartX = math.MaxUint32
+var selectionStartY = math.MaxUint32
+var selectionEndX = math.MaxUint32
+var selectionEndY = math.MaxUint32
+var selectingRangeOfText = false
 
 func main() {
 	if err := glfw.Init(); err != nil {
@@ -56,7 +81,7 @@ func main() {
 	glfw.WindowHint(glfw.Resizable, glfw.False)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-	window, err := glfw.CreateWindow(800, 600, "V I S", nil, nil)
+	window, err := glfw.CreateWindow(resX, resY, "V I S", nil, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -71,28 +96,71 @@ func main() {
 
 	// init
 	setupScene()
-	window.SetKeyCallback(onKey)
-	window.SetCharCallback(onChar)
 	initDoc()
+	initInputEvents(window)
 
 	for !window.ShouldClose() {
-		doInput(window)
+		pollEventsAndHandleAnInput(window)
 		drawScene()
 		window.SwapBuffers()
 	}
 }
 
 func initDoc() {
-	var line = make([]rune, 0)
-
-	for _, c := range runes {
-		line = append(line, c)
-	}
-
+	//var line = make([]rune, 0)
 	document = append(document, "testing init line")
 }
 
-func doInput(window *glfw.Window) {
+func initInputEvents(w *glfw.Window) {
+	w.SetCharCallback(onChar)
+	w.SetKeyCallback(onKey)
+	w.SetMouseButtonCallback(onMouseBtn)
+	w.SetScrollCallback(onMouseScroll)
+	w.SetCursorPosCallback(onMouseCursorPos)
+}
+
+func drawScene() {
+	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+
+	gl.MatrixMode(gl.MODELVIEW)
+	gl.LoadIdentity()
+	gl.Translatef(0, 0, -3.0)
+	//gl.Rotatef(rotationX, 1, 0, 0)
+	//gl.Rotatef(rotationY, 0, 1, 0)
+
+	//rotationX += 0.5
+	//rotationY += 0.5
+
+	gl.BindTexture(gl.TEXTURE_2D, texture)
+
+	gl.Color4f(1, 1, 1, 1)
+
+	gl.Begin(gl.QUADS)
+
+	//makeCube()
+	makeChars()
+
+	gl.End()
+}
+
+func makeChars() {
+	for _, line := range document {
+		for _, c := range line {
+			drawCharAtCurrentPos(c)
+		}
+
+		curX = -rectRad
+		curY -= chHei
+	}
+
+	drawCursorMaybe()
+	drawCharAt('#', mouseX, mouseY)
+
+	curX = -rectRad
+	curY = rectRad
+}
+
+func pollEventsAndHandleAnInput(window *glfw.Window) {
 	glfw.PollEvents()
 
 	// poll a particular key state
@@ -102,26 +170,92 @@ func doInput(window *glfw.Window) {
 	//}
 }
 
-func onKey(w *glfw.Window, key glfw.Key, scancode int,
-	action glfw.Action, mods glfw.ModifierKey) {
-	//func (w *Window) SetKeyCallback(cbfun func(w *Window,
-	//		key Key, scancode int, action Action, mods ModifierKey)) {
+func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
+	mouseX = int(x) / pixelWid
+	mouseY = int(y) / pixelHei
+	fmt.Printf("onMouseCursorPos() x: %.1f   y: %.1f\n", x, y)
+}
+
+func onMouseScroll(window *glfw.Window, xOff float64, yOff float64) {
+	fmt.Println("onScroll()")
+}
+
+func onMouseBtn(
+	window *glfw.Window,
+	b glfw.MouseButton,
+	action glfw.Action,
+	mods glfw.ModifierKey) {
+
+	fmt.Println("onMouseBtn()")
+
+	if action != glfw.Press {
+		switch glfw.MouseButton(b) {
+		case glfw.MouseButtonLeft:
+		default:
+		}
+	}
+}
+
+// WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can get a
+// shift/alt/ctrl/super event through the "mods" variable,
+// (see the top of "action == glfw.Press" section for an example)
+// regardless of left/right key used.
+// BUT for RELEASE, the "mods" variable will NOT tell you what key it is!
+// you will have to find the specific left or right key that was released via
+// the "action" variable!
+func onKey(
+	w *glfw.Window,
+	key glfw.Key,
+	scancode int,
+	action glfw.Action,
+	mods glfw.ModifierKey) {
+
+	if action == glfw.Release {
+		switch key {
+		case glfw.KeyLeftShift:
+			fallthrough
+		case glfw.KeyRightShift:
+			fmt.Println("done selecting")
+			selectingRangeOfText = false
+			// TODO?  possibly flip around if selectionStart comes after selectionEnd in the page flow?
+		case glfw.KeyLeftControl:
+			fallthrough
+		case glfw.KeyRightControl:
+			fmt.Println("Control RELEASED")
+		case glfw.KeyLeftAlt:
+			fallthrough
+		case glfw.KeyRightAlt:
+			fmt.Println("Alt RELEASED")
+		case glfw.KeyLeftSuper:
+			fallthrough
+		case glfw.KeyRightSuper:
+			fmt.Println("'Super' modifier key RELEASED")
+		}
+	}
 
 	if action == glfw.Press {
-		//fmt.Printf("PRESSED: %s\n", key)
+		switch mods {
+		case glfw.ModShift:
+			fmt.Println("start selecting")
+			selectingRangeOfText = true
+			selectionStartX = cursX
+			selectionStartY = cursY
+		}
+
 		switch key {
 		case glfw.KeyEnter:
 			cursX = 0
 			cursY++
 			document = append(document, "")
-			break
 		case glfw.KeyHome:
+			commonMovementKeyHandling()
 			cursX = 0
-			break
 		case glfw.KeyEnd:
+			commonMovementKeyHandling()
 			cursX = len(document[cursY])
-			break
 		case glfw.KeyUp:
+			commonMovementKeyHandling()
+
 			if cursY > 0 {
 				cursY--
 
@@ -129,8 +263,9 @@ func onKey(w *glfw.Window, key glfw.Key, scancode int,
 					cursX = len(document[cursY])
 				}
 			}
-			break
 		case glfw.KeyDown:
+			commonMovementKeyHandling()
+
 			if cursY < len(document)-1 {
 				cursY++
 
@@ -138,8 +273,9 @@ func onKey(w *glfw.Window, key glfw.Key, scancode int,
 					cursX = len(document[cursY])
 				}
 			}
-			break
 		case glfw.KeyLeft:
+			commonMovementKeyHandling()
+
 			if cursX == 0 {
 				if cursY > 0 {
 					cursY--
@@ -148,17 +284,33 @@ func onKey(w *glfw.Window, key glfw.Key, scancode int,
 			} else {
 				cursX--
 			}
-			break
 		case glfw.KeyRight:
+			commonMovementKeyHandling()
+
 			if cursX < len(document[cursY]) {
 				cursX++
 			}
-			break
+		case glfw.KeyBackspace:
+			removeCharacter(false)
+		case glfw.KeyDelete:
+			removeCharacter(true)
 		}
 	}
 
 	if key == glfw.KeyEscape && action == glfw.Release {
 		w.SetShouldClose(true)
+	}
+}
+
+func commonMovementKeyHandling() {
+	if selectingRangeOfText {
+		selectionEndX = cursX
+		selectionEndY = cursY
+	} else { // arrow keys without shift gets rid selection
+		selectionStartX = math.MaxUint32
+		selectionStartY = math.MaxUint32
+		selectionEndX = math.MaxUint32
+		selectionEndY = math.MaxUint32
 	}
 }
 
@@ -170,6 +322,19 @@ func onChar(w *glfw.Window, char rune) {
 	//document[len(document)-1] += string(char)
 	document[cursY] = document[cursY][:cursX] + string(char) + document[cursY][cursX:len(document[cursY])]
 	cursX++
+}
+
+func removeCharacter(fromUnderCursor bool) {
+	if fromUnderCursor {
+		if len(document[cursY]) > cursX {
+			document[cursY] = document[cursY][:cursX] + document[cursY][cursX+1:len(document[cursY])]
+		}
+	} else {
+		if cursX > 0 {
+			document[cursY] = document[cursY][:cursX-1] + document[cursY][cursX:len(document[cursY])]
+			cursX--
+		}
+	}
 }
 
 func newTexture(file string) uint32 {
@@ -241,46 +406,6 @@ func destroyScene() {
 
 }
 
-func drawScene() {
-	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-
-	gl.MatrixMode(gl.MODELVIEW)
-	gl.LoadIdentity()
-	gl.Translatef(0, 0, -3.0)
-	//gl.Rotatef(rotationX, 1, 0, 0)
-	//gl.Rotatef(rotationY, 0, 1, 0)
-
-	//rotationX += 0.5
-	//rotationY += 0.5
-
-	gl.BindTexture(gl.TEXTURE_2D, texture)
-
-	gl.Color4f(1, 1, 1, 1)
-
-	gl.Begin(gl.QUADS)
-
-	//makeCube()
-	makeChars()
-
-	gl.End()
-}
-
-func makeChars() {
-	for _, line := range document {
-		for _, c := range line {
-			drawCharAtCurrentPos(c)
-		}
-
-		curX = -rectRad
-		curY -= lnHei
-	}
-
-	drawCursorMaybe()
-
-	curX = -rectRad
-	curY = rectRad
-}
-
 func drawCursorMaybe() {
 	if nextBlinkChange.Before(time.Now()) {
 		nextBlinkChange = time.Now().Add(time.Millisecond * 170)
@@ -299,22 +424,22 @@ func drawCharAt(letter rune, posX int, posY int) {
 	gl.Normal3f(0, 0, 1)
 
 	gl.TexCoord2f(float32(x)*uvSpan, float32(y)*uvSpan+uvSpan) // bl  0, 1
-	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*lnHei-lnHei, 0)
+	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*chHei-chHei, 0)
 
 	gl.TexCoord2f(float32(x)*uvSpan+uvSpan, float32(y)*uvSpan+uvSpan) // br  1, 1
-	gl.Vertex3f(-rectRad+float32(posX)*chWid+chWid, rectRad-float32(posY)*lnHei-lnHei, 0)
+	gl.Vertex3f(-rectRad+float32(posX)*chWid+chWid, rectRad-float32(posY)*chHei-chHei, 0)
 
 	gl.TexCoord2f(float32(x)*uvSpan+uvSpan, float32(y)*uvSpan) // tr  1, 0
-	gl.Vertex3f(-rectRad+float32(posX)*chWid+chWid, rectRad-float32(posY)*lnHei, 0)
+	gl.Vertex3f(-rectRad+float32(posX)*chWid+chWid, rectRad-float32(posY)*chHei, 0)
 
 	gl.TexCoord2f(float32(x)*uvSpan, float32(y)*uvSpan) // tl  0, 0
-	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*lnHei, 0)
+	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*chHei, 0)
 
-	curX += lnHei / 2
+	curX += chWid
 
 	if curX >= rectRad {
 		curX = -rectRad
-		curY -= lnHei
+		curY -= chHei
 	}
 }
 
@@ -325,22 +450,22 @@ func drawCharAtCurrentPos(letter rune) {
 	gl.Normal3f(0, 0, 1)
 
 	gl.TexCoord2f(float32(x)*uvSpan, float32(y)*uvSpan+uvSpan) // bl  0, 1
-	gl.Vertex3f(curX, curY-lnHei, 0)
+	gl.Vertex3f(curX, curY-chHei, 0)
 
 	gl.TexCoord2f(float32(x)*uvSpan+uvSpan, float32(y)*uvSpan+uvSpan) // br  1, 1
-	gl.Vertex3f(curX+lnHei/2, curY-lnHei, 0)
+	gl.Vertex3f(curX+chWid, curY-chHei, 0)
 
 	gl.TexCoord2f(float32(x)*uvSpan+uvSpan, float32(y)*uvSpan) // tr  1, 0
-	gl.Vertex3f(curX+lnHei/2, curY, 0)
+	gl.Vertex3f(curX+chWid, curY, 0)
 
 	gl.TexCoord2f(float32(x)*uvSpan, float32(y)*uvSpan) // tl  0, 0
 	gl.Vertex3f(curX, curY, 0)
 
-	curX += lnHei / 2
+	curX += chWid
 
 	if curX >= rectRad {
 		curX = -rectRad
-		curY -= lnHei
+		curY -= chHei
 	}
 }
 
