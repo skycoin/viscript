@@ -472,7 +472,7 @@ func drawCharAtCurrentPos(letter rune) {
 // Set the working directory to the root of Go package, so that its assets can be accessed.
 func init() {
 	//dir, err := importPathToDir("github.com/go-gl/examples/glfw31-gl21-cube")
-	dir, err := importPathToDir("c21/")
+	dir, err := importPathToDir("vis")
 	if err != nil {
 		log.Fatalln("Unable to find Go package in your GOPATH, it's needed to load assets:", err)
 	}
