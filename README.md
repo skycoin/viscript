@@ -1,6 +1,6 @@
 # viscript
 
-Feature requirement notes from Brandon:
+Feature requirement snippets from Brandon:
 
 
 "
@@ -18,7 +18,7 @@ I want the screen to respond to length prefixed messages (32 bit length prefix, 
 later, i want pixels and to be able to create subwindow or 2d plane, and then to blit it to screen and do opengl operations, from the scripting language; but we will do that later
 
 
-[7/10/2016 6:20:37 AM] Brandon: 1> terminal, with terminal program handling opengl and input (mouse click, scroll, left click right click) and sending the messages to another program over a channel as lenght prefixed messages
+[7/10/2016 6:20:37 AM] Brandon: 1> terminal, with terminal program handling opengl and input (mouse click, scroll, left click right click) and sending the messages to another program over a channel as length prefixed messages
 2> a simple lisp or C like scripting language on the other end of the terminal
 3> tools for scripting language, autocomplete etc
 
