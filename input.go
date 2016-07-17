@@ -1,20 +1,9 @@
 package main
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
-	/*
-		"go/build"
-		"image"
-		"image/draw"
-		_ "image/png"
-		"log"
-		"math"
-		"os"
-		"runtime"
-		"time"
-	*/
-
-	//"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.1/glfw"
 )
 
@@ -29,14 +18,35 @@ func initInputEvents(w *glfw.Window) {
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	mouseX = int(x) / pixelWid
 	mouseY = int(y) / pixelHei
-	fmt.Printf("onMouseCursorPos() X: %.1f   Y: %.1f\n", x, y)
+
+	// write message
+	buf := new(bytes.Buffer)
+	err := binary.Write(buf, binary.LittleEndian, x)
+
+	if err != nil {
+		fmt.Println("binary.Write failed: ", err)
+	} else {
+		var xAfter float64
+
+		rBuf := bytes.NewReader(buf.Bytes())
+		err := binary.Read(rBuf, binary.LittleEndian, &xAfter)
+
+		if err != nil {
+			fmt.Println("binary.Read failed: ", err)
+		} else {
+			//fmt.Printf("onMouseCursorPos() x: %.1f   Y: %.1f\n", x, y)
+			//fmt.Printfln(" from byte buffer, x: % x", buf.Bytes())
+			fmt.Printf("from byte buffer, x: %.1f\n", xAfter)
+		}
+	}
 }
 
 func pollEventsAndHandleAnInput(window *glfw.Window) {
 	glfw.PollEvents()
 
+	// (at the moment we have no reason to detect keys being held)
 	// poll a particular key state
-	//if window.GetKey(glfw.KeyEscape) /* Action */ == glfw.Press {
+	//if window.GetKey(glfw.KeyEscape) == glfw.Press {
 	//	fmt.Println("PRESSED ESCape")
 	//	window.SetShouldClose(true)
 	//}

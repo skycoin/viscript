@@ -26,15 +26,18 @@ func main() {
 	if err := glfw.Init(); err != nil {
 		log.Fatalln("failed to initialize glfw:", err)
 	}
+
 	defer glfw.Terminate()
 
 	glfw.WindowHint(glfw.Resizable, glfw.False)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
 	window, err := glfw.CreateWindow(resX, resY, "V I S", nil, nil)
+
 	if err != nil {
 		panic(err)
 	}
+
 	window.MakeContextCurrent()
 
 	if err := gl.Init(); err != nil {
@@ -44,7 +47,6 @@ func main() {
 	texture = newTexture("Bisasam_24x24_Shadowed.png")
 	defer gl.DeleteTextures(1, &texture)
 
-	// init
 	setupScene()
 	initDoc()
 	initInputEvents(window)
@@ -60,10 +62,13 @@ func main() {
 func init() {
 	//dir, err := importPathToDir("github.com/go-gl/examples/glfw31-gl21-cube")
 	dir, err := importPathToDir("viscript")
+
 	if err != nil {
 		log.Fatalln("Unable to find Go package in your GOPATH, it's needed to load assets:", err)
 	}
+
 	err = os.Chdir(dir)
+
 	if err != nil {
 		log.Panicln("os.Chdir:", err)
 	}
@@ -74,8 +79,10 @@ func init() {
 // but the directory must exist.
 func importPathToDir(importPath string) (string, error) {
 	p, err := build.Import(importPath, "", build.FindOnly)
+
 	if err != nil {
 		return "", err
 	}
+
 	return p.Dir, nil
 }
