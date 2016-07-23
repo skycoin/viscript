@@ -1,20 +1,9 @@
 package main
 
 import (
-	//"fmt"
+	"github.com/go-gl/gl/v2.1/gl"
 	"math"
 	"time"
-	/*
-		"go/build"
-		"image"
-		"image/draw"
-		_ "image/png"
-		"log"
-		"os"
-		"runtime"
-	*/
-	"github.com/go-gl/gl/v2.1/gl"
-	//"github.com/go-gl/glfw/v3.1/glfw"
 )
 
 // character

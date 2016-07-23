@@ -20,24 +20,13 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	mouseY = int(y) / pixelHei
 
 	// write message
-	buf := new(bytes.Buffer)
-	err := binary.Write(buf, binary.LittleEndian, x)
+	wBuf := new(bytes.Buffer)
 
+	err := binary.Write(wBuf, binary.LittleEndian, x)
 	if err != nil {
 		fmt.Println("binary.Write failed: ", err)
 	} else {
-		var xAfter float64
-
-		rBuf := bytes.NewReader(buf.Bytes())
-		err := binary.Read(rBuf, binary.LittleEndian, &xAfter)
-
-		if err != nil {
-			fmt.Println("binary.Read failed: ", err)
-		} else {
-			//fmt.Printf("onMouseCursorPos() x: %.1f   Y: %.1f\n", x, y)
-			//fmt.Printfln(" from byte buffer, x: % x", buf.Bytes())
-			fmt.Printf("from byte buffer, x: %.1f\n", xAfter)
-		}
+		ProcessMessage(wBuf)
 	}
 }
 
@@ -56,6 +45,7 @@ func onMouseScroll(window *glfw.Window, xOff float64, yOff float64) {
 	fmt.Println("onScroll()")
 }
 
+// apparently every time this is fired, a mouse position event is ALSO fired
 func onMouseBtn(
 	window *glfw.Window,
 	b glfw.MouseButton,
@@ -88,20 +78,24 @@ func onKey(
 
 	if action == glfw.Release {
 		switch key {
+
 		case glfw.KeyLeftShift:
 			fallthrough
 		case glfw.KeyRightShift:
 			fmt.Println("done selecting")
 			selectingRangeOfText = false
 			// TODO?  possibly flip around if selectionStart comes after selectionEnd in the page flow?
+
 		case glfw.KeyLeftControl:
 			fallthrough
 		case glfw.KeyRightControl:
 			fmt.Println("Control RELEASED")
+
 		case glfw.KeyLeftAlt:
 			fallthrough
 		case glfw.KeyRightAlt:
 			fmt.Println("Alt RELEASED")
+
 		case glfw.KeyLeftSuper:
 			fallthrough
 		case glfw.KeyRightSuper:
