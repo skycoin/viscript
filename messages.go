@@ -10,7 +10,6 @@ const (
 	MessageMousePos    = iota // 0
 	MessageMouseScroll        // 1
 	MessageMouseButton        // 2
-
 	MessageCharacter
 	MessageKey
 )
@@ -35,6 +34,8 @@ func processMessage(message []byte) {
 
 	case MessageMouseButton:
 		s("MessageMouseButton", message)
+		//showMouseButton()
+		//showAction()
 
 	case MessageCharacter:
 		s("MessageCharacter", message)
@@ -99,3 +100,6 @@ func showFloat64(s string, message []byte) { // almost generic, just top 2 vars 
 		fmt.Printf("   < %s: %.1f >", s, value)
 	}
 }
+
+//		b glfw.MouseButton
+//		action glfw.Action

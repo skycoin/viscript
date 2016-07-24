@@ -10,7 +10,7 @@ import (
 func initInputEvents(w *glfw.Window) {
 	w.SetCharCallback(onChar)
 	w.SetKeyCallback(onKey)
-	w.SetMouseButtonCallback(onMouseBtn)
+	w.SetMouseButtonCallback(onMouseButton)
 	w.SetScrollCallback(onMouseScroll)
 	w.SetCursorPosCallback(onMouseCursorPos)
 }
@@ -61,13 +61,13 @@ func onMouseScroll(w *glfw.Window, xOff float64, yOff float64) {
 }
 
 // apparently every time this is fired, a mouse position event is ALSO fired
-func onMouseBtn(
+func onMouseButton(
 	window *glfw.Window,
 	b glfw.MouseButton,
 	action glfw.Action,
-	mods glfw.ModifierKey) {
+	mod glfw.ModifierKey) {
 
-	//fmt.Println("onMouseBtn()")
+	//fmt.Println("onMouseButton()")
 
 	if action != glfw.Press {
 		switch glfw.MouseButton(b) {
@@ -81,16 +81,19 @@ func onMouseBtn(
 	message := make([]byte, length)
 	addUInt32(length, message)
 	addUInt8(MessageMouseButton, message)
+	addMouseButton(b, message)
+	addAction(action, message)
+	addModifierKey(mod, message)
 	curByte = 0
 
 	processMessage(message)
 }
 
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can get a
-// shift/alt/ctrl/super event through the "mods" variable,
+// shift/alt/ctrl/super event through the "mod" variable,
 // (see the top of "action == glfw.Press" section for an example)
 // regardless of left/right key used.
-// BUT for RELEASE, the "mods" variable will NOT tell you what key it is!
+// BUT for RELEASE, the "mod" variable will NOT tell you what key it is!
 // you will have to find the specific left or right key that was released via
 // the "action" variable!
 func onKey(
@@ -218,6 +221,7 @@ func onChar(w *glfw.Window, char rune) {
 	processMessage(message)
 }
 
+// add*() functions are identical except for the value type
 func addUInt32(value uint32, message []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
@@ -249,6 +253,51 @@ func addUInt8(value uint8, message []byte) {
 func addFloat64(value float64, message []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
+
+	if err != nil {
+		fmt.Println("binary.Write failed:", err)
+	} else {
+		for i := 0; i < wBuf.Len(); i++ {
+			message[curByte] = wBuf.Bytes()[i]
+			curByte++
+		}
+	}
+}
+
+func addMouseButton(value glfw.MouseButton, message []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+	fmt.Println("PACKING - MouseButton len:", wBuf.Len())
+
+	if err != nil {
+		fmt.Println("binary.Write failed:", err)
+	} else {
+		for i := 0; i < wBuf.Len(); i++ {
+			message[curByte] = wBuf.Bytes()[i]
+			curByte++
+		}
+	}
+}
+
+func addAction(value glfw.Action, message []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+	fmt.Println("PACKING - Action len:", wBuf.Len())
+
+	if err != nil {
+		fmt.Println("binary.Write failed:", err)
+	} else {
+		for i := 0; i < wBuf.Len(); i++ {
+			message[curByte] = wBuf.Bytes()[i]
+			curByte++
+		}
+	}
+}
+
+func addModifierKey(value glfw.ModifierKey, message []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+	fmt.Println("PACKING - ModifierKey len:", wBuf.Len())
 
 	if err != nil {
 		fmt.Println("binary.Write failed:", err)

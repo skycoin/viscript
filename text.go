@@ -7,6 +7,12 @@ PGUP/DN
 RIGHT at end of line goes to next line
 BACKSPACE/DELETE at the ends of lines
 	pulls us up to prev line, or pulls up next line
+H/V SCROLLBARS
+	horizontal could be charHei thickness
+	vertical could easily be a smaller rendering of the first ~40 chars?
+		however not if we map the whole vertical space (when scrollspace is taller than screen),
+		because this requires scaling the text.  and keeping the aspect ratio means ~40 (max)
+		would alter the width of the scrollbar
 */
 
 package main
