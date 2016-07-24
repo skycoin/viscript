@@ -45,50 +45,19 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	processMessage(message)
 }
 
-func addUInt32(value uint32, message []byte) {
-	wBuf := new(bytes.Buffer)
-	err := binary.Write(wBuf, binary.LittleEndian, value)
+func onMouseScroll(w *glfw.Window, xOff float64, yOff float64) {
+	//fmt.Println("onScroll()")
 
-	if err != nil {
-		fmt.Println("binary.Write failed:", err)
-	} else {
-		for i := 0; i < wBuf.Len(); i++ {
-			message[curByte] = wBuf.Bytes()[i]
-			curByte++
-		}
-	}
-}
+	// build message
+	var length uint32 = 5 + 8 + 8
+	message := make([]byte, length)
+	addUInt32(length, message)
+	addUInt8(MessageMouseScroll, message)
+	addFloat64(xOff, message)
+	addFloat64(yOff, message)
+	curByte = 0
 
-func addUInt8(value uint8, message []byte) {
-	wBuf := new(bytes.Buffer)
-	err := binary.Write(wBuf, binary.LittleEndian, value)
-
-	if err != nil {
-		fmt.Println("binary.Write failed:", err)
-	} else {
-		for i := 0; i < wBuf.Len(); i++ {
-			message[curByte] = wBuf.Bytes()[i]
-			curByte++
-		}
-	}
-}
-
-func addFloat64(value float64, message []byte) {
-	wBuf := new(bytes.Buffer)
-	err := binary.Write(wBuf, binary.LittleEndian, value)
-
-	if err != nil {
-		fmt.Println("binary.Write failed:", err)
-	} else {
-		for i := 0; i < wBuf.Len(); i++ {
-			message[curByte] = wBuf.Bytes()[i]
-			curByte++
-		}
-	}
-}
-
-func onMouseScroll(window *glfw.Window, xOff float64, yOff float64) {
-	fmt.Println("onScroll()")
+	processMessage(message)
 }
 
 // apparently every time this is fired, a mouse position event is ALSO fired
@@ -98,7 +67,7 @@ func onMouseBtn(
 	action glfw.Action,
 	mods glfw.ModifierKey) {
 
-	fmt.Println("onMouseBtn()")
+	//fmt.Println("onMouseBtn()")
 
 	if action != glfw.Press {
 		switch glfw.MouseButton(b) {
@@ -106,6 +75,15 @@ func onMouseBtn(
 		default:
 		}
 	}
+
+	// build message
+	var length uint32 = 5
+	message := make([]byte, length)
+	addUInt32(length, message)
+	addUInt8(MessageMouseButton, message)
+	curByte = 0
+
+	processMessage(message)
 }
 
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can get a
@@ -216,6 +194,15 @@ func onKey(
 	if key == glfw.KeyEscape && action == glfw.Release {
 		w.SetShouldClose(true)
 	}
+
+	// build message
+	var length uint32 = 5
+	message := make([]byte, length)
+	addUInt32(length, message)
+	addUInt8(MessageKey, message)
+	curByte = 0
+
+	processMessage(message)
 }
 
 func onChar(w *glfw.Window, char rune) {
@@ -226,4 +213,55 @@ func onChar(w *glfw.Window, char rune) {
 	//document[len(document)-1] += string(char)
 	document[cursY] = document[cursY][:cursX] + string(char) + document[cursY][cursX:len(document[cursY])]
 	cursX++
+
+	// build message
+	var length uint32 = 5
+	message := make([]byte, length)
+	addUInt32(length, message)
+	addUInt8(MessageCharacter, message)
+	curByte = 0
+
+	processMessage(message)
+}
+
+func addUInt32(value uint32, message []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+
+	if err != nil {
+		fmt.Println("binary.Write failed:", err)
+	} else {
+		for i := 0; i < wBuf.Len(); i++ {
+			message[curByte] = wBuf.Bytes()[i]
+			curByte++
+		}
+	}
+}
+
+func addUInt8(value uint8, message []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+
+	if err != nil {
+		fmt.Println("binary.Write failed:", err)
+	} else {
+		for i := 0; i < wBuf.Len(); i++ {
+			message[curByte] = wBuf.Bytes()[i]
+			curByte++
+		}
+	}
+}
+
+func addFloat64(value float64, message []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+
+	if err != nil {
+		fmt.Println("binary.Write failed:", err)
+	} else {
+		for i := 0; i < wBuf.Len(); i++ {
+			message[curByte] = wBuf.Bytes()[i]
+			curByte++
+		}
+	}
 }

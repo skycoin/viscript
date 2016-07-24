@@ -10,6 +10,9 @@ const (
 	MessageMousePos    = iota // 0
 	MessageMouseScroll        // 1
 	MessageMouseButton        // 2
+
+	MessageCharacter
+	MessageKey
 )
 
 var curRecByte = 0 // current receive message index
@@ -18,22 +21,39 @@ func processMessage(message []byte) {
 	// do: extract length
 	// do: get msgType
 
-	switch getMessageType("Message Type", message) {
+	switch getMessageType(".", message) {
+
 	case MessageMousePos:
-		fmt.Println("MessageMousePos")
-		showUInt32("Length", message)
-		curRecByte++ // skipping message type's space
+		s("MessageMousePos", message)
 		showFloat64("X", message)
 		showFloat64("Y", message)
+
 	case MessageMouseScroll:
-		fmt.Println("MessageMouseScroll")
+		s("MessageMouseScroll", message)
+		showFloat64("X Offset", message)
+		showFloat64("Y Offset", message)
+
 	case MessageMouseButton:
-		fmt.Println("MessageMouseButton")
+		s("MessageMouseButton", message)
+
+	case MessageCharacter:
+		s("MessageCharacter", message)
+
+	case MessageKey:
+		s("MessageKey", message)
+
 	default:
 		fmt.Println("UNKNOWN MESSAGE TYPE!")
+
 	}
 
 	curRecByte = 0
+}
+
+func s(s string, message []byte) { // common to all messages
+	fmt.Println(s)
+	showUInt32("Length", message)
+	curRecByte++ // skipping message type's space
 }
 
 func getMessageType(s string, message []byte) (value uint8) {
@@ -43,7 +63,7 @@ func getMessageType(s string, message []byte) (value uint8) {
 	if err != nil {
 		fmt.Println("binary.Read failed: ", err)
 	} else {
-		fmt.Printf("from byte buffer, %s: %d\n", s, value)
+		//fmt.Printf("from byte buffer, %s: %d\n", s, value)
 	}
 
 	return
@@ -60,7 +80,7 @@ func showUInt32(s string, message []byte) { // almost generic, just top 2 vars c
 	if err != nil {
 		fmt.Println("binary.Read failed: ", err)
 	} else {
-		fmt.Printf("from byte buffer, %s: %d\n", s, value)
+		fmt.Printf("%s: %d\n", s, value)
 	}
 }
 
@@ -75,6 +95,6 @@ func showFloat64(s string, message []byte) { // almost generic, just top 2 vars 
 	if err != nil {
 		fmt.Println("binary.Read failed: ", err)
 	} else {
-		fmt.Printf("from byte buffer, %s: %.1f\n", s, value)
+		fmt.Printf("%s: %.1f\n", s, value)
 	}
 }
