@@ -29,20 +29,48 @@ func pollEventsAndHandleAnInput(window *glfw.Window) {
 var curByte = 0 // current send message index, for iterating across funcs
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
-	fmt.Println("onMouseCursorPos()")
+	//fmt.Println("onMouseCursorPos()")
 	mouseX = int(x) / pixelWid
 	mouseY = int(y) / pixelHei
 
 	// build message
-	length := 8 + 8 //5 + 8 + 8
+	var length uint32 = 5 + 8 + 8
 	message := make([]byte, length)
-	//addInt32(length)
-	//addInt8(msgType)
+	addUInt32(length, message)
+	addUInt8(MessageMousePos, message)
 	addFloat64(x, message)
 	addFloat64(y, message)
 	curByte = 0
 
-	ProcessMessage(message)
+	processMessage(message)
+}
+
+func addUInt32(value uint32, message []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+
+	if err != nil {
+		fmt.Println("binary.Write failed:", err)
+	} else {
+		for i := 0; i < wBuf.Len(); i++ {
+			message[curByte] = wBuf.Bytes()[i]
+			curByte++
+		}
+	}
+}
+
+func addUInt8(value uint8, message []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+
+	if err != nil {
+		fmt.Println("binary.Write failed:", err)
+	} else {
+		for i := 0; i < wBuf.Len(); i++ {
+			message[curByte] = wBuf.Bytes()[i]
+			curByte++
+		}
+	}
 }
 
 func addFloat64(value float64, message []byte) {
@@ -54,7 +82,6 @@ func addFloat64(value float64, message []byte) {
 	} else {
 		for i := 0; i < wBuf.Len(); i++ {
 			message[curByte] = wBuf.Bytes()[i]
-			//fmt.Println("byte:", wBuf.Bytes()[i])
 			curByte++
 		}
 	}
