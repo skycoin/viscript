@@ -12,7 +12,9 @@ const (
 	MessageMouseButton        // 2
 )
 
-func ProcessMessage(message *bytes.Buffer) {
+var curRecByte = 0 // current receive message index
+
+func ProcessMessage(message []byte) {
 	// do: extract length
 	// do: get msgType
 
@@ -21,16 +23,8 @@ func ProcessMessage(message *bytes.Buffer) {
 	*/
 	fmt.Println("MessageMousePos")
 
-	var xAfter float64
-	rBuf := bytes.NewReader(message.Bytes())
-	err := binary.Read(rBuf, binary.LittleEndian, &xAfter)
-
-	if err != nil {
-		fmt.Println("binary.Read failed: ", err)
-	} else {
-		//fmt.Printf("onMouseCursorPos() x: %.1f   Y: %.1f\n", x, y)
-		fmt.Printf("from byte buffer, x: %.1f\n", xAfter)
-	}
+	showFloat64("X", message)
+	showFloat64("Y", message)
 	/*case MessageMouseScroll:
 		fmt.Println("MessageMouseScroll")
 	case MessageMouseButton:
@@ -39,4 +33,20 @@ func ProcessMessage(message *bytes.Buffer) {
 		fmt.Println("UNKNOWN MESSAGE TYPE!")
 	}
 	*/
+
+	curRecByte = 0
+}
+
+func showFloat64(s string, message []byte) {
+	var value float64
+
+	rBuf := bytes.NewReader(message[curRecByte : curRecByte+8]) // later _:_+8
+	err := binary.Read(rBuf, binary.LittleEndian, &value)
+	curRecByte += 8
+
+	if err != nil {
+		fmt.Println("binary.Read failed: ", err)
+	} else {
+		fmt.Printf("from byte buffer, %s: %.1f\n", s, value)
+	}
 }

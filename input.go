@@ -15,21 +15,6 @@ func initInputEvents(w *glfw.Window) {
 	w.SetCursorPosCallback(onMouseCursorPos)
 }
 
-func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
-	mouseX = int(x) / pixelWid
-	mouseY = int(y) / pixelHei
-
-	// write message
-	wBuf := new(bytes.Buffer)
-
-	err := binary.Write(wBuf, binary.LittleEndian, x)
-	if err != nil {
-		fmt.Println("binary.Write failed: ", err)
-	} else {
-		ProcessMessage(wBuf)
-	}
-}
-
 func pollEventsAndHandleAnInput(window *glfw.Window) {
 	glfw.PollEvents()
 
@@ -39,6 +24,40 @@ func pollEventsAndHandleAnInput(window *glfw.Window) {
 	//	fmt.Println("PRESSED ESCape")
 	//	window.SetShouldClose(true)
 	//}
+}
+
+var curByte = 0 // current send message index, for iterating across funcs
+
+func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
+	fmt.Println("onMouseCursorPos()")
+	mouseX = int(x) / pixelWid
+	mouseY = int(y) / pixelHei
+
+	// build message
+	length := 8 + 8 //5 + 8 + 8
+	message := make([]byte, length)
+	//addInt32(length)
+	//addInt8(msgType)
+	addFloat64(x, message)
+	addFloat64(y, message)
+	curByte = 0
+
+	ProcessMessage(message)
+}
+
+func addFloat64(value float64, message []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+
+	if err != nil {
+		fmt.Println("binary.Write failed:", err)
+	} else {
+		for i := 0; i < wBuf.Len(); i++ {
+			message[curByte] = wBuf.Bytes()[i]
+			//fmt.Println("byte:", wBuf.Bytes()[i])
+			curByte++
+		}
+	}
 }
 
 func onMouseScroll(window *glfw.Window, xOff float64, yOff float64) {
