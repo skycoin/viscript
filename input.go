@@ -103,6 +103,9 @@ func onKey(
 	if action == glfw.Release {
 		switch key {
 
+		case glfw.KeyEscape:
+			w.SetShouldClose(true)
+
 		case glfw.KeyLeftShift:
 			fallthrough
 		case glfw.KeyRightShift:
@@ -125,9 +128,7 @@ func onKey(
 		case glfw.KeyRightSuper:
 			fmt.Println("'Super' modifier key RELEASED")
 		}
-	}
-
-	if action == glfw.Press {
+	} else { // action might be glfw.Press, glfw.? (repeated key (held) ), or ?
 		switch mods {
 		case glfw.ModShift:
 			fmt.Println("start selecting")
@@ -191,10 +192,6 @@ func onKey(
 		}
 	}
 
-	if key == glfw.KeyEscape && action == glfw.Release {
-		w.SetShouldClose(true)
-	}
-
 	// build message
 	var length uint32 = 5
 	message := make([]byte, length)
@@ -207,10 +204,7 @@ func onKey(
 
 func onChar(w *glfw.Window, char rune) {
 	// when a Unicode character is input.
-	//func (w *Window) SetCharacterCallback(cbfun func(w *Window, char uint)) {}
-
-	fmt.Printf("onChar(): %c\n", char)
-	//document[len(document)-1] += string(char)
+	//fmt.Printf("onChar(): %c\n", char)
 	document[cursY] = document[cursY][:cursX] + string(char) + document[cursY][cursX:len(document[cursY])]
 	cursX++
 

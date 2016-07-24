@@ -47,11 +47,12 @@ func processMessage(message []byte) {
 
 	}
 
+	fmt.Println()
 	curRecByte = 0
 }
 
 func s(s string, message []byte) { // common to all messages
-	fmt.Println(s)
+	fmt.Print(s)
 	showUInt32("Length", message)
 	curRecByte++ // skipping message type's space
 }
@@ -80,7 +81,7 @@ func showUInt32(s string, message []byte) { // almost generic, just top 2 vars c
 	if err != nil {
 		fmt.Println("binary.Read failed: ", err)
 	} else {
-		fmt.Printf("%s: %d\n", s, value)
+		fmt.Printf("   < %s: %d >", s, value)
 	}
 }
 
@@ -95,6 +96,6 @@ func showFloat64(s string, message []byte) { // almost generic, just top 2 vars 
 	if err != nil {
 		fmt.Println("binary.Read failed: ", err)
 	} else {
-		fmt.Printf("%s: %.1f\n", s, value)
+		fmt.Printf("   < %s: %.1f >", s, value)
 	}
 }

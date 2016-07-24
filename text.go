@@ -1,3 +1,14 @@
+/* TODO:
+CTRL-ARROW moves by whole word
+select range with mouse
+" " " arrow keys
+CTRL-HOME/END
+PGUP/DN
+RIGHT at end of line goes to next line
+BACKSPACE/DELETE at the ends of lines
+	pulls us up to prev line, or pulls up next line
+*/
+
 package main
 
 import (
@@ -57,8 +68,8 @@ func makeChars() {
 		curY -= chHei
 	}
 
-	drawCursorMaybe()
 	drawCharAt('#', mouseX, mouseY)
+	drawCursorMaybe()
 
 	curX = -rectRad
 	curY = rectRad
