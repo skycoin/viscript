@@ -26,6 +26,7 @@ func pollEventsAndHandleAnInput(window *glfw.Window) {
 	//}
 }
 
+const PREFIX_SIZE = 5 // guaranteed minimum size of every message (4 for length & 1 for type)
 
 var prefixLen uint32 = 0
 var contentLen uint32 = 0 // current send message CONTENT index, for iterating across funcs
@@ -79,6 +80,7 @@ func onMouseButton(
 	}
 
 	// build message
+	prefix := make([]byte, PREFIX_SIZE)
 	content := make([]byte, 0) // dynamic size
 
 	// 1st build content, which will inform the size put in prefix
