@@ -37,30 +37,22 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	mouseY = int(y) / pixelHei
 
 	// build message
-	var length uint32 = 5 + 8 + 8
-	message := make([]byte, length)
-	addUInt32(length, message)
-	addUInt8(MessageMousePos, message)
-	addFloat64(x, message)
-	addFloat64(y, message)
-	contentLen = 0
+	content := make([]byte, 0) // dynamic size
+	addFloat64(x, content)
+	addFloat64(y, content)
 
-	processMessage(message)
+	buildPrefix(content, MessageMousePos)
 }
 
 func onMouseScroll(w *glfw.Window, xOff float64, yOff float64) {
 	//fmt.Println("onScroll()")
 
 	// build message
-	var length uint32 = 5 + 8 + 8
-	message := make([]byte, length)
-	addUInt32(length, message)
-	addUInt8(MessageMouseScroll, message)
-	addFloat64(xOff, message)
-	addFloat64(yOff, message)
-	contentLen = 0
+	content := make([]byte, 0) // dynamic size
+	addFloat64(xOff, content)
+	addFloat64(yOff, content)
 
-	processMessage(message)
+	buildPrefix(content, MessageMouseScroll)
 }
 
 // apparently every time this is fired, a mouse position event is ALSO fired
@@ -80,20 +72,19 @@ func onMouseButton(
 	}
 
 	// build message
-	prefix := make([]byte, PREFIX_SIZE)
 	content := make([]byte, 0) // dynamic size
-
-	// 1st build content, which will inform the size put in prefix
 	addMouseButton(b, content)
 	addAction(action, content)
 	addModifierKey(mod, content)
 
-	/////////FIXME:  damnit, now we need another counter?
-	// feeding the found size into addUInt32, which atm wants to increment it as well
-	// build prefix
-	addPREfixUInt32(contentLen+PREFIX_SIZE, prefix)
+	buildPrefix(content, MessageMouseButton)
+}
+
+func buildPrefix(content []byte, msgType uint8) {
+	prefix := make([]byte, PREFIX_SIZE)
+	addPREfixUInt32(uint32(len(content))+PREFIX_SIZE, prefix)
 	contentLen = 0
-	addPREfixUInt8(MessageMouseButton, prefix)
+	addPREfixUInt8(msgType, prefix)
 	prefixLen = 0
 
 	processMessage(append(prefix, content...))
@@ -208,8 +199,8 @@ func onKey(
 	// build message
 	var length uint32 = 5
 	message := make([]byte, length)
-	addUInt32(length, message)
-	addUInt8(MessageKey, message)
+	addPREfixUInt32(length, message)
+	addPREfixUInt8(MessageKey, message)
 	contentLen = 0
 
 	processMessage(message)
@@ -224,14 +215,14 @@ func onChar(w *glfw.Window, char rune) {
 	// build message
 	var length uint32 = 5
 	message := make([]byte, length)
-	addUInt32(length, message)
-	addUInt8(MessageCharacter, message)
+	addPREfixUInt32(length, message)
+	addPREfixUInt8(MessageCharacter, message)
 	contentLen = 0
 
 	processMessage(message)
 }
 
-func addPREfixUInt32(value uint32, message []byte) {
+func addPREfixUInt32(value uint32, data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
 
@@ -239,13 +230,13 @@ func addPREfixUInt32(value uint32, message []byte) {
 		fmt.Println("binary.Write failed:", err)
 	} else {
 		for i := 0; i < wBuf.Len(); i++ {
-			message[prefixLen] = wBuf.Bytes()[i] // optimizeme?  converts->[]byte each iteration
+			data[prefixLen] = wBuf.Bytes()[i] // optimizeme?  converts->[]byte each iteration
 			prefixLen++
 		}
 	}
 }
 
-func addPREfixUInt8(value uint8, message []byte) {
+func addPREfixUInt8(value uint8, data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
 
@@ -253,65 +244,38 @@ func addPREfixUInt8(value uint8, message []byte) {
 		fmt.Println("binary.Write failed:", err)
 	} else {
 		for i := 0; i < wBuf.Len(); i++ {
-			message[prefixLen] = wBuf.Bytes()[i]
+			data[prefixLen] = wBuf.Bytes()[i]
 			prefixLen++
 		}
 	}
 }
 
 // the rest of these add[type]() functions are identical except for the value type
-func addFloat64(value float64, message []byte) {
+func addFloat64(value float64, data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
-
-	if err != nil {
-		fmt.Println("binary.Write failed:", err)
-	} else {
-		for i := 0; i < wBuf.Len(); i++ {
-			message[contentLen] = wBuf.Bytes()[i]
-			contentLen++
-		}
-	}
+	copyBytes(wBuf, data, err)
 }
 
-// these newer ones now use dynamic []byte slice
 func addMouseButton(value glfw.MouseButton, data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
-	fmt.Println("PACKING - MouseButton len:", wBuf.Len())
-
-	if err != nil {
-		fmt.Println("binary.Write failed:", err)
-	} else {
-		b := wBuf.Bytes()
-
-		for i := 0; i < wBuf.Len(); i++ {
-			data = append(data, b[i])
-		}
-	}
+	copyBytes(wBuf, data, err)
 }
 
 func addAction(value glfw.Action, data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
-	fmt.Println("PACKING - Action len:", wBuf.Len())
-
-	if err != nil {
-		fmt.Println("binary.Write failed:", err)
-	} else {
-		b := wBuf.Bytes()
-
-		for i := 0; i < wBuf.Len(); i++ {
-			data = append(data, b[i])
-		}
-	}
+	copyBytes(wBuf, data, err)
 }
 
 func addModifierKey(value glfw.ModifierKey, data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
-	fmt.Println("PACKING - ModifierKey len:", wBuf.Len())
+	copyBytes(wBuf, data, err)
+}
 
+func copyBytes(wBuf *bytes.Buffer, data []byte, err error) {
 	if err != nil {
 		fmt.Println("binary.Write failed:", err)
 	} else {
