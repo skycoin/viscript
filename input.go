@@ -28,19 +28,13 @@ func pollEventsAndHandleAnInput(window *glfw.Window) {
 
 const PREFIX_SIZE = 5 // guaranteed minimum size of every message (4 for length & 1 for type)
 
-var prefixLen uint32 = 0
-var contentLen uint32 = 0 // current send message CONTENT index, for iterating across funcs
-
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	//fmt.Println("onMouseCursorPos()")
 	mouseX = int(x) / pixelWid
 	mouseY = int(y) / pixelHei
 
 	// build message
-	content := make([]byte, 0) // dynamic size
-	addFloat64(x, content)
-	addFloat64(y, content)
-
+	content := append(getBytesOfFloat64(x), getBytesOfFloat64(y)...)
 	buildPrefix(content, MessageMousePos)
 }
 
@@ -48,10 +42,7 @@ func onMouseScroll(w *glfw.Window, xOff float64, yOff float64) {
 	//fmt.Println("onScroll()")
 
 	// build message
-	content := make([]byte, 0) // dynamic size
-	addFloat64(xOff, content)
-	addFloat64(yOff, content)
-
+	content := append(getBytesOfFloat64(xOff), getBytesOfFloat64(yOff)...)
 	buildPrefix(content, MessageMouseScroll)
 }
 
@@ -72,20 +63,16 @@ func onMouseButton(
 	}
 
 	// build message
-	content := make([]byte, 0) // dynamic size
-	addMouseButton(b, content)
-	addAction(action, content)
-	addModifierKey(mod, content)
-
+	content := append(addMouseButton(b), addAction(action)...)
+	content = append(content, addModifierKey(mod)...)
 	buildPrefix(content, MessageMouseButton)
 }
 
 func buildPrefix(content []byte, msgType uint8) {
-	prefix := make([]byte, PREFIX_SIZE)
-	addPREfixUInt32(uint32(len(content))+PREFIX_SIZE, prefix)
-	contentLen = 0
-	addPREfixUInt8(msgType, prefix)
-	prefixLen = 0
+	//prefix := make([]byte, PREFIX_SIZE)
+	prefix := append(
+		getBytesOfUInt32(uint32(len(content))+PREFIX_SIZE),
+		getBytesOfUInt8(msgType)...)
 
 	processMessage(append(prefix, content...))
 }
@@ -197,13 +184,9 @@ func onKey(
 	}
 
 	// build message
-	var length uint32 = 5
-	message := make([]byte, length)
-	addPREfixUInt32(length, message)
-	addPREfixUInt8(MessageKey, message)
-	contentLen = 0
-
-	processMessage(message)
+	processMessage(append(
+		getBytesOfUInt32(PREFIX_SIZE),
+		getBytesOfUInt8(MessageKey)...))
 }
 
 func onChar(w *glfw.Window, char rune) {
@@ -213,16 +196,12 @@ func onChar(w *glfw.Window, char rune) {
 	cursX++
 
 	// build message
-	var length uint32 = 5
-	message := make([]byte, length)
-	addPREfixUInt32(length, message)
-	addPREfixUInt8(MessageCharacter, message)
-	contentLen = 0
-
-	processMessage(message)
+	processMessage(append(
+		getBytesOfUInt32(PREFIX_SIZE),
+		getBytesOfUInt8(MessageCharacter)...))
 }
 
-func addPREfixUInt32(value uint32, data []byte) {
+/*func addPREfixUInt32(value uint32, data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
 
@@ -248,34 +227,54 @@ func addPREfixUInt8(value uint8, data []byte) {
 			prefixLen++
 		}
 	}
-}
+}*/
 
-// the rest of these add[type]() functions are identical except for the value type
-func addFloat64(value float64, data []byte) {
+// the rest of these getBytesOfType() funcs are identical except for the value type
+func getBytesOfUInt8(value uint8) (data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
-	copyBytes(wBuf, data, err)
+	data = getSlice(wBuf, err)
+	return
 }
 
-func addMouseButton(value glfw.MouseButton, data []byte) {
+func getBytesOfUInt32(value uint32) (data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
-	copyBytes(wBuf, data, err)
+	data = getSlice(wBuf, err)
+	return
 }
 
-func addAction(value glfw.Action, data []byte) {
+func getBytesOfFloat64(value float64) (data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
-	copyBytes(wBuf, data, err)
+	data = getSlice(wBuf, err)
+	return
 }
 
-func addModifierKey(value glfw.ModifierKey, data []byte) {
+func addMouseButton(value glfw.MouseButton) (data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
-	copyBytes(wBuf, data, err)
+	data = getSlice(wBuf, err)
+	return
 }
 
-func copyBytes(wBuf *bytes.Buffer, data []byte, err error) {
+func addAction(value glfw.Action) (data []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+	data = getSlice(wBuf, err)
+	return
+}
+
+func addModifierKey(value glfw.ModifierKey) (data []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+	data = getSlice(wBuf, err)
+	return
+}
+
+func getSlice(wBuf *bytes.Buffer, err error) (data []byte) {
+	data = make([]byte, 0)
+
 	if err != nil {
 		fmt.Println("binary.Write failed:", err)
 	} else {
@@ -285,4 +284,6 @@ func copyBytes(wBuf *bytes.Buffer, data []byte, err error) {
 			data = append(data, b[i])
 		}
 	}
+
+	return
 }
