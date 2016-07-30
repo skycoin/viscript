@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	//"github.com/go-gl/glfw/v3.1/glfw"
 )
 
 const (
@@ -34,8 +35,9 @@ func processMessage(message []byte) {
 
 	case MessageMouseButton:
 		s("MessageMouseButton", message)
-		//showMouseButton()
-		//showAction()
+		showUInt8("Button", message)
+		showUInt8("Action", message)
+		showUInt8("Mod", message)
 
 	case MessageCharacter:
 		s("MessageCharacter", message)
@@ -69,6 +71,21 @@ func getMessageType(s string, message []byte) (value uint8) {
 	}
 
 	return
+}
+
+func showUInt8(s string, message []byte) { // almost generic, just top 2 vars customized (and string format)
+	var value uint8
+	var size = 1
+
+	rBuf := bytes.NewReader(message[curRecByte : curRecByte+size])
+	err := binary.Read(rBuf, binary.LittleEndian, &value)
+	curRecByte += size
+
+	if err != nil {
+		fmt.Println("binary.Read failed: ", err)
+	} else {
+		fmt.Printf("   < %s: %d >", s, value)
+	}
 }
 
 func showUInt32(s string, message []byte) { // almost generic, just top 2 vars customized (and string format)

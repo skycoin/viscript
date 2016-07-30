@@ -63,8 +63,8 @@ func onMouseButton(
 	}
 
 	// build message
-	content := append(addMouseButton(b), addAction(action)...)
-	content = append(content, addModifierKey(mod)...)
+	content := append(getBytesOfUInt8(uint8(b)), getBytesOfUInt8(uint8(action))...)
+	content = append(content, getBytesOfUInt8(uint8(mod))...)
 	buildPrefix(content, MessageMouseButton)
 }
 
@@ -119,7 +119,7 @@ func onKey(
 		case glfw.KeyRightSuper:
 			fmt.Println("'Super' modifier key RELEASED")
 		}
-	} else { // action might be glfw.Press, glfw.? (repeated key (held) ), or ?
+	} else { // glfw.Repeat   or   glfw.Press
 		switch mods {
 		case glfw.ModShift:
 			fmt.Println("start selecting")
@@ -201,34 +201,6 @@ func onChar(w *glfw.Window, char rune) {
 		getBytesOfUInt8(MessageCharacter)...))
 }
 
-/*func addPREfixUInt32(value uint32, data []byte) {
-	wBuf := new(bytes.Buffer)
-	err := binary.Write(wBuf, binary.LittleEndian, value)
-
-	if err != nil {
-		fmt.Println("binary.Write failed:", err)
-	} else {
-		for i := 0; i < wBuf.Len(); i++ {
-			data[prefixLen] = wBuf.Bytes()[i] // optimizeme?  converts->[]byte each iteration
-			prefixLen++
-		}
-	}
-}
-
-func addPREfixUInt8(value uint8, data []byte) {
-	wBuf := new(bytes.Buffer)
-	err := binary.Write(wBuf, binary.LittleEndian, value)
-
-	if err != nil {
-		fmt.Println("binary.Write failed:", err)
-	} else {
-		for i := 0; i < wBuf.Len(); i++ {
-			data[prefixLen] = wBuf.Bytes()[i]
-			prefixLen++
-		}
-	}
-}*/
-
 // the rest of these getBytesOfType() funcs are identical except for the value type
 func getBytesOfUInt8(value uint8) (data []byte) {
 	wBuf := new(bytes.Buffer)
@@ -245,27 +217,6 @@ func getBytesOfUInt32(value uint32) (data []byte) {
 }
 
 func getBytesOfFloat64(value float64) (data []byte) {
-	wBuf := new(bytes.Buffer)
-	err := binary.Write(wBuf, binary.LittleEndian, value)
-	data = getSlice(wBuf, err)
-	return
-}
-
-func addMouseButton(value glfw.MouseButton) (data []byte) {
-	wBuf := new(bytes.Buffer)
-	err := binary.Write(wBuf, binary.LittleEndian, value)
-	data = getSlice(wBuf, err)
-	return
-}
-
-func addAction(value glfw.Action) (data []byte) {
-	wBuf := new(bytes.Buffer)
-	err := binary.Write(wBuf, binary.LittleEndian, value)
-	data = getSlice(wBuf, err)
-	return
-}
-
-func addModifierKey(value glfw.ModifierKey) (data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
 	data = getSlice(wBuf, err)
