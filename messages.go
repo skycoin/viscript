@@ -41,9 +41,14 @@ func processMessage(message []byte) {
 
 	case MessageCharacter:
 		s("MessageCharacter", message)
+		showRune("Rune", message)
 
 	case MessageKey:
 		s("MessageKey", message)
+		showUInt8("Key", message)
+		showSInt32("Scan", message)
+		showUInt8("Action", message)
+		showUInt8("Mod", message)
 
 	default:
 		fmt.Println("UNKNOWN MESSAGE TYPE!")
@@ -56,7 +61,7 @@ func processMessage(message []byte) {
 
 func s(s string, message []byte) { // common to all messages
 	fmt.Print(s)
-	showUInt32("Length", message)
+	showUInt32("Len", message)
 	curRecByte++ // skipping message type's space
 }
 
@@ -73,9 +78,39 @@ func getMessageType(s string, message []byte) (value uint8) {
 	return
 }
 
+func showRune(s string, message []byte) { // almost generic, just top 2 vars customized (and string format)
+	var value rune
+	var size = 4
+
+	rBuf := bytes.NewReader(message[curRecByte : curRecByte+size])
+	err := binary.Read(rBuf, binary.LittleEndian, &value)
+	curRecByte += size
+
+	if err != nil {
+		fmt.Println("binary.Read failed: ", err)
+	} else {
+		fmt.Printf("   < %s: %s >", s, string(value))
+	}
+}
+
 func showUInt8(s string, message []byte) { // almost generic, just top 2 vars customized (and string format)
 	var value uint8
 	var size = 1
+
+	rBuf := bytes.NewReader(message[curRecByte : curRecByte+size])
+	err := binary.Read(rBuf, binary.LittleEndian, &value)
+	curRecByte += size
+
+	if err != nil {
+		fmt.Println("binary.Read failed: ", err)
+	} else {
+		fmt.Printf("   < %s: %d >", s, value)
+	}
+}
+
+func showSInt32(s string, message []byte) { // almost generic, just top 2 vars customized (and string format)
+	var value int32
+	var size = 4
 
 	rBuf := bytes.NewReader(message[curRecByte : curRecByte+size])
 	err := binary.Read(rBuf, binary.LittleEndian, &value)

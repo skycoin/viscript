@@ -89,7 +89,7 @@ func onKey(
 	key glfw.Key,
 	scancode int,
 	action glfw.Action,
-	mods glfw.ModifierKey) {
+	mod glfw.ModifierKey) {
 
 	if action == glfw.Release {
 		switch key {
@@ -120,7 +120,7 @@ func onKey(
 			fmt.Println("'Super' modifier key RELEASED")
 		}
 	} else { // glfw.Repeat   or   glfw.Press
-		switch mods {
+		switch mod {
 		case glfw.ModShift:
 			fmt.Println("start selecting")
 			selectingRangeOfText = true
@@ -184,9 +184,11 @@ func onKey(
 	}
 
 	// build message
-	processMessage(append(
-		getBytesOfUInt32(PREFIX_SIZE),
-		getBytesOfUInt8(MessageKey)...))
+	content := getBytesOfUInt8(uint8(key))
+	content = append(content, getBytesOfSInt32(int32(scancode))...)
+	content = append(content, getBytesOfUInt8(uint8(action))...)
+	content = append(content, getBytesOfUInt8(uint8(mod))...)
+	buildPrefix(content, MessageKey)
 }
 
 func onChar(w *glfw.Window, char rune) {
@@ -196,13 +198,25 @@ func onChar(w *glfw.Window, char rune) {
 	cursX++
 
 	// build message
-	processMessage(append(
-		getBytesOfUInt32(PREFIX_SIZE),
-		getBytesOfUInt8(MessageCharacter)...))
+	buildPrefix(getBytesOfRune(char), MessageCharacter)
 }
 
 // the rest of these getBytesOfType() funcs are identical except for the value type
+func getBytesOfRune(value rune) (data []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+	data = getSlice(wBuf, err)
+	return
+}
+
 func getBytesOfUInt8(value uint8) (data []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+	data = getSlice(wBuf, err)
+	return
+}
+
+func getBytesOfSInt32(value int32) (data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
 	data = getSlice(wBuf, err)
