@@ -29,10 +29,12 @@ var rectRad = float32(3) // rectangular radius (distance to edge of app window
 // in the cardinal directions from the center, corners would be farther away)
 var curX = -rectRad // the current pos of the DRAWing cursor
 var curY = rectRad
-var chWid = float32(rectRad * 2 / 80) // char w
-var chHei = float32(rectRad * 2 / 25) // char h
-var pixelWid = int(float32(resX) / 80)
-var pixelHei = int(float32(resY) / 25)
+var numXChars = 80
+var numYChars = 25
+var chWid = float32(rectRad * 2 / float32(numXChars))
+var chHei = float32(rectRad * 2 / float32(numYChars))
+var pixelWid = int(float32(resX) / float32(numXChars))
+var pixelHei = int(float32(resY) / float32(numYChars))
 var mouseX int = 0 // char position of mouse pointer
 var mouseY int = 0
 var document = make([]string, 0)
@@ -61,7 +63,9 @@ var selectionEndY = math.MaxUint32
 var selectingRangeOfText = false
 
 func initDoc() {
-	document = append(document, "testing init line")
+	for i := 0; i < 30; i++ {
+		document = append(document, "testing init line")
+	}
 }
 
 func makeChars() {
@@ -74,6 +78,8 @@ func makeChars() {
 		curY -= chHei
 	}
 
+	scrollBarLen := float32(numYChars) / float32(len(document)) * rectRad * 2
+	drawScrollBarVertical(2, 11, numXChars-1, 0, scrollBarLen)
 	drawCharAt('#', mouseX, mouseY)
 	drawCursorMaybe()
 
@@ -117,6 +123,24 @@ func drawCursorMaybe() {
 	}
 }
 
+func drawScrollBarVertical(atlasX, atlasY, posX int, posY int, length float32) {
+	gl.Normal3f(0, 0, 1)
+
+	gl.TexCoord2f(float32(atlasX)*uvSpan, float32(atlasY)*uvSpan+uvSpan) // bl  0, 1
+	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*chHei-length, 0)
+
+	gl.TexCoord2f(float32(atlasX)*uvSpan+uvSpan, float32(atlasY)*uvSpan+uvSpan) // br  1, 1
+	gl.Vertex3f(-rectRad+float32(posX)*chWid+chWid, rectRad-float32(posY)*chHei-length, 0)
+
+	gl.TexCoord2f(float32(atlasX)*uvSpan+uvSpan, float32(atlasY)*uvSpan) // tr  1, 0
+	gl.Vertex3f(-rectRad+float32(posX)*chWid+chWid, rectRad-float32(posY)*chHei, 0)
+
+	gl.TexCoord2f(float32(atlasX)*uvSpan, float32(atlasY)*uvSpan) // tl  0, 0
+	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*chHei, 0)
+
+	curX += chWid
+}
+
 func drawCharAt(letter rune, posX int, posY int) {
 	x := int(letter) % 16
 	y := int(letter) / 16
@@ -136,11 +160,6 @@ func drawCharAt(letter rune, posX int, posY int) {
 	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*chHei, 0)
 
 	curX += chWid
-
-	if curX >= rectRad {
-		curX = -rectRad
-		curY -= chHei
-	}
 }
 
 func drawCharAtCurrentPos(letter rune) {
@@ -162,9 +181,4 @@ func drawCharAtCurrentPos(letter rune) {
 	gl.Vertex3f(curX, curY, 0)
 
 	curX += chWid
-
-	if curX >= rectRad {
-		curX = -rectRad
-		curY -= chHei
-	}
 }
