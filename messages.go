@@ -52,7 +52,6 @@ func processMessage(message []byte) {
 
 	default:
 		fmt.Println("UNKNOWN MESSAGE TYPE!")
-
 	}
 
 	fmt.Println()
@@ -152,6 +151,3 @@ func showFloat64(s string, message []byte) { // almost generic, just top 2 vars 
 		fmt.Printf("   [%s: %.1f]", s, value)
 	}
 }
-
-//		b glfw.MouseButton
-//		action glfw.Action
