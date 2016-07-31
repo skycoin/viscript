@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"go/build"
 	_ "image/png"
 	"log"
@@ -14,6 +15,7 @@ import (
 func init() {
 	// GLFW event handling must run on the main OS thread
 	// See documentation for functions that are only allowed to be called from the main thread.
+	fmt.Println("init()")
 	runtime.LockOSThread()
 }
 
@@ -47,6 +49,7 @@ func main() {
 	initInputEvents(window)
 
 	for !window.ShouldClose() {
+		monitorEvents(events)
 		pollEventsAndHandleAnInput(window)
 		drawScene()
 		window.SwapBuffers()

@@ -17,10 +17,16 @@ const (
 
 var curRecByte = 0 // current receive message index
 
-func processMessage(message []byte) {
-	// do: extract length
-	// do: get msgType
+func monitorEvents(ch chan []byte) {
+	select {
+	case v := <-ch:
+		processMessage(v)
+	default:
+		//fmt.Println("monitorEvents() default")
+	}
+}
 
+func processMessage(message []byte) {
 	switch getMessageType(".", message) {
 
 	case MessageMousePos:

@@ -7,6 +7,9 @@ import (
 	"github.com/go-gl/glfw/v3.1/glfw"
 )
 
+const PREFIX_SIZE = 5 // guaranteed minimum size of every message (4 for length & 1 for type)
+var events = make(chan []byte, 256)
+
 func initInputEvents(w *glfw.Window) {
 	w.SetCharCallback(onChar)
 	w.SetKeyCallback(onKey)
@@ -25,8 +28,6 @@ func pollEventsAndHandleAnInput(window *glfw.Window) {
 	//	window.SetShouldClose(true)
 	//}
 }
-
-const PREFIX_SIZE = 5 // guaranteed minimum size of every message (4 for length & 1 for type)
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	//fmt.Println("onMouseCursorPos()")
@@ -74,7 +75,7 @@ func buildPrefix(content []byte, msgType uint8) {
 		getBytesOfUInt32(uint32(len(content))+PREFIX_SIZE),
 		getBytesOfUInt8(msgType)...)
 
-	processMessage(append(prefix, content...))
+	events <- append(prefix, content...)
 }
 
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can get a
