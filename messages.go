@@ -89,7 +89,7 @@ func showRune(s string, message []byte) { // almost generic, just top 2 vars cus
 	if err != nil {
 		fmt.Println("binary.Read failed: ", err)
 	} else {
-		fmt.Printf("   < %s: %s >", s, string(value))
+		fmt.Printf("   [%s: %s]", s, string(value))
 	}
 }
 
@@ -104,7 +104,7 @@ func showUInt8(s string, message []byte) { // almost generic, just top 2 vars cu
 	if err != nil {
 		fmt.Println("binary.Read failed: ", err)
 	} else {
-		fmt.Printf("   < %s: %d >", s, value)
+		fmt.Printf("   [%s: %d]", s, value)
 	}
 }
 
@@ -119,7 +119,7 @@ func showSInt32(s string, message []byte) { // almost generic, just top 2 vars c
 	if err != nil {
 		fmt.Println("binary.Read failed: ", err)
 	} else {
-		fmt.Printf("   < %s: %d >", s, value)
+		fmt.Printf("   [%s: %d]", s, value)
 	}
 }
 
@@ -134,7 +134,7 @@ func showUInt32(s string, message []byte) { // almost generic, just top 2 vars c
 	if err != nil {
 		fmt.Println("binary.Read failed: ", err)
 	} else {
-		fmt.Printf("   < %s: %d >", s, value)
+		fmt.Printf("   [%s: %d]", s, value)
 	}
 }
 
@@ -149,7 +149,7 @@ func showFloat64(s string, message []byte) { // almost generic, just top 2 vars 
 	if err != nil {
 		fmt.Println("binary.Read failed: ", err)
 	} else {
-		fmt.Printf("   < %s: %.1f >", s, value)
+		fmt.Printf("   [%s: %.1f]", s, value)
 	}
 }
 

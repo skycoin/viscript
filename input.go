@@ -168,13 +168,21 @@ func onKey(
 					cursX = len(document[cursY])
 				}
 			} else {
-				cursX--
+				if mod == glfw.ModControl {
+					cursX = getWordSkipPos(cursX, -1)
+				} else {
+					cursX--
+				}
 			}
 		case glfw.KeyRight:
 			commonMovementKeyHandling()
 
 			if cursX < len(document[cursY]) {
-				cursX++
+				if mod == glfw.ModControl {
+					cursX = getWordSkipPos(cursX, 1)
+				} else {
+					cursX++
+				}
 			}
 		case glfw.KeyBackspace:
 			removeCharacter(false)
@@ -189,6 +197,29 @@ func onKey(
 	content = append(content, getBytesOfUInt8(uint8(action))...)
 	content = append(content, getBytesOfUInt8(uint8(mod))...)
 	buildPrefix(content, MessageKey)
+}
+
+func getWordSkipPos(xIn int, change int) (cursX int) {
+	peekPos := xIn
+
+	for {
+		peekPos += change
+
+		if peekPos < 0 {
+			cursX = 0
+			return
+		}
+
+		if peekPos >= len(document[cursY]) {
+			cursX = len(document[cursY])
+			return
+		}
+
+		if string(document[cursY][peekPos]) == " " {
+			cursX = peekPos
+			return
+		}
+	}
 }
 
 func onChar(w *glfw.Window, char rune) {
