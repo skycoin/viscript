@@ -36,7 +36,7 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 
 	// build message
 	content := append(getBytesOfFloat64(x), getBytesOfFloat64(y)...)
-	buildPrefix(content, MessageMousePos)
+	dispatchWithPrefix(content, MessageMousePos)
 }
 
 func onMouseScroll(w *glfw.Window, xOff float64, yOff float64) {
@@ -44,7 +44,7 @@ func onMouseScroll(w *glfw.Window, xOff float64, yOff float64) {
 
 	// build message
 	content := append(getBytesOfFloat64(xOff), getBytesOfFloat64(yOff)...)
-	buildPrefix(content, MessageMouseScroll)
+	dispatchWithPrefix(content, MessageMouseScroll)
 }
 
 // apparently every time this is fired, a mouse position event is ALSO fired
@@ -66,10 +66,10 @@ func onMouseButton(
 	// build message
 	content := append(getBytesOfUInt8(uint8(b)), getBytesOfUInt8(uint8(action))...)
 	content = append(content, getBytesOfUInt8(uint8(mod))...)
-	buildPrefix(content, MessageMouseButton)
+	dispatchWithPrefix(content, MessageMouseButton)
 }
 
-func buildPrefix(content []byte, msgType uint8) {
+func dispatchWithPrefix(content []byte, msgType uint8) {
 	//prefix := make([]byte, PREFIX_SIZE)
 	prefix := append(
 		getBytesOfUInt32(uint32(len(content))+PREFIX_SIZE),
@@ -197,7 +197,7 @@ func onKey(
 	content = append(content, getBytesOfSInt32(int32(scancode))...)
 	content = append(content, getBytesOfUInt8(uint8(action))...)
 	content = append(content, getBytesOfUInt8(uint8(mod))...)
-	buildPrefix(content, MessageKey)
+	dispatchWithPrefix(content, MessageKey)
 }
 
 func getWordSkipPos(xIn int, change int) (cursX int) {
@@ -230,7 +230,7 @@ func onChar(w *glfw.Window, char rune) {
 	cursX++
 
 	// build message
-	buildPrefix(getBytesOfRune(char), MessageCharacter)
+	dispatchWithPrefix(getBytesOfRune(char), MessageCharacter)
 }
 
 // the rest of these getBytesOfType() funcs are identical except for the value type
