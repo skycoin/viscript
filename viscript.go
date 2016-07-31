@@ -1,15 +1,10 @@
-// Copyright 2014 The go-gl Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// Renders a textured spinning cube using GLFW 3.1 and OpenGL 2.1.
 package main
 
 import (
 	"go/build"
 	_ "image/png"
 	"log"
-	"os"
+	_ "os"
 	"runtime"
 
 	"github.com/go-gl/gl/v2.1/gl"
@@ -61,17 +56,19 @@ func main() {
 // Set the working directory to the root of Go package, so that its assets can be accessed.
 func init() {
 	//dir, err := importPathToDir("github.com/go-gl/examples/glfw31-gl21-cube")
-	dir, err := importPathToDir("viscript")
+	/*
+		dir, err := importPathToDir("viscript")
 
-	if err != nil {
-		log.Fatalln("Unable to find Go package in your GOPATH, it's needed to load assets:", err)
-	}
+		if err != nil {
+			log.Fatalln("Unable to find Go package in your GOPATH, it's needed to load assets:", err)
+		}
 
-	err = os.Chdir(dir)
+		err = os.Chdir(dir)
 
-	if err != nil {
-		log.Panicln("os.Chdir:", err)
-	}
+		if err != nil {
+			log.Panicln("os.Chdir:", err)
+		}
+	*/
 }
 
 // importPathToDir resolves the absolute path from importPath.
