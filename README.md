@@ -1,6 +1,7 @@
 # viscript
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 Renders a textured spinning cube using GLFW 3.1 and OpenGL 2.1.
 =======
@@ -13,6 +14,9 @@ Feature requirement notes from Brandon:
 
 Debian
 ===
+=======
+Feature requirement snippets from Brandon:
+>>>>>>> b2cedd53a890edd90a681b0f8d61b31ea7badfd9
 
 sudo apt-get install libgl1-mesa-dev
 sudo apt-get install libxrandr-dev
@@ -37,7 +41,7 @@ I want the screen to respond to length prefixed messages (32 bit length prefix, 
 later, i want pixels and to be able to create subwindow or 2d plane, and then to blit it to screen and do opengl operations, from the scripting language; but we will do that later
 
 
-[7/10/2016 6:20:37 AM] Brandon: 1> terminal, with terminal program handling opengl and input (mouse click, scroll, left click right click) and sending the messages to another program over a channel as lenght prefixed messages
+[7/10/2016 6:20:37 AM] Brandon: 1> terminal, with terminal program handling opengl and input (mouse click, scroll, left click right click) and sending the messages to another program over a channel as length prefixed messages
 2> a simple lisp or C like scripting language on the other end of the terminal
 3> tools for scripting language, autocomplete etc
 
@@ -53,5 +57,19 @@ later, i want pixels and to be able to create subwindow or 2d plane, and then to
 [7/14/2016 11:39:21 AM] Brandon: i need grid of characters, like a Ssh terminal array
 [7/14/2016 11:39:40 AM] Brandon: and all events serialized, through a channel, to be handled by another application (the same application)
 [7/14/2016 11:39:47 AM] Brandon: its cross platform terminal in opengl
+
+
+
+[7/18/2016 4:32:28 AM] Brandon: create file called input.go and input will go there and each key or button press will be sent over
+[7/18/2016 4:32:50 AM] Brandon: then the program will send back length prefixed commands, like "set character" or ask for size of display etc
+[7/18/2016 4:33:21 AM] Brandon: and we will have a program, that only takes length prefixed messages (key inputs) and sends back length prefixed messages (setting display, set characters etc)
+[7/18/2016 4:34:38 AM] Brandon: and then we will start on a simple programming language; like C, but will use abstract syntax tree. will just have structs, functions, int32, byte array; very basic
+
+the programming language will take in length prefixed messages, respond to them and then emit length prefixed messages
+
+Then we will add "modules" which are collections of structs and functions and you can import a module into another module
+[7/18/2016 4:44:06 AM] Brandon: a module is a struct, with a list of struct signatures (the structs in that module) and a list of function signatures (the functions in that module)
+[7/18/2016 4:44:49 AM] Brandon: a function is a struct; a struct for signature (type input list, type output list) and an array of expressions
+
 "
 >>>>>>> d43197e79f54ffc91b1e2abd162e19fdb24ec96f
