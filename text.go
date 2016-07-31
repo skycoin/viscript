@@ -63,7 +63,7 @@ var selectionEndY = math.MaxUint32
 var selectingRangeOfText = false
 
 func initDoc() {
-	for i := 0; i < 30; i++ {
+	for i := 0; i < 24; i++ {
 		document = append(document, "testing init line")
 	}
 }
@@ -79,6 +79,10 @@ func makeChars() {
 	}
 
 	scrollBarLen := float32(numYChars) / float32(len(document)) * rectRad * 2
+	if len(document) <= numYChars {
+		scrollBarLen = 0
+	}
+
 	drawScrollBarVertical(2, 11, numXChars-1, 0, scrollBarLen)
 	drawCharAt('#', mouseX, mouseY)
 	drawCursorMaybe()
