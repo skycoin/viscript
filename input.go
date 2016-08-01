@@ -131,9 +131,28 @@ func onKey(
 
 		switch key {
 		case glfw.KeyEnter:
+			startOfLine := document[cursY][:cursX]
+			restOfLine := document[cursY][cursX:len(document[cursY])]
+			//restOfDoc := document[cursY+1 : len(document)]
+			//startOfDoc := document[:cursY]
+
+			newDoc := make([]string, 0)
+
+			for i := 0; i < len(document); i++ {
+				//fmt.Printf("___[%d]: %s\n", i, document[i])
+
+				if i == cursY {
+					newDoc = append(newDoc, startOfLine)
+					newDoc = append(newDoc, restOfLine)
+				} else {
+					newDoc = append(newDoc, document[i])
+				}
+			}
+
+			document = newDoc
 			cursX = 0
 			cursY++
-			document = append(document, "")
+
 		case glfw.KeyHome:
 			commonMovementKeyHandling()
 			cursX = 0
@@ -224,12 +243,6 @@ func getWordSkipPos(xIn int, change int) (cursX int) {
 }
 
 func onChar(w *glfw.Window, char rune) {
-	// when a Unicode character is input.
-	//fmt.Printf("onChar(): %c\n", char)
-	document[cursY] = document[cursY][:cursX] + string(char) + document[cursY][cursX:len(document[cursY])]
-	cursX++
-
-	// build message
 	dispatchWithPrefix(getBytesOfRune(char), MessageCharacter)
 }
 

@@ -47,7 +47,7 @@ func processMessage(message []byte) {
 
 	case MessageCharacter:
 		s("MessageCharacter", message)
-		showRune("Rune", message)
+		insertRuneInDocument("Rune", message)
 
 	case MessageKey:
 		s("MessageKey", message)
@@ -83,7 +83,7 @@ func getMessageType(s string, message []byte) (value uint8) {
 	return
 }
 
-func showRune(s string, message []byte) { // almost generic, just top 2 vars customized (and string format)
+func insertRuneInDocument(s string, message []byte) {
 	var value rune
 	var size = 4
 
@@ -95,6 +95,9 @@ func showRune(s string, message []byte) { // almost generic, just top 2 vars cus
 		fmt.Println("binary.Read failed: ", err)
 	} else {
 		fmt.Printf("   [%s: %s]", s, string(value))
+
+		document[cursY] = document[cursY][:cursX] + string(value) + document[cursY][cursX:len(document[cursY])]
+		cursX++
 	}
 }
 

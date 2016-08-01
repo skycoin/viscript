@@ -18,6 +18,7 @@ H/V SCROLLBARS
 package main
 
 import (
+	"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
 	"math"
 	"time"
@@ -63,8 +64,8 @@ var selectionEndY = math.MaxUint32
 var selectingRangeOfText = false
 
 func initDoc() {
-	for i := 0; i < 24; i++ {
-		document = append(document, "testing init line")
+	for i := 0; i < 22; i++ {
+		document = append(document, fmt.Sprintf("%d: put lots of text on screen", i))
 	}
 }
 
