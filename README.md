@@ -64,6 +64,7 @@ Then we will add "modules" which are collections of structs and functions and yo
 
 === Spec ===
 
+Macros + Reflection
 Statically typed scheme
 
 Define types
@@ -129,9 +130,12 @@ An "assert" is something that must be true
 
 An "affordance" is something that CAN be done to an object
 - all affordances, must be enumerable
+- a user must be able to select each possible action, from a list
 
 A "restriction" is something that CANNOT be done to an object
 - restrictions must be checked and the affordance list filtered
+- Some types of restrictions, can be applied to a program as an operation, to remove an affordance
+- an example, is that structs/functions are defined, then the affordance for modifying them is removed (allowing compilation or simplification to a static binary)
 
 A "context" is current state
 - list of functions
@@ -142,7 +146,12 @@ A "context" is current state
 - current statement the program is on
 - list of variables in the current scope
 - list of functions in the current module
-- list of 
+- list of variables defined in a module
+
+reflection
+- each type has a list of functions and operators on it
+- reflection on an object is a func_of the object meta_type
+- modifying or extending an object is a func_on the object meta_type
 
 (is_def x)
 - returns if thing is defined
@@ -192,3 +201,25 @@ Modules
 - The program begins with a default object (the null object)
 - The program starts with a series of actions that can be applied to it (affordances)
 - The program is built up, by a series of operators applied to it (affordances)
+
+Programs accept and emit only length prefixed messages
+- there is a function for checking if there is an incoming length prefixed message
+- there is a function for emitting a length prefixed message
+- there is a function for receiving the length prefixed message from the queue
+- there is a function for halting the program, until a length prefixed message is available
+
+A program can spawn, isolated sub-programs that it can only communicate to over length prefixed messages
+
+An "agent" is a program that can apply affordances
+- the agent program reads the curent affordances on objects and applies them
+- agents are often restricted to a subset of objects and a subset of affordances
+
+A "behavior" is a set of criteria or goals or states, that the agent attempts to maintain
+
+Reflection
+- the fields and functions on a struct can be enumerated
+- the signature and body of a function can be enumerated
+- the list of structs, variables and objects in a given module can be enumerated
+- the list of modules, imported by a given module can be enumerated
+- the list of local scope variables, in a given function/context/stack frame can be enumerated
+- the types of each variable, can be enumerated
