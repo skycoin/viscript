@@ -61,3 +61,134 @@ Then we will add "modules" which are collections of structs and functions and yo
 [7/18/2016 4:44:49 AM] HaltingState: a function is a struct; a struct for signature (type input list, type output list) and an array of expressions
 
 "
+
+=== Spec ===
+
+Statically typed scheme
+
+Define types
+- i32 (int 32)
+- u8 (uint 8)
+- []byte (byte array, all byte arrays are fixed length)
+
+Define operators
+- i32_add
+- i32_sub
+- i32_mult
+- i32_div
+
+Syntax
+- (i32_add 3, 5)
+
+A function
+- has tuple of inputs, tuple of outputs
+- i32_add has type (i32, i32) (i32); takes in two i32 and returns one i32
+- a function has a list of statements
+
+A struct
+- a tuple of types
+- (i32, i32) is a tuple of two i32
+
+(def_struct Tag,
+	tag []byte
+	uuid [16] byte
+)
+
+A union
+- means "has to choose A or B"
+- enumerates possibilities
+- a choice of types
+
+A function has an array of "statesments" or "blocks" (an array of statements) or a control flow (if/then, for)
+
+(def_func, NAME, (u32 a, u32 b), (u32), 
+	(u32_add a, b)
+	)
+
+Type types of operators
+- functions on (can modify object)
+- functions of (cannot modify object)
+- functions on and functions of, should be in different colors
+
+The type of an object is a type
+- the type of an object is a struct, defining the type
+
+(def_func_on ...)
+(def_func_of ...)
+
+def_func_of cannot call functions def_func_on
+- can only read program, cannot modify
+
+(def_var_m i32 x)
+- defines new entity x
+
+(def_var_imutable i32 x)
+- defines new variable, which cannot be changed after creation
+
+An "assert" is something that must be true
+
+An "affordance" is something that CAN be done to an object
+- all affordances, must be enumerable
+
+A "restriction" is something that CANNOT be done to an object
+- restrictions must be checked and the affordance list filtered
+
+A "context" is current state
+- list of functions
+- list of structs
+- list of defined things
+- the context contains the current module, the stack, the current line and function
+- current function the program is on
+- current statement the program is on
+- list of variables in the current scope
+- list of functions in the current module
+- list of 
+
+(is_def x)
+- returns if thing is defined
+
+(is_type x, type)
+- determines of object is of type x
+
+(type_of x)
+- returns type
+
+A "choice" is a place where A or B (where program can choose A or B)
+- unions are for objects (structs)
+- choices are for code
+- a choice has a list of preconditions (things that must be true for choice to be made) and a list of statements (which can only be chosen if the preconditions are met)
+- a choice may have a signature (if it returns an object)
+- a choice could be modeled as a special type of function, that returns something
+- the choice operator, is a special function, that takes in the current context (state of program)
+
+(def_func, NAME, (uint a, uint b), (uint),
+	(choice, 
+		(true, (u32_add a, b)),
+		(true, (u32_add b,a)))
+	)
+)
+
+UIDs
+- struct { text_tag []byte , uuid [16]byte}
+- all variables, functions, modules have 128 bit UIDS
+- a UUID has a text "text_tag", or keyboard/display name
+- The UUID is used to look up the object in a table
+
+Modules
+- all code occurs in modules
+- a module has a name
+- a module contains functions and function definitions
+- a module contains structs and struct definitions
+
+(as x y)
+(as x z)
+- another way of writing choice operator
+- see XL programming language
+- when conditions occurs, x can be choice Y or Z
+- as operator, defines choices, that are not bound to a context or object
+- the as operator, defines the conditions, when an affordance is available
+
+- The program itself is an object (a struct)
+- The program begins with a default object (the null object)
+- The program starts with a series of actions that can be applied to it (affordances)
+- The program is built up, by a series of operators applied to it (affordances)
