@@ -223,3 +223,92 @@ Reflection
 - the list of modules, imported by a given module can be enumerated
 - the list of local scope variables, in a given function/context/stack frame can be enumerated
 - the types of each variable, can be enumerated
+
+Reflection on dependecy graphs
+
+Define a program object
+- then apply its operators on it, to construct the program
+
+---
+
+!!!
+Crash logs
+- overlay all crashes on the source code
+- find and trace crash logs
+
+Interactions between classes/functions
+- graph all interactions
+
+
+====
+
+atomic types (int32, uin32, []byte)
+operatiosn on atomic types (uint32.add a b)
+structs
+functions
+modules
+type signatures
+
+Atomic types
+- ints
+- byte arrays
+- "Type" objects
+
+====
+
+A function is a 
+1> name (text)
+2> input tuple (name, type) pair list
+3> output tuple (list of types/signatures returned)
+4> an array of lines/statements
+
+A struct is a 
+1> name
+2> list of (name, type) pairs
+3> later list of functions on the struct but ignore this for now
+
+A module is
+0> The name of the module (string)
+1> A list of modules imported by the current module
+2> A list of structs defined in the current module
+3> A list of function defined in the current module
+4> A list of variables at the global scope of the module
+
+===
+
+Note:
+- modules
+- structs
+- functions
+
+Should all have unique ids, to be used as references
+- unique IDs can be 64 bit (effectively pointers to def)
+
+A function is
+
+struct Function {
+	name []byte
+	input []struct{[]byte name, type Type)} //name/type pair array
+	output []struct{[]byte name, type Type} //optional name
+	lines []Expressions
+}
+
+A struct is
+
+struct Struct {
+	name []bytes
+	fields []struct{[]byte name, type Type)} //name/type pair aray
+}
+
+A module is
+
+struct Module {
+	name []bytes
+	module_imports []*Modules
+	module_functions []*function
+	module_structs []*structs
+}
+
+Each of these is written as S notation
+
+(def_func Name (in...) (out...) (expression_array...) )
