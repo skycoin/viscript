@@ -9,6 +9,12 @@ import (
 
 const PREFIX_SIZE = 5 // guaranteed minimum size of every message (4 for length & 1 for type)
 var events = make(chan []byte, 256)
+var prevMousePixelX float64
+var prevMousePixelY float64
+var mousePixelDeltaX float64
+var mousePixelDeltaY float64
+var scrollPosX float32
+var scrollPosY float32 = rectRad
 
 func initInputEvents(w *glfw.Window) {
 	w.SetCharCallback(onChar)
@@ -18,26 +24,27 @@ func initInputEvents(w *glfw.Window) {
 	w.SetCursorPosCallback(onMouseCursorPos)
 }
 
-func pollEventsAndHandleAnInput(window *glfw.Window) {
+func pollEventsAndHandleAnInput(w *glfw.Window) {
 	glfw.PollEvents()
 
 	// (at the moment we have no reason to poll/detect keys being held)
-	//if window.GetKey(glfw.KeyEscape) == glfw.Press {
+	//if w.GetKey(glfw.KeyEscape) == glfw.Press {
 	//	fmt.Println("PRESSED ESCape")
 	//}
 }
 
-var prevMousePixelX;
-var prevMousePixelY;
-var mousePixelDeltaX;
-var mousePixelDeltaY;
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	mouseX = int(x) / chWidInPixels
 	mouseY = int(y) / chHeiInPixels
 	mousePixelDeltaX = x - prevMousePixelX
 	mousePixelDeltaY = y - prevMousePixelY
-	prevMousePixelX = x;
-	prevMousePixelY = y;
+	prevMousePixelX = x
+	prevMousePixelY = y
+
+	if w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
+		//fmt.Printf("mousePixelDelta: %.1f, %.1f\n", mousePixelDeltaX, mousePixelDeltaY)
+		scrollPosY -= float32(mousePixelDeltaY) * pixelHei
+	}
 
 	// build message
 	content := append(getBytesOfFloat64(x), getBytesOfFloat64(y)...)

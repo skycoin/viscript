@@ -36,8 +36,8 @@ var chWid = float32(rectRad * 2 / float32(numXChars))
 var chHei = float32(rectRad * 2 / float32(numYChars))
 var chWidInPixels = int(float32(resX) / float32(numXChars))
 var chHeiInPixels = int(float32(resY) / float32(numYChars))
-var pixelWid = rectRad * 2 / resX
-var pixelHei = rectRad * 2 / resY
+var pixelWid = rectRad * 2 / float32(resX)
+var pixelHei = rectRad * 2 / float32(resY)
 var mouseX int = 0 // char position of mouse pointer
 var mouseY int = 0
 var document = make([]string, 0)
@@ -86,7 +86,7 @@ func makeChars() {
 		scrollBarLen = 0
 	}
 
-	drawScrollBarVertical(2, 11, numXChars-1, 0, scrollBarLen)
+	drawScrollBarVertical(2, 11, scrollBarLen)
 	drawCharAt('#', mouseX, mouseY)
 	drawCursorMaybe()
 
@@ -130,20 +130,27 @@ func drawCursorMaybe() {
 	}
 }
 
-func drawScrollBarVertical(atlasX, atlasY, posX int, posY int, length float32) {
+func drawScrollBarVertical(atlasX, atlasY, length float32) {
+	if scrollPosY < -rectRad+length {
+		scrollPosY = -rectRad + length
+	}
+	if scrollPosY > rectRad { // (rectRad-length)
+		scrollPosY = rectRad
+	}
+
 	gl.Normal3f(0, 0, 1)
 
 	gl.TexCoord2f(float32(atlasX)*uvSpan, float32(atlasY)*uvSpan+uvSpan) // bl  0, 1
-	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*chHei-length, 0)
+	gl.Vertex3f(rectRad-chWid, scrollPosY-length, 0)
 
 	gl.TexCoord2f(float32(atlasX)*uvSpan+uvSpan, float32(atlasY)*uvSpan+uvSpan) // br  1, 1
-	gl.Vertex3f(-rectRad+float32(posX)*chWid+chWid, rectRad-float32(posY)*chHei-length, 0)
+	gl.Vertex3f(rectRad, scrollPosY-length, 0)
 
 	gl.TexCoord2f(float32(atlasX)*uvSpan+uvSpan, float32(atlasY)*uvSpan) // tr  1, 0
-	gl.Vertex3f(-rectRad+float32(posX)*chWid+chWid, rectRad-float32(posY)*chHei, 0)
+	gl.Vertex3f(rectRad, scrollPosY, 0)
 
 	gl.TexCoord2f(float32(atlasX)*uvSpan, float32(atlasY)*uvSpan) // tl  0, 0
-	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*chHei, 0)
+	gl.Vertex3f(rectRad-chWid, scrollPosY, 0)
 
 	curX += chWid
 }
