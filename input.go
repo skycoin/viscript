@@ -21,18 +21,23 @@ func initInputEvents(w *glfw.Window) {
 func pollEventsAndHandleAnInput(window *glfw.Window) {
 	glfw.PollEvents()
 
-	// (at the moment we have no reason to detect keys being held)
-	// poll a particular key state
+	// (at the moment we have no reason to poll/detect keys being held)
 	//if window.GetKey(glfw.KeyEscape) == glfw.Press {
 	//	fmt.Println("PRESSED ESCape")
-	//	window.SetShouldClose(true)
 	//}
 }
 
+var prevMousePixelX;
+var prevMousePixelY;
+var mousePixelDeltaX;
+var mousePixelDeltaY;
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
-	//fmt.Println("onMouseCursorPos()")
-	mouseX = int(x) / pixelWid
-	mouseY = int(y) / pixelHei
+	mouseX = int(x) / chWidInPixels
+	mouseY = int(y) / chHeiInPixels
+	mousePixelDeltaX = x - prevMousePixelX
+	mousePixelDeltaY = y - prevMousePixelY
+	prevMousePixelX = x;
+	prevMousePixelY = y;
 
 	// build message
 	content := append(getBytesOfFloat64(x), getBytesOfFloat64(y)...)
