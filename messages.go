@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	//"github.com/go-gl/glfw/v3.1/glfw"
+	"github.com/go-gl/glfw/v3.1/glfw"
 )
 
 const (
@@ -41,20 +41,21 @@ func processMessage(message []byte) {
 
 	case MessageMouseButton:
 		s("MessageMouseButton", message)
-		showUInt8("Button", message)
-		showUInt8("Action", message)
-		showUInt8("Mod", message)
+		convertMouseClickToTextCursorPosition(
+			getAndShowUInt8("Button", message),
+			getAndShowUInt8("Action", message))
+		getAndShowUInt8("Mod", message)
 
 	case MessageCharacter:
 		s("MessageCharacter", message)
-		insertRuneInDocument("Rune", message)
+		insertRuneIntoDocument("Rune", message)
 
 	case MessageKey:
 		s("MessageKey", message)
-		showUInt8("Key", message)
+		getAndShowUInt8("Key", message)
 		showSInt32("Scan", message)
-		showUInt8("Action", message)
-		showUInt8("Mod", message)
+		getAndShowUInt8("Action", message)
+		getAndShowUInt8("Mod", message)
 
 	default:
 		fmt.Println("UNKNOWN MESSAGE TYPE!")
@@ -70,6 +71,24 @@ func s(s string, message []byte) { // common to all messages
 	curRecByte++ // skipping message type's space
 }
 
+func convertMouseClickToTextCursorPosition(button uint8, action uint8) {
+	if glfw.MouseButton(button) == glfw.MouseButtonLeft &&
+		glfw.Action(action) == glfw.Press {
+
+		if mouseY < len(document) {
+			cursY = mouseY
+
+			if mouseX <= len(document[cursY]) {
+				cursX = mouseX
+			} else {
+				cursX = len(document[cursY])
+			}
+		} else {
+			cursY = len(document) - 1
+		}
+	}
+}
+
 func getMessageType(s string, message []byte) (value uint8) {
 	rBuf := bytes.NewReader(message[4:5])
 	err := binary.Read(rBuf, binary.LittleEndian, &value)
@@ -83,7 +102,7 @@ func getMessageType(s string, message []byte) (value uint8) {
 	return
 }
 
-func insertRuneInDocument(s string, message []byte) {
+func insertRuneIntoDocument(s string, message []byte) {
 	var value rune
 	var size = 4
 
@@ -101,8 +120,7 @@ func insertRuneInDocument(s string, message []byte) {
 	}
 }
 
-func showUInt8(s string, message []byte) { // almost generic, just top 2 vars customized (and string format)
-	var value uint8
+func getAndShowUInt8(s string, message []byte) (value uint8) {
 	var size = 1
 
 	rBuf := bytes.NewReader(message[curRecByte : curRecByte+size])
@@ -114,9 +132,12 @@ func showUInt8(s string, message []byte) { // almost generic, just top 2 vars cu
 	} else {
 		fmt.Printf("   [%s: %d]", s, value)
 	}
+
+	return
 }
 
-func showSInt32(s string, message []byte) { // almost generic, just top 2 vars customized (and string format)
+// the rest of these funcs are almost identical, just top 2 vars customized (and string format)
+func showSInt32(s string, message []byte) {
 	var value int32
 	var size = 4
 
@@ -131,7 +152,7 @@ func showSInt32(s string, message []byte) { // almost generic, just top 2 vars c
 	}
 }
 
-func showUInt32(s string, message []byte) { // almost generic, just top 2 vars customized (and string format)
+func showUInt32(s string, message []byte) {
 	var value uint32
 	var size = 4
 
@@ -146,7 +167,7 @@ func showUInt32(s string, message []byte) { // almost generic, just top 2 vars c
 	}
 }
 
-func showFloat64(s string, message []byte) { // almost generic, just top 2 vars customized (and string format)
+func showFloat64(s string, message []byte) {
 	var value float64
 	var size = 8
 
