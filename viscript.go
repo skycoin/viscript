@@ -47,6 +47,7 @@ func main() {
 	setupScene()
 	initDoc()
 	initInputEvents(window)
+	parse()
 
 	for !window.ShouldClose() {
 		monitorEvents(events)
@@ -58,8 +59,8 @@ func main() {
 
 // Set the working directory to the root of Go package, so that its assets can be accessed.
 func init() {
-	//dir, err := importPathToDir("github.com/go-gl/examples/glfw31-gl21-cube")
 	/*
+		//dir, err := importPathToDir("github.com/go-gl/examples/glfw31-gl21-cube")
 		dir, err := importPathToDir("viscript")
 
 		if err != nil {

@@ -76,8 +76,8 @@ func onMouseButton(
 	}
 
 	// build message
-	content := append(getBytesOfUInt8(uint8(b)), getBytesOfUInt8(uint8(action))...)
-	content = append(content, getBytesOfUInt8(uint8(mod))...)
+	content := append(getByteOfUInt8(uint8(b)), getByteOfUInt8(uint8(action))...)
+	content = append(content, getByteOfUInt8(uint8(mod))...)
 	dispatchWithPrefix(content, MessageMouseButton)
 }
 
@@ -85,7 +85,7 @@ func dispatchWithPrefix(content []byte, msgType uint8) {
 	//prefix := make([]byte, PREFIX_SIZE)
 	prefix := append(
 		getBytesOfUInt32(uint32(len(content))+PREFIX_SIZE),
-		getBytesOfUInt8(msgType)...)
+		getByteOfUInt8(msgType)...)
 
 	events <- append(prefix, content...)
 }
@@ -224,10 +224,10 @@ func onKey(
 	}
 
 	// build message
-	content := getBytesOfUInt8(uint8(key))
+	content := getByteOfUInt8(uint8(key))
 	content = append(content, getBytesOfSInt32(int32(scancode))...)
-	content = append(content, getBytesOfUInt8(uint8(action))...)
-	content = append(content, getBytesOfUInt8(uint8(mod))...)
+	content = append(content, getByteOfUInt8(uint8(action))...)
+	content = append(content, getByteOfUInt8(uint8(mod))...)
 	dispatchWithPrefix(content, MessageKey)
 }
 
@@ -266,7 +266,7 @@ func getBytesOfRune(value rune) (data []byte) {
 	return
 }
 
-func getBytesOfUInt8(value uint8) (data []byte) {
+func getByteOfUInt8(value uint8) (data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
 	data = getSlice(wBuf, err)
