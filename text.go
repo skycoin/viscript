@@ -66,6 +66,22 @@ var selectionEndY = math.MaxUint32
 var selectingRangeOfText = false
 
 func initDoc() {
+	//document = append(document, "PRESS CTRL-R to RUN your program")
+	document = append(document, "")
+	document = append(document, "var myVar int32")
+	document = append(document, "var a int32")
+	document = append(document, "var b int32")
+	document = append(document, "")
+	document = append(document, "add32(2,   3)")
+	document = append(document, "add32(2,3)")
+	document = append(document, "    sub32(7, 9)")
+	document = append(document, "sub32(4,8)")
+	document = append(document, "mult32(7, 7)")
+	document = append(document, "mult32(3,5)")
+	document = append(document, "div32(8,2)")
+	document = append(document, "div32(15,  3)")
+	document = append(document, "")
+
 	for i := 0; i < 22; i++ {
 		document = append(document, fmt.Sprintf("%d: put lots of text on screen", i))
 	}

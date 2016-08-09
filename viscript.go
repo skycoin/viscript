@@ -12,7 +12,10 @@ import (
 	"github.com/go-gl/glfw/v3.1/glfw"
 )
 
+var appName = "V I S C R I P T"
+
 func init() {
+	makeHighlyVisibleRuntimeLogHeader(appName, 15)
 	// GLFW event handling must run on the main OS thread
 	// See documentation for functions that are only allowed to be called from the main thread.
 	fmt.Println("init()")
@@ -29,7 +32,7 @@ func main() {
 	glfw.WindowHint(glfw.Resizable, glfw.False)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-	window, err := glfw.CreateWindow(resX, resY, "V I S", nil, nil)
+	window, err := glfw.CreateWindow(resX, resY, appName, nil, nil)
 
 	if err != nil {
 		panic(err)
@@ -47,7 +50,7 @@ func main() {
 	setupScene()
 	initDoc()
 	initInputEvents(window)
-	parse()
+	initParser()
 
 	for !window.ShouldClose() {
 		monitorEvents(events)
@@ -86,4 +89,37 @@ func importPathToDir(importPath string) (string, error) {
 	}
 
 	return p.Dir, nil
+}
+
+// numLines: use odd number for an exact middle point
+func makeHighlyVisibleRuntimeLogHeader(s string, numLines int) {
+	s = " " + s + " "
+	fillChar := "#"
+
+	var bar string
+	for i := 0; i < 79; i++ {
+		bar += fillChar
+	}
+
+	var spaces string
+	for i := 0; i < len(s); i++ {
+		spaces += " "
+	}
+
+	var bookend string
+	for i := 0; i < (79-len(s))/2; i++ {
+		bookend += fillChar
+	}
+
+	middle := numLines / 2
+	for i := 0; i < numLines; i++ {
+		switch {
+		case i == middle:
+			fmt.Println(bookend + s + bookend)
+		case i == middle-1 || i == middle+1:
+			fmt.Println(bookend + spaces + bookend)
+		default:
+			fmt.Println(bar)
+		}
+	}
 }
