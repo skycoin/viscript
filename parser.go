@@ -25,7 +25,6 @@ func initParser() {
 
 func parse() {
 	// Use raw strings to avoid having to quote the backslashes.
-	// FIXME: '( +)?' makes spaces optional.  should REQUIRE 1, and ALLOW optional additional
 	var varInt32 = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32$`)
 	var funcCall = regexp.MustCompile(`^( +)?(add32|sub32|mult32|div32)\(([0-9]+),( +)?([0-9]+)\)$`)
 
