@@ -60,7 +60,197 @@ Then we will add "modules" which are collections of structs and functions and yo
 [7/18/2016 4:44:06 AM] HaltingState: a module is a struct, with a list of struct signatures (the structs in that module) and a list of function signatures (the functions in that module)
 [7/18/2016 4:44:49 AM] HaltingState: a function is a struct; a struct for signature (type input list, type output list) and an array of expressions
 
+
+
+
+func() {} (), is an anonymous function. that is being called
+
+do window resizing and send length prefixed message to other end, when window is resized
+
+
+We need a few base types, like "int" which is int32, i32, u32, i64, u64 (uint 64), []byte. []byte (all array types are fixed length).
+
+A set of operators (add_i32, sub_i32, mult_i32, div_i32) etc
+
+then we need
+- ability to create structs (new types) from existing types
+- functions (a type type in, type tuple out, an array of statements or blocks (a block is an array of statements)
+
+The language will be all structs and everything will be structs and abstract syntax trees. the written part, will be auto correction.
+
+Look at XL programming language. 
+
+https://en.wikipedia.org/wiki/XL_(programming_language)
+
+and do S syntax syntax. 
+- look at current thing or choices
+- then look at what valid choices are for context, then do dropdown to allow selection or autocompletion
+- all choices or actions mut be enumerable at each step
+
+
+[8/2/2016 3:38:18 AM] HaltingState: so bascly, statically typed scheme for now
+[8/2/2016 2:47:57 PM] HaltingState: ???
+[8/2/2016 2:48:11 PM] HaltingState: scheme should be simple and we can implement a few commands, then implement everything else in terms of that
+
+
+[8/3/2016 11:09:02 AM] HaltingState: just text for now
+[8/3/2016 11:09:19 AM] HaltingState: just statically typed scheme
+[8/3/2016 11:09:41 AM] HaltingState: the language turns in on itself, recursively, eventually
+[8/3/2016 6:53:35 PM] HaltingState: you know what  scheme is right?
+[8/3/2016 6:54:44 PM] HaltingState: I want
+1> structs
+2> functions
+3> static typing
+4> a small number of atomic types and operations
+
+So do (u32.add 3 5) (add 3+5), etc, each expression should be typed (inputs and return type) and have it be a tuple in, tuple out
+(u32.div 5 15)
+[8/3/2016 6:55:19 PM] HaltingState: func F1(x int) (int) {
+line 1
+line 2
+} etc
+[8/3/2016 6:56:25 PM] HaltingState: a function is a 
+1> name (text)
+2> input tuple (name, type) pair list
+3> output tuple (list of types/signatures returned)
+4> an array of lines/statements
+[8/3/2016 6:56:51 PM] HaltingState: a struct is a 
+1> name
+2> list of (name, type) pairs
+3> later list of functions on the struct but ignore this for now
+[8/3/2016 7:09:18 PM] HaltingState: ok; i pushed better instructions; towards bottom
+[8/3/2016 7:09:51 PM] HaltingState: everything will be S-expressions like lisp, but statically typed. For now
+
+But in IDE and editor, where you are typing, it will look like normal language (like golang) and have autocomplete
+
+
+
+we will have an internal language, which is the s-expressions and parens and (func a b) and then have it look like C to user in IDE, but will just start with S expression and autocomplete
+
+
+buy "mesogold, collodial gold" and take 1 tea spoon a day (or less if its too strong)
+
+
+[8/7/2016 1:07:21 PM] HaltingState: lets do some simple types like uint32
+[8/7/2016 1:07:26 PM] HaltingState: and do add, sub, new variable etc
+[8/7/2016 1:07:33 PM] HaltingState: (add32, a, b)
+[8/7/2016 1:07:38 PM] HaltingState: then lets create functions
+[8/7/2016 1:07:51 PM] HaltingState: and maybe add functions and structs and some new atomics
+
+
+
+[8/9/2016 4:48:21 AM] HaltingState: the most important things are all reflection
+[8/9/2016 4:48:29 AM] HaltingState: like "What functions are in this module"
+[8/9/2016 4:48:48 AM] HaltingState: "What elements/types/names are in this struct"
+[8/9/2016 4:49:03 AM] HaltingState: "what variables are in the local scope"
+[8/9/2016 4:49:13 AM] HaltingState: "What actions can I do on this type, in this context"
+[8/9/2016 5:40:01 AM] HaltingState: scheme is a very simple language really
+[8/9/2016 10:45:08 PM] HaltingState: do you know lisp style?
+[8/9/2016 10:45:20 PM] HaltingState: (add a b)
+[8/9/2016 10:45:32 PM] HaltingState: (sub (add 1 3) 4)
+[8/9/2016 10:45:36 PM] HaltingState: (div 1 4)
+
+
+
+[8/10/2016 9:38:40 AM] HaltingState: it will be golang like
+[8/10/2016 9:38:46 AM] HaltingState: the back end is trees and S expression
+[8/10/2016 9:38:56 AM] HaltingState: but to user and editor, it will displayed as golang type
+[8/10/2016 9:41:42 AM] HaltingState: create an "object" type for embedding in the document. These are like software objects or code.  Then for (add32, x, 3), have a type that is like a list and have element1, element2, element3; store the type, and "tag" 
+
+like 3 is int32 literal (or literal and then store type and value in the literal type sruct)
+add32 is func or operation 
+x is int32 variable or variable and store the type in variable
+
+and (add32 5 (add32 4 5))
+
+the (add32 4 5) is an "Expression"
+[8/10/2016 9:42:21 AM] HaltingState: and have a value for "unknown" and as you are typing, enumerate in a dropdown all the possibilities for what can go there or what you can do
+[8/10/2016 9:42:52 AM] HaltingState: so arrow keys wont select the type directly, but will select the object and go from field to field.
+[8/10/2016 9:43:18 AM] HaltingState: also color code each type differently so (add32 x 3), the add32, will be in different color
+[8/10/2016 9:44:27 AM] HaltingState: but you can write a parser at start, for a text language; but the source code really should be a software object, that has a representation as text on screen; but you are applying operations to the software object itself
+[8/10/2016 9:44:58 AM] HaltingState: (var label type), (var X int32)  is define variable
+
+
+[8/10/2016 9:25:37 PM] HaltingState: the idea is that there are a finite set of actions at each point, you can apply to the program (finite action selection). Like a video game
+[8/10/2016 9:27:10 PM] HaltingState: So you at at a node,with the node selected, then it sees (add32 X 3) and you have X selected and then pop down menu and it knows what can go in x like "expression, literal, variable) and then if you hit variable, then it would look up all the variables in the local scope and only show the int32 and look up the variables in the current module and look up variables that are inputs to the functions (checks the variables in scope and filters them)
+
+etc
+[8/10/2016 9:27:30 PM] HaltingState: and so the computer program is actually a data structure, in memory (like a program), made out of structs and objects) and you are applying functions to it, to modify it
+[8/10/2016 9:27:41 PM] HaltingState: there is a "line editor" and it looks like terminal or text application
+[8/10/2016 9:28:08 PM] HaltingState: You can ignore this for now and just do a text based programming language, get the basic one working. Then we will build the advanced language on top of that
+[8/10/2016 9:29:08 PM] HaltingState: so when you have a module selected, you can add function to the module, add new structs or add a variable to the global scope of the module and the module is a struct object
+[8/10/2016 9:29:58 PM] HaltingState: and when you have a function object selected , you can edit its name (its tag, it will have a description as text string, but will have a UUID that is used internally; so you can change its name without the UUID chanigng and everywhere it is called, the name will change automatically, because its really referencing a UUID)
+[8/10/2016 9:30:24 PM] HaltingState: and when the function object is selected, you can edit its name, add/remove lines, edit lines, change its type signature etc
+[8/10/2016 9:30:51 PM] HaltingState: and when a struct object is selected, you can add new fields, remove fields, or add/remove functions to the struct
+[8/10/2016 9:32:19 PM] HaltingState: so it is sort of like a "programming language video game", because it would show children at each step, everything they can do to the program, at the current cursor position, or what object is selected. And will tell you what actiosn you can do on the object.
+
+And when you mouse over an object, it will tell you its type and information.
+[8/10/2016 9:32:42 PM] HaltingState: this is long term stuff; but good to think about, but probably wont be there for years
+[8/10/2016 9:34:10 PM] HaltingState: we can start with a few basic types like int32 and then do some operations and have a text based programming language; that looks like lisp. Have structs and funcs, like golang has.
+
+Then from there, we can build this more advanced language, on top of the structs and funcs, of the base language
+[8/10/2016 9:34:22 PM] HaltingState: also, look at iPython notebook
+[8/10/2016 9:39:37 PM] HaltingState: there is also a command called (eval) and eval takes in an expression and it executes it. So if you have a function and it is N lines, then when you run the function, a loop will just go line by line, calling eval on each line
+
+
+http://ergoemacs.org/emacs/i/emacs_lisp_interactive_command_line_interface_REPL_ielm.png
+
+
+https://en.wikipedia.org/wiki/Lisp_(programming_language)#Conses_and_lists
+
+
+[8/10/2016 9:43:29 PM] HaltingState: this is how lisp does it, but not sure  we need this, but might help, but not sure if its best way. I like the struct, func, module, lines as basic units. then each line is an "expression"
+[8/10/2016 9:47:40 PM] HaltingState: lisp does not have "objects". I want to focus on objects (essentially structs) and focus on the functions of (things that dont modify) and functions on (things that modify) the objects. 
+
+So that the modules are object, the structs in the modules are objects, the functions in the modules are objects and the expressions in the functions are objects
+
+
+https://upload.wikimedia.org/wikipedia/commons/a/af/IPython-notebook.png
+
+http://2.bp.blogspot.com/-W-mMDGXDLiQ/UM0fIZEJwwI/AAAAAAAAAYc/khS0LdI2UI4/s1600/notebook_shot.png
+
+
+
+[8/10/2016 9:53:21 PM] HaltingState: we need 3 modes. first mode is like editor mode and for code and browsing and editing lines etc.
+
+Then one mode is like command like REPL mode which is just boring
+
+The ipython mode is probably best. it gives you a box and you put code in box and under the box it runs it
+[8/10/2016 9:53:46 PM] HaltingState: and you can have a notebook page, which has a bunch of boxes and can run code in them and shows code examples
+
+
+http://ipython.org/_static/screenshots/ipython-notebook.png
+
+
+
+[8/10/2016 9:59:12 PM] HaltingState: this language CX, is also for controlling my robot swarms and CNC machines, because I was pissed at how difficult it was and how shitty software was and how much stuff i had to install
+[8/10/2016 9:59:45 PM] HaltingState: and will be for video games also and have native support for component systems
+
+
+
+http://www.idryman.org/images/ipython_notebook.png
+
+http://www2.cisl.ucar.edu/sites/default/files/users/bjsmith/ipython-notebook_0.png
+
+
+[8/10/2016 10:20:54 PM] HaltingState: we need an "Action button" or something, so we can insert code boxes like this into the terminal or do actions on an object
+[8/10/2016 10:21:09 PM] HaltingState: and then insert code box, then type some stuff and then runi t and see result in box below the code box
+[8/10/2016 10:21:23 PM] HaltingState: and scroll through the document, and looking at the code boxes and results
+[8/10/2016 10:21:35 PM] HaltingState: and so we have software objects embedded in the text document essentially
+
+
 "
+
+
+
+
+
+
+
+
+
+
+
 
 === Spec ===
 
