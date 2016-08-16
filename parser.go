@@ -2,13 +2,19 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	//"regexp/syntax"
 )
 
-var vars = make([]string, 0)
+var varInts = make([]VarInt, 0)
 var funcs = make([]string, 0)
+
+type VarInt struct {
+	name  string
+	value int32
+}
 
 func initParser() {
 	funcs = append(funcs, "add32")
@@ -25,30 +31,44 @@ func initParser() {
 
 func parse() {
 	// Use raw strings to avoid having to quote the backslashes.
-	var varInt32 = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32$`)
-	var funcCall = regexp.MustCompile(`^( +)?(add32|sub32|mult32|div32)\(([0-9]+),( +)?([0-9]+)\)$`)
+	var varInt32 = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32(( +)?=( +)?([0-9]+))?$`)
+	var funcCall = regexp.MustCompile(`^( +)?(add32|sub32|mult32|div32)\(([0-9]+|[a-zA-Z]\w*),( +)?([0-9]+|[a-zA-Z]\w*)\)$`)
 
 	for i, line := range document {
 		switch {
 		case varInt32.MatchString(line):
-			fmt.Printf("%d: variable declaration\n", i)
-			vars = append(vars)
+			result := varInt32.FindStringSubmatch(line)
+			fmt.Printf("%d: variable (%s) declaration\n", i, result[3])
+
+			if result[8] == "" {
+				varInts = append(varInts, VarInt{result[3], 0})
+			} else {
+				value, err := strconv.Atoi(result[8])
+				if err != nil {
+					fmt.Println("ZOMG!  COULDN'T CONVERT ASSIGNMENT TO NUMBER!")
+				}
+
+				fmt.Printf("....assigned value of: %d\n", value)
+				varInts = append(varInts, VarInt{result[3], int32(value)})
+			}
 		case funcCall.MatchString(line):
 			fmt.Printf("%d: function call\n", i)
 			result := funcCall.FindStringSubmatch(line)
 
-			/*for i, v := range result {
-				fmt.Printf("%d. %s\n", i, v)
-			}*/
+			/*
+				// prints out all captures
+				for i, v := range result {
+					fmt.Printf("%d. %s\n", i, v)
+				}
+			*/
 
-			a, err := strconv.Atoi(result[3])
-			if err != nil {
-				fmt.Println("ZOMG!  COULDN'T CONVERT THAT NUMBER!")
+			a := getUInt32(result[3])
+			if a == math.MaxInt32 {
+				return
 			}
-
-			b, err := strconv.Atoi(result[5])
-			if err != nil {
-				fmt.Println("ZOMG!  COULDN'T CONVERT THAT NUMBER!")
+			b := getUInt32(result[5])
+			if b == math.MaxInt32 {
+				return
 			}
 
 			switch result[2] {
@@ -65,6 +85,23 @@ func parse() {
 			fmt.Printf("SYNTAX ERROR on line %d: %s\n", i, line)
 		}
 	}
+}
+
+func getUInt32(s string) int32 {
+	value, err := strconv.Atoi(s)
+
+	if err != nil {
+		for _, v := range varInts {
+			if s == v.name {
+				return v.value
+			}
+		}
+
+		fmt.Printf("ERROR!  '%s' IS NOT A VALID VARIABLE/FUNCTION!", s)
+		return math.MaxInt32
+	}
+
+	return int32(value)
 }
 
 /*
