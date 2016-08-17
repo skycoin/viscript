@@ -40,7 +40,7 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	prevMousePixelY = y
 
 	if w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		scroll(mousePixelDeltaY)
+		sb.Scroll(mousePixelDeltaY)
 	}
 
 	// build message

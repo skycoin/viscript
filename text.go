@@ -147,16 +147,16 @@ func drawScrollBarVertical(atlasX, atlasY float32) {
 	v := float32(atlasY) * uvSpan
 
 	gl.TexCoord2f(u, v+uvSpan) // bl  0, 1
-	gl.Vertex3f(rectRad-chWid, scrollPosY-scrollBarLen, 0)
+	gl.Vertex3f(rectRad-chWid, sb.scrollPosY-sb.scrollBarLen, 0)
 
 	gl.TexCoord2f(u+uvSpan, v+uvSpan) // br  1, 1
-	gl.Vertex3f(rectRad, scrollPosY-scrollBarLen, 0)
+	gl.Vertex3f(rectRad, sb.scrollPosY-sb.scrollBarLen, 0)
 
 	gl.TexCoord2f(u+uvSpan, v) // tr  1, 0
-	gl.Vertex3f(rectRad, scrollPosY, 0)
+	gl.Vertex3f(rectRad, sb.scrollPosY, 0)
 
 	gl.TexCoord2f(u, v) // tl  0, 0
-	gl.Vertex3f(rectRad-chWid, scrollPosY, 0)
+	gl.Vertex3f(rectRad-chWid, sb.scrollPosY, 0)
 
 	curX += chWid
 }
