@@ -17,13 +17,23 @@ import (
 
 var (
 	// gl graphics
-	resX, resY int = 800, 600
-	texture    uint32
-	rotationX  float32
-	rotationY  float32
+	resX, resY      int = 800, 600
+	scrollBarLen    float32
+	scrollVoidLen   float32
+	viewportOffsetY float32
+	texture         uint32
+	rotationX       float32
+	rotationY       float32
 )
 
 func drawScene() {
+	scrollBarLen = float32(numYChars) / float32(len(document)) * rectRad * 2
+	if /* no need for scrollbar, cuz entire doc less than screen */ len(document) <= numYChars {
+		scrollBarLen = 0
+		viewportOffsetY = 0
+	} else {
+		scrollVoidLen = rectRad*2 - scrollBarLen
+	}
 	//rotationX += 0.5
 	//rotationY += 0.5
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
@@ -37,7 +47,7 @@ func drawScene() {
 	gl.Color4f(1, 1, 1, 1)
 
 	gl.Begin(gl.QUADS)
-	makeChars() //makeCube()
+	drawAll()
 	gl.End()
 }
 

@@ -44,6 +44,15 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	if w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
 		//fmt.Printf("mousePixelDelta: %.1f, %.1f\n", mousePixelDeltaX, mousePixelDeltaY)
 		scrollPosY -= float32(mousePixelDeltaY) * pixelHei
+
+		if scrollPosY < -rectRad+scrollBarLen {
+			scrollPosY = -rectRad + scrollBarLen
+		}
+		if scrollPosY > rectRad { // (rectRad-scrollBarLen)
+			scrollPosY = rectRad
+		}
+
+		viewportOffsetY = scrollPosY / scrollVoidLen * float32(len(document)) * chHei
 	}
 
 	// build message

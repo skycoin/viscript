@@ -45,7 +45,7 @@ func parse() {
 			} else {
 				value, err := strconv.Atoi(result[8])
 				if err != nil {
-					fmt.Println("ZOMG!  COULDN'T CONVERT ASSIGNMENT TO NUMBER!")
+					fmt.Println("COULDN'T CONVERT ASSIGNMENT TO NUMBER!")
 				}
 
 				fmt.Printf("....assigned value of: %d\n", value)
@@ -63,11 +63,11 @@ func parse() {
 			*/
 
 			a := getUInt32(result[3])
-			if a == math.MaxInt32 {
+			if /* not legit num */ a == math.MaxInt32 {
 				return
 			}
 			b := getUInt32(result[5])
-			if b == math.MaxInt32 {
+			if /* not legit num */ b == math.MaxInt32 {
 				return
 			}
 

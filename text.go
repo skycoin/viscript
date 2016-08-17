@@ -87,7 +87,7 @@ func initDoc() {
 	}
 }
 
-func makeChars() {
+func drawAll() {
 	for _, line := range document {
 		for _, c := range line {
 			drawCharAtCurrentPos(c)
@@ -97,17 +97,12 @@ func makeChars() {
 		curY -= chHei
 	}
 
-	scrollBarLen := float32(numYChars) / float32(len(document)) * rectRad * 2
-	if len(document) <= numYChars {
-		scrollBarLen = 0
-	}
-
-	drawScrollBarVertical(2, 11, scrollBarLen)
+	drawScrollBarVertical(2, 11)
 	drawCharAt('#', mouseX, mouseY)
 	drawCursorMaybe()
 
 	curX = -rectRad
-	curY = rectRad
+	curY = rectRad + viewportOffsetY
 }
 
 func commonMovementKeyHandling() {
@@ -146,26 +141,21 @@ func drawCursorMaybe() {
 	}
 }
 
-func drawScrollBarVertical(atlasX, atlasY, length float32) {
-	if scrollPosY < -rectRad+length {
-		scrollPosY = -rectRad + length
-	}
-	if scrollPosY > rectRad { // (rectRad-length)
-		scrollPosY = rectRad
-	}
-
+func drawScrollBarVertical(atlasX, atlasY float32) {
 	gl.Normal3f(0, 0, 1)
+	u := float32(atlasX) * uvSpan
+	v := float32(atlasY) * uvSpan
 
-	gl.TexCoord2f(float32(atlasX)*uvSpan, float32(atlasY)*uvSpan+uvSpan) // bl  0, 1
-	gl.Vertex3f(rectRad-chWid, scrollPosY-length, 0)
+	gl.TexCoord2f(u, v+uvSpan) // bl  0, 1
+	gl.Vertex3f(rectRad-chWid, scrollPosY-scrollBarLen, 0)
 
-	gl.TexCoord2f(float32(atlasX)*uvSpan+uvSpan, float32(atlasY)*uvSpan+uvSpan) // br  1, 1
-	gl.Vertex3f(rectRad, scrollPosY-length, 0)
+	gl.TexCoord2f(u+uvSpan, v+uvSpan) // br  1, 1
+	gl.Vertex3f(rectRad, scrollPosY-scrollBarLen, 0)
 
-	gl.TexCoord2f(float32(atlasX)*uvSpan+uvSpan, float32(atlasY)*uvSpan) // tr  1, 0
+	gl.TexCoord2f(u+uvSpan, v) // tr  1, 0
 	gl.Vertex3f(rectRad, scrollPosY, 0)
 
-	gl.TexCoord2f(float32(atlasX)*uvSpan, float32(atlasY)*uvSpan) // tl  0, 0
+	gl.TexCoord2f(u, v) // tl  0, 0
 	gl.Vertex3f(rectRad-chWid, scrollPosY, 0)
 
 	curX += chWid
