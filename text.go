@@ -102,7 +102,7 @@ func drawAll() {
 	drawCursorMaybe()
 
 	curX = -rectRad
-	curY = rectRad + viewportOffsetY
+	curY = rectRad - viewportOffsetY
 }
 
 func commonMovementKeyHandling() {

@@ -13,8 +13,6 @@ var prevMousePixelX float64
 var prevMousePixelY float64
 var mousePixelDeltaX float64
 var mousePixelDeltaY float64
-var scrollPosX float32
-var scrollPosY float32 = rectRad
 
 func initInputEvents(w *glfw.Window) {
 	w.SetCharCallback(onChar)
@@ -42,17 +40,7 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	prevMousePixelY = y
 
 	if w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		//fmt.Printf("mousePixelDelta: %.1f, %.1f\n", mousePixelDeltaX, mousePixelDeltaY)
-		scrollPosY -= float32(mousePixelDeltaY) * pixelHei
-
-		if scrollPosY < -rectRad+scrollBarLen {
-			scrollPosY = -rectRad + scrollBarLen
-		}
-		if scrollPosY > rectRad { // (rectRad-scrollBarLen)
-			scrollPosY = rectRad
-		}
-
-		viewportOffsetY = scrollPosY / scrollVoidLen * float32(len(document)) * chHei
+		scroll(mousePixelDeltaY)
 	}
 
 	// build message
