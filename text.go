@@ -97,12 +97,12 @@ func drawAll() {
 		curY -= chHei
 	}
 
-	drawScrollBarVertical(2, 11)
+	sb.DrawVertical(2, 11)
 	drawCharAt('#', mouseX, mouseY)
 	drawCursorMaybe()
 
 	curX = -rectRad
-	curY = rectRad - viewportOffsetY
+	curY = rectRad - view.OffsetY
 }
 
 func commonMovementKeyHandling() {
@@ -139,26 +139,6 @@ func drawCursorMaybe() {
 	if cursVisible == true {
 		drawCharAt('_', cursX, cursY)
 	}
-}
-
-func drawScrollBarVertical(atlasX, atlasY float32) {
-	gl.Normal3f(0, 0, 1)
-	u := float32(atlasX) * uvSpan
-	v := float32(atlasY) * uvSpan
-
-	gl.TexCoord2f(u, v+uvSpan) // bl  0, 1
-	gl.Vertex3f(rectRad-chWid, sb.PosY-sb.LenOfBar, 0)
-
-	gl.TexCoord2f(u+uvSpan, v+uvSpan) // br  1, 1
-	gl.Vertex3f(rectRad, sb.PosY-sb.LenOfBar, 0)
-
-	gl.TexCoord2f(u+uvSpan, v) // tr  1, 0
-	gl.Vertex3f(rectRad, sb.PosY, 0)
-
-	gl.TexCoord2f(u, v) // tl  0, 0
-	gl.Vertex3f(rectRad-chWid, sb.PosY, 0)
-
-	curX += chWid
 }
 
 func drawCharAt(letter rune, posX int, posY int) {
