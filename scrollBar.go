@@ -5,6 +5,13 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
+/*
+mouse position updates use pixels, so the smallest drag motions will be
+a jump of at least 1 pixel height.
+the ratio of that height / LenOfBar (bar representing the page size)
+gives us the jump sizes in scrolling the text
+*/
+
 var sb = ScrollBar{0, rectRad, 0, 0}
 
 type ScrollBar struct {
@@ -15,18 +22,20 @@ type ScrollBar struct {
 }
 
 func (bar ScrollBar) StartFrame() {
-	bar.LenOfBar = float32(numYChars) / float32(len(document)) * rectRad * 2
-
-	if /* no need for scrollbar, cuz entire doc less than screen */ len(document) <= numYChars {
+	if /* content smaller than screen */ len(document) <= numYChars {
+		// no need for scrollbar
 		bar.LenOfBar = 0
-		view.OffsetY = 0
+		bar.LenOfVoid = rectRad * 2
 	} else {
+		bar.LenOfBar = float32(numYChars) / float32(len(document)) * rectRad * 2
 		bar.LenOfVoid = rectRad*2 - bar.LenOfBar
 	}
 }
 
 func (bar ScrollBar) Scroll(mousePixelDeltaY float64) {
-	bar.PosY -= float32(mousePixelDeltaY) * pixelHei
+	// y increment in gl space
+	yInc := float32(mousePixelDeltaY) * pixelHei
+	bar.PosY -= yInc
 
 	if bar.PosY < -rectRad+bar.LenOfBar {
 		bar.PosY = -rectRad + bar.LenOfBar
@@ -35,8 +44,11 @@ func (bar ScrollBar) Scroll(mousePixelDeltaY float64) {
 		bar.PosY = rectRad
 	}
 
-	view.OffsetY = bar.PosY / bar.LenOfVoid * float32(len(document)) * chHei
+	view.OffsetY += yInc
+
+	//view.OffsetY = bar.PosY / bar.LenOfVoid * float32(len(document)) * chHei
 	fmt.Printf("PosY: %.1f - view.OffsetY: %.1f", bar.PosY, view.OffsetY)
+	fmt.Printf("LenOfBar: %.1f", bar.LenOfBar)
 }
 
 func (bar ScrollBar) DrawVertical(atlasX, atlasY float32) {
