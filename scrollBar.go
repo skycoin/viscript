@@ -21,7 +21,7 @@ type ScrollBar struct {
 	LenOfVoid float32 // length of the negative space adjacent to bar
 }
 
-func (bar ScrollBar) StartFrame() {
+func (bar *ScrollBar) StartFrame() {
 	if /* content smaller than screen */ len(document) <= numYChars {
 		// no need for scrollbar
 		bar.LenOfBar = 0
@@ -32,7 +32,7 @@ func (bar ScrollBar) StartFrame() {
 	}
 }
 
-func (bar ScrollBar) Scroll(mousePixelDeltaY float64) {
+func (bar *ScrollBar) Scroll(mousePixelDeltaY float64) {
 	// y increment in gl space
 	yInc := float32(mousePixelDeltaY) * pixelHei
 	bar.PosY -= yInc
@@ -45,28 +45,32 @@ func (bar ScrollBar) Scroll(mousePixelDeltaY float64) {
 	}
 
 	view.OffsetY += yInc
-
 	//view.OffsetY = bar.PosY / bar.LenOfVoid * float32(len(document)) * chHei
-	fmt.Printf("PosY: %.1f - view.OffsetY: %.1f", bar.PosY, view.OffsetY)
-	fmt.Printf("LenOfBar: %.1f", bar.LenOfBar)
 }
 
-func (bar ScrollBar) DrawVertical(atlasX, atlasY float32) {
+func (bar *ScrollBar) DrawVertical(atlasX, atlasY float32) {
 	gl.Normal3f(0, 0, 1)
 	u := float32(atlasX) * uvSpan
 	v := float32(atlasY) * uvSpan
 
-	gl.TexCoord2f(u, v+uvSpan) // bl  0, 1
-	gl.Vertex3f(rectRad-chWid, bar.PosY-bar.LenOfBar, 0)
+	top := bar.PosY                 //rectRad - 1
+	bott := bar.PosY - bar.LenOfBar //-rectRad + 1
 
-	gl.TexCoord2f(u+uvSpan, v+uvSpan) // br  1, 1
-	gl.Vertex3f(rectRad, bar.PosY-bar.LenOfBar, 0)
+	// bottom left   0, 1
+	gl.TexCoord2f(u, v+uvSpan)
+	gl.Vertex3f(rectRad-chWid, bott, 0)
 
-	gl.TexCoord2f(u+uvSpan, v) // tr  1, 0
-	gl.Vertex3f(rectRad, bar.PosY, 0)
+	// bottom right   1, 1
+	gl.TexCoord2f(u+uvSpan, v+uvSpan)
+	gl.Vertex3f(rectRad, bott, 0)
 
-	gl.TexCoord2f(u, v) // tl  0, 0
-	gl.Vertex3f(rectRad-chWid, bar.PosY, 0)
+	// top right   1, 0
+	gl.TexCoord2f(u+uvSpan, v)
+	gl.Vertex3f(rectRad, top, 0)
+
+	// top left   0, 0
+	gl.TexCoord2f(u, v)
+	gl.Vertex3f(rectRad-chWid, top, 0)
 
 	curX += chWid
 }
