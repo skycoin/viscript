@@ -7,5 +7,6 @@ import (
 var view CcViewport = CcViewport{}
 
 type CcViewport struct {
-	OffsetY float32
+	OffsetY         float32
+	LenOfOffscreenY float32
 }
