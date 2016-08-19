@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"fmt"
+	//	"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
@@ -38,6 +38,7 @@ func (bar *ScrollBar) StartFrame() {
 func (bar *ScrollBar) Scroll(mousePixelDeltaY float64) {
 	// y increment in gl space
 	yInc := float32(mousePixelDeltaY) * pixelHei
+
 	bar.PosY -= yInc
 
 	if bar.PosY < -rectRad+bar.LenOfBar {
@@ -47,7 +48,15 @@ func (bar *ScrollBar) Scroll(mousePixelDeltaY float64) {
 		bar.PosY = rectRad
 	}
 
-	view.OffsetY -= (rectRad - bar.PosY) / bar.LenOfVoid * view.LenOfOffscreenY
+	view.OffsetY -= yInc / bar.LenOfVoid * view.LenOfOffscreenY
+
+	if view.OffsetY > 0 {
+		view.OffsetY = 0
+	}
+
+	if view.OffsetY < -view.LenOfOffscreenY {
+		view.OffsetY = -view.LenOfOffscreenY
+	}
 }
 
 func (bar *ScrollBar) DrawVertical(atlasX, atlasY float32) {
