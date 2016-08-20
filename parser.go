@@ -19,6 +19,16 @@ which may come after the opening curly brace, but on the same line
 closing curly brace of function only recognized as a 1 character line
 */
 
+// NOTES
+
+/*
+depending on whether go allows funcs inside funcs.....
+assuming no: what should probably be done is that we have a var that represents what
+function we are currently adding to (or none of course).  upon detecting the start
+of a function we will start funneling the following expressions into that function.
+then pop out when encountering a closing curly brace
+*/
+
 var varInts = make([]VarInt, 0)
 var funcs = make([]Func, 0)
 
