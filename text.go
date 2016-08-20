@@ -67,10 +67,14 @@ var selectingRangeOfText = false
 
 func initDoc() {
 	//document = append(document, "PRESS CTRL-R to RUN your program")
-	document = append(document, "")
+	document = append(document, "------- variable declarations -------")
 	document = append(document, "var myVar int32")
 	document = append(document, "var a int32 = 42")
 	document = append(document, "var b int32 = 58")
+	document = append(document, "")
+	document = append(document, "------- function declarations -------")
+	document = append(document, "func myFunc(a,b){")
+	document = append(document, "func myOtherFunc (a, b) {")
 	document = append(document, "")
 	document = append(document, "add32(a, b)")
 	document = append(document, "add32(2,3)")

@@ -8,30 +8,44 @@ import (
 	//"regexp/syntax"
 )
 
+// ISSUES?
+
+/*
+only looks for 1 expression per line
+
+no attempt is made to get anything inside a function
+which may come after the opening curly brace, but on the same line
+
+closing curly brace of function only recognized as a 1 character line
+*/
+
 var varInts = make([]VarInt, 0)
-var funcs = make([]string, 0)
+var funcs = make([]Func, 0)
 
 type VarInt struct {
 	name  string
 	value int32
 }
 
+type Func struct {
+	Name        string
+	Parameters  []string
+	Expressions []string
+}
+
 func initParser() {
-	funcs = append(funcs, "add32")
-	funcs = append(funcs, "sub32")
-	funcs = append(funcs, "mult32")
-	funcs = append(funcs, "div32")
-
-	for _, f := range funcs {
-		fmt.Println(f)
-	}
-
+	/*
+		for _, f := range funcs {
+			fmt.Println(f)
+		}
+	*/
 	parse()
 }
 
 func parse() {
 	// Use raw strings to avoid having to quote the backslashes.
 	var varInt32 = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32(( +)?=( +)?([0-9]+))?$`)
+	var declFuncStart = regexp.MustCompile(`^func ([a-zA-Z]\w*)( +)?\((.*)\)( +)?\{$`)
 	var funcCall = regexp.MustCompile(`^( +)?(add32|sub32|mult32|div32)\(([0-9]+|[a-zA-Z]\w*),( +)?([0-9]+|[a-zA-Z]\w*)\)$`)
 
 	for i, line := range document {
@@ -51,6 +65,10 @@ func parse() {
 				fmt.Printf("....assigned value of: %d\n", value)
 				varInts = append(varInts, VarInt{result[3], int32(value)})
 			}
+		case declFuncStart.MatchString(line):
+			result := declFuncStart.FindStringSubmatch(line)
+			fmt.Printf("%d: function (%s) declaration, with parameters: %s\n", i, result[1], result[3])
+			funcs = append(funcs, Func{Name: result[1]})
 		case funcCall.MatchString(line):
 			fmt.Printf("%d: function call\n", i)
 			result := funcCall.FindStringSubmatch(line)
