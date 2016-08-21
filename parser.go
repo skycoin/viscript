@@ -14,27 +14,20 @@ import (
 only looks for 1 expression per line
 
 no attempt is made to get anything inside a function
-which may come after the opening curly brace, but on the same line
+which may come after the opening curly brace, on the same line
 
-closing curly brace of function only recognized as a 1 character line
+closing curly brace of function only recognized as a "}" amidst spaces
 */
 
 // NOTES
 
 /*
-depending on whether go allows funcs inside funcs.....
-assuming no: what should probably be done is that we have a var that represents what
-function we are currently adding to (or none of course).  upon detecting the start
-of a function we will start funneling the following expressions into that function.
-then pop out when encountering a closing curly brace
+make sure names are unique within a partic scope
 */
 
 var types = []string{"bool", "int32", "string"} // FIXME: should allow [] and [42] prefixes
-var varBools = make([]VarBool, 0)
-var varInt32s = make([]VarInt32, 0)
-var varString = make([]VarString, 0)
-var funcs = make([]Func, 0)
-var currFunc *Func = nil // expressions go in here, if not nil
+var rootFunc = Func{Name: "root"}               // the top/alpha/entry level of the program
+var currFunc = rootFunc
 
 type VarBool struct {
 	name  string
@@ -52,9 +45,13 @@ type VarString struct {
 }
 
 type Func struct {
-	Name        string
-	Parameters  []string
-	Expressions []string
+	Name      string
+	VarBools  []VarBool
+	VarInt32s []VarInt32
+	VarString []VarString
+	Funcs     []Func
+	// next is just temporary?
+	Parameters []string
 }
 
 func initParser() {
@@ -70,6 +67,7 @@ func parse() {
 	// Use raw strings to avoid having to quote the backslashes.
 	var varInt32 = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32(( +)?=( +)?([0-9]+))?$`)
 	var declFuncStart = regexp.MustCompile(`^func ([a-zA-Z]\w*)( +)?\((.*)\)( +)?\{$`)
+	var declFuncEnd = regexp.MustCompile(`^( +)?\}( +)?$`)
 	var funcCall = regexp.MustCompile(`^( +)?(add32|sub32|mult32|div32)\(([0-9]+|[a-zA-Z]\w*),( +)?([0-9]+|[a-zA-Z]\w*)\)$`)
 
 	for i, line := range document {
@@ -79,27 +77,39 @@ func parse() {
 			con.Add(fmt.Sprintf("%d: variable (%s) declaration\n", i, result[3]))
 
 			if result[8] == "" {
-				varInt32s = append(varInt32s, VarInt32{result[3], 0})
+				currFunc.VarInt32s = append(currFunc.VarInt32s, VarInt32{result[3], 0})
 			} else {
 				value, err := strconv.Atoi(result[8])
 				if err != nil {
 					con.Add(fmt.Sprintf("COULDN'T CONVERT ASSIGNMENT TO NUMBER!"))
+				} else {
+					currFunc.VarInt32s = append(currFunc.VarInt32s, VarInt32{result[3], int32(value)})
+					con.Add(fmt.Sprintf("....assigned value of: %d\n", value))
 				}
-
-				con.Add(fmt.Sprintf("....assigned value of: %d\n", value))
-				varInt32s = append(varInt32s, VarInt32{result[3], int32(value)})
 			}
+
+			printIntsFrom(currFunc)
 		case declFuncStart.MatchString(line):
-			if currFunc != nil {
-				con.Add("CAN'T PUT FUNC INSIDE A FUNC!")
-			}
-
 			result := declFuncStart.FindStringSubmatch(line)
 			con.Add(fmt.Sprintf("%d: function (%s) declaration, with parameters: %s\n", i, result[1], result[3]))
-			funcs = append(funcs, Func{Name: result[1]})
-		case funcCall.MatchString(line):
-			con.Add(fmt.Sprintf("%d: function call\n", i))
+
+			if currFunc.Name == "root" {
+				currFunc = Func{Name: result[1]}
+				rootFunc.Funcs = append(rootFunc.Funcs, currFunc)
+			} else {
+				con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
+			}
+		case declFuncEnd.MatchString(line):
+			con.Add(fmt.Sprintf("function close...\n"))
+
+			if currFunc.Name == "root" {
+				con.Add(fmt.Sprintf("ERROR! Root level function doesn't need enclosure!\n"))
+			} else {
+				currFunc = rootFunc
+			}
+		case funcCall.MatchString(line): // FIXME: hardwired for 4 undefined math functions, with 2 params each
 			result := funcCall.FindStringSubmatch(line)
+			con.Add(fmt.Sprintf("%d: function call\n", i))
 
 			/*
 				// prints out all captures
@@ -108,11 +118,11 @@ func parse() {
 				}
 			*/
 
-			a := getUInt32(result[3])
+			a := getInt32(result[3])
 			if /* not legit num */ a == math.MaxInt32 {
 				return
 			}
-			b := getUInt32(result[5])
+			b := getInt32(result[5])
 			if /* not legit num */ b == math.MaxInt32 {
 				return
 			}
@@ -127,27 +137,45 @@ func parse() {
 			case "div32":
 				con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
 			}
+		case line == "":
+			// just ignore
 		default:
 			con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: %s\n", i, line))
 		}
 	}
 }
 
-func getUInt32(s string) int32 {
+func getInt32(s string) int32 {
 	value, err := strconv.Atoi(s)
+	con.Add(fmt.Sprint("len root: %d\n", len(rootFunc.VarInt32s)))
+	con.Add(fmt.Sprint("len curr: %d\n", len(currFunc.VarInt32s)))
 
 	if err != nil {
-		for _, v := range varInt32s {
+		for _, v := range currFunc.VarInt32s {
 			if s == v.name {
 				return v.value
 			}
 		}
 
-		con.Add(fmt.Sprintf("ERROR!  '%s' IS NOT A VALID VARIABLE/FUNCTION!", s))
+		if currFunc.Name != "root" {
+			for _, v := range rootFunc.VarInt32s {
+				if s == v.name {
+					return v.value
+				}
+			}
+		}
+
+		con.Add(fmt.Sprintf("ERROR!  '%s' IS NOT A VALID VARIABLE/FUNCTION!\n", s))
 		return math.MaxInt32
 	}
 
 	return int32(value)
+}
+
+func printIntsFrom(f Func) {
+	for i, v := range f.VarInt32s {
+		con.Add(fmt.Sprintf("%s.VarInt32s[%d]: %s = %d\n", f.Name, i, v.name, v.value))
+	}
 }
 
 /*
