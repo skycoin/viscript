@@ -36,7 +36,7 @@ func (bar *ScrollBar) StartFrame() {
 }
 
 func (bar *ScrollBar) Scroll(mousePixelDeltaY float64) {
-	// y increment in gl space
+	// y increment (for bar) in gl space
 	yInc := float32(mousePixelDeltaY) * pixelHei
 
 	bar.PosY -= yInc

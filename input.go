@@ -49,7 +49,7 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 }
 
 func onMouseScroll(w *glfw.Window, xOff float64, yOff float64) {
-	//fmt.Println("onScroll()")
+	sb.Scroll(yOff * -30) // FIXME?: scroll speed depends on length of document
 
 	// build message
 	content := append(getBytesOfFloat64(xOff), getBytesOfFloat64(yOff)...)
