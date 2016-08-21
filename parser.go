@@ -29,12 +29,26 @@ of a function we will start funneling the following expressions into that functi
 then pop out when encountering a closing curly brace
 */
 
-var varInts = make([]VarInt, 0)
+var types = []string{"bool", "int32", "string"} // FIXME: should allow [] and [42] prefixes
+var varBools = make([]VarBool, 0)
+var varInt32s = make([]VarInt32, 0)
+var varString = make([]VarString, 0)
 var funcs = make([]Func, 0)
+var currFunc *Func = nil // expressions go in here, if not nil
 
-type VarInt struct {
+type VarBool struct {
+	name  string
+	value bool
+}
+
+type VarInt32 struct {
 	name  string
 	value int32
+}
+
+type VarString struct {
+	name  string
+	value string
 }
 
 type Func struct {
@@ -46,7 +60,7 @@ type Func struct {
 func initParser() {
 	/*
 		for _, f := range funcs {
-			fmt.Println(f)
+			con.Add(fmt.Sprintf(f))
 		}
 	*/
 	parse()
@@ -62,31 +76,35 @@ func parse() {
 		switch {
 		case varInt32.MatchString(line):
 			result := varInt32.FindStringSubmatch(line)
-			fmt.Printf("%d: variable (%s) declaration\n", i, result[3])
+			con.Add(fmt.Sprintf("%d: variable (%s) declaration\n", i, result[3]))
 
 			if result[8] == "" {
-				varInts = append(varInts, VarInt{result[3], 0})
+				varInt32s = append(varInt32s, VarInt32{result[3], 0})
 			} else {
 				value, err := strconv.Atoi(result[8])
 				if err != nil {
-					fmt.Println("COULDN'T CONVERT ASSIGNMENT TO NUMBER!")
+					con.Add(fmt.Sprintf("COULDN'T CONVERT ASSIGNMENT TO NUMBER!"))
 				}
 
-				fmt.Printf("....assigned value of: %d\n", value)
-				varInts = append(varInts, VarInt{result[3], int32(value)})
+				con.Add(fmt.Sprintf("....assigned value of: %d\n", value))
+				varInt32s = append(varInt32s, VarInt32{result[3], int32(value)})
 			}
 		case declFuncStart.MatchString(line):
+			if currFunc != nil {
+				con.Add("CAN'T PUT FUNC INSIDE A FUNC!")
+			}
+
 			result := declFuncStart.FindStringSubmatch(line)
-			fmt.Printf("%d: function (%s) declaration, with parameters: %s\n", i, result[1], result[3])
+			con.Add(fmt.Sprintf("%d: function (%s) declaration, with parameters: %s\n", i, result[1], result[3]))
 			funcs = append(funcs, Func{Name: result[1]})
 		case funcCall.MatchString(line):
-			fmt.Printf("%d: function call\n", i)
+			con.Add(fmt.Sprintf("%d: function call\n", i))
 			result := funcCall.FindStringSubmatch(line)
 
 			/*
 				// prints out all captures
 				for i, v := range result {
-					fmt.Printf("%d. %s\n", i, v)
+					con.Add(fmt.Sprintf("%d. %s\n", i, v))
 				}
 			*/
 
@@ -101,16 +119,16 @@ func parse() {
 
 			switch result[2] {
 			case "add32":
-				fmt.Printf("%d + %d = %d\n", a, b, a+b)
+				con.Add(fmt.Sprintf("%d + %d = %d\n", a, b, a+b))
 			case "sub32":
-				fmt.Printf("%d - %d = %d\n", a, b, a-b)
+				con.Add(fmt.Sprintf("%d - %d = %d\n", a, b, a-b))
 			case "mult32":
-				fmt.Printf("%d * %d = %d\n", a, b, a*b)
+				con.Add(fmt.Sprintf("%d * %d = %d\n", a, b, a*b))
 			case "div32":
-				fmt.Printf("%d / %d = %d\n", a, b, a/b)
+				con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
 			}
 		default:
-			fmt.Printf("SYNTAX ERROR on line %d: %s\n", i, line)
+			con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: %s\n", i, line))
 		}
 	}
 }
@@ -119,13 +137,13 @@ func getUInt32(s string) int32 {
 	value, err := strconv.Atoi(s)
 
 	if err != nil {
-		for _, v := range varInts {
+		for _, v := range varInt32s {
 			if s == v.name {
 				return v.value
 			}
 		}
 
-		fmt.Printf("ERROR!  '%s' IS NOT A VALID VARIABLE/FUNCTION!", s)
+		con.Add(fmt.Sprintf("ERROR!  '%s' IS NOT A VALID VARIABLE/FUNCTION!", s))
 		return math.MaxInt32
 	}
 
