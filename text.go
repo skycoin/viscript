@@ -79,14 +79,15 @@ func initDoc() {
 	document = append(document, "        var myLocal int32")
 	document = append(document, "    }    ")
 	document = append(document, "")
-	document = append(document, "add32(a, b)")
-	document = append(document, "add32(2,3)")
+	document = append(document, "------- function calls -------")
 	document = append(document, "    sub32(7, 9)")
 	document = append(document, "sub32(4,8)")
 	document = append(document, "mult32(7, 7)")
 	document = append(document, "mult32(3,5)")
 	document = append(document, "div32(8,2)")
 	document = append(document, "div32(15,  3)")
+	document = append(document, "add32(2,3)")
+	document = append(document, "add32(a, b)")
 	document = append(document, "")
 
 	for i := 0; i < 22; i++ {

@@ -26,7 +26,7 @@ make sure names are unique within a partic scope
 */
 
 var types = []string{"bool", "int32", "string"} // FIXME: should allow [] and [42] prefixes
-var rootFunc = Func{Name: "root"}               // the top/alpha/entry level of the program
+var rootFunc = &Func{Name: "root"}              // the top/alpha/entry level of the program
 var currFunc = rootFunc
 
 type VarBool struct {
@@ -75,6 +75,7 @@ func parse() {
 		case varInt32.MatchString(line):
 			result := varInt32.FindStringSubmatch(line)
 			con.Add(fmt.Sprintf("%d: variable (%s) declaration\n", i, result[3]))
+			printIntsFrom(currFunc)
 
 			if result[8] == "" {
 				currFunc.VarInt32s = append(currFunc.VarInt32s, VarInt32{result[3], 0})
@@ -94,13 +95,15 @@ func parse() {
 			con.Add(fmt.Sprintf("%d: function (%s) declaration, with parameters: %s\n", i, result[1], result[3]))
 
 			if currFunc.Name == "root" {
-				currFunc = Func{Name: result[1]}
-				rootFunc.Funcs = append(rootFunc.Funcs, currFunc)
+				currFunc = &Func{Name: result[1]}
+				rootFunc.Funcs = append(rootFunc.Funcs, *currFunc) // FIXME: methods in structs shouldn't be on root
 			} else {
 				con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
 			}
 		case declFuncEnd.MatchString(line):
 			con.Add(fmt.Sprintf("function close...\n"))
+			printIntsFrom(rootFunc)
+			printIntsFrom(currFunc)
 
 			if currFunc.Name == "root" {
 				con.Add(fmt.Sprintf("ERROR! Root level function doesn't need enclosure!\n"))
@@ -110,6 +113,7 @@ func parse() {
 		case funcCall.MatchString(line): // FIXME: hardwired for 4 undefined math functions, with 2 params each
 			result := funcCall.FindStringSubmatch(line)
 			con.Add(fmt.Sprintf("%d: function call\n", i))
+			printIntsFrom(currFunc)
 
 			/*
 				// prints out all captures
@@ -147,8 +151,6 @@ func parse() {
 
 func getInt32(s string) int32 {
 	value, err := strconv.Atoi(s)
-	con.Add(fmt.Sprint("len root: %d\n", len(rootFunc.VarInt32s)))
-	con.Add(fmt.Sprint("len curr: %d\n", len(currFunc.VarInt32s)))
 
 	if err != nil {
 		for _, v := range currFunc.VarInt32s {
@@ -172,9 +174,13 @@ func getInt32(s string) int32 {
 	return int32(value)
 }
 
-func printIntsFrom(f Func) {
-	for i, v := range f.VarInt32s {
-		con.Add(fmt.Sprintf("%s.VarInt32s[%d]: %s = %d\n", f.Name, i, v.name, v.value))
+func printIntsFrom(f *Func) {
+	if len(f.VarInt32s) == 0 {
+		con.Add(fmt.Sprintf("%s has no elements!\n", f.Name))
+	} else {
+		for i, v := range f.VarInt32s {
+			con.Add(fmt.Sprintf("%s.VarInt32s[%d]: %s = %d\n", f.Name, i, v.name, v.value))
+		}
 	}
 }
 
