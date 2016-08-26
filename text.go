@@ -42,12 +42,6 @@ var mouseX int = 0 // char position of mouse pointer
 var mouseY int = 0
 var document = make([]string, 0)
 
-// cursor
-var nextBlinkChange = time.Now()
-var cursVisible = true
-var cursX = 0
-var cursY = 0
-
 // selection
 // future consideration/fixme:
 // need to sanitize start/end positions.
@@ -115,8 +109,8 @@ func drawAll() {
 
 func commonMovementKeyHandling() {
 	if selectingRangeOfText {
-		selectionEndX = cursX
-		selectionEndY = cursY
+		selectionEndX = curs.X
+		selectionEndY = curs.Y
 	} else { // arrow keys without shift gets rid selection
 		selectionStartX = math.MaxUint32
 		selectionStartY = math.MaxUint32
@@ -127,25 +121,25 @@ func commonMovementKeyHandling() {
 
 func removeCharacter(fromUnderCursor bool) {
 	if fromUnderCursor {
-		if len(document[cursY]) > cursX {
-			document[cursY] = document[cursY][:cursX] + document[cursY][cursX+1:len(document[cursY])]
+		if len(document[curs.Y]) > curs.X {
+			document[curs.Y] = document[curs.Y][:curs.X] + document[curs.Y][curs.X+1:len(document[curs.Y])]
 		}
 	} else {
-		if cursX > 0 {
-			document[cursY] = document[cursY][:cursX-1] + document[cursY][cursX:len(document[cursY])]
-			cursX--
+		if curs.X > 0 {
+			document[curs.Y] = document[curs.Y][:curs.X-1] + document[curs.Y][curs.X:len(document[curs.Y])]
+			curs.X--
 		}
 	}
 }
 
 func drawCursorMaybe() {
-	if nextBlinkChange.Before(time.Now()) {
-		nextBlinkChange = time.Now().Add(time.Millisecond * 170)
-		cursVisible = !cursVisible
+	if curs.NextBlinkChange.Before(time.Now()) {
+		curs.NextBlinkChange = time.Now().Add(time.Millisecond * 170)
+		curs.Visible = !curs.Visible
 	}
 
-	if cursVisible == true {
-		drawCharAt('_', cursX, cursY)
+	if curs.Visible == true {
+		drawCharAt('_', curs.X, curs.Y)
 	}
 }
 

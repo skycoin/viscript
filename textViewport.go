@@ -4,9 +4,9 @@ import (
 //"fmt"
 )
 
-var view CcViewport = CcViewport{}
+var view TextViewport = TextViewport{}
 
-type CcViewport struct {
+type TextViewport struct {
 	OffsetY         float32
 	LenOfOffscreenY float32
 }

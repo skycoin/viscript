@@ -134,14 +134,14 @@ func onKey(
 		case glfw.ModShift:
 			fmt.Println("start selecting")
 			selectingRangeOfText = true
-			selectionStartX = cursX
-			selectionStartY = cursY
+			selectionStartX = curs.X
+			selectionStartY = curs.Y
 		}
 
 		switch key {
 		case glfw.KeyEnter:
-			startOfLine := document[cursY][:cursX]
-			restOfLine := document[cursY][cursX:len(document[cursY])]
+			startOfLine := document[curs.Y][:curs.X]
+			restOfLine := document[curs.Y][curs.X:len(document[curs.Y])]
 			//restOfDoc := document[cursY+1 : len(document)]
 			//startOfDoc := document[:cursY]
 
@@ -150,7 +150,7 @@ func onKey(
 			for i := 0; i < len(document); i++ {
 				//fmt.Printf("___[%d]: %s\n", i, document[i])
 
-				if i == cursY {
+				if i == curs.Y {
 					newDoc = append(newDoc, startOfLine)
 					newDoc = append(newDoc, restOfLine)
 				} else {
@@ -159,58 +159,58 @@ func onKey(
 			}
 
 			document = newDoc
-			cursX = 0
-			cursY++
+			curs.X = 0
+			curs.Y++
 
 		case glfw.KeyHome:
 			commonMovementKeyHandling()
-			cursX = 0
+			curs.X = 0
 		case glfw.KeyEnd:
 			commonMovementKeyHandling()
-			cursX = len(document[cursY])
+			curs.X = len(document[curs.Y])
 		case glfw.KeyUp:
 			commonMovementKeyHandling()
 
-			if cursY > 0 {
-				cursY--
+			if curs.Y > 0 {
+				curs.Y--
 
-				if cursX > len(document[cursY]) {
-					cursX = len(document[cursY])
+				if curs.X > len(document[curs.Y]) {
+					curs.X = len(document[curs.Y])
 				}
 			}
 		case glfw.KeyDown:
 			commonMovementKeyHandling()
 
-			if cursY < len(document)-1 {
-				cursY++
+			if curs.Y < len(document)-1 {
+				curs.Y++
 
-				if cursX > len(document[cursY]) {
-					cursX = len(document[cursY])
+				if curs.X > len(document[curs.Y]) {
+					curs.X = len(document[curs.Y])
 				}
 			}
 		case glfw.KeyLeft:
 			commonMovementKeyHandling()
 
-			if cursX == 0 {
-				if cursY > 0 {
-					cursY--
-					cursX = len(document[cursY])
+			if curs.X == 0 {
+				if curs.Y > 0 {
+					curs.Y--
+					curs.X = len(document[curs.Y])
 				}
 			} else {
 				if mod == glfw.ModControl {
-					cursX = getWordSkipPos(cursX, -1)
+					curs.X = getWordSkipPos(curs.X, -1)
 				} else {
-					cursX--
+					curs.X--
 				}
 			}
 		case glfw.KeyRight:
 			commonMovementKeyHandling()
 
-			if cursX < len(document[cursY]) {
+			if curs.X < len(document[curs.Y]) {
 				if mod == glfw.ModControl {
-					cursX = getWordSkipPos(cursX, 1)
+					curs.X = getWordSkipPos(curs.X, 1)
 				} else {
-					cursX++
+					curs.X++
 				}
 			}
 		case glfw.KeyBackspace:
@@ -228,25 +228,22 @@ func onKey(
 	dispatchWithPrefix(content, MessageKey)
 }
 
-func getWordSkipPos(xIn int, change int) (cursX int) {
+func getWordSkipPos(xIn int, change int) int {
 	peekPos := xIn
 
 	for {
 		peekPos += change
 
 		if peekPos < 0 {
-			cursX = 0
-			return
+			return 0
 		}
 
-		if peekPos >= len(document[cursY]) {
-			cursX = len(document[cursY])
-			return
+		if peekPos >= len(document[curs.Y]) {
+			return len(document[curs.Y])
 		}
 
-		if string(document[cursY][peekPos]) == " " {
-			cursX = peekPos
-			return
+		if string(document[curs.Y][peekPos]) == " " {
+			return peekPos
 		}
 	}
 }

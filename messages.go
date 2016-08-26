@@ -76,15 +76,15 @@ func convertMouseClickToTextCursorPosition(button uint8, action uint8) {
 		glfw.Action(action) == glfw.Press {
 
 		if mouseY < len(document) {
-			cursY = mouseY
+			curs.Y = mouseY
 
-			if mouseX <= len(document[cursY]) {
-				cursX = mouseX
+			if mouseX <= len(document[curs.Y]) {
+				curs.X = mouseX
 			} else {
-				cursX = len(document[cursY])
+				curs.X = len(document[curs.Y])
 			}
 		} else {
-			cursY = len(document) - 1
+			curs.Y = len(document) - 1
 		}
 	}
 }
@@ -115,8 +115,8 @@ func insertRuneIntoDocument(s string, message []byte) {
 	} else {
 		fmt.Printf("   [%s: %s]", s, string(value))
 
-		document[cursY] = document[cursY][:cursX] + string(value) + document[cursY][cursX:len(document[cursY])]
-		cursX++
+		document[curs.Y] = document[curs.Y][:curs.X] + string(value) + document[curs.Y][curs.X:len(document[curs.Y])]
+		curs.X++
 	}
 }
 
