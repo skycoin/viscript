@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/go-gl/glfw/v3.1/glfw"
 )
 
 const (

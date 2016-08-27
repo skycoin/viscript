@@ -54,6 +54,14 @@ var selectionEndX = math.MaxUint32
 var selectionEndY = math.MaxUint32
 var selectingRangeOfText = false
 
+var textRend TextRenderer = TextRenderer{-rectRad, rectRad}
+
+type TextRenderer struct {
+	// the current pos of the DRAWing cursor
+	CurrX float32
+	CurrY float32
+}
+
 func initDoc() {
 	//document = append(document, "PRESS CTRL-R to RUN your program")
 	document = append(document, "------- variable declarations -------")
@@ -90,16 +98,16 @@ func drawAll() {
 			drawCharAtCurrentPos(c)
 		}
 
-		curX = -rectRad
-		curY -= chHei
+		textRend.CurrX = -rectRad
+		textRend.CurrY -= chHei
 	}
 
 	sb.DrawVertical(2, 11)
-	drawCharAt('#', mouseX, mouseY)
+	drawCharAt('#', curs.MouseX, curs.MouseY)
 	curs.Draw()
 
-	curX = -rectRad
-	curY = rectRad - code.OffsetY
+	textRend.CurrX = -rectRad
+	textRend.CurrY = rectRad - code.OffsetY
 }
 
 func commonMovementKeyHandling() {
@@ -145,7 +153,7 @@ func drawCharAt(letter rune, posX int, posY int) {
 	gl.TexCoord2f(float32(x)*uvSpan, float32(y)*uvSpan) // tl  0, 0
 	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*chHei, 0)
 
-	curX += chWid
+	textRend.CurrX += chWid
 }
 
 func drawCharAtCurrentPos(letter rune) {
@@ -155,16 +163,16 @@ func drawCharAtCurrentPos(letter rune) {
 	gl.Normal3f(0, 0, 1)
 
 	gl.TexCoord2f(float32(x)*uvSpan, float32(y)*uvSpan+uvSpan) // bl  0, 1
-	gl.Vertex3f(curX, curY-chHei, 0)
+	gl.Vertex3f(textRend.CurrX, textRend.CurrY-chHei, 0)
 
 	gl.TexCoord2f(float32(x)*uvSpan+uvSpan, float32(y)*uvSpan+uvSpan) // br  1, 1
-	gl.Vertex3f(curX+chWid, curY-chHei, 0)
+	gl.Vertex3f(textRend.CurrX+chWid, textRend.CurrY-chHei, 0)
 
 	gl.TexCoord2f(float32(x)*uvSpan+uvSpan, float32(y)*uvSpan) // tr  1, 0
-	gl.Vertex3f(curX+chWid, curY, 0)
+	gl.Vertex3f(textRend.CurrX+chWid, textRend.CurrY, 0)
 
 	gl.TexCoord2f(float32(x)*uvSpan, float32(y)*uvSpan) // tl  0, 0
-	gl.Vertex3f(curX, curY, 0)
+	gl.Vertex3f(textRend.CurrX, textRend.CurrY, 0)
 
-	curX += chWid
+	textRend.CurrX += chWid
 }

@@ -83,5 +83,5 @@ func (bar *ScrollBar) DrawVertical(atlasX, atlasY float32) {
 	gl.TexCoord2f(u, v)
 	gl.Vertex3f(rectRad-chWid, top, 0)
 
-	curX += chWid
+	textRend.CurrX += chWid
 }
