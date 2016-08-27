@@ -41,7 +41,7 @@ func processMessage(message []byte) {
 
 	case MessageMouseButton:
 		s("MessageMouseButton", message)
-		convertMouseClickToTextCursorPosition(
+		curs.ConvertMouseClickToTextCursorPosition(
 			getAndShowUInt8("Button", message),
 			getAndShowUInt8("Action", message))
 		getAndShowUInt8("Mod", message)
@@ -69,24 +69,6 @@ func s(s string, message []byte) { // common to all messages
 	fmt.Print(s)
 	showUInt32("Len", message)
 	curRecByte++ // skipping message type's space
-}
-
-func convertMouseClickToTextCursorPosition(button uint8, action uint8) {
-	if glfw.MouseButton(button) == glfw.MouseButtonLeft &&
-		glfw.Action(action) == glfw.Press {
-
-		if mouseY < len(document) {
-			curs.Y = mouseY
-
-			if mouseX <= len(document[curs.Y]) {
-				curs.X = mouseX
-			} else {
-				curs.X = len(document[curs.Y])
-			}
-		} else {
-			curs.Y = len(document) - 1
-		}
-	}
 }
 
 func getMessageType(s string, message []byte) (value uint8) {

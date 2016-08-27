@@ -32,8 +32,8 @@ func pollEventsAndHandleAnInput(w *glfw.Window) {
 }
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
-	mouseX = int(x) / chWidInPixels
-	mouseY = int(y) / chHeiInPixels
+	curs.MouseX = int(x) / chWidInPixels
+	curs.MouseY = int(y) / chHeiInPixels
 	mousePixelDeltaX = x - prevMousePixelX
 	mousePixelDeltaY = y - prevMousePixelY
 	prevMousePixelX = x

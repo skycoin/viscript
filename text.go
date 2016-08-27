@@ -25,10 +25,8 @@ import (
 
 // character
 var uvSpan = float32(1.0) / 16
-var rectRad = float32(3) // rectangular radius (distance to edge of app window
+var rectRad = float32(3) // rectangular radius (distance to edge of entire app screen
 // in the cardinal directions from the center, corners would be farther away)
-var curX = -rectRad // the current pos of the DRAWing cursor
-var curY = rectRad
 var numXChars = 80
 var numYChars = 25
 var chWid = float32(rectRad * 2 / float32(numXChars))
@@ -37,8 +35,6 @@ var chWidInPixels = int(float32(resX) / float32(numXChars))
 var chHeiInPixels = int(float32(resY) / float32(numYChars))
 var pixelWid = rectRad * 2 / float32(resX)
 var pixelHei = rectRad * 2 / float32(resY)
-var mouseX int = 0 // char position of mouse pointer
-var mouseY int = 0
 var document = make([]string, 0)
 
 // selection
