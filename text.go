@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
 	"math"
-	"time"
 )
 
 // character
@@ -101,10 +100,10 @@ func drawAll() {
 
 	sb.DrawVertical(2, 11)
 	drawCharAt('#', mouseX, mouseY)
-	drawCursorMaybe()
+	curs.Draw()
 
 	curX = -rectRad
-	curY = rectRad - view.OffsetY
+	curY = rectRad - code.OffsetY
 }
 
 func commonMovementKeyHandling() {
@@ -129,17 +128,6 @@ func removeCharacter(fromUnderCursor bool) {
 			document[curs.Y] = document[curs.Y][:curs.X-1] + document[curs.Y][curs.X:len(document[curs.Y])]
 			curs.X--
 		}
-	}
-}
-
-func drawCursorMaybe() {
-	if curs.NextBlinkChange.Before(time.Now()) {
-		curs.NextBlinkChange = time.Now().Add(time.Millisecond * 170)
-		curs.Visible = !curs.Visible
-	}
-
-	if curs.Visible == true {
-		drawCharAt('_', curs.X, curs.Y)
 	}
 }
 

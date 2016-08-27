@@ -13,3 +13,14 @@ type Cursor struct {
 	X               int // position at the character level
 	Y               int
 }
+
+func (c *Cursor) Draw() {
+	if c.NextBlinkChange.Before(time.Now()) {
+		c.NextBlinkChange = time.Now().Add(time.Millisecond * 170)
+		c.Visible = !c.Visible
+	}
+
+	if c.Visible == true {
+		drawCharAt('_', c.X, c.Y)
+	}
+}

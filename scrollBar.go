@@ -27,11 +27,11 @@ func (bar *ScrollBar) StartFrame() {
 		// no need for scrollbar
 		bar.LenOfBar = 0
 		bar.LenOfVoid = rectRad * 2
-		view.LenOfOffscreenY = 0
+		code.LenOfOffscreenY = 0
 	} else {
 		bar.LenOfBar = float32(numYChars) / float32(len(document)) * rectRad * 2
 		bar.LenOfVoid = rectRad*2 - bar.LenOfBar
-		view.LenOfOffscreenY = float32(len(document)-numYChars) * chHei
+		code.LenOfOffscreenY = float32(len(document)-numYChars) * chHei
 	}
 }
 
@@ -48,14 +48,14 @@ func (bar *ScrollBar) Scroll(mousePixelDeltaY float64) {
 		bar.PosY = rectRad
 	}
 
-	view.OffsetY -= yInc / bar.LenOfVoid * view.LenOfOffscreenY
+	code.OffsetY -= yInc / bar.LenOfVoid * code.LenOfOffscreenY
 
-	if view.OffsetY > 0 {
-		view.OffsetY = 0
+	if code.OffsetY > 0 {
+		code.OffsetY = 0
 	}
 
-	if view.OffsetY < -view.LenOfOffscreenY {
-		view.OffsetY = -view.LenOfOffscreenY
+	if code.OffsetY < -code.LenOfOffscreenY {
+		code.OffsetY = -code.LenOfOffscreenY
 	}
 }
 
