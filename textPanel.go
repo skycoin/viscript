@@ -8,6 +8,8 @@ import (
 type TextPanel struct {
 	Top             float32
 	Bottom          float32
+	Left            float32
+	Right           float32
 	NumCharsX       int
 	NumCharsY       int
 	OffsetY         float32
@@ -20,6 +22,9 @@ type TextPanel struct {
 func (tp *TextPanel) Init() {
 	tp.Selection = SelectionRange{}
 	tp.Selection.Init()
+
+	tp.Left = -textRend.ScreenRad
+	tp.Right = textRend.ScreenRad
 
 	if tp.Top == 0 {
 		tp.Top = textRend.ScreenRad
@@ -70,6 +75,14 @@ func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 	gl.Vertex3f(-rad, tp.Top, 0)
 
 	textRend.CurrX += textRend.chWid
+}
+
+func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaY float64) {
+	if curs.MouseGlY < tp.Top && curs.MouseGlY > tp.Bottom {
+		if curs.MouseGlX < tp.Right && curs.MouseGlX > tp.Left {
+			tp.Bar.Scroll(mousePixelDeltaY) // FIXME to work with any TextPanel
+		}
+	}
 }
 
 func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {

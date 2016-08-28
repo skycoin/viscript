@@ -32,6 +32,8 @@ func pollEventsAndHandleAnInput(w *glfw.Window) {
 }
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
+	curs.MouseGlX = -textRend.ScreenRad + float32(x)*textRend.pixelWid
+	curs.MouseGlY = textRend.ScreenRad - float32(y)*textRend.pixelHei
 	curs.MouseX = int(x) / textRend.chWidInPixels
 	curs.MouseY = int(y) / textRend.chHeiInPixels
 	mousePixelDeltaX = x - prevMousePixelX
@@ -40,7 +42,8 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	prevMousePixelY = y
 
 	if /* LMB held */ w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		code.Bar.Scroll(mousePixelDeltaY) // FIXME to work with any TextPanel
+		code.ScrollIfMouseOver(mousePixelDeltaY)
+		cons.ScrollIfMouseOver(mousePixelDeltaY)
 	}
 
 	// build message
@@ -49,8 +52,8 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 }
 
 func onMouseScroll(w *glfw.Window, xOff float64, yOff float64) {
-	// FIXME: allow this to scroll whichever TextPanel mouse hovers over
-	code.Bar.Scroll(yOff * -30) // FIXME?: scroll speed depends on number of lines
+	code.ScrollIfMouseOver(yOff * -30)
+	cons.ScrollIfMouseOver(yOff * -30)
 
 	// build message
 	content := append(getBytesOfFloat64(xOff), getBytesOfFloat64(yOff)...)

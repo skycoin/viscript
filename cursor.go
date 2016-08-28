@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-var curs Cursor = Cursor{time.Now(), true, 0, 0, 0, 0}
+var curs Cursor = Cursor{NextBlinkChange: time.Now(), Visible: true}
 
 // there's 2 cursors actually....
 // 1) for mouse: keeps updated to current pointer position
@@ -15,10 +15,12 @@ var curs Cursor = Cursor{time.Now(), true, 0, 0, 0, 0}
 type Cursor struct {
 	NextBlinkChange time.Time
 	Visible         bool
-	X               int // text insert position (at the character level)
+	X               int // current text insert position (in character grid space)
 	Y               int
-	MouseX          int // current mouse position (at the character level)
+	MouseX          int // current mouse position (in character grid space)
 	MouseY          int
+	MouseGlX        float32 // current mouse position in OpenGL space
+	MouseGlY        float32
 }
 
 func (c *Cursor) Draw() {
