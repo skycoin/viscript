@@ -13,6 +13,8 @@ import (
 )
 
 var appName = "V I S C R I P T"
+var code TextPanel = TextPanel{NumCharsX: 80, NumCharsY: 14}
+var cons TextPanel = TextPanel{NumCharsX: 80, NumCharsY: 10} // console
 
 func init() {
 	makeHighlyVisibleRuntimeLogHeader(appName, 15)
@@ -48,7 +50,8 @@ func main() {
 	defer gl.DeleteTextures(1, &texture)
 
 	setupScene()
-	initDoc()
+	code.Init()
+	cons.Init()
 	initInputEvents(window)
 	initParser()
 

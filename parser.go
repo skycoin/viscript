@@ -70,7 +70,7 @@ func parse() {
 	var declFuncEnd = regexp.MustCompile(`^( +)?\}( +)?$`)
 	var funcCall = regexp.MustCompile(`^( +)?(add32|sub32|mult32|div32)\(([0-9]+|[a-zA-Z]\w*),( +)?([0-9]+|[a-zA-Z]\w*)\)$`)
 
-	for i, line := range document {
+	for i, line := range code.Body {
 		switch {
 		case varInt32.MatchString(line):
 			result := varInt32.FindStringSubmatch(line)

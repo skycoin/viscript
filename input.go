@@ -32,15 +32,15 @@ func pollEventsAndHandleAnInput(w *glfw.Window) {
 }
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
-	curs.MouseX = int(x) / chWidInPixels
-	curs.MouseY = int(y) / chHeiInPixels
+	curs.MouseX = int(x) / textRend.chWidInPixels
+	curs.MouseY = int(y) / textRend.chHeiInPixels
 	mousePixelDeltaX = x - prevMousePixelX
 	mousePixelDeltaY = y - prevMousePixelY
 	prevMousePixelX = x
 	prevMousePixelY = y
 
-	if w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		sb.Scroll(mousePixelDeltaY)
+	if /* LMB held */ w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
+		code.Bar.Scroll(mousePixelDeltaY) // FIXME to work with any TextPanel
 	}
 
 	// build message
@@ -49,7 +49,8 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 }
 
 func onMouseScroll(w *glfw.Window, xOff float64, yOff float64) {
-	sb.Scroll(yOff * -30) // FIXME?: scroll speed depends on length of document
+	// FIXME: allow this to scroll whichever TextPanel mouse hovers over
+	code.Bar.Scroll(yOff * -30) // FIXME?: scroll speed depends on number of lines
 
 	// build message
 	content := append(getBytesOfFloat64(xOff), getBytesOfFloat64(yOff)...)
@@ -111,7 +112,7 @@ func onKey(
 			fallthrough
 		case glfw.KeyRightShift:
 			fmt.Println("done selecting")
-			selectingRangeOfText = false
+			code.Selection.CurrentlySelecting = false // FIXME to work with whichever has focus
 			// TODO?  possibly flip around if selectionStart comes after selectionEnd in the page flow?
 
 		case glfw.KeyLeftControl:
@@ -133,32 +134,32 @@ func onKey(
 		switch mod {
 		case glfw.ModShift:
 			fmt.Println("start selecting")
-			selectingRangeOfText = true
-			selectionStartX = curs.X
-			selectionStartY = curs.Y
+			code.Selection.CurrentlySelecting = true // FIXME to work on any TextPanel
+			code.Selection.StartX = curs.X
+			code.Selection.StartY = curs.Y
 		}
 
 		switch key {
 		case glfw.KeyEnter:
-			startOfLine := document[curs.Y][:curs.X]
-			restOfLine := document[curs.Y][curs.X:len(document[curs.Y])]
-			//restOfDoc := document[cursY+1 : len(document)]
-			//startOfDoc := document[:cursY]
+			startOfLine := code.Body[curs.Y][:curs.X]
+			restOfLine := code.Body[curs.Y][curs.X:len(code.Body[curs.Y])]
+			//restOfDoc := code.Body[curs.Y+1 : len(code.Body)]
+			//startOfDoc := code.Body[:curs.Y]
 
 			newDoc := make([]string, 0)
 
-			for i := 0; i < len(document); i++ {
-				//fmt.Printf("___[%d]: %s\n", i, document[i])
+			for i := 0; i < len(code.Body); i++ {
+				//fmt.Printf("___[%d]: %s\n", i, code.Body[i])
 
 				if i == curs.Y {
 					newDoc = append(newDoc, startOfLine)
 					newDoc = append(newDoc, restOfLine)
 				} else {
-					newDoc = append(newDoc, document[i])
+					newDoc = append(newDoc, code.Body[i])
 				}
 			}
 
-			document = newDoc
+			code.Body = newDoc
 			curs.X = 0
 			curs.Y++
 
@@ -167,25 +168,25 @@ func onKey(
 			curs.X = 0
 		case glfw.KeyEnd:
 			commonMovementKeyHandling()
-			curs.X = len(document[curs.Y])
+			curs.X = len(code.Body[curs.Y])
 		case glfw.KeyUp:
 			commonMovementKeyHandling()
 
 			if curs.Y > 0 {
 				curs.Y--
 
-				if curs.X > len(document[curs.Y]) {
-					curs.X = len(document[curs.Y])
+				if curs.X > len(code.Body[curs.Y]) {
+					curs.X = len(code.Body[curs.Y])
 				}
 			}
 		case glfw.KeyDown:
 			commonMovementKeyHandling()
 
-			if curs.Y < len(document)-1 {
+			if curs.Y < len(code.Body)-1 {
 				curs.Y++
 
-				if curs.X > len(document[curs.Y]) {
-					curs.X = len(document[curs.Y])
+				if curs.X > len(code.Body[curs.Y]) {
+					curs.X = len(code.Body[curs.Y])
 				}
 			}
 		case glfw.KeyLeft:
@@ -194,7 +195,7 @@ func onKey(
 			if curs.X == 0 {
 				if curs.Y > 0 {
 					curs.Y--
-					curs.X = len(document[curs.Y])
+					curs.X = len(code.Body[curs.Y])
 				}
 			} else {
 				if mod == glfw.ModControl {
@@ -206,7 +207,7 @@ func onKey(
 		case glfw.KeyRight:
 			commonMovementKeyHandling()
 
-			if curs.X < len(document[curs.Y]) {
+			if curs.X < len(code.Body[curs.Y]) {
 				if mod == glfw.ModControl {
 					curs.X = getWordSkipPos(curs.X, 1)
 				} else {
@@ -214,9 +215,9 @@ func onKey(
 				}
 			}
 		case glfw.KeyBackspace:
-			removeCharacter(false)
+			code.RemoveCharacter(false)
 		case glfw.KeyDelete:
-			removeCharacter(true)
+			code.RemoveCharacter(true)
 		}
 	}
 
@@ -238,11 +239,11 @@ func getWordSkipPos(xIn int, change int) int {
 			return 0
 		}
 
-		if peekPos >= len(document[curs.Y]) {
-			return len(document[curs.Y])
+		if peekPos >= len(code.Body[curs.Y]) {
+			return len(code.Body[curs.Y])
 		}
 
-		if string(document[curs.Y][peekPos]) == " " {
+		if string(code.Body[curs.Y][peekPos]) == " " {
 			return peekPos
 		}
 	}

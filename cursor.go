@@ -36,16 +36,16 @@ func (c *Cursor) ConvertMouseClickToTextCursorPosition(button uint8, action uint
 	if glfw.MouseButton(button) == glfw.MouseButtonLeft &&
 		glfw.Action(action) == glfw.Press {
 
-		if c.MouseY < len(document) {
+		if c.MouseY < len(code.Body) {
 			curs.Y = c.MouseY
 
-			if c.MouseX <= len(document[curs.Y]) {
+			if c.MouseX <= len(code.Body[curs.Y]) {
 				curs.X = c.MouseX
 			} else {
-				curs.X = len(document[curs.Y])
+				curs.X = len(code.Body[curs.Y])
 			}
 		} else {
-			curs.Y = len(document) - 1
+			curs.Y = len(code.Body) - 1
 		}
 	}
 }

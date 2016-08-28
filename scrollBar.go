@@ -9,11 +9,9 @@ import (
 mouse position updates use pixels, so the smallest drag motions will be
 a jump of at least 1 pixel height.
 the ratio of that height / LenOfVoid (bar representing the page size),
-compared to the void/offscreen length of the document,
-gives us the jump size in scrolling through the document
+compared to the void/offscreen length of the text body,
+gives us the jump size in scrolling through the text body
 */
-
-var sb = ScrollBar{0, textRend.ScreenRad, 0, 0}
 
 type ScrollBar struct {
 	PosX      float32
@@ -22,24 +20,24 @@ type ScrollBar struct {
 	LenOfVoid float32 // length of the negative space adjacent to bar
 }
 
-func (bar *ScrollBar) StartFrame() {
+func (bar *ScrollBar) StartFrame(tp TextPanel) {
 	size /* of screen */ := textRend.ScreenRad * 2
 
-	if /* content smaller than screen */ len(document) <= textRend.NumCharsY {
+	if /* content smaller than screen */ len(tp.Body) <= tp.NumCharsY {
 		// no need for scrollbar
 		bar.LenOfBar = 0
 		bar.LenOfVoid = size
 		code.LenOfOffscreenY = 0
 	} else {
-		bar.LenOfBar = float32(textRend.NumCharsY) / float32(len(document)) * size
+		bar.LenOfBar = float32(tp.NumCharsY) / float32(len(tp.Body)) * size
 		bar.LenOfVoid = size - bar.LenOfBar
-		code.LenOfOffscreenY = float32(len(document)-textRend.NumCharsY) * chHei
+		code.LenOfOffscreenY = float32(len(tp.Body)-tp.NumCharsY) * textRend.chHei
 	}
 }
 
 func (bar *ScrollBar) Scroll(mousePixelDeltaY float64) {
 	// y increment (for bar) in gl space
-	yInc := float32(mousePixelDeltaY) * pixelHei
+	yInc := float32(mousePixelDeltaY) * textRend.pixelHei
 
 	bar.PosY -= yInc
 
@@ -62,28 +60,31 @@ func (bar *ScrollBar) Scroll(mousePixelDeltaY float64) {
 }
 
 func (bar *ScrollBar) DrawVertical(atlasX, atlasY float32) {
-	gl.Normal3f(0, 0, 1)
-	u := float32(atlasX) * textRend.UvSpan
-	v := float32(atlasY) * textRend.UvSpan
+	rad := textRend.ScreenRad
+	sp := textRend.UvSpan
+	u := float32(atlasX) * sp
+	v := float32(atlasY) * sp
 
-	top := bar.PosY                 //textRend.ScreenRad - 1
-	bott := bar.PosY - bar.LenOfBar //-textRend.ScreenRad + 1
+	top := bar.PosY                 //rad - 1
+	bott := bar.PosY - bar.LenOfBar //-rad + 1
+
+	gl.Normal3f(0, 0, 1)
 
 	// bottom left   0, 1
-	gl.TexCoord2f(u, v+textRend.UvSpan)
-	gl.Vertex3f(textRend.ScreenRad-chWid, bott, 0)
+	gl.TexCoord2f(u, v+sp)
+	gl.Vertex3f(rad-textRend.chWid, bott, 0)
 
 	// bottom right   1, 1
-	gl.TexCoord2f(u+textRend.UvSpan, v+textRend.UvSpan)
-	gl.Vertex3f(textRend.ScreenRad, bott, 0)
+	gl.TexCoord2f(u+sp, v+sp)
+	gl.Vertex3f(rad, bott, 0)
 
 	// top right   1, 0
-	gl.TexCoord2f(u+textRend.UvSpan, v)
-	gl.Vertex3f(textRend.ScreenRad, top, 0)
+	gl.TexCoord2f(u+sp, v)
+	gl.Vertex3f(rad, top, 0)
 
 	// top left   0, 0
 	gl.TexCoord2f(u, v)
-	gl.Vertex3f(textRend.ScreenRad-chWid, top, 0)
+	gl.Vertex3f(rad-textRend.chWid, top, 0)
 
-	textRend.CurrX += chWid
+	textRend.CurrX += textRend.chWid
 }
