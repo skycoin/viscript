@@ -15,10 +15,24 @@ type TextPanel struct {
 }
 
 func (tp *TextPanel) Init() {
-	textRend.Init()
-
 	tp.Selection = SelectionRange{}
 	tp.Selection.Init()
+}
+
+func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {
+	if fromUnderCursor {
+		if len(tp.Body[curs.Y]) > curs.X {
+			tp.Body[curs.Y] = tp.Body[curs.Y][:curs.X] + tp.Body[curs.Y][curs.X+1:len(tp.Body[curs.Y])]
+		}
+	} else {
+		if curs.X > 0 {
+			tp.Body[curs.Y] = tp.Body[curs.Y][:curs.X-1] + tp.Body[curs.Y][curs.X:len(tp.Body[curs.Y])]
+			curs.X--
+		}
+	}
+}
+
+func (tp *TextPanel) SetupDemoProgram() {
 	tp.Body = append(tp.Body, "PRESS CTRL-R to RUN your program")
 	tp.Body = append(tp.Body, "")
 	tp.Body = append(tp.Body, "------- variable declarations -------")
@@ -46,18 +60,5 @@ func (tp *TextPanel) Init() {
 
 	for i := 0; i < 22; i++ {
 		tp.Body = append(tp.Body, fmt.Sprintf("%d: put lots of text on screen", i))
-	}
-}
-
-func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {
-	if fromUnderCursor {
-		if len(tp.Body[curs.Y]) > curs.X {
-			tp.Body[curs.Y] = tp.Body[curs.Y][:curs.X] + tp.Body[curs.Y][curs.X+1:len(tp.Body[curs.Y])]
-		}
-	} else {
-		if curs.X > 0 {
-			tp.Body[curs.Y] = tp.Body[curs.Y][:curs.X-1] + tp.Body[curs.Y][curs.X:len(tp.Body[curs.Y])]
-			curs.X--
-		}
 	}
 }

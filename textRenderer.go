@@ -19,8 +19,6 @@ import (
 	"math"
 )
 
-var textRend = TextRenderer{}
-
 type TextRenderer struct {
 	pixelWid      float32
 	pixelHei      float32

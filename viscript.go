@@ -13,10 +13,15 @@ import (
 )
 
 var appName = "V I S C R I P T"
+var textRend = TextRenderer{}
 var code TextPanel = TextPanel{NumCharsX: 80, NumCharsY: 14}
-var cons TextPanel = TextPanel{NumCharsX: 80, NumCharsY: 10} // console
+var cons TextPanel = TextPanel{NumCharsX: 80, NumCharsY: 10} // console (runtime feedback)
 
 func init() {
+	textRend.Init()
+	cons.Init()
+	code.Init()
+	code.SetupDemoProgram()
 	makeHighlyVisibleRuntimeLogHeader(appName, 15)
 	// GLFW event handling must run on the main OS thread
 	// See documentation for functions that are only allowed to be called from the main thread.
@@ -50,8 +55,6 @@ func main() {
 	defer gl.DeleteTextures(1, &texture)
 
 	setupScene()
-	code.Init()
-	cons.Init()
 	initInputEvents(window)
 	initParser()
 

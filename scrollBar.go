@@ -35,7 +35,7 @@ func (bar *ScrollBar) StartFrame(tp TextPanel) {
 	}
 }
 
-func (bar *ScrollBar) Scroll(mousePixelDeltaY float64) {
+func (bar *ScrollBar) Scroll(mousePixelDeltaY float64) { // FIXME: handle more than just "code" TextPanel
 	// y increment (for bar) in gl space
 	yInc := float32(mousePixelDeltaY) * textRend.pixelHei
 
