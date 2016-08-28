@@ -24,17 +24,12 @@ import (
 )
 
 // character
-var uvSpan = float32(1.0) / 16
-var rectRad = float32(3) // rectangular radius (distance to edge of entire app screen
-// in the cardinal directions from the center, corners would be farther away)
-var numXChars = 80
-var numYChars = 25
-var chWid = float32(rectRad * 2 / float32(numXChars))
-var chHei = float32(rectRad * 2 / float32(numYChars))
-var chWidInPixels = int(float32(resX) / float32(numXChars))
-var chHeiInPixels = int(float32(resY) / float32(numYChars))
-var pixelWid = rectRad * 2 / float32(resX)
-var pixelHei = rectRad * 2 / float32(resY)
+var chWid = float32(textRend.ScreenRad * 2 / float32(textRend.NumCharsX))
+var chHei = float32(textRend.ScreenRad * 2 / float32(textRend.NumCharsY))
+var chWidInPixels = int(float32(resX) / float32(textRend.NumCharsX))
+var chHeiInPixels = int(float32(resY) / float32(textRend.NumCharsY))
+var pixelWid = textRend.ScreenRad * 2 / float32(resX)
+var pixelHei = textRend.ScreenRad * 2 / float32(resY)
 var document = make([]string, 0)
 
 // selection
@@ -54,16 +49,13 @@ var selectionEndX = math.MaxUint32
 var selectionEndY = math.MaxUint32
 var selectingRangeOfText = false
 
-var textRend TextRenderer = TextRenderer{-rectRad, rectRad}
-
-type TextRenderer struct {
-	// the current pos of the DRAWing cursor
-	CurrX float32
-	CurrY float32
-}
+var textRend = TextRenderer{}
 
 func initDoc() {
-	//document = append(document, "PRESS CTRL-R to RUN your program")
+	textRend.Init()
+
+	document = append(document, "PRESS CTRL-R to RUN your program")
+	document = append(document, "")
 	document = append(document, "------- variable declarations -------")
 	document = append(document, "var myVar int32")
 	document = append(document, "var a int32 = 42")
@@ -92,22 +84,42 @@ func initDoc() {
 	}
 }
 
-func drawAll() {
+type TextRenderer struct {
+	UvSpan    float32
+	ScreenRad float32 // entire screen radius (distance to edge
+	// in the cardinal directions from the center, corners would be farther away)
+	NumCharsX int
+	NumCharsY int
+	// current place renderer draws to
+	CurrX float32
+	CurrY float32
+}
+
+func (tr *TextRenderer) Init() {
+	tr.UvSpan = float32(1.0) / 16
+	tr.ScreenRad = float32(3)
+	tr.NumCharsX = 80
+	tr.NumCharsY = 25
+	tr.CurrX = -tr.ScreenRad
+	tr.CurrY = tr.ScreenRad
+}
+
+func (tr *TextRenderer) DrawAll() {
 	for _, line := range document {
 		for _, c := range line {
 			drawCharAtCurrentPos(c)
 		}
 
-		textRend.CurrX = -rectRad
-		textRend.CurrY -= chHei
+		tr.CurrX = -tr.ScreenRad
+		tr.CurrY -= chHei
 	}
 
 	sb.DrawVertical(2, 11)
-	drawCharAt('#', curs.MouseX, curs.MouseY)
+	tr.DrawCharAt('#', curs.MouseX, curs.MouseY)
 	curs.Draw()
 
-	textRend.CurrX = -rectRad
-	textRend.CurrY = rectRad - code.OffsetY
+	tr.CurrX = -tr.ScreenRad
+	tr.CurrY = tr.ScreenRad - code.OffsetY
 }
 
 func commonMovementKeyHandling() {
@@ -135,43 +147,45 @@ func removeCharacter(fromUnderCursor bool) {
 	}
 }
 
-func drawCharAt(letter rune, posX int, posY int) {
+func (tr *TextRenderer) DrawCharAt(letter rune, posX int, posY int) {
 	x := int(letter) % 16
 	y := int(letter) / 16
+	sp := tr.UvSpan
 
 	gl.Normal3f(0, 0, 1)
 
-	gl.TexCoord2f(float32(x)*uvSpan, float32(y)*uvSpan+uvSpan) // bl  0, 1
-	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*chHei-chHei, 0)
+	gl.TexCoord2f(float32(x)*sp, float32(y)*sp+sp) // bl  0, 1
+	gl.Vertex3f(-tr.ScreenRad+float32(posX)*chWid, tr.ScreenRad-float32(posY)*chHei-chHei, 0)
 
-	gl.TexCoord2f(float32(x)*uvSpan+uvSpan, float32(y)*uvSpan+uvSpan) // br  1, 1
-	gl.Vertex3f(-rectRad+float32(posX)*chWid+chWid, rectRad-float32(posY)*chHei-chHei, 0)
+	gl.TexCoord2f(float32(x)*sp+sp, float32(y)*sp+sp) // br  1, 1
+	gl.Vertex3f(-tr.ScreenRad+float32(posX)*chWid+chWid, tr.ScreenRad-float32(posY)*chHei-chHei, 0)
 
-	gl.TexCoord2f(float32(x)*uvSpan+uvSpan, float32(y)*uvSpan) // tr  1, 0
-	gl.Vertex3f(-rectRad+float32(posX)*chWid+chWid, rectRad-float32(posY)*chHei, 0)
+	gl.TexCoord2f(float32(x)*sp+sp, float32(y)*sp) // tr  1, 0
+	gl.Vertex3f(-tr.ScreenRad+float32(posX)*chWid+chWid, tr.ScreenRad-float32(posY)*chHei, 0)
 
-	gl.TexCoord2f(float32(x)*uvSpan, float32(y)*uvSpan) // tl  0, 0
-	gl.Vertex3f(-rectRad+float32(posX)*chWid, rectRad-float32(posY)*chHei, 0)
+	gl.TexCoord2f(float32(x)*sp, float32(y)*sp) // tl  0, 0
+	gl.Vertex3f(-tr.ScreenRad+float32(posX)*chWid, tr.ScreenRad-float32(posY)*chHei, 0)
 
-	textRend.CurrX += chWid
+	tr.CurrX += chWid
 }
 
 func drawCharAtCurrentPos(letter rune) {
 	x := int(letter) % 16
 	y := int(letter) / 16
+	sp := textRend.UvSpan
 
 	gl.Normal3f(0, 0, 1)
 
-	gl.TexCoord2f(float32(x)*uvSpan, float32(y)*uvSpan+uvSpan) // bl  0, 1
+	gl.TexCoord2f(float32(x)*sp, float32(y)*sp+sp) // bl  0, 1
 	gl.Vertex3f(textRend.CurrX, textRend.CurrY-chHei, 0)
 
-	gl.TexCoord2f(float32(x)*uvSpan+uvSpan, float32(y)*uvSpan+uvSpan) // br  1, 1
+	gl.TexCoord2f(float32(x)*sp+sp, float32(y)*sp+sp) // br  1, 1
 	gl.Vertex3f(textRend.CurrX+chWid, textRend.CurrY-chHei, 0)
 
-	gl.TexCoord2f(float32(x)*uvSpan+uvSpan, float32(y)*uvSpan) // tr  1, 0
+	gl.TexCoord2f(float32(x)*sp+sp, float32(y)*sp) // tr  1, 0
 	gl.Vertex3f(textRend.CurrX+chWid, textRend.CurrY, 0)
 
-	gl.TexCoord2f(float32(x)*uvSpan, float32(y)*uvSpan) // tl  0, 0
+	gl.TexCoord2f(float32(x)*sp, float32(y)*sp) // tl  0, 0
 	gl.Vertex3f(textRend.CurrX, textRend.CurrY, 0)
 
 	textRend.CurrX += chWid

@@ -38,7 +38,7 @@ func drawScene() {
 	gl.Color4f(1, 1, 1, 1)
 
 	gl.Begin(gl.QUADS)
-	drawAll()
+	textRend.DrawAll()
 	gl.End()
 }
 

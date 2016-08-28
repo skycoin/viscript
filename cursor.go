@@ -8,12 +8,16 @@ import (
 
 var curs Cursor = Cursor{time.Now(), true, 0, 0, 0, 0}
 
+// there's 2 cursors actually....
+// 1) for mouse: keeps updated to current pointer position
+// 2) for text: keyboard typing will be inserted here
+
 type Cursor struct {
 	NextBlinkChange time.Time
 	Visible         bool
 	X               int // text insert position (at the character level)
 	Y               int
-	MouseX          int // mouse position (at the character level)
+	MouseX          int // current mouse position (at the character level)
 	MouseY          int
 }
 
@@ -24,7 +28,7 @@ func (c *Cursor) Draw() {
 	}
 
 	if c.Visible == true {
-		drawCharAt('_', c.X, c.Y)
+		textRend.DrawCharAt('_', c.X, c.Y)
 	}
 }
 

@@ -13,7 +13,7 @@ compared to the void/offscreen length of the document,
 gives us the jump size in scrolling through the document
 */
 
-var sb = ScrollBar{0, rectRad, 0, 0}
+var sb = ScrollBar{0, textRend.ScreenRad, 0, 0}
 
 type ScrollBar struct {
 	PosX      float32
@@ -23,15 +23,17 @@ type ScrollBar struct {
 }
 
 func (bar *ScrollBar) StartFrame() {
-	if /* content smaller than screen */ len(document) <= numYChars {
+	size /* of screen */ := textRend.ScreenRad * 2
+
+	if /* content smaller than screen */ len(document) <= textRend.NumCharsY {
 		// no need for scrollbar
 		bar.LenOfBar = 0
-		bar.LenOfVoid = rectRad * 2
+		bar.LenOfVoid = size
 		code.LenOfOffscreenY = 0
 	} else {
-		bar.LenOfBar = float32(numYChars) / float32(len(document)) * rectRad * 2
-		bar.LenOfVoid = rectRad*2 - bar.LenOfBar
-		code.LenOfOffscreenY = float32(len(document)-numYChars) * chHei
+		bar.LenOfBar = float32(textRend.NumCharsY) / float32(len(document)) * size
+		bar.LenOfVoid = size - bar.LenOfBar
+		code.LenOfOffscreenY = float32(len(document)-textRend.NumCharsY) * chHei
 	}
 }
 
@@ -41,11 +43,11 @@ func (bar *ScrollBar) Scroll(mousePixelDeltaY float64) {
 
 	bar.PosY -= yInc
 
-	if bar.PosY < -rectRad+bar.LenOfBar {
-		bar.PosY = -rectRad + bar.LenOfBar
+	if bar.PosY < -textRend.ScreenRad+bar.LenOfBar {
+		bar.PosY = -textRend.ScreenRad + bar.LenOfBar
 	}
-	if bar.PosY > rectRad {
-		bar.PosY = rectRad
+	if bar.PosY > textRend.ScreenRad {
+		bar.PosY = textRend.ScreenRad
 	}
 
 	code.OffsetY -= yInc / bar.LenOfVoid * code.LenOfOffscreenY
@@ -61,27 +63,27 @@ func (bar *ScrollBar) Scroll(mousePixelDeltaY float64) {
 
 func (bar *ScrollBar) DrawVertical(atlasX, atlasY float32) {
 	gl.Normal3f(0, 0, 1)
-	u := float32(atlasX) * uvSpan
-	v := float32(atlasY) * uvSpan
+	u := float32(atlasX) * textRend.UvSpan
+	v := float32(atlasY) * textRend.UvSpan
 
-	top := bar.PosY                 //rectRad - 1
-	bott := bar.PosY - bar.LenOfBar //-rectRad + 1
+	top := bar.PosY                 //textRend.ScreenRad - 1
+	bott := bar.PosY - bar.LenOfBar //-textRend.ScreenRad + 1
 
 	// bottom left   0, 1
-	gl.TexCoord2f(u, v+uvSpan)
-	gl.Vertex3f(rectRad-chWid, bott, 0)
+	gl.TexCoord2f(u, v+textRend.UvSpan)
+	gl.Vertex3f(textRend.ScreenRad-chWid, bott, 0)
 
 	// bottom right   1, 1
-	gl.TexCoord2f(u+uvSpan, v+uvSpan)
-	gl.Vertex3f(rectRad, bott, 0)
+	gl.TexCoord2f(u+textRend.UvSpan, v+textRend.UvSpan)
+	gl.Vertex3f(textRend.ScreenRad, bott, 0)
 
 	// top right   1, 0
-	gl.TexCoord2f(u+uvSpan, v)
-	gl.Vertex3f(rectRad, top, 0)
+	gl.TexCoord2f(u+textRend.UvSpan, v)
+	gl.Vertex3f(textRend.ScreenRad, top, 0)
 
 	// top left   0, 0
 	gl.TexCoord2f(u, v)
-	gl.Vertex3f(rectRad-chWid, top, 0)
+	gl.Vertex3f(textRend.ScreenRad-chWid, top, 0)
 
 	textRend.CurrX += chWid
 }
