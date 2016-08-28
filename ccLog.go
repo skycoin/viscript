@@ -13,6 +13,7 @@ type CcLog struct {
 
 func (log CcLog) Add(s string) {
 	log.Lines = append(log.Lines, s)
+	cons.Body = append(cons.Body, s)
 	fmt.Printf(s)
 }
 

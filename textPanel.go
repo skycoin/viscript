@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-gl/gl/v2.1/gl"
 )
 
 type TextPanel struct {
+	Top             float32
+	Bottom          float32
 	NumCharsX       int
 	NumCharsY       int
 	OffsetY         float32
@@ -17,6 +20,56 @@ type TextPanel struct {
 func (tp *TextPanel) Init() {
 	tp.Selection = SelectionRange{}
 	tp.Selection.Init()
+
+	if tp.Top == 0 {
+		tp.Top = textRend.ScreenRad
+	}
+
+	tp.Bottom = tp.Top - float32(tp.NumCharsY)*textRend.chHei
+
+	fmt.Printf("TextPanel.Init()    t: %.2f, b: %.2f\n", tp.Top, tp.Bottom)
+}
+
+func (tp *TextPanel) Draw() {
+	tp.DrawBackground(11, 13)
+
+	for _, line := range tp.Body {
+		for _, c := range line {
+			drawCurrentChar(c)
+		}
+
+		textRend.CurrX = -textRend.ScreenRad
+		textRend.CurrY -= textRend.chHei
+	}
+
+	tp.Bar.DrawVertical(2, 11)
+}
+
+func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
+	rad := textRend.ScreenRad
+	sp := textRend.UvSpan
+	u := float32(atlasCellX) * sp
+	v := float32(atlasCellY) * sp
+
+	gl.Normal3f(0, 0, 1)
+
+	// bottom left   0, 1
+	gl.TexCoord2f(u, v+sp)
+	gl.Vertex3f(-rad, tp.Bottom, 0)
+
+	// bottom right   1, 1
+	gl.TexCoord2f(u+sp, v+sp)
+	gl.Vertex3f(rad, tp.Bottom, 0)
+
+	// top right   1, 0
+	gl.TexCoord2f(u+sp, v)
+	gl.Vertex3f(rad, tp.Top, 0)
+
+	// top left   0, 0
+	gl.TexCoord2f(u, v)
+	gl.Vertex3f(-rad, tp.Top, 0)
+
+	textRend.CurrX += textRend.chWid
 }
 
 func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {

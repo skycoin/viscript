@@ -15,6 +15,10 @@ import (
 	//"github.com/go-gl/glfw/v3.1/glfw"
 )
 
+var textRend = TextRenderer{}
+var code = TextPanel{NumCharsX: 80, NumCharsY: 14}
+var cons = TextPanel{NumCharsX: 80, NumCharsY: 10} // console (runtime feedback log)
+
 var (
 	// gl graphics
 	resX, resY int = 800, 600
@@ -22,6 +26,36 @@ var (
 	rotationX  float32
 	rotationY  float32
 )
+
+func initRenderer() {
+	fmt.Println("initRenderer()")
+	textRend.Init()
+	cons.Top = textRend.ScreenRad - float32(code.NumCharsY)*textRend.chHei
+	cons.Init()
+	code.Init()
+	code.SetupDemoProgram()
+
+	gl.Enable(gl.DEPTH_TEST)
+	gl.Enable(gl.LIGHTING)
+
+	gl.ClearColor(0.5, 0.5, 0.5, 0.0)
+	gl.ClearDepth(1)
+	gl.DepthFunc(gl.LEQUAL)
+
+	ambient := []float32{0.5, 0.5, 0.5, 1}
+	diffuse := []float32{1, 1, 1, 1}
+	lightPosition := []float32{-5, 5, 10, 0}
+	gl.Lightfv(gl.LIGHT0, gl.AMBIENT, &ambient[0])
+	gl.Lightfv(gl.LIGHT0, gl.DIFFUSE, &diffuse[0])
+	gl.Lightfv(gl.LIGHT0, gl.POSITION, &lightPosition[0])
+	gl.Enable(gl.LIGHT0)
+
+	gl.MatrixMode(gl.PROJECTION)
+	gl.LoadIdentity()
+	gl.Frustum(-1, 1, -1, 1, 1.0, 10.0)
+	gl.MatrixMode(gl.MODELVIEW)
+	gl.LoadIdentity()
+}
 
 func drawScene() {
 	code.Bar.StartFrame(code)
@@ -81,31 +115,6 @@ func newTexture(file string) uint32 {
 		gl.Ptr(rgba.Pix))
 
 	return texture
-}
-
-func setupScene() {
-	fmt.Println("setupScene()")
-
-	gl.Enable(gl.DEPTH_TEST)
-	gl.Enable(gl.LIGHTING)
-
-	gl.ClearColor(0.5, 0.5, 0.5, 0.0)
-	gl.ClearDepth(1)
-	gl.DepthFunc(gl.LEQUAL)
-
-	ambient := []float32{0.5, 0.5, 0.5, 1}
-	diffuse := []float32{1, 1, 1, 1}
-	lightPosition := []float32{-5, 5, 10, 0}
-	gl.Lightfv(gl.LIGHT0, gl.AMBIENT, &ambient[0])
-	gl.Lightfv(gl.LIGHT0, gl.DIFFUSE, &diffuse[0])
-	gl.Lightfv(gl.LIGHT0, gl.POSITION, &lightPosition[0])
-	gl.Enable(gl.LIGHT0)
-
-	gl.MatrixMode(gl.PROJECTION)
-	gl.LoadIdentity()
-	gl.Frustum(-1, 1, -1, 1, 1.0, 10.0)
-	gl.MatrixMode(gl.MODELVIEW)
-	gl.LoadIdentity()
 }
 
 func destroyScene() {

@@ -51,26 +51,12 @@ func (tr *TextRenderer) Init() {
 }
 
 func (tr *TextRenderer) DrawAll() {
-	tr.DrawTextPanel(code)
-	// actually might work out perfect for 2 hardwired panels (horizontal split line)
-	// to just draw 1 after the other with no position reset (tr.SetDrawPositionToUpperLeft() )
-	tr.DrawTextPanel(cons)
+	code.Draw()
+	//tr.SetDrawPositionToUpperLeft()
+	cons.Draw()
 	tr.DrawCharAt('#', curs.MouseX, curs.MouseY) // mouse cursor
 	curs.Draw()                                  // text cursor
 	tr.SetDrawPositionToUpperLeft()
-}
-
-func (tr *TextRenderer) DrawTextPanel(tp TextPanel) {
-	for _, line := range tp.Body {
-		for _, c := range line {
-			drawCurrentChar(c)
-		}
-
-		tr.CurrX = -tr.ScreenRad
-		tr.CurrY -= tr.chHei
-	}
-
-	tp.Bar.DrawVertical(2, 11)
 }
 
 func (tr *TextRenderer) SetDrawPositionToUpperLeft() {
