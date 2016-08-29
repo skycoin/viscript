@@ -36,8 +36,10 @@ func (tp *TextPanel) Init() {
 }
 
 func (tp *TextPanel) Draw() {
+	tp.GoToTopLeftCorner()
 	tp.DrawBackground(11, 13)
 
+	// body of text
 	for _, line := range tp.Body {
 		for _, c := range line {
 			drawCurrentChar(c)
@@ -48,6 +50,11 @@ func (tp *TextPanel) Draw() {
 	}
 
 	tp.Bar.DrawVertical(2, 11)
+}
+
+func (tp *TextPanel) GoToTopLeftCorner() {
+	textRend.CurrX = tp.Left
+	textRend.CurrY = tp.Top - tp.OffsetY
 }
 
 func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {

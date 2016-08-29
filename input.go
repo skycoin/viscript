@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/go-gl/glfw/v3.1/glfw"
+	"math"
 )
 
 const PREFIX_SIZE = 5 // guaranteed minimum size of every message (4 for length & 1 for type)
@@ -82,13 +83,8 @@ func onMouseButton(
 	dispatchWithPrefix(content, MessageMouseButton)
 }
 
-func dispatchWithPrefix(content []byte, msgType uint8) {
-	//prefix := make([]byte, PREFIX_SIZE)
-	prefix := append(
-		getBytesOfUInt32(uint32(len(content))+PREFIX_SIZE),
-		getByteOfUInt8(msgType)...)
-
-	events <- append(prefix, content...)
+func onChar(w *glfw.Window, char rune) {
+	dispatchWithPrefix(getBytesOfRune(char), MessageCharacter)
 }
 
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can get a
@@ -232,6 +228,15 @@ func onKey(
 	dispatchWithPrefix(content, MessageKey)
 }
 
+func dispatchWithPrefix(content []byte, msgType uint8) {
+	//prefix := make([]byte, PREFIX_SIZE)
+	prefix := append(
+		getBytesOfUInt32(uint32(len(content))+PREFIX_SIZE),
+		getByteOfUInt8(msgType)...)
+
+	events <- append(prefix, content...)
+}
+
 func getWordSkipPos(xIn int, change int) int {
 	peekPos := xIn
 
@@ -252,8 +257,16 @@ func getWordSkipPos(xIn int, change int) int {
 	}
 }
 
-func onChar(w *glfw.Window, char rune) {
-	dispatchWithPrefix(getBytesOfRune(char), MessageCharacter)
+func commonMovementKeyHandling() {
+	if code.Selection.CurrentlySelecting {
+		code.Selection.EndX = curs.X
+		code.Selection.EndY = curs.Y
+	} else { // arrow keys without shift gets rid selection
+		code.Selection.StartX = math.MaxUint32
+		code.Selection.StartY = math.MaxUint32
+		code.Selection.EndX = math.MaxUint32
+		code.Selection.EndY = math.MaxUint32
+	}
 }
 
 // the rest of these getBytesOfType() funcs are identical except for the value type

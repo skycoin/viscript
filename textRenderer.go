@@ -16,7 +16,6 @@ package main
 import (
 	//"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
-	"math"
 )
 
 type TextRenderer struct {
@@ -31,7 +30,7 @@ type TextRenderer struct {
 	// in the cardinal directions from the center, corners would be farther away)
 	MaxCharsX int
 	MaxCharsY int
-	// current place renderer draws to
+	// current position renderer draws to
 	CurrX float32
 	CurrY float32
 }
@@ -47,21 +46,12 @@ func (tr *TextRenderer) Init() {
 	tr.chHei = float32(tr.ScreenRad * 2 / float32(tr.MaxCharsY))
 	tr.chWidInPixels = int(float32(resX) / float32(tr.MaxCharsX))
 	tr.chHeiInPixels = int(float32(resY) / float32(tr.MaxCharsY))
-	tr.SetDrawPositionToUpperLeft()
 }
 
 func (tr *TextRenderer) DrawAll() {
 	code.Draw()
-	//tr.SetDrawPositionToUpperLeft()
 	cons.Draw()
-
 	curs.Draw()
-	tr.SetDrawPositionToUpperLeft()
-}
-
-func (tr *TextRenderer) SetDrawPositionToUpperLeft() {
-	tr.CurrX = -tr.ScreenRad
-	tr.CurrY = tr.ScreenRad - code.OffsetY
 }
 
 func drawCurrentChar(char rune) {
@@ -86,16 +76,4 @@ func drawCurrentChar(char rune) {
 	gl.Vertex3f(textRend.CurrX, textRend.CurrY, 0)
 
 	textRend.CurrX += w
-}
-
-func commonMovementKeyHandling() {
-	if code.Selection.CurrentlySelecting {
-		code.Selection.EndX = curs.X
-		code.Selection.EndY = curs.Y
-	} else { // arrow keys without shift gets rid selection
-		code.Selection.StartX = math.MaxUint32
-		code.Selection.StartY = math.MaxUint32
-		code.Selection.EndX = math.MaxUint32
-		code.Selection.EndY = math.MaxUint32
-	}
 }
