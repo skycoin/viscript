@@ -68,11 +68,14 @@ func onMouseButton(
 	action glfw.Action,
 	mod glfw.ModifierKey) {
 
-	//fmt.Println("onMouseButton()")
-
 	if action != glfw.Press {
 		switch glfw.MouseButton(b) {
 		case glfw.MouseButtonLeft:
+			for _, pan := range textRend.Panels {
+				if pan.ContainsMouseCursor() {
+					textRend.Focused = pan
+				}
+			}
 		default:
 		}
 	}

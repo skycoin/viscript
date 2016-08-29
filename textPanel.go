@@ -85,11 +85,19 @@ func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 }
 
 func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaY float64) {
+	if tp.ContainsMouseCursor() {
+		tp.Bar.Scroll(mousePixelDeltaY)
+	}
+}
+
+func (tp *TextPanel) ContainsMouseCursor() bool {
 	if curs.MouseGlY < tp.Top && curs.MouseGlY > tp.Bottom {
 		if curs.MouseGlX < tp.Right && curs.MouseGlX > tp.Left {
-			tp.Bar.Scroll(mousePixelDeltaY) // FIXME to work with any TextPanel
+			return true
 		}
 	}
+
+	return false
 }
 
 func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {

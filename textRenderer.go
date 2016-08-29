@@ -31,8 +31,10 @@ type TextRenderer struct {
 	MaxCharsX int
 	MaxCharsY int
 	// current position renderer draws to
-	CurrX float32
-	CurrY float32
+	CurrX   float32
+	CurrY   float32
+	Focused TextPanel
+	Panels  []TextPanel
 }
 
 func (tr *TextRenderer) Init() {

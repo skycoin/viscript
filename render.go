@@ -29,7 +29,11 @@ var (
 
 func initRenderer() {
 	fmt.Println("initRenderer()")
+
 	textRend.Init()
+	textRend.Panels = append(textRend.Panels, code)
+	textRend.Panels = append(textRend.Panels, cons)
+	textRend.Focused = code
 	cons.Top = textRend.ScreenRad - float32(code.NumCharsY)*textRend.chHei
 	cons.Init()
 	code.Init()
