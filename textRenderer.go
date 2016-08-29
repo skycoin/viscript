@@ -54,38 +54,14 @@ func (tr *TextRenderer) DrawAll() {
 	code.Draw()
 	//tr.SetDrawPositionToUpperLeft()
 	cons.Draw()
-	tr.DrawCharAt('#', curs.MouseX, curs.MouseY) // mouse cursor
-	curs.Draw()                                  // text cursor
+
+	curs.Draw()
 	tr.SetDrawPositionToUpperLeft()
 }
 
 func (tr *TextRenderer) SetDrawPositionToUpperLeft() {
 	tr.CurrX = -tr.ScreenRad
 	tr.CurrY = tr.ScreenRad - code.OffsetY
-}
-
-func (tr *TextRenderer) DrawCharAt(char rune, posX int, posY int) {
-	x := int(char) % 16
-	y := int(char) / 16
-	w := tr.chWid // char width
-	h := tr.chHei // char height
-	sp := tr.UvSpan
-
-	gl.Normal3f(0, 0, 1)
-
-	gl.TexCoord2f(float32(x)*sp, float32(y)*sp+sp) // bl  0, 1
-	gl.Vertex3f(-tr.ScreenRad+float32(posX)*w, tr.ScreenRad-float32(posY)*h-h, 0)
-
-	gl.TexCoord2f(float32(x)*sp+sp, float32(y)*sp+sp) // br  1, 1
-	gl.Vertex3f(-tr.ScreenRad+float32(posX)*w+w, tr.ScreenRad-float32(posY)*h-h, 0)
-
-	gl.TexCoord2f(float32(x)*sp+sp, float32(y)*sp) // tr  1, 0
-	gl.Vertex3f(-tr.ScreenRad+float32(posX)*w+w, tr.ScreenRad-float32(posY)*h, 0)
-
-	gl.TexCoord2f(float32(x)*sp, float32(y)*sp) // tl  0, 0
-	gl.Vertex3f(-tr.ScreenRad+float32(posX)*w, tr.ScreenRad-float32(posY)*h, 0)
-
-	tr.CurrX += w
 }
 
 func drawCurrentChar(char rune) {
