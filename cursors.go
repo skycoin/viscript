@@ -43,25 +43,29 @@ func (c *Cursors) Draw() {
 }
 
 func (c *Cursors) DrawCharAt(char rune, posX int, posY int) {
-	x := int(char) % 16
-	y := int(char) / 16
+	rad := textRend.ScreenRad
+	sp := textRend.UvSpan
+	u := sp * float32(int(char)%16)
+	v := sp * float32(int(char)/16)
 	w := textRend.chWid // char width
 	h := textRend.chHei // char height
-	sp := textRend.UvSpan
-	rad := textRend.ScreenRad
 
 	gl.Normal3f(0, 0, 1)
 
-	gl.TexCoord2f(float32(x)*sp, float32(y)*sp+sp) // bl  0, 1
+	// bottom left
+	gl.TexCoord2f(u, v+sp)
 	gl.Vertex3f(-rad+float32(posX)*w, rad-float32(posY)*h-h, 0)
 
-	gl.TexCoord2f(float32(x)*sp+sp, float32(y)*sp+sp) // br  1, 1
+	// bottom right
+	gl.TexCoord2f(u+sp, v+sp)
 	gl.Vertex3f(-rad+float32(posX)*w+w, rad-float32(posY)*h-h, 0)
 
-	gl.TexCoord2f(float32(x)*sp+sp, float32(y)*sp) // tr  1, 0
+	// top right
+	gl.TexCoord2f(u+sp, v)
 	gl.Vertex3f(-rad+float32(posX)*w+w, rad-float32(posY)*h, 0)
 
-	gl.TexCoord2f(float32(x)*sp, float32(y)*sp) // tl  0, 0
+	// top left
+	gl.TexCoord2f(u, v)
 	gl.Vertex3f(-rad+float32(posX)*w, rad-float32(posY)*h, 0)
 
 	textRend.CurrX += w
