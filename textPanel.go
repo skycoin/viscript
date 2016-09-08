@@ -86,7 +86,7 @@ func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 
 func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaY float64) {
 	if tp.ContainsMouseCursor() {
-		tp.Bar.Scroll(mousePixelDeltaY)
+		tp.Bar.Scroll(tp, mousePixelDeltaY)
 	}
 }
 

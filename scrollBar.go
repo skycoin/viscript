@@ -17,45 +17,45 @@ type ScrollBar struct {
 	PosX      float32
 	PosY      float32
 	LenOfBar  float32
-	LenOfVoid float32 // length of the negative space adjacent to bar
+	LenOfVoid float32 // length of the negative space representing the length of entire document
 }
 
 func (bar *ScrollBar) StartFrame(tp TextPanel) {
-	size /* of screen */ := textRend.ScreenRad * 2
+	hei /* height of panel */ := textRend.chHei * float32(tp.NumCharsY)
 
 	if /* content smaller than screen */ len(tp.Body) <= tp.NumCharsY {
 		// no need for scrollbar
 		bar.LenOfBar = 0
-		bar.LenOfVoid = size
+		bar.LenOfVoid = hei
 		code.LenOfOffscreenY = 0
 	} else {
-		bar.LenOfBar = float32(tp.NumCharsY) / float32(len(tp.Body)) * size
-		bar.LenOfVoid = size - bar.LenOfBar
+		bar.LenOfBar = float32(tp.NumCharsY) / float32(len(tp.Body)) * hei
+		bar.LenOfVoid = hei - bar.LenOfBar
 		code.LenOfOffscreenY = float32(len(tp.Body)-tp.NumCharsY) * textRend.chHei
 	}
 }
 
-func (bar *ScrollBar) Scroll(mousePixelDeltaY float64) { // FIXME: handle more than just "code" TextPanel
+func (bar *ScrollBar) Scroll(tp *TextPanel, mousePixelDeltaY float64) {
 	// y increment (for bar) in gl space
 	yInc := float32(mousePixelDeltaY) * textRend.pixelHei
 
 	bar.PosY -= yInc
 
-	if bar.PosY < -textRend.ScreenRad+bar.LenOfBar {
-		bar.PosY = -textRend.ScreenRad + bar.LenOfBar
+	if bar.PosY < tp.Bottom+bar.LenOfBar {
+		bar.PosY = tp.Bottom + bar.LenOfBar
 	}
-	if bar.PosY > textRend.ScreenRad {
-		bar.PosY = textRend.ScreenRad
-	}
-
-	code.OffsetY -= yInc / bar.LenOfVoid * code.LenOfOffscreenY
-
-	if code.OffsetY > 0 {
-		code.OffsetY = 0
+	if bar.PosY > tp.Top {
+		bar.PosY = tp.Top
 	}
 
-	if code.OffsetY < -code.LenOfOffscreenY {
-		code.OffsetY = -code.LenOfOffscreenY
+	tp.OffsetY -= yInc / bar.LenOfVoid * tp.LenOfOffscreenY
+
+	if tp.OffsetY > 0 {
+		tp.OffsetY = 0
+	}
+
+	if tp.OffsetY < -tp.LenOfOffscreenY {
+		tp.OffsetY = -tp.LenOfOffscreenY
 	}
 }
 
