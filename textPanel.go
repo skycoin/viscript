@@ -32,7 +32,21 @@ func (tp *TextPanel) Init() {
 
 	tp.Bottom = tp.Top - float32(tp.NumCharsY)*textRend.chHei
 
+	tp.Bar.PosX = tp.Right - textRend.chWid
+	tp.Bar.PosY = tp.Top
+
 	fmt.Printf("TextPanel.Init()    t: %.2f, b: %.2f\n", tp.Top, tp.Bottom)
+}
+
+func (tp *TextPanel) GoToTopEdge() {
+	textRend.CurrY = tp.Top - tp.OffsetY
+}
+func (tp *TextPanel) GoToLeftEdge() {
+	textRend.CurrX = tp.Left
+}
+func (tp *TextPanel) GoToTopLeftCorner() {
+	tp.GoToTopEdge()
+	tp.GoToLeftEdge()
 }
 
 func (tp *TextPanel) Draw() {
@@ -45,16 +59,11 @@ func (tp *TextPanel) Draw() {
 			drawCurrentChar(c)
 		}
 
-		textRend.CurrX = -textRend.ScreenRad
+		tp.GoToLeftEdge()
 		textRend.CurrY -= textRend.chHei
 	}
 
 	tp.Bar.DrawVertical(2, 11)
-}
-
-func (tp *TextPanel) GoToTopLeftCorner() {
-	textRend.CurrX = tp.Left
-	textRend.CurrY = tp.Top - tp.OffsetY
 }
 
 func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
