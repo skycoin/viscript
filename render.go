@@ -16,8 +16,6 @@ import (
 )
 
 var textRend = TextRenderer{}
-var code = TextPanel{NumCharsX: 80, NumCharsY: 14}
-var cons = TextPanel{NumCharsX: 80, NumCharsY: 10} // console (runtime feedback log)
 
 var (
 	// gl graphics
@@ -31,13 +29,6 @@ func initRenderer() {
 	fmt.Println("initRenderer()")
 
 	textRend.Init()
-	textRend.Panels = append(textRend.Panels, code)
-	textRend.Panels = append(textRend.Panels, cons)
-	textRend.Focused = code
-	cons.Top = textRend.ScreenRad - float32(code.NumCharsY+1)*textRend.chHei
-	cons.Init()
-	code.Init()
-	code.SetupDemoProgram()
 
 	gl.Enable(gl.DEPTH_TEST)
 	gl.Enable(gl.LIGHTING)

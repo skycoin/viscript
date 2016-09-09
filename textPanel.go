@@ -12,7 +12,7 @@ type TextPanel struct {
 	Right           float32
 	NumCharsX       int
 	NumCharsY       int
-	OffsetY         float32
+	ScrollDistY     float32 // distance from topmost/leftmost
 	LenOfOffscreenY float32
 	Selection       SelectionRange
 	Bar             ScrollBar
@@ -39,7 +39,7 @@ func (tp *TextPanel) Init() {
 }
 
 func (tp *TextPanel) GoToTopEdge() {
-	textRend.CurrY = tp.Top - tp.OffsetY
+	textRend.CurrY = tp.Top - tp.ScrollDistY
 }
 func (tp *TextPanel) GoToLeftEdge() {
 	textRend.CurrX = tp.Left

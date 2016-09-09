@@ -48,14 +48,14 @@ func (bar *ScrollBar) Scroll(tp *TextPanel, mousePixelDeltaY float64) {
 		bar.PosY = tp.Top
 	}
 
-	tp.OffsetY -= yInc / bar.LenOfVoid * tp.LenOfOffscreenY
+	tp.ScrollDistY -= yInc / bar.LenOfVoid * tp.LenOfOffscreenY
 
-	if tp.OffsetY > 0 {
-		tp.OffsetY = 0
+	if tp.ScrollDistY > 0 {
+		tp.ScrollDistY = 0
 	}
 
-	if tp.OffsetY < -tp.LenOfOffscreenY {
-		tp.OffsetY = -tp.LenOfOffscreenY
+	if tp.ScrollDistY < -tp.LenOfOffscreenY {
+		tp.ScrollDistY = -tp.LenOfOffscreenY
 	}
 }
 
