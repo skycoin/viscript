@@ -67,8 +67,6 @@ func (bar *ScrollBar) DrawVertical(atlasX, atlasY float32) {
 
 	top := bar.PosY                 //rad - 1
 	bott := bar.PosY - bar.LenOfBar //-rad + 1
-	fmt.Printf("top: %.1f, bott: %.1f\n", top, bott)
-	fmt.Printf("bar.LenOfBar: %.1f\n", bar.LenOfBar)
 
 	gl.Normal3f(0, 0, 1)
 

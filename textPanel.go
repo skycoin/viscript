@@ -12,7 +12,7 @@ type TextPanel struct {
 	Right           float32
 	NumCharsX       int
 	NumCharsY       int
-	ScrollDistY     float32 // distance from topmost/leftmost
+	ScrollDistY     float32 // distance/offset from top of document (negative number cuz Y goes down screen)
 	LenOfOffscreenY float32
 	Selection       SelectionRange
 	Bar             ScrollBar
