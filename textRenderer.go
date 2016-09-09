@@ -18,8 +18,8 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
-var code = TextPanel{NumCharsX: 80, NumCharsY: 14}
-var cons = TextPanel{NumCharsX: 80, NumCharsY: 10} // console (runtime feedback log)
+var code = TextPanel{NumCharsY: 14}
+var cons = TextPanel{NumCharsY: 10} // console (runtime feedback log)
 
 type TextRenderer struct {
 	pixelWid      float32

@@ -53,8 +53,6 @@ func initRenderer() {
 }
 
 func drawScene() {
-	code.Bar.StartFrame(code)
-	cons.Bar.StartFrame(cons)
 	//rotationX += 0.5
 	//rotationY += 0.5
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)

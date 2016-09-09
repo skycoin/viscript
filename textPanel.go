@@ -35,6 +35,13 @@ func (tp *TextPanel) Init() {
 	tp.Bar.PosX = tp.Right - textRend.chWid
 	tp.Bar.PosY = tp.Top
 
+	if tp.NumCharsX == 0 {
+		tp.NumCharsX = textRend.MaxCharsX
+	}
+	if tp.NumCharsY == 0 {
+		tp.NumCharsY = textRend.MaxCharsY
+	}
+
 	fmt.Printf("TextPanel.Init()    t: %.2f, b: %.2f\n", tp.Top, tp.Bottom)
 }
 
@@ -63,6 +70,7 @@ func (tp *TextPanel) Draw() {
 		textRend.CurrY -= textRend.chHei // go down a line height
 	}
 
+	tp.Bar.StartFrame(*tp)
 	tp.Bar.DrawVertical(2, 11)
 }
 
