@@ -27,7 +27,7 @@ func (tp *TextPanel) Init() {
 	tp.Right = textRend.ScreenRad
 
 	if tp.Top == 0 {
-		tp.Top = textRend.ScreenRad
+		tp.Top = textRend.ScreenRad - textRend.chHei
 	}
 
 	tp.Bottom = tp.Top - float32(tp.NumCharsY)*textRend.chHei
@@ -60,7 +60,7 @@ func (tp *TextPanel) Draw() {
 		}
 
 		tp.GoToLeftEdge()
-		textRend.CurrY -= textRend.chHei
+		textRend.CurrY -= textRend.chHei // go down a line height
 	}
 
 	tp.Bar.DrawVertical(2, 11)
@@ -89,8 +89,6 @@ func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 	// top left   0, 0
 	gl.TexCoord2f(u, v)
 	gl.Vertex3f(-rad, tp.Top, 0)
-
-	textRend.CurrX += textRend.chWid
 }
 
 func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaY float64) {

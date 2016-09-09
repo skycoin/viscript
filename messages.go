@@ -64,7 +64,7 @@ func processMessage(message []byte) {
 	curRecByte = 0
 }
 
-func s(s string, message []byte) { // common to all messages
+func s(s string, message []byte) {
 	fmt.Print(s)
 	showUInt32("Len", message)
 	curRecByte++ // skipping message type's space

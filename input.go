@@ -43,6 +43,7 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	prevMousePixelY = y
 
 	if /* LMB held */ w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
+		//textRend.Focused.ScrollIfMouseOver(mousePixelDeltaY)
 		code.ScrollIfMouseOver(mousePixelDeltaY)
 		cons.ScrollIfMouseOver(mousePixelDeltaY)
 	}
@@ -68,7 +69,7 @@ func onMouseButton(
 	action glfw.Action,
 	mod glfw.ModifierKey) {
 
-	if action != glfw.Press {
+	if action == glfw.Press {
 		switch glfw.MouseButton(b) {
 		case glfw.MouseButtonLeft:
 			for _, pan := range textRend.Panels {

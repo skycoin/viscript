@@ -53,6 +53,11 @@ func (tr *TextRenderer) Init() {
 func (tr *TextRenderer) DrawAll() {
 	code.Draw()
 	cons.Draw()
+
+	for _, pan := range tr.Panels {
+		pan.Draw()
+	}
+
 	curs.Draw()
 }
 

@@ -69,15 +69,13 @@ func (c *Cursors) DrawCharAt(char rune, posX int, posY int) {
 	// top left
 	gl.TexCoord2f(u, v)
 	gl.Vertex3f(x, y, 0)
-
-	textRend.CurrX += w
 }
 
 func (c *Cursors) ConvertMouseClickToTextCursorPosition(button uint8, action uint8) {
 	if glfw.MouseButton(button) == glfw.MouseButtonLeft &&
 		glfw.Action(action) == glfw.Press {
 
-		if c.MouseY < len(code.Body) {
+		if c.MouseY < len(code.Body) { // FIXME for any textpanel instance?  or maybe only code window needs cursors?
 			curs.Y = c.MouseY
 
 			if c.MouseX <= len(code.Body[curs.Y]) {

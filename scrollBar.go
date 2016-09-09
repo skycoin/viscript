@@ -27,11 +27,11 @@ func (bar *ScrollBar) StartFrame(tp TextPanel) {
 		// no need for scrollbar
 		bar.LenOfBar = 0
 		bar.LenOfVoid = hei
-		code.LenOfOffscreenY = 0
+		tp.LenOfOffscreenY = 0
 	} else {
 		bar.LenOfBar = float32(tp.NumCharsY) / float32(len(tp.Body)) * hei
 		bar.LenOfVoid = hei - bar.LenOfBar
-		code.LenOfOffscreenY = float32(len(tp.Body)-tp.NumCharsY) * textRend.chHei
+		tp.LenOfOffscreenY = float32(len(tp.Body)-tp.NumCharsY) * textRend.chHei
 	}
 }
 
@@ -85,6 +85,4 @@ func (bar *ScrollBar) DrawVertical(atlasX, atlasY float32) {
 	// top left   0, 0
 	gl.TexCoord2f(u, v)
 	gl.Vertex3f(rad-textRend.chWid, top, 0)
-
-	textRend.CurrX += textRend.chWid
 }
