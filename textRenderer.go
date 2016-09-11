@@ -36,7 +36,7 @@ type TextRenderer struct {
 	// current position renderer draws to
 	CurrX   float32
 	CurrY   float32
-	Focused TextPanel
+	Focused *TextPanel
 	Panels  []TextPanel
 }
 
@@ -56,7 +56,7 @@ func (tr *TextRenderer) Init() {
 	cons.Init()
 	code.Init()
 	code.SetupDemoProgram()
-	tr.Focused = code
+	tr.Focused = &code
 	tr.Panels = append(tr.Panels, code)
 	tr.Panels = append(tr.Panels, cons)
 }

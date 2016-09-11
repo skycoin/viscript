@@ -70,7 +70,7 @@ func (tp *TextPanel) Draw() {
 		textRend.CurrY -= textRend.CharHei // go down a line height
 	}
 
-	tp.Bar.StartFrame(*tp)
+	tp.Bar.UpdateSize(tp)
 	tp.Bar.DrawVertical(2, 11)
 }
 
@@ -101,7 +101,9 @@ func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 
 func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaY float64) {
 	if tp.ContainsMouseCursor() {
-		tp.Bar.Scroll(tp, mousePixelDeltaY)
+		fmt.Printf("ScrollIfMouseOver tp.Bar.LenOfBar: %.3f\n", tp.Bar.LenOfBar)
+		fmt.Printf("ScrollIfMouseOver tp.Bar.LenOfVoid: %.3f\n", tp.Bar.LenOfVoid)
+		tp.Bar.ScrollThisMuch(tp, mousePixelDeltaY)
 	}
 }
 

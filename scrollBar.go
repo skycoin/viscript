@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"fmt"
+	"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
@@ -20,7 +20,7 @@ type ScrollBar struct {
 	LenOfVoid float32 // length of the negative space representing the length of entire document
 }
 
-func (bar *ScrollBar) StartFrame(tp TextPanel) {
+func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
 	hei := textRend.CharHei * float32(tp.NumCharsY) /* height of panel */
 
 	if /* content smaller than screen */ len(tp.Body) <= tp.NumCharsY {
@@ -35,8 +35,10 @@ func (bar *ScrollBar) StartFrame(tp TextPanel) {
 	}
 }
 
-func (bar *ScrollBar) Scroll(tp *TextPanel, mousePixelDeltaY float64) {
-	// y increment (for bar) in gl space
+func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, mousePixelDeltaY float64) {
+	fmt.Printf(".ScrollThisMuch() bar.LenOfBar: %.3f\n", bar.LenOfBar)
+	fmt.Printf(".ScrollThisMuch() bar.LenOfVoid: %.3f\n", bar.LenOfVoid)
+	// y position increment (for bar) in gl space
 	yInc := float32(mousePixelDeltaY) * textRend.PixelHei
 
 	bar.PosY -= yInc
@@ -57,6 +59,8 @@ func (bar *ScrollBar) Scroll(tp *TextPanel, mousePixelDeltaY float64) {
 	if tp.ScrollDistY < -tp.LenOfOffscreenY {
 		tp.ScrollDistY = -tp.LenOfOffscreenY
 	}
+
+	fmt.Printf(".Scroll() tp.ScrollDistY: %.1f\n", tp.ScrollDistY)
 }
 
 func (bar *ScrollBar) DrawVertical(atlasX, atlasY float32) {
