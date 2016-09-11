@@ -22,14 +22,14 @@ var code = TextPanel{NumCharsY: 14}
 var cons = TextPanel{NumCharsY: 10} // console (runtime feedback log)
 
 type TextRenderer struct {
-	pixelWid      float32
-	pixelHei      float32
-	chWid         float32
-	chHei         float32
-	chWidInPixels int
-	chHeiInPixels int
-	UvSpan        float32 // looking into 16/16 atlas/grid of character tiles
-	ScreenRad     float32 // entire screen radius (distance to edge
+	PixelWid        float32
+	PixelHei        float32
+	CharWid         float32
+	CharHei         float32
+	CharWidInPixels int
+	CharHeiInPixels int
+	UvSpan          float32 // looking into 16/16 atlas/grid of character tiles
+	ScreenRad       float32 // entire screen radius (distance to edge
 	// in the cardinal directions from the center, corners would be farther away)
 	MaxCharsX int
 	MaxCharsY int
@@ -45,14 +45,14 @@ func (tr *TextRenderer) Init() {
 	tr.ScreenRad = float32(3)
 	tr.MaxCharsX = 80
 	tr.MaxCharsY = 25
-	tr.pixelWid = tr.ScreenRad * 2 / float32(resX)
-	tr.pixelHei = tr.ScreenRad * 2 / float32(resY)
-	tr.chWid = float32(tr.ScreenRad * 2 / float32(tr.MaxCharsX))
-	tr.chHei = float32(tr.ScreenRad * 2 / float32(tr.MaxCharsY))
-	tr.chWidInPixels = int(float32(resX) / float32(tr.MaxCharsX))
-	tr.chHeiInPixels = int(float32(resY) / float32(tr.MaxCharsY))
+	tr.PixelWid = tr.ScreenRad * 2 / float32(resX)
+	tr.PixelHei = tr.ScreenRad * 2 / float32(resY)
+	tr.CharWid = float32(tr.ScreenRad * 2 / float32(tr.MaxCharsX))
+	tr.CharHei = float32(tr.ScreenRad * 2 / float32(tr.MaxCharsY))
+	tr.CharWidInPixels = int(float32(resX) / float32(tr.MaxCharsX))
+	tr.CharHeiInPixels = int(float32(resY) / float32(tr.MaxCharsY))
 
-	cons.Top = tr.ScreenRad - float32(code.NumCharsY+1)*tr.chHei
+	cons.Top = tr.ScreenRad - float32(code.NumCharsY+1)*tr.CharHei
 	cons.Init()
 	code.Init()
 	code.SetupDemoProgram()
@@ -69,11 +69,17 @@ func (tr *TextRenderer) DrawAll() {
 	curs.Draw()
 }
 
+func (tr *TextRenderer) ScrollFocusedPanel(mousePixelDeltaY float64) {
+	for _, pan := range tr.Panels {
+		pan.ScrollIfMouseOver(mousePixelDeltaY)
+	}
+}
+
 func drawCurrentChar(char rune) {
 	x := int(char) % 16
 	y := int(char) / 16
-	w := textRend.chWid // char width
-	h := textRend.chHei // char height
+	w := textRend.CharWid // char width
+	h := textRend.CharHei // char height
 	sp := textRend.UvSpan
 
 	gl.Normal3f(0, 0, 1)

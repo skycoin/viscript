@@ -27,12 +27,12 @@ func (tp *TextPanel) Init() {
 	tp.Right = textRend.ScreenRad
 
 	if tp.Top == 0 {
-		tp.Top = textRend.ScreenRad - textRend.chHei
+		tp.Top = textRend.ScreenRad - textRend.CharHei
 	}
 
-	tp.Bottom = tp.Top - float32(tp.NumCharsY)*textRend.chHei
+	tp.Bottom = tp.Top - float32(tp.NumCharsY)*textRend.CharHei
 
-	tp.Bar.PosX = tp.Right - textRend.chWid
+	tp.Bar.PosX = tp.Right - textRend.CharWid
 	tp.Bar.PosY = tp.Top
 
 	if tp.NumCharsX == 0 {
@@ -67,7 +67,7 @@ func (tp *TextPanel) Draw() {
 		}
 
 		tp.GoToLeftEdge()
-		textRend.CurrY -= textRend.chHei // go down a line height
+		textRend.CurrY -= textRend.CharHei // go down a line height
 	}
 
 	tp.Bar.StartFrame(*tp)

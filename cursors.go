@@ -47,8 +47,8 @@ func (c *Cursors) DrawCharAt(char rune, posX int, posY int) {
 	sp := textRend.UvSpan
 	u := sp * float32(int(char)%16)
 	v := sp * float32(int(char)/16)
-	w := textRend.chWid // char width
-	h := textRend.chHei // char height
+	w := textRend.CharWid // char width
+	h := textRend.CharHei // char height
 	x := -rad + float32(posX)*w
 	y := rad - float32(posY)*h
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	//"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
@@ -21,7 +21,7 @@ type ScrollBar struct {
 }
 
 func (bar *ScrollBar) StartFrame(tp TextPanel) {
-	hei := textRend.chHei * float32(tp.NumCharsY) /* height of panel */
+	hei := textRend.CharHei * float32(tp.NumCharsY) /* height of panel */
 
 	if /* content smaller than screen */ len(tp.Body) <= tp.NumCharsY {
 		// no need for scrollbar
@@ -31,13 +31,13 @@ func (bar *ScrollBar) StartFrame(tp TextPanel) {
 	} else {
 		bar.LenOfBar = float32(tp.NumCharsY) / float32(len(tp.Body)) * hei
 		bar.LenOfVoid = hei - bar.LenOfBar
-		tp.LenOfOffscreenY = float32(len(tp.Body)-tp.NumCharsY) * textRend.chHei
+		tp.LenOfOffscreenY = float32(len(tp.Body)-tp.NumCharsY) * textRend.CharHei
 	}
 }
 
 func (bar *ScrollBar) Scroll(tp *TextPanel, mousePixelDeltaY float64) {
 	// y increment (for bar) in gl space
-	yInc := float32(mousePixelDeltaY) * textRend.pixelHei
+	yInc := float32(mousePixelDeltaY) * textRend.PixelHei
 
 	bar.PosY -= yInc
 
@@ -72,7 +72,7 @@ func (bar *ScrollBar) DrawVertical(atlasX, atlasY float32) {
 
 	// bottom left   0, 1
 	gl.TexCoord2f(u, v+sp)
-	gl.Vertex3f(rad-textRend.chWid, bott, 0)
+	gl.Vertex3f(rad-textRend.CharWid, bott, 0)
 
 	// bottom right   1, 1
 	gl.TexCoord2f(u+sp, v+sp)
@@ -84,5 +84,5 @@ func (bar *ScrollBar) DrawVertical(atlasX, atlasY float32) {
 
 	// top left   0, 0
 	gl.TexCoord2f(u, v)
-	gl.Vertex3f(rad-textRend.chWid, top, 0)
+	gl.Vertex3f(rad-textRend.CharWid, top, 0)
 }

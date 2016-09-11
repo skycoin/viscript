@@ -33,19 +33,17 @@ func pollEventsAndHandleAnInput(w *glfw.Window) {
 }
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
-	curs.MouseGlX = -textRend.ScreenRad + float32(x)*textRend.pixelWid
-	curs.MouseGlY = textRend.ScreenRad - float32(y)*textRend.pixelHei
-	curs.MouseX = int(x) / textRend.chWidInPixels
-	curs.MouseY = int(y) / textRend.chHeiInPixels
+	curs.MouseGlX = -textRend.ScreenRad + float32(x)*textRend.PixelWid
+	curs.MouseGlY = textRend.ScreenRad - float32(y)*textRend.PixelHei
+	curs.MouseX = int(x) / textRend.CharWidInPixels
+	curs.MouseY = int(y) / textRend.CharHeiInPixels
 	mousePixelDeltaX = x - prevMousePixelX
 	mousePixelDeltaY = y - prevMousePixelY
 	prevMousePixelX = x
 	prevMousePixelY = y
 
 	if /* LMB held */ w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		//textRend.Focused.ScrollIfMouseOver(mousePixelDeltaY)
-		code.ScrollIfMouseOver(mousePixelDeltaY)
-		cons.ScrollIfMouseOver(mousePixelDeltaY)
+		textRend.ScrollFocusedPanel(mousePixelDeltaY)
 	}
 
 	// build message
@@ -54,8 +52,7 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 }
 
 func onMouseScroll(w *glfw.Window, xOff float64, yOff float64) {
-	code.ScrollIfMouseOver(yOff * -30)
-	cons.ScrollIfMouseOver(yOff * -30)
+	textRend.ScrollFocusedPanel(yOff * -30)
 
 	// build message
 	content := append(getBytesOfFloat64(xOff), getBytesOfFloat64(yOff)...)
