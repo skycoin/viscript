@@ -36,6 +36,7 @@ func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
 }
 
 func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, mousePixelDeltaY float64) {
+	bar.UpdateSize(tp)
 	fmt.Printf(".ScrollThisMuch() bar.LenOfBar: %.3f\n", bar.LenOfBar)
 	fmt.Printf(".ScrollThisMuch() bar.LenOfVoid: %.3f\n", bar.LenOfVoid)
 	// y position increment (for bar) in gl space
