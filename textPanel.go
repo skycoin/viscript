@@ -15,7 +15,7 @@ type TextPanel struct {
 	ScrollDistY     float32 // distance/offset from top of document (negative number cuz Y goes down screen)
 	LenOfOffscreenY float32
 	Selection       SelectionRange
-	Bar             ScrollBar
+	Bar             *ScrollBar
 	Body            []string
 }
 
@@ -32,6 +32,7 @@ func (tp *TextPanel) Init() {
 
 	tp.Bottom = tp.Top - float32(tp.NumCharsY)*textRend.CharHei
 
+	tp.Bar = &ScrollBar{}
 	tp.Bar.PosX = tp.Right - textRend.CharWid
 	tp.Bar.PosY = tp.Top
 
@@ -46,6 +47,7 @@ func (tp *TextPanel) Init() {
 }
 
 func (tp *TextPanel) GoToTopEdge() {
+	//fmt.Printf("GoToTopEdge() tp.ScrollDistY: %.2f\n", tp.ScrollDistY)
 	textRend.CurrY = tp.Top - tp.ScrollDistY
 }
 func (tp *TextPanel) GoToLeftEdge() {
@@ -57,6 +59,7 @@ func (tp *TextPanel) GoToTopLeftCorner() {
 }
 
 func (tp *TextPanel) Draw() {
+	tp.Bar.UpdateSize(tp)
 	tp.GoToTopLeftCorner()
 	tp.DrawBackground(11, 13)
 
@@ -70,7 +73,6 @@ func (tp *TextPanel) Draw() {
 		textRend.CurrY -= textRend.CharHei // go down a line height
 	}
 
-	tp.Bar.UpdateSize(tp)
 	tp.Bar.DrawVertical(2, 11)
 }
 
@@ -101,9 +103,8 @@ func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 
 func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaY float64) {
 	if tp.ContainsMouseCursor() {
-		fmt.Printf("ScrollIfMouseOver tp.Bar.LenOfBar: %.3f\n", tp.Bar.LenOfBar)
-		fmt.Printf("ScrollIfMouseOver tp.Bar.LenOfVoid: %.3f\n", tp.Bar.LenOfVoid)
 		tp.Bar.ScrollThisMuch(tp, mousePixelDeltaY)
+		//fmt.Printf("ScrollIfMouseOver() tp.ScrollDistY AFTER ScrollThisMuch: %.3f\n", tp.ScrollDistY)
 	}
 }
 
