@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	//"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
@@ -27,22 +27,14 @@ func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
 		// no need for scrollbar
 		bar.LenOfBar = 0
 		bar.LenOfVoid = hei
-		tp.LenOfOffscreenY = 0
 	} else {
 		bar.LenOfBar = float32(tp.NumCharsY) / float32(len(tp.Body)) * hei
 		bar.LenOfVoid = hei - bar.LenOfBar
-		tp.LenOfOffscreenY = float32(len(tp.Body)-tp.NumCharsY) * textRend.CharHei
 	}
 }
 
-func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, mousePixelDeltaY float64) {
-	//fmt.Printf(".ScrollThisMuch() bar.LenOfBar: %.3f\n", bar.LenOfBar)
-	//fmt.Printf(".ScrollThisMuch() bar.LenOfVoid: %.3f\n", bar.LenOfVoid)
-
-	// y position increment (for bar) in gl space
-	yInc := float32(mousePixelDeltaY) * textRend.PixelHei
-
-	bar.PosY -= yInc
+func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, incrementY float32) {
+	bar.PosY -= incrementY
 
 	if bar.PosY < tp.Bottom+bar.LenOfBar {
 		bar.PosY = tp.Bottom + bar.LenOfBar
@@ -50,19 +42,6 @@ func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, mousePixelDeltaY float64) {
 	if bar.PosY > tp.Top {
 		bar.PosY = tp.Top
 	}
-
-	tp.ScrollDistY -= yInc / bar.LenOfVoid * tp.LenOfOffscreenY
-
-	if tp.ScrollDistY > 0 {
-		tp.ScrollDistY = 0
-	}
-
-	if tp.ScrollDistY < -tp.LenOfOffscreenY {
-		tp.ScrollDistY = -tp.LenOfOffscreenY
-	}
-
-	fmt.Printf(".Scroll() tp.ScrollDistY: %.1f\n", tp.ScrollDistY)
-	fmt.Printf(".Scroll() tp.LenOfOffscreenY: %.1f\n", tp.LenOfOffscreenY)
 }
 
 func (bar *ScrollBar) DrawVertical(atlasX, atlasY float32) {

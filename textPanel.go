@@ -60,6 +60,14 @@ func (tp *TextPanel) GoToTopLeftCorner() {
 
 func (tp *TextPanel) Draw() {
 	tp.Bar.UpdateSize(tp)
+	//fmt.Printf("LenOfOffscreenY: %.2f\n", tp.LenOfOffscreenY)
+	if /* content smaller than screen */ len(tp.Body) <= tp.NumCharsY {
+		// no need for scrollbar
+		tp.LenOfOffscreenY = 0
+	} else {
+		tp.LenOfOffscreenY = float32(len(tp.Body)-tp.NumCharsY) * textRend.CharHei
+	}
+
 	tp.GoToTopLeftCorner()
 	tp.DrawBackground(11, 13)
 
@@ -103,8 +111,24 @@ func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 
 func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaY float64) {
 	if tp.ContainsMouseCursor() {
-		tp.Bar.ScrollThisMuch(tp, mousePixelDeltaY)
+		// y position increment (for bar) in gl space
+		yInc := float32(mousePixelDeltaY) * textRend.PixelHei
+		tp.Bar.ScrollThisMuch(tp, yInc)
 		//fmt.Printf("ScrollIfMouseOver() tp.ScrollDistY AFTER ScrollThisMuch: %.3f\n", tp.ScrollDistY)
+
+		tp.ScrollDistY -= yInc / tp.Bar.LenOfVoid * tp.LenOfOffscreenY
+
+		if tp.ScrollDistY > 0 {
+			tp.ScrollDistY = 0
+		}
+
+		if tp.ScrollDistY < -tp.LenOfOffscreenY {
+			tp.ScrollDistY = -tp.LenOfOffscreenY
+		}
+
+		fmt.Printf(".Scroll() tp.Bar.LenOfVoid: %.1f\n", tp.Bar.LenOfVoid)
+		fmt.Printf(".Scroll() tp.ScrollDistY: %.1f\n", tp.ScrollDistY)
+		fmt.Printf(".Scroll() tp.LenOfOffscreenY: %.1f\n", tp.LenOfOffscreenY)
 	}
 }
 
@@ -132,21 +156,19 @@ func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {
 }
 
 func (tp *TextPanel) SetupDemoProgram() {
-	tp.Body = append(tp.Body, "PRESS CTRL-R to RUN your program")
-	tp.Body = append(tp.Body, "")
-	tp.Body = append(tp.Body, "------- variable declarations -------")
+	tp.Body = append(tp.Body, "// ------- variable declarations -------")
 	tp.Body = append(tp.Body, "var myVar int32")
 	tp.Body = append(tp.Body, "var a int32 = 42")
 	tp.Body = append(tp.Body, "var b int32 = 58")
 	tp.Body = append(tp.Body, "")
-	tp.Body = append(tp.Body, "------- function declarations -------")
+	tp.Body = append(tp.Body, "// ------- function declarations -------")
 	tp.Body = append(tp.Body, "func myFunc(a,b){")
 	tp.Body = append(tp.Body, "}")
 	tp.Body = append(tp.Body, "func nuthaFunc (a, b) {")
 	tp.Body = append(tp.Body, "        var myLocal int32")
 	tp.Body = append(tp.Body, "    }    ")
 	tp.Body = append(tp.Body, "")
-	tp.Body = append(tp.Body, "------- function calls -------")
+	tp.Body = append(tp.Body, "// ------- function calls -------")
 	tp.Body = append(tp.Body, "    sub32(7, 9)")
 	tp.Body = append(tp.Body, "sub32(4,8)")
 	tp.Body = append(tp.Body, "mult32(7, 7)")

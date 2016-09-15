@@ -69,13 +69,14 @@ func parse() {
 	var declFuncStart = regexp.MustCompile(`^func ([a-zA-Z]\w*)( +)?\((.*)\)( +)?\{$`)
 	var declFuncEnd = regexp.MustCompile(`^( +)?\}( +)?$`)
 	var funcCall = regexp.MustCompile(`^( +)?(add32|sub32|mult32|div32)\(([0-9]+|[a-zA-Z]\w*),( +)?([0-9]+|[a-zA-Z]\w*)\)$`)
+	var comment = regexp.MustCompile(`^//.*`)
 
 	for i, line := range code.Body {
 		switch {
 		case varInt32.MatchString(line):
 			result := varInt32.FindStringSubmatch(line)
 			con.Add(fmt.Sprintf("%d: variable (%s) declaration\n", i, result[3]))
-			printIntsFrom(currFunc)
+			//printIntsFrom(currFunc)
 
 			if result[8] == "" {
 				currFunc.VarInt32s = append(currFunc.VarInt32s, VarInt32{result[3], 0})
@@ -89,7 +90,7 @@ func parse() {
 				}
 			}
 
-			printIntsFrom(currFunc)
+			//printIntsFrom(currFunc)
 		case declFuncStart.MatchString(line):
 			result := declFuncStart.FindStringSubmatch(line)
 			con.Add(fmt.Sprintf("%d: function (%s) declaration, with parameters: %s\n", i, result[1], result[3]))
@@ -102,8 +103,8 @@ func parse() {
 			}
 		case declFuncEnd.MatchString(line):
 			con.Add(fmt.Sprintf("function close...\n"))
-			printIntsFrom(rootFunc)
-			printIntsFrom(currFunc)
+			//printIntsFrom(rootFunc)
+			//printIntsFrom(currFunc)
 
 			if currFunc.Name == "root" {
 				con.Add(fmt.Sprintf("ERROR! Root level function doesn't need enclosure!\n"))
@@ -113,7 +114,7 @@ func parse() {
 		case funcCall.MatchString(line): // FIXME: hardwired for 4 undefined math functions, with 2 params each
 			result := funcCall.FindStringSubmatch(line)
 			con.Add(fmt.Sprintf("%d: function call\n", i))
-			printIntsFrom(currFunc)
+			//printIntsFrom(currFunc)
 
 			/*
 				// prints out all captures
@@ -141,10 +142,12 @@ func parse() {
 			case "div32":
 				con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
 			}
+		case comment.MatchString(line): // allow "//" comments
+			fallthrough
 		case line == "":
 			// just ignore
 		default:
-			con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: %s\n", i, line))
+			con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
 		}
 	}
 }
