@@ -6,17 +6,15 @@ import (
 )
 
 type TextPanel struct {
-	Top             float32
-	Bottom          float32
-	Left            float32
-	Right           float32
-	NumCharsX       int
-	NumCharsY       int
-	ScrollDistY     float32 // distance/offset from top of document (negative number cuz Y goes down screen)
-	LenOfOffscreenY float32
-	Selection       SelectionRange
-	Bar             *ScrollBar
-	Body            []string
+	Top       float32
+	Bottom    float32
+	Left      float32
+	Right     float32
+	NumCharsX int
+	NumCharsY int
+	Selection SelectionRange
+	Bar       *ScrollBar
+	Body      []string
 }
 
 func (tp *TextPanel) Init() {
@@ -48,7 +46,7 @@ func (tp *TextPanel) Init() {
 
 func (tp *TextPanel) GoToTopEdge() {
 	//fmt.Printf("GoToTopEdge() tp.ScrollDistY: %.2f\n", tp.ScrollDistY)
-	textRend.CurrY = tp.Top - tp.ScrollDistY
+	textRend.CurrY = tp.Top - tp.Bar.ScrollDistY
 }
 func (tp *TextPanel) GoToLeftEdge() {
 	textRend.CurrX = tp.Left
@@ -60,14 +58,6 @@ func (tp *TextPanel) GoToTopLeftCorner() {
 
 func (tp *TextPanel) Draw() {
 	tp.Bar.UpdateSize(tp)
-	//fmt.Printf("LenOfOffscreenY: %.2f\n", tp.LenOfOffscreenY)
-	if /* content smaller than screen */ len(tp.Body) <= tp.NumCharsY {
-		// no need for scrollbar
-		tp.LenOfOffscreenY = 0
-	} else {
-		tp.LenOfOffscreenY = float32(len(tp.Body)-tp.NumCharsY) * textRend.CharHei
-	}
-
 	tp.GoToTopLeftCorner()
 	tp.DrawBackground(11, 13)
 
@@ -114,21 +104,6 @@ func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaY float64) {
 		// y position increment (for bar) in gl space
 		yInc := float32(mousePixelDeltaY) * textRend.PixelHei
 		tp.Bar.ScrollThisMuch(tp, yInc)
-		//fmt.Printf("ScrollIfMouseOver() tp.ScrollDistY AFTER ScrollThisMuch: %.3f\n", tp.ScrollDistY)
-
-		tp.ScrollDistY -= yInc / tp.Bar.LenOfVoid * tp.LenOfOffscreenY
-
-		if tp.ScrollDistY > 0 {
-			tp.ScrollDistY = 0
-		}
-
-		if tp.ScrollDistY < -tp.LenOfOffscreenY {
-			tp.ScrollDistY = -tp.LenOfOffscreenY
-		}
-
-		fmt.Printf(".Scroll() tp.Bar.LenOfVoid: %.1f\n", tp.Bar.LenOfVoid)
-		fmt.Printf(".Scroll() tp.ScrollDistY: %.1f\n", tp.ScrollDistY)
-		fmt.Printf(".Scroll() tp.LenOfOffscreenY: %.1f\n", tp.LenOfOffscreenY)
 	}
 }
 

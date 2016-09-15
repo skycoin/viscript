@@ -45,11 +45,11 @@ type VarString struct {
 }
 
 type Func struct {
-	Name      string
-	VarBools  []VarBool
-	VarInt32s []VarInt32
-	VarString []VarString
-	Funcs     []Func
+	Name       string
+	VarBools   []VarBool
+	VarInt32s  []VarInt32
+	VarStrings []VarString
+	Funcs      []Func
 	// next is just temporary?
 	Parameters []string
 }

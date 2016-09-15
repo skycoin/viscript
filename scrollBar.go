@@ -14,22 +14,26 @@ gives us the jump size in scrolling through the text body
 */
 
 type ScrollBar struct {
-	PosX      float32
-	PosY      float32
-	LenOfBar  float32
-	LenOfVoid float32 // length of the negative space representing the length of entire document
+	PosX            float32
+	PosY            float32
+	LenOfBar        float32
+	LenOfVoid       float32 // length of the negative space representing the length of entire document
+	LenOfOffscreenY float32
+	ScrollDistY     float32 // distance/offset from top of document (negative number cuz Y goes down screen)
 }
 
 func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
 	hei := textRend.CharHei * float32(tp.NumCharsY) /* height of panel */
 
 	if /* content smaller than screen */ len(tp.Body) <= tp.NumCharsY {
-		// no need for scrollbar
+		// NO BAR
 		bar.LenOfBar = 0
 		bar.LenOfVoid = hei
+		bar.LenOfOffscreenY = 0
 	} else {
 		bar.LenOfBar = float32(tp.NumCharsY) / float32(len(tp.Body)) * hei
 		bar.LenOfVoid = hei - bar.LenOfBar
+		bar.LenOfOffscreenY = float32(len(tp.Body)-tp.NumCharsY) * textRend.CharHei
 	}
 }
 
@@ -41,6 +45,16 @@ func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, incrementY float32) {
 	}
 	if bar.PosY > tp.Top {
 		bar.PosY = tp.Top
+	}
+
+	bar.ScrollDistY -= incrementY / bar.LenOfVoid * bar.LenOfOffscreenY
+
+	if bar.ScrollDistY > 0 {
+		bar.ScrollDistY = 0
+	}
+
+	if bar.ScrollDistY < -bar.LenOfOffscreenY {
+		bar.ScrollDistY = -bar.LenOfOffscreenY
 	}
 }
 
