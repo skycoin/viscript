@@ -46,7 +46,7 @@ func (tp *TextPanel) Init() {
 
 func (tp *TextPanel) GoToTopEdge() {
 	//fmt.Printf("GoToTopEdge() tp.ScrollDistY: %.2f\n", tp.ScrollDistY)
-	textRend.CurrY = tp.Top - tp.Bar.ScrollDistY
+	textRend.CurrY = tp.Top - tp.Bar.ScrollDistY //tp.Bar.OffsetY
 }
 func (tp *TextPanel) GoToLeftEdge() {
 	textRend.CurrX = tp.Left
@@ -63,11 +63,15 @@ func (tp *TextPanel) Draw() {
 
 	// body of text
 	for _, line := range tp.Body {
-		for _, c := range line {
-			drawCurrentChar(c)
+		if textRend.CurrY <= tp.Top { // y >= tp.Bar.NumLinesToSkip {
+			// draw line of text
+			for _, c := range line {
+				drawCurrentChar(c)
+			}
+
+			tp.GoToLeftEdge()
 		}
 
-		tp.GoToLeftEdge()
 		textRend.CurrY -= textRend.CharHei // go down a line height
 	}
 

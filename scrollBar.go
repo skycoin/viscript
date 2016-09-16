@@ -20,6 +20,8 @@ type ScrollBar struct {
 	LenOfVoid       float32 // length of the negative space representing the length of entire document
 	LenOfOffscreenY float32
 	ScrollDistY     float32 // distance/offset from top of document (negative number cuz Y goes down screen)
+	OffsetY         float32 // the top of the 1st visible line
+	NumLinesToSkip  int
 }
 
 func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
@@ -48,6 +50,8 @@ func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, incrementY float32) {
 	}
 
 	bar.ScrollDistY -= incrementY / bar.LenOfVoid * bar.LenOfOffscreenY
+	bar.NumLinesToSkip = int(-bar.ScrollDistY / textRend.CharHei)
+	bar.OffsetY = bar.ScrollDistY - float32(bar.NumLinesToSkip)*textRend.CharHei
 
 	if bar.ScrollDistY > 0 {
 		bar.ScrollDistY = 0
