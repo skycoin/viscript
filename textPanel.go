@@ -63,10 +63,16 @@ func (tp *TextPanel) Draw() {
 
 	// body of text
 	for _, line := range tp.Body {
-		if textRend.CurrY <= tp.Top { // y >= tp.Bar.NumLinesToSkip {
+		if textRend.CurrY <= tp.Top+textRend.CharHei { // if line visible
+			var clipSpan float32
+
+			if textRend.CurrY > tp.Top { // if line needs its top clipped
+				clipSpan = textRend.CurrY - tp.Top
+			}
+
 			// draw line of text
 			for _, c := range line {
-				drawCurrentChar(c)
+				drawCurrentChar(c, clipSpan)
 			}
 
 			tp.GoToLeftEdge()
