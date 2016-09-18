@@ -140,26 +140,31 @@ func onKey(
 		}
 
 		switch key {
+
 		case glfw.KeyEnter:
 			startOfLine := code.Body[curs.Y][:curs.X]
 			restOfLine := code.Body[curs.Y][curs.X:len(code.Body[curs.Y])]
-			//restOfDoc := code.Body[curs.Y+1 : len(code.Body)]
-			//startOfDoc := code.Body[:curs.Y]
+			fmt.Printf("startOfLine: \"%s\"\n", startOfLine)
+			fmt.Printf(" restOfLine: \"%s\"\n", restOfLine)
+			code.Body[curs.Y] = startOfLine
+			code.Body = insert(code.Body, curs.Y+1, restOfLine)
 
-			newDoc := make([]string, 0)
+			/*
+				newDoc := make([]string, 0)
 
-			for i := 0; i < len(code.Body); i++ {
-				//fmt.Printf("___[%d]: %s\n", i, code.Body[i])
+				for i := 0; i < len(code.Body); i++ {
+					//fmt.Printf("___[%d]: %s\n", i, code.Body[i])
 
-				if i == curs.Y {
-					newDoc = append(newDoc, startOfLine)
-					newDoc = append(newDoc, restOfLine)
-				} else {
-					newDoc = append(newDoc, code.Body[i])
+					if i == curs.Y {
+						newDoc = append(newDoc, startOfLine)
+						newDoc = append(newDoc, restOfLine)
+					} else {
+						newDoc = append(newDoc, code.Body[i])
+					}
 				}
-			}
 
-			code.Body = newDoc
+				code.Body = newDoc
+			*/
 			curs.X = 0
 			curs.Y++
 
@@ -218,6 +223,7 @@ func onKey(
 			code.RemoveCharacter(false)
 		case glfw.KeyDelete:
 			code.RemoveCharacter(true)
+
 		}
 	}
 
@@ -227,6 +233,14 @@ func onKey(
 	content = append(content, getByteOfUInt8(uint8(action))...)
 	content = append(content, getByteOfUInt8(uint8(mod))...)
 	dispatchWithPrefix(content, MessageKey)
+}
+
+// must be in range
+func insert(slice []string, index int, value string) []string {
+	slice = slice[0 : len(slice)+1]      // grow the slice by one element
+	copy(slice[index+1:], slice[index:]) // move the upper part of the slice out of the way and open a hole
+	slice[index] = value
+	return slice
 }
 
 func dispatchWithPrefix(content []byte, msgType uint8) {

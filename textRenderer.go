@@ -62,11 +62,15 @@ func (tr *TextRenderer) Init() {
 }
 
 func (tr *TextRenderer) DrawAll() {
-	for _, pan := range tr.Panels {
-		pan.Draw()
-	}
+	curs.Update()
 
-	curs.Draw()
+	for i, pan := range tr.Panels {
+		if i == 0 {
+			pan.Draw(true)
+		} else {
+			pan.Draw(false)
+		}
+	}
 }
 
 func (tr *TextRenderer) ScrollFocusedPanel(mousePixelDeltaY float64) {

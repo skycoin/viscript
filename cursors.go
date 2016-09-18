@@ -27,21 +27,20 @@ type Cursors struct {
 	MouseGlY        float32
 }
 
-func (c *Cursors) Draw() {
+func (c *Cursors) Update() {
 	// mouse
-	c.DrawCharAt('#', c.MouseX, c.MouseY)
+	// (don't know that we ever need this, but it only worked properly
+	// when we had just 1 panel that took up the whole client area of this app)
+	//c.DrawCharAt('#', c.MouseX, c.MouseY)
 
 	// text/char insert
 	if c.NextBlinkChange.Before(time.Now()) {
 		c.NextBlinkChange = time.Now().Add(time.Millisecond * 170)
 		c.Visible = !c.Visible
 	}
-
-	if c.Visible == true {
-		c.DrawCharAt('_', c.X, c.Y)
-	}
 }
 
+// this function was designed for a single panel, and before scrolling was added
 func (c *Cursors) DrawCharAt(char rune, posX int, posY int) {
 	rad := textRend.ScreenRad
 	sp := textRend.UvSpan

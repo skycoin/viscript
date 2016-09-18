@@ -40,9 +40,9 @@ func processMessage(message []byte) {
 
 	case MessageMouseButton:
 		s("MessageMouseButton", message)
-		curs.ConvertMouseClickToTextCursorPosition(
-			getAndShowUInt8("Button", message),
-			getAndShowUInt8("Action", message))
+		//curs.ConvertMouseClickToTextCursorPosition(
+		getAndShowUInt8("Button", message) //,
+		getAndShowUInt8("Action", message) //)
 		getAndShowUInt8("Mod", message)
 
 	case MessageCharacter:
