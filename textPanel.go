@@ -74,8 +74,17 @@ func (tp *TextPanel) Draw(cursorWanted bool) {
 			for x, c := range line {
 				drawCurrentChar(c, clipSpan)
 
-				if cursorWanted && curs.Visible == true && x == curs.X && y == curs.Y {
-					textRend.CurrX -= textRend.CharWid
+				if cursorWanted && curs.Visible == true {
+					if x == curs.X && y == curs.Y {
+						textRend.CurrX -= textRend.CharWid
+						drawCurrentChar('_', clipSpan)
+					}
+				}
+			}
+
+			// draw at the end of line if needed
+			if y == curs.Y && curs.X == len(line) {
+				if cursorWanted && curs.Visible == true {
 					drawCurrentChar('_', clipSpan)
 				}
 			}
