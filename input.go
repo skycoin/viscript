@@ -139,12 +139,13 @@ func onKey(
 		switch key {
 
 		case glfw.KeyEnter:
-			startOfLine := code.Body[curs.TextY][:curs.TextX]
-			restOfLine := code.Body[curs.TextY][curs.TextX:len(code.Body[curs.TextY])]
+			b := textRend.Panels[0] // FIXME if/when we need multiple panels with text input
+			startOfLine := b[curs.TextY][:curs.TextX]
+			restOfLine := b[curs.TextY][curs.TextX:len(b[curs.TextY])]
 			fmt.Printf("startOfLine: \"%s\"\n", startOfLine)
 			fmt.Printf(" restOfLine: \"%s\"\n", restOfLine)
-			code.Body[curs.TextY] = startOfLine
-			code.Body = insert(code.Body, curs.TextY+1, restOfLine)
+			b[curs.TextY] = startOfLine
+			b = insert(b, curs.TextY+1, restOfLine)
 
 			/*
 				newDoc := make([]string, 0)

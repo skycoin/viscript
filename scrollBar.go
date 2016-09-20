@@ -37,6 +37,16 @@ func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
 	}
 }
 
+func (bar *ScrollBar) DragHandleContainsMouseCursor() bool {
+	if curs.MouseGlY <= bar.PosY && curs.MouseGlY >= bar.PosY-bar.LenOfBar {
+		if curs.MouseGlX <= bar.PosX+textRend.CharWid && curs.MouseGlX >= bar.PosX {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, incrementY float32) {
 	bar.PosY -= incrementY
 
