@@ -75,7 +75,7 @@ func (tp *TextPanel) Draw(cursorWanted bool) {
 				drawCurrentChar(c, clipSpan)
 
 				if cursorWanted && curs.Visible == true {
-					if x == curs.X && y == curs.Y {
+					if x == curs.TextX && y == curs.TextY {
 						textRend.CurrX -= textRend.CharWid
 						drawCurrentChar('_', clipSpan)
 					}
@@ -83,7 +83,7 @@ func (tp *TextPanel) Draw(cursorWanted bool) {
 			}
 
 			// draw at the end of line if needed
-			if y == curs.Y && curs.X == len(line) {
+			if y == curs.TextY && curs.TextX == len(line) {
 				if cursorWanted && curs.Visible == true {
 					drawCurrentChar('_', clipSpan)
 				}
@@ -143,13 +143,13 @@ func (tp *TextPanel) ContainsMouseCursor() bool {
 
 func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {
 	if fromUnderCursor {
-		if len(tp.Body[curs.Y]) > curs.X {
-			tp.Body[curs.Y] = tp.Body[curs.Y][:curs.X] + tp.Body[curs.Y][curs.X+1:len(tp.Body[curs.Y])]
+		if len(tp.Body[curs.TextY]) > curs.TextX {
+			tp.Body[curs.TextY] = tp.Body[curs.TextY][:curs.TextX] + tp.Body[curs.TextY][curs.TextX+1:len(tp.Body[curs.TextY])]
 		}
 	} else {
-		if curs.X > 0 {
-			tp.Body[curs.Y] = tp.Body[curs.Y][:curs.X-1] + tp.Body[curs.Y][curs.X:len(tp.Body[curs.Y])]
-			curs.X--
+		if curs.TextX > 0 {
+			tp.Body[curs.TextY] = tp.Body[curs.TextY][:curs.TextX-1] + tp.Body[curs.TextY][curs.TextX:len(tp.Body[curs.TextY])]
+			curs.TextX--
 		}
 	}
 }

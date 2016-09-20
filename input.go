@@ -33,10 +33,7 @@ func pollEventsAndHandleAnInput(w *glfw.Window) {
 }
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
-	curs.MouseGlX = -textRend.ScreenRad + float32(x)*textRend.PixelWid
-	curs.MouseGlY = textRend.ScreenRad - float32(y)*textRend.PixelHei
-	curs.MouseX = int(x) / textRend.CharWidInPixels
-	curs.MouseY = int(y) / textRend.CharHeiInPixels
+	curs.UpdatePosition(float32(x), float32(y))
 	mousePixelDeltaX = x - prevMousePixelX
 	mousePixelDeltaY = y - prevMousePixelY
 	prevMousePixelX = x
@@ -135,19 +132,19 @@ func onKey(
 		case glfw.ModShift:
 			fmt.Println("start selecting")
 			code.Selection.CurrentlySelecting = true // FIXME to work on any TextPanel
-			code.Selection.StartX = curs.X
-			code.Selection.StartY = curs.Y
+			code.Selection.StartX = curs.TextX
+			code.Selection.StartY = curs.TextY
 		}
 
 		switch key {
 
 		case glfw.KeyEnter:
-			startOfLine := code.Body[curs.Y][:curs.X]
-			restOfLine := code.Body[curs.Y][curs.X:len(code.Body[curs.Y])]
+			startOfLine := code.Body[curs.TextY][:curs.TextX]
+			restOfLine := code.Body[curs.TextY][curs.TextX:len(code.Body[curs.TextY])]
 			fmt.Printf("startOfLine: \"%s\"\n", startOfLine)
 			fmt.Printf(" restOfLine: \"%s\"\n", restOfLine)
-			code.Body[curs.Y] = startOfLine
-			code.Body = insert(code.Body, curs.Y+1, restOfLine)
+			code.Body[curs.TextY] = startOfLine
+			code.Body = insert(code.Body, curs.TextY+1, restOfLine)
 
 			/*
 				newDoc := make([]string, 0)
@@ -155,7 +152,7 @@ func onKey(
 				for i := 0; i < len(code.Body); i++ {
 					//fmt.Printf("___[%d]: %s\n", i, code.Body[i])
 
-					if i == curs.Y {
+					if i == curs.TextY {
 						newDoc = append(newDoc, startOfLine)
 						newDoc = append(newDoc, restOfLine)
 					} else {
@@ -165,58 +162,58 @@ func onKey(
 
 				code.Body = newDoc
 			*/
-			curs.X = 0
-			curs.Y++
+			curs.TextX = 0
+			curs.TextY++
 
 		case glfw.KeyHome:
 			commonMovementKeyHandling()
-			curs.X = 0
+			curs.TextX = 0
 		case glfw.KeyEnd:
 			commonMovementKeyHandling()
-			curs.X = len(code.Body[curs.Y])
+			curs.TextX = len(code.Body[curs.TextY])
 		case glfw.KeyUp:
 			commonMovementKeyHandling()
 
-			if curs.Y > 0 {
-				curs.Y--
+			if curs.TextY > 0 {
+				curs.TextY--
 
-				if curs.X > len(code.Body[curs.Y]) {
-					curs.X = len(code.Body[curs.Y])
+				if curs.TextX > len(code.Body[curs.TextY]) {
+					curs.TextX = len(code.Body[curs.TextY])
 				}
 			}
 		case glfw.KeyDown:
 			commonMovementKeyHandling()
 
-			if curs.Y < len(code.Body)-1 {
-				curs.Y++
+			if curs.TextY < len(code.Body)-1 {
+				curs.TextY++
 
-				if curs.X > len(code.Body[curs.Y]) {
-					curs.X = len(code.Body[curs.Y])
+				if curs.TextX > len(code.Body[curs.TextY]) {
+					curs.TextX = len(code.Body[curs.TextY])
 				}
 			}
 		case glfw.KeyLeft:
 			commonMovementKeyHandling()
 
-			if curs.X == 0 {
-				if curs.Y > 0 {
-					curs.Y--
-					curs.X = len(code.Body[curs.Y])
+			if curs.TextX == 0 {
+				if curs.TextY > 0 {
+					curs.TextY--
+					curs.TextX = len(code.Body[curs.TextY])
 				}
 			} else {
 				if mod == glfw.ModControl {
-					curs.X = getWordSkipPos(curs.X, -1)
+					curs.TextX = getWordSkipPos(curs.TextX, -1)
 				} else {
-					curs.X--
+					curs.TextX--
 				}
 			}
 		case glfw.KeyRight:
 			commonMovementKeyHandling()
 
-			if curs.X < len(code.Body[curs.Y]) {
+			if curs.TextX < len(code.Body[curs.TextY]) {
 				if mod == glfw.ModControl {
-					curs.X = getWordSkipPos(curs.X, 1)
+					curs.TextX = getWordSkipPos(curs.TextX, 1)
 				} else {
-					curs.X++
+					curs.TextX++
 				}
 			}
 		case glfw.KeyBackspace:
@@ -262,11 +259,11 @@ func getWordSkipPos(xIn int, change int) int {
 			return 0
 		}
 
-		if peekPos >= len(code.Body[curs.Y]) {
-			return len(code.Body[curs.Y])
+		if peekPos >= len(code.Body[curs.TextY]) {
+			return len(code.Body[curs.TextY])
 		}
 
-		if string(code.Body[curs.Y][peekPos]) == " " {
+		if string(code.Body[curs.TextY][peekPos]) == " " {
 			return peekPos
 		}
 	}
@@ -274,8 +271,8 @@ func getWordSkipPos(xIn int, change int) int {
 
 func commonMovementKeyHandling() {
 	if code.Selection.CurrentlySelecting {
-		code.Selection.EndX = curs.X
-		code.Selection.EndY = curs.Y
+		code.Selection.EndX = curs.TextX
+		code.Selection.EndY = curs.TextY
 	} else { // arrow keys without shift gets rid selection
 		code.Selection.StartX = math.MaxUint32
 		code.Selection.StartY = math.MaxUint32

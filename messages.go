@@ -40,9 +40,9 @@ func processMessage(message []byte) {
 
 	case MessageMouseButton:
 		s("MessageMouseButton", message)
-		//curs.ConvertMouseClickToTextCursorPosition(
-		getAndShowUInt8("Button", message) //,
-		getAndShowUInt8("Action", message) //)
+		curs.ConvertMouseClickToTextCursorPosition(
+			getAndShowUInt8("Button", message),
+			getAndShowUInt8("Action", message))
 		getAndShowUInt8("Mod", message)
 
 	case MessageCharacter:
@@ -96,8 +96,8 @@ func insertRuneIntoDocument(s string, message []byte) {
 	} else {
 		fmt.Printf("   [%s: %s]", s, string(value))
 
-		code.Body[curs.Y] = code.Body[curs.Y][:curs.X] + string(value) + code.Body[curs.Y][curs.X:len(code.Body[curs.Y])]
-		curs.X++
+		code.Body[curs.TextY] = code.Body[curs.TextY][:curs.TextX] + string(value) + code.Body[curs.TextY][curs.TextX:len(code.Body[curs.TextY])]
+		curs.TextX++
 	}
 }
 
