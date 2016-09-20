@@ -139,7 +139,7 @@ func onKey(
 		switch key {
 
 		case glfw.KeyEnter:
-			b := textRend.Panels[0] // FIXME if/when we need multiple panels with text input
+			b := textRend.Panels[0].Body // FIXME if/when we need multiple panels with text input
 			startOfLine := b[curs.TextY][:curs.TextX]
 			restOfLine := b[curs.TextY][curs.TextX:len(b[curs.TextY])]
 			fmt.Printf("startOfLine: \"%s\"\n", startOfLine)
