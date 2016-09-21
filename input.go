@@ -40,7 +40,7 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	prevMousePixelY = y
 
 	if /* LMB held */ w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		textRend.ScrollFocusedPanel(mousePixelDeltaY)
+		textRend.ScrollPanelThatIsHoveredOver(mousePixelDeltaY)
 	}
 
 	// build message
@@ -49,7 +49,7 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 }
 
 func onMouseScroll(w *glfw.Window, xOff float64, yOff float64) {
-	textRend.ScrollFocusedPanel(yOff * -30)
+	textRend.ScrollPanelThatIsHoveredOver(yOff * -30)
 
 	// build message
 	content := append(getBytesOfFloat64(xOff), getBytesOfFloat64(yOff)...)
@@ -139,13 +139,15 @@ func onKey(
 		switch key {
 
 		case glfw.KeyEnter:
-			b := textRend.Panels[0].Body // FIXME if/when we need multiple panels with text input
+			b := textRend.Panels[0].Body // FIXME (and further down) if/when we need multiple panels with text input
+			fmt.Printf("b len: \"%d\"  -  code.Body len: \"%d\"\n", len(b), len(code.Body))
+			fmt.Printf("curs.TextX: \"%d\"  -  curs.TextY: \"%d\"\n", curs.TextX, curs.TextY)
 			startOfLine := b[curs.TextY][:curs.TextX]
 			restOfLine := b[curs.TextY][curs.TextX:len(b[curs.TextY])]
 			fmt.Printf("startOfLine: \"%s\"\n", startOfLine)
 			fmt.Printf(" restOfLine: \"%s\"\n", restOfLine)
 			b[curs.TextY] = startOfLine
-			b = insert(b, curs.TextY+1, restOfLine)
+			textRend.Panels[0].Body = insert(b, curs.TextY+1, restOfLine)
 
 			/*
 				newDoc := make([]string, 0)
@@ -165,6 +167,11 @@ func onKey(
 			*/
 			curs.TextX = 0
 			curs.TextY++
+
+			if curs.TextY >= len(b) {
+				curs.TextY = len(b) - 1
+			}
+			fmt.Printf("******** len(b): \"%d\"  -  curs.TextY: \"%d\"\n", len(b), curs.TextY)
 
 		case glfw.KeyHome:
 			commonMovementKeyHandling()

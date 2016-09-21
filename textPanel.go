@@ -6,15 +6,16 @@ import (
 )
 
 type TextPanel struct {
-	Top       float32
-	Bottom    float32
-	Left      float32
-	Right     float32
-	NumCharsX int
-	NumCharsY int
-	Selection SelectionRange
-	Bar       *ScrollBar
-	Body      []string
+	Top        float32
+	Bottom     float32
+	Left       float32
+	Right      float32
+	NumCharsX  int
+	NumCharsY  int
+	IsEditable bool
+	Selection  SelectionRange
+	Bar        *ScrollBar
+	Body       []string
 }
 
 func (tp *TextPanel) Init() {

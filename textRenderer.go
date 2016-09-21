@@ -18,7 +18,7 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
-var code = TextPanel{NumCharsY: 14}
+var code *TextPanel = &TextPanel{NumCharsY: 14, IsEditable: true}
 var cons = TextPanel{NumCharsY: 10} // console (runtime feedback log)
 
 type TextRenderer struct {
@@ -56,8 +56,8 @@ func (tr *TextRenderer) Init() {
 	cons.Init()
 	code.Init()
 	code.SetupDemoProgram()
-	tr.Focused = &code
-	tr.Panels = append(tr.Panels, code)
+	tr.Focused = code
+	tr.Panels = append(tr.Panels, *code)
 	tr.Panels = append(tr.Panels, cons)
 }
 
@@ -73,7 +73,7 @@ func (tr *TextRenderer) DrawAll() {
 	}
 }
 
-func (tr *TextRenderer) ScrollFocusedPanel(mousePixelDeltaY float64) {
+func (tr *TextRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaY float64) {
 	for _, pan := range tr.Panels {
 		pan.ScrollIfMouseOver(mousePixelDeltaY)
 	}
