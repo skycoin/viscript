@@ -71,7 +71,7 @@ func parse() {
 	var funcCall = regexp.MustCompile(`^( +)?(add32|sub32|mult32|div32)\(([0-9]+|[a-zA-Z]\w*),( +)?([0-9]+|[a-zA-Z]\w*)\)$`)
 	var comment = regexp.MustCompile(`^//.*`)
 
-	for i, line := range code.Body {
+	for i, line := range textRend.Focused.Body {
 		switch {
 		case varInt32.MatchString(line):
 			result := varInt32.FindStringSubmatch(line)

@@ -18,7 +18,6 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
-var code *TextPanel = &TextPanel{NumCharsY: 14, IsEditable: true}
 var cons = TextPanel{NumCharsY: 10} // console (runtime feedback log)
 
 type TextRenderer struct {
@@ -52,12 +51,13 @@ func (tr *TextRenderer) Init() {
 	tr.CharWidInPixels = int(float32(resX) / float32(tr.MaxCharsX))
 	tr.CharHeiInPixels = int(float32(resY) / float32(tr.MaxCharsY))
 
-	cons.Top = tr.ScreenRad - float32(code.NumCharsY+1)*tr.CharHei
+	tr.Panels = append(tr.Panels, TextPanel{NumCharsY: 14, IsEditable: true})
+	tr.Panels[0].Init()
+	tr.Panels[0].SetupDemoProgram()
+	tr.Focused = &tr.Panels[0]
+
+	cons.Top = tr.ScreenRad - float32(tr.Focused.NumCharsY+1)*tr.CharHei
 	cons.Init()
-	code.Init()
-	code.SetupDemoProgram()
-	tr.Focused = code
-	tr.Panels = append(tr.Panels, *code)
 	tr.Panels = append(tr.Panels, cons)
 }
 
