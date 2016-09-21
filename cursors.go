@@ -19,11 +19,9 @@ var curs Cursors = Cursors{NextBlinkChange: time.Now(), Visible: true}
 type Cursors struct {
 	NextBlinkChange time.Time
 	Visible         bool
-	TextX           int // current insert position (in character grid space)
-	TextY           int
-	MouseX          int // current position (in character grid space)
+	MouseX          int // current position in character grid space (units/cells)
 	MouseY          int
-	MouseGlX        float32 // current mouse position in OpenGL space
+	MouseGlX        float32 // current mouse position in "analog" OpenGL space
 	MouseGlY        float32
 }
 
@@ -87,18 +85,20 @@ func (c *Cursors) ConvertMouseClickToTextCursorPosition(button, action uint8) {
 	if glfw.MouseButton(button) == glfw.MouseButtonLeft &&
 		glfw.Action(action) == glfw.Press {
 
-		if textRend.Focused.IsEditable && textRend.Focused.ContainsMouseCursor() {
-			if !textRend.Focused.Bar.DragHandleContainsMouseCursor() {
-				if c.MouseY < len(textRend.Focused.Body) {
-					c.TextY = c.MouseY
+		foc := textRend.Focused
 
-					if c.MouseX <= len(textRend.Focused.Body[c.TextY]) {
-						c.TextX = c.MouseX
+		if foc.IsEditable && foc.ContainsMouseCursor() {
+			if !foc.Bar.DragHandleContainsMouseCursor() {
+				if c.MouseY < len(foc.Body) {
+					foc.CursY = c.MouseY
+
+					if c.MouseX <= len(foc.Body[foc.CursY]) {
+						foc.CursX = c.MouseX
 					} else {
-						c.TextX = len(textRend.Focused.Body[c.TextY])
+						foc.CursX = len(foc.Body[foc.CursY])
 					}
 				} else {
-					c.TextY = len(textRend.Focused.Body) - 1
+					foc.CursY = len(foc.Body) - 1
 				}
 			}
 		}

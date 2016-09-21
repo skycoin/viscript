@@ -12,6 +12,8 @@ type TextPanel struct {
 	Right      float32
 	NumCharsX  int
 	NumCharsY  int
+	CursX      int // current cursor/insert position (in character grid cells/units)
+	CursY      int
 	IsEditable bool
 	Selection  SelectionRange
 	Bar        *ScrollBar
@@ -76,7 +78,7 @@ func (tp *TextPanel) Draw(cursorWanted bool) {
 				drawCurrentChar(c, clipSpan)
 
 				if cursorWanted && curs.Visible == true {
-					if x == curs.TextX && y == curs.TextY {
+					if x == tp.CursX && y == tp.CursY {
 						textRend.CurrX -= textRend.CharWid
 						drawCurrentChar('_', clipSpan)
 					}
@@ -84,7 +86,7 @@ func (tp *TextPanel) Draw(cursorWanted bool) {
 			}
 
 			// draw at the end of line if needed
-			if y == curs.TextY && curs.TextX == len(line) {
+			if y == tp.CursY && tp.CursX == len(line) {
 				if cursorWanted && curs.Visible == true {
 					drawCurrentChar('_', clipSpan)
 				}
@@ -144,13 +146,13 @@ func (tp *TextPanel) ContainsMouseCursor() bool {
 
 func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {
 	if fromUnderCursor {
-		if len(tp.Body[curs.TextY]) > curs.TextX {
-			tp.Body[curs.TextY] = tp.Body[curs.TextY][:curs.TextX] + tp.Body[curs.TextY][curs.TextX+1:len(tp.Body[curs.TextY])]
+		if len(tp.Body[tp.CursY]) > tp.CursX {
+			tp.Body[tp.CursY] = tp.Body[tp.CursY][:tp.CursX] + tp.Body[tp.CursY][tp.CursX+1:len(tp.Body[tp.CursY])]
 		}
 	} else {
-		if curs.TextX > 0 {
-			tp.Body[curs.TextY] = tp.Body[curs.TextY][:curs.TextX-1] + tp.Body[curs.TextY][curs.TextX:len(tp.Body[curs.TextY])]
-			curs.TextX--
+		if tp.CursX > 0 {
+			tp.Body[tp.CursY] = tp.Body[tp.CursY][:tp.CursX-1] + tp.Body[tp.CursY][tp.CursX:len(tp.Body[tp.CursY])]
+			tp.CursX--
 		}
 	}
 }

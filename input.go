@@ -134,8 +134,8 @@ func onKey(
 		case glfw.ModShift:
 			fmt.Println("start selecting")
 			foc.Selection.CurrentlySelecting = true // FIXME to work on any TextPanel
-			foc.Selection.StartX = curs.TextX
-			foc.Selection.StartY = curs.TextY
+			foc.Selection.StartX = foc.CursX
+			foc.Selection.StartY = foc.CursY
 		}
 
 		switch key {
@@ -143,13 +143,13 @@ func onKey(
 		case glfw.KeyEnter:
 			b := foc.Body // FIXME (and further down) if/when we need multiple panels with text input
 			fmt.Printf("b len: \"%d\"  -  foc.Body len: \"%d\"\n", len(b), len(foc.Body))
-			fmt.Printf("curs.TextX: \"%d\"  -  curs.TextY: \"%d\"\n", curs.TextX, curs.TextY)
-			startOfLine := b[curs.TextY][:curs.TextX]
-			restOfLine := b[curs.TextY][curs.TextX:len(b[curs.TextY])]
+			fmt.Printf("foc.CursX: \"%d\"  -  foc.CursY: \"%d\"\n", foc.CursX, foc.CursY)
+			startOfLine := b[foc.CursY][:foc.CursX]
+			restOfLine := b[foc.CursY][foc.CursX:len(b[foc.CursY])]
 			fmt.Printf("startOfLine: \"%s\"\n", startOfLine)
 			fmt.Printf(" restOfLine: \"%s\"\n", restOfLine)
-			b[curs.TextY] = startOfLine
-			foc.Body = insert(b, curs.TextY+1, restOfLine)
+			b[foc.CursY] = startOfLine
+			foc.Body = insert(b, foc.CursY+1, restOfLine)
 
 			/*
 				newDoc := make([]string, 0)
@@ -157,7 +157,7 @@ func onKey(
 				for i := 0; i < len(foc.Body); i++ {
 					//fmt.Printf("___[%d]: %s\n", i, foc.Body[i])
 
-					if i == curs.TextY {
+					if i == foc.CursY {
 						newDoc = append(newDoc, startOfLine)
 						newDoc = append(newDoc, restOfLine)
 					} else {
@@ -167,63 +167,63 @@ func onKey(
 
 				foc.Body = newDoc
 			*/
-			curs.TextX = 0
-			curs.TextY++
+			foc.CursX = 0
+			foc.CursY++
 
-			if curs.TextY >= len(b) {
-				curs.TextY = len(b) - 1
+			if foc.CursY >= len(b) {
+				foc.CursY = len(b) - 1
 			}
-			fmt.Printf("******** len(b): \"%d\"  -  curs.TextY: \"%d\"\n", len(b), curs.TextY)
+			fmt.Printf("******** len(b): \"%d\"  -  foc.CursY: \"%d\"\n", len(b), foc.CursY)
 
 		case glfw.KeyHome:
 			commonMovementKeyHandling()
-			curs.TextX = 0
+			foc.CursX = 0
 		case glfw.KeyEnd:
 			commonMovementKeyHandling()
-			curs.TextX = len(foc.Body[curs.TextY])
+			foc.CursX = len(foc.Body[foc.CursY])
 		case glfw.KeyUp:
 			commonMovementKeyHandling()
 
-			if curs.TextY > 0 {
-				curs.TextY--
+			if foc.CursY > 0 {
+				foc.CursY--
 
-				if curs.TextX > len(foc.Body[curs.TextY]) {
-					curs.TextX = len(foc.Body[curs.TextY])
+				if foc.CursX > len(foc.Body[foc.CursY]) {
+					foc.CursX = len(foc.Body[foc.CursY])
 				}
 			}
 		case glfw.KeyDown:
 			commonMovementKeyHandling()
 
-			if curs.TextY < len(foc.Body)-1 {
-				curs.TextY++
+			if foc.CursY < len(foc.Body)-1 {
+				foc.CursY++
 
-				if curs.TextX > len(foc.Body[curs.TextY]) {
-					curs.TextX = len(foc.Body[curs.TextY])
+				if foc.CursX > len(foc.Body[foc.CursY]) {
+					foc.CursX = len(foc.Body[foc.CursY])
 				}
 			}
 		case glfw.KeyLeft:
 			commonMovementKeyHandling()
 
-			if curs.TextX == 0 {
-				if curs.TextY > 0 {
-					curs.TextY--
-					curs.TextX = len(foc.Body[curs.TextY])
+			if foc.CursX == 0 {
+				if foc.CursY > 0 {
+					foc.CursY--
+					foc.CursX = len(foc.Body[foc.CursY])
 				}
 			} else {
 				if mod == glfw.ModControl {
-					curs.TextX = getWordSkipPos(curs.TextX, -1)
+					foc.CursX = getWordSkipPos(foc.CursX, -1)
 				} else {
-					curs.TextX--
+					foc.CursX--
 				}
 			}
 		case glfw.KeyRight:
 			commonMovementKeyHandling()
 
-			if curs.TextX < len(foc.Body[curs.TextY]) {
+			if foc.CursX < len(foc.Body[foc.CursY]) {
 				if mod == glfw.ModControl {
-					curs.TextX = getWordSkipPos(curs.TextX, 1)
+					foc.CursX = getWordSkipPos(foc.CursX, 1)
 				} else {
-					curs.TextX++
+					foc.CursX++
 				}
 			}
 		case glfw.KeyBackspace:
@@ -270,11 +270,11 @@ func getWordSkipPos(xIn int, change int) int {
 			return 0
 		}
 
-		if peekPos >= len(foc.Body[curs.TextY]) {
-			return len(foc.Body[curs.TextY])
+		if peekPos >= len(foc.Body[foc.CursY]) {
+			return len(foc.Body[foc.CursY])
 		}
 
-		if string(foc.Body[curs.TextY][peekPos]) == " " {
+		if string(foc.Body[foc.CursY][peekPos]) == " " {
 			return peekPos
 		}
 	}
@@ -284,8 +284,8 @@ func commonMovementKeyHandling() {
 	foc := textRend.Focused
 
 	if foc.Selection.CurrentlySelecting {
-		foc.Selection.EndX = curs.TextX
-		foc.Selection.EndY = curs.TextY
+		foc.Selection.EndX = foc.CursX
+		foc.Selection.EndY = foc.CursY
 	} else { // arrow keys without shift gets rid selection
 		foc.Selection.StartX = math.MaxUint32
 		foc.Selection.StartY = math.MaxUint32
