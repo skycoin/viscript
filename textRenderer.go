@@ -18,7 +18,7 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
-var cons = TextPanel{NumCharsY: 10} // console (runtime feedback log)
+var cons = TextPanel{NumCharsY: 10, IsEditable: true} // FIXME so its not editable once we're done debugging some things // console (runtime feedback log)
 
 type TextRenderer struct {
 	PixelWid        float32
@@ -64,12 +64,8 @@ func (tr *TextRenderer) Init() {
 func (tr *TextRenderer) DrawAll() {
 	curs.Update()
 
-	for i, pan := range tr.Panels {
-		if i == 0 {
-			pan.Draw(true)
-		} else {
-			pan.Draw(false)
-		}
+	for _, pan := range tr.Panels {
+		pan.Draw()
 	}
 }
 

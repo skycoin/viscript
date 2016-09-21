@@ -143,12 +143,12 @@ func onKey(
 		case glfw.KeyEnter:
 			b := foc.Body // FIXME (and further down) if/when we need multiple panels with text input
 			fmt.Printf("b len: \"%d\"  -  foc.Body len: \"%d\"\n", len(b), len(foc.Body))
-			fmt.Printf("foc.CursX: \"%d\"  -  foc.CursY: \"%d\"\n", foc.CursX, foc.CursY)
 			startOfLine := b[foc.CursY][:foc.CursX]
 			restOfLine := b[foc.CursY][foc.CursX:len(b[foc.CursY])]
 			fmt.Printf("startOfLine: \"%s\"\n", startOfLine)
 			fmt.Printf(" restOfLine: \"%s\"\n", restOfLine)
 			b[foc.CursY] = startOfLine
+			fmt.Printf("foc.CursX: \"%d\"  -  foc.CursY: \"%d\"\n", foc.CursX, foc.CursY)
 			foc.Body = insert(b, foc.CursY+1, restOfLine)
 
 			/*

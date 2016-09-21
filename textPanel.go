@@ -59,7 +59,7 @@ func (tp *TextPanel) GoToTopLeftCorner() {
 	tp.GoToLeftEdge()
 }
 
-func (tp *TextPanel) Draw(cursorWanted bool) {
+func (tp *TextPanel) Draw() {
 	tp.Bar.UpdateSize(tp)
 	tp.GoToTopLeftCorner()
 	tp.DrawBackground(11, 13)
@@ -77,7 +77,7 @@ func (tp *TextPanel) Draw(cursorWanted bool) {
 			for x, c := range line {
 				drawCurrentChar(c, clipSpan)
 
-				if cursorWanted && curs.Visible == true {
+				if tp.IsEditable && curs.Visible == true {
 					if x == tp.CursX && y == tp.CursY {
 						textRend.CurrX -= textRend.CharWid
 						drawCurrentChar('_', clipSpan)
@@ -87,7 +87,7 @@ func (tp *TextPanel) Draw(cursorWanted bool) {
 
 			// draw at the end of line if needed
 			if y == tp.CursY && tp.CursX == len(line) {
-				if cursorWanted && curs.Visible == true {
+				if tp.IsEditable && curs.Visible == true {
 					drawCurrentChar('_', clipSpan)
 				}
 			}
