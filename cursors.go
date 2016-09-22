@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"fmt"
+	"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.1/glfw"
 	"time"
@@ -41,13 +41,19 @@ func (c *Cursors) Update() {
 func (c *Cursors) UpdatePosition(x, y float32) {
 	c.MouseGlX = -textRend.ScreenRad + x*textRend.PixelWid
 	c.MouseGlY = textRend.ScreenRad - y*textRend.PixelHei
+	foc := textRend.Focused
+	panY := c.MouseGlY - foc.Top
+	fmt.Printf("panY: %.2f\n", panY)
+	c.MouseY = int(( /**/ -panY /*+ -foc.Bar.ScrollDistY*/) / textRend.CharHei)
 	c.MouseX = int(x) / textRend.CharWidInPixels
-	// FIXME... (next line VVV) if we ever want additional windows with their own cursors
-	// ....ALSO, it is hardwired for the code window to be 1 character down from top of screen
-	c.MouseY = int((y*textRend.PixelHei+-textRend.Panels[0].Bar.ScrollDistY)/textRend.CharHei) - 1
+	fmt.Printf("c.MouseY: %d\n", c.MouseY)
 
 	if c.MouseY < 0 {
 		c.MouseY = 0
+	}
+
+	if c.MouseY >= len(foc.Body) {
+		c.MouseY = len(foc.Body) - 1
 	}
 }
 
@@ -89,6 +95,8 @@ func (c *Cursors) ConvertMouseClickToTextCursorPosition(button, action uint8) {
 
 		if foc.IsEditable && foc.ContainsMouseCursor() {
 			if !foc.Bar.DragHandleContainsMouseCursor() {
+				fmt.Printf("ConvertMouseClickToTextCursorPosition --- c.MouseY: %d\n", c.MouseY)
+
 				if c.MouseY < len(foc.Body) {
 					foc.CursY = c.MouseY
 

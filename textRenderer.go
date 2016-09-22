@@ -18,8 +18,6 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
-var cons = TextPanel{NumCharsY: 10, IsEditable: true} // FIXME so its not editable once we're done debugging some things // console (runtime feedback log)
-
 type TextRenderer struct {
 	PixelWid        float32
 	PixelHei        float32
@@ -36,7 +34,7 @@ type TextRenderer struct {
 	CurrX   float32
 	CurrY   float32
 	Focused *TextPanel
-	Panels  []TextPanel
+	Panels  []*TextPanel
 }
 
 func (tr *TextRenderer) Init() {
@@ -51,14 +49,14 @@ func (tr *TextRenderer) Init() {
 	tr.CharWidInPixels = int(float32(resX) / float32(tr.MaxCharsX))
 	tr.CharHeiInPixels = int(float32(resY) / float32(tr.MaxCharsY))
 
-	tr.Panels = append(tr.Panels, TextPanel{NumCharsY: 14, IsEditable: true})
+	tr.Panels = append(tr.Panels, &TextPanel{NumCharsY: 14, IsEditable: true})
+	tr.Panels = append(tr.Panels, &TextPanel{NumCharsY: 10, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
+	tr.Focused = tr.Panels[0]
+
 	tr.Panels[0].Init()
 	tr.Panels[0].SetupDemoProgram()
-	tr.Focused = &tr.Panels[0]
-
-	cons.Top = tr.ScreenRad - float32(tr.Focused.NumCharsY+1)*tr.CharHei
-	cons.Init()
-	tr.Panels = append(tr.Panels, cons)
+	tr.Panels[1].Top = tr.ScreenRad - float32(tr.Focused.NumCharsY+1)*tr.CharHei
+	tr.Panels[1].Init()
 }
 
 func (tr *TextRenderer) DrawAll() {

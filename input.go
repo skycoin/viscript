@@ -68,7 +68,7 @@ func onMouseButton(
 		case glfw.MouseButtonLeft:
 			for _, pan := range textRend.Panels {
 				if pan.ContainsMouseCursor() {
-					textRend.Focused = &pan
+					textRend.Focused = pan
 				}
 			}
 		default:

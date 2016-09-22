@@ -78,6 +78,8 @@ func (tp *TextPanel) Draw() {
 				drawCurrentChar(c, clipSpan)
 
 				if tp.IsEditable && curs.Visible == true {
+					//fmt.Printf("tp.CursX, tp.CursY: %d,%d\n", tp.CursX, tp.CursY)
+
 					if x == tp.CursX && y == tp.CursY {
 						textRend.CurrX -= textRend.CharWid
 						drawCurrentChar('_', clipSpan)
