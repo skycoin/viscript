@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	//"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.1/glfw"
 	"time"
@@ -19,8 +19,6 @@ var curs Cursors = Cursors{NextBlinkChange: time.Now(), Visible: true}
 type Cursors struct {
 	NextBlinkChange time.Time
 	Visible         bool
-	MouseX          int // current position in character grid space (units/cells)
-	MouseY          int
 	MouseGlX        float32 // current mouse position in "analog" OpenGL space
 	MouseGlY        float32
 }
@@ -29,7 +27,7 @@ func (c *Cursors) Update() {
 	// mouse
 	// (don't know that we ever need this, but it only worked properly
 	// when we had just 1 panel that took up the whole client area of this app)
-	//c.DrawCharAt('#', c.MouseX, c.MouseY)
+	//c.DrawCharAt('#', .MouseX, .MouseY)
 
 	// text/char insert
 	if c.NextBlinkChange.Before(time.Now()) {
@@ -41,20 +39,6 @@ func (c *Cursors) Update() {
 func (c *Cursors) UpdatePosition(x, y float32) {
 	c.MouseGlX = -textRend.ScreenRad + x*textRend.PixelWid
 	c.MouseGlY = textRend.ScreenRad - y*textRend.PixelHei
-	foc := textRend.Focused
-	panY := c.MouseGlY - foc.Top
-	fmt.Printf("panY: %.2f\n", panY)
-	c.MouseY = int(( /**/ -panY /*+ -foc.Bar.ScrollDistY*/) / textRend.CharHei)
-	c.MouseX = int(x) / textRend.CharWidInPixels
-	fmt.Printf("c.MouseY: %d\n", c.MouseY)
-
-	if c.MouseY < 0 {
-		c.MouseY = 0
-	}
-
-	if c.MouseY >= len(foc.Body) {
-		c.MouseY = len(foc.Body) - 1
-	}
 }
 
 // this function was designed for a single panel, and before scrolling was added
@@ -95,13 +79,11 @@ func (c *Cursors) ConvertMouseClickToTextCursorPosition(button, action uint8) {
 
 		if foc.IsEditable && foc.ContainsMouseCursor() {
 			if !foc.Bar.DragHandleContainsMouseCursor() {
-				fmt.Printf("ConvertMouseClickToTextCursorPosition --- c.MouseY: %d\n", c.MouseY)
+				if foc.MouseY < len(foc.Body) {
+					foc.CursY = foc.MouseY
 
-				if c.MouseY < len(foc.Body) {
-					foc.CursY = c.MouseY
-
-					if c.MouseX <= len(foc.Body[foc.CursY]) {
-						foc.CursX = c.MouseX
+					if foc.MouseX <= len(foc.Body[foc.CursY]) {
+						foc.CursX = foc.MouseX
 					} else {
 						foc.CursX = len(foc.Body[foc.CursY])
 					}

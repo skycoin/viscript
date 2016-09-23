@@ -18,8 +18,10 @@ type ScrollBar struct {
 	PosY            float32
 	LenOfBar        float32
 	LenOfVoid       float32 // length of the negative space representing the length of entire document
+	LenOfOffscreenX float32
 	LenOfOffscreenY float32
-	ScrollDistY     float32 // distance/offset from top of document (negative number cuz Y goes down screen)
+	ScrollDeltaX    float32 // distance/offset from leftmost of document
+	ScrollDeltaY    float32 // distance/offset from top of document (negative number cuz Y goes down screen)
 }
 
 func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
@@ -57,14 +59,14 @@ func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, incrementY float32) {
 		bar.PosY = tp.Top
 	}
 
-	bar.ScrollDistY -= incrementY / bar.LenOfVoid * bar.LenOfOffscreenY
+	bar.ScrollDeltaY -= incrementY / bar.LenOfVoid * bar.LenOfOffscreenY
 
-	if bar.ScrollDistY > 0 {
-		bar.ScrollDistY = 0
+	if bar.ScrollDeltaY > 0 {
+		bar.ScrollDeltaY = 0
 	}
 
-	if bar.ScrollDistY < -bar.LenOfOffscreenY {
-		bar.ScrollDistY = -bar.LenOfOffscreenY
+	if bar.ScrollDeltaY < -bar.LenOfOffscreenY {
+		bar.ScrollDeltaY = -bar.LenOfOffscreenY
 	}
 }
 

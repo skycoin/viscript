@@ -14,6 +14,8 @@ type TextPanel struct {
 	NumCharsY  int
 	CursX      int // current cursor/insert position (in character grid cells/units)
 	CursY      int
+	MouseX     int // current mouse position in character grid space (units/cells)
+	MouseY     int
 	IsEditable bool
 	Selection  SelectionRange
 	Bar        *ScrollBar
@@ -47,9 +49,29 @@ func (tp *TextPanel) Init() {
 	fmt.Printf("TextPanel.Init()    t: %.2f, b: %.2f\n", tp.Top, tp.Bottom)
 }
 
+func (tp *TextPanel) RespondToMouseClick() {
+	textRend.Focused = tp
+
+	// diffs/deltas from home position of panel (top left corner)
+	glDeltaXFromHome := curs.MouseGlX - tp.Left
+	glDeltaYFromHome := curs.MouseGlY - tp.Top
+	//fmt.Printf("glDeltaYFromHome: %.2f\n", glDeltaYFromHome)
+	tp.MouseX = int((glDeltaXFromHome + tp.Bar.ScrollDeltaX) / textRend.CharWid)
+	tp.MouseY = int(-(glDeltaYFromHome + tp.Bar.ScrollDeltaY) / textRend.CharHei)
+	//fmt.Printf("tp.MouseY: %d\n", tp.MouseY)
+
+	if tp.MouseY < 0 {
+		tp.MouseY = 0
+	}
+
+	if tp.MouseY >= len(tp.Body) {
+		tp.MouseY = len(tp.Body) - 1
+	}
+}
+
 func (tp *TextPanel) GoToTopEdge() {
-	//fmt.Printf("GoToTopEdge() tp.ScrollDistY: %.2f\n", tp.ScrollDistY)
-	textRend.CurrY = tp.Top - tp.Bar.ScrollDistY //tp.Bar.OffsetY
+	//fmt.Printf("GoToTopEdge() tp.ScrollDeltaY: %.2f\n", tp.ScrollDeltaY)
+	textRend.CurrY = tp.Top - tp.Bar.ScrollDeltaY //tp.Bar.OffsetY
 }
 func (tp *TextPanel) GoToLeftEdge() {
 	textRend.CurrX = tp.Left

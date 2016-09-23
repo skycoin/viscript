@@ -68,7 +68,7 @@ func onMouseButton(
 		case glfw.MouseButtonLeft:
 			for _, pan := range textRend.Panels {
 				if pan.ContainsMouseCursor() {
-					textRend.Focused = pan
+					pan.RespondToMouseClick()
 				}
 			}
 		default:
@@ -85,13 +85,12 @@ func onChar(w *glfw.Window, char rune) {
 	dispatchWithPrefix(getBytesOfRune(char), MessageCharacter)
 }
 
-// WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can get a
-// shift/alt/ctrl/super event through the "mod" variable,
+// WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can detect a
+// shift/alt/ctrl/super key through the "mod" variable,
 // (see the top of "action == glfw.Press" section for an example)
 // regardless of left/right key used.
 // BUT for RELEASE, the "mod" variable will NOT tell you what key it is!
-// you will have to find the specific left or right key that was released via
-// the "action" variable!
+// so you will have to handle both left & right mod keys via the "action" variable!
 func onKey(
 	w *glfw.Window,
 	key glfw.Key,
@@ -111,8 +110,7 @@ func onKey(
 			fallthrough
 		case glfw.KeyRightShift:
 			fmt.Println("done selecting")
-			foc.Selection.CurrentlySelecting = false // FIXME to work with whichever has focus
-			// TODO?  possibly flip around if selectionStart comes after selectionEnd in the page flow?
+			foc.Selection.CurrentlySelecting = false // TODO?  possibly flip around if selectionStart comes after selectionEnd in the page flow?
 
 		case glfw.KeyLeftControl:
 			fallthrough
@@ -133,7 +131,7 @@ func onKey(
 		switch mod {
 		case glfw.ModShift:
 			fmt.Println("start selecting")
-			foc.Selection.CurrentlySelecting = true // FIXME to work on any TextPanel
+			foc.Selection.CurrentlySelecting = true
 			foc.Selection.StartX = foc.CursX
 			foc.Selection.StartY = foc.CursY
 		}
@@ -141,8 +139,7 @@ func onKey(
 		switch key {
 
 		case glfw.KeyEnter:
-			b := foc.Body // FIXME (and further down) if/when we need multiple panels with text input
-			fmt.Printf("b len: \"%d\"  -  foc.Body len: \"%d\"\n", len(b), len(foc.Body))
+			b := foc.Body
 			startOfLine := b[foc.CursY][:foc.CursX]
 			restOfLine := b[foc.CursY][foc.CursX:len(b[foc.CursY])]
 			fmt.Printf("startOfLine: \"%s\"\n", startOfLine)
@@ -151,29 +148,12 @@ func onKey(
 			fmt.Printf("foc.CursX: \"%d\"  -  foc.CursY: \"%d\"\n", foc.CursX, foc.CursY)
 			foc.Body = insert(b, foc.CursY+1, restOfLine)
 
-			/*
-				newDoc := make([]string, 0)
-
-				for i := 0; i < len(foc.Body); i++ {
-					//fmt.Printf("___[%d]: %s\n", i, foc.Body[i])
-
-					if i == foc.CursY {
-						newDoc = append(newDoc, startOfLine)
-						newDoc = append(newDoc, restOfLine)
-					} else {
-						newDoc = append(newDoc, foc.Body[i])
-					}
-				}
-
-				foc.Body = newDoc
-			*/
 			foc.CursX = 0
 			foc.CursY++
 
 			if foc.CursY >= len(b) {
 				foc.CursY = len(b) - 1
 			}
-			fmt.Printf("******** len(b): \"%d\"  -  foc.CursY: \"%d\"\n", len(b), foc.CursY)
 
 		case glfw.KeyHome:
 			commonMovementKeyHandling()
