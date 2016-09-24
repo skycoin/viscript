@@ -94,6 +94,7 @@ func importPathToDir(importPath string) (string, error) {
 func makeHighlyVisibleRuntimeLogHeader(s string, numLines int) {
 	s = " " + s + " "
 	fillChar := "#"
+	osOnly := s == appName
 
 	var bar string
 	for i := 0; i < 79; i++ {
@@ -114,11 +115,20 @@ func makeHighlyVisibleRuntimeLogHeader(s string, numLines int) {
 	for i := 0; i < numLines; i++ {
 		switch {
 		case i == middle:
-			fmt.Println(bookend + s + bookend)
+			predPrint(osOnly, bookend+s+bookend)
 		case i == middle-1 || i == middle+1:
-			fmt.Println(bookend + spaces + bookend)
+			predPrint(osOnly, bookend+spaces+bookend)
 		default:
-			fmt.Println(bar)
+			predPrint(osOnly, bar)
 		}
+	}
+}
+
+// prints only to OS console window if it's for the appName
+func predPrint(osOnly bool, s string) {
+	if osOnly {
+		fmt.Println(s)
+	} else {
+		con.Add(fmt.Sprintf("%s\n", s))
 	}
 }

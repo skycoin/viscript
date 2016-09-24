@@ -31,10 +31,10 @@ var rootFunc = &Func{Name: "root"} // the top/alpha/entry level of the program
 var currFunc = rootFunc
 
 // REGEX (raw strings to avoid having to quote backslashes)
-var varInt32 = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32(( +)?=( +)?([0-9]+))?$`)
+var declaredVar = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32(( +)?=( +)?([0-9]+))?$`)
 var declFuncStart = regexp.MustCompile(`^func ([a-zA-Z]\w*)( +)?\((.*)\)( +)?\{$`)
 var declFuncEnd = regexp.MustCompile(`^( +)?\}( +)?$`)
-var funcCall = regexp.MustCompile(`^( +)?([a-zA-Z]\w*)\(([0-9]+|[a-zA-Z]\w*),( +)?([0-9]+|[a-zA-Z]\w*)\)$`)
+var calledFunc = regexp.MustCompile(`^( +)?([a-zA-Z]\w*)\(([0-9]+|[a-zA-Z]\w*),( +)?([0-9]+|[a-zA-Z]\w*)\)$`)
 var comment = regexp.MustCompile(`^//.*`)
 
 type VarBool struct {
@@ -69,16 +69,18 @@ func initParser() {
 			con.Add(fmt.Sprintf(f))
 		}
 	*/
+	makeHighlyVisibleRuntimeLogHeader(`PARSING`, 5)
 	parse()
+	makeHighlyVisibleRuntimeLogHeader("RUNNING", 5)
 	run()
 }
 
 func parse() {
 	for i, line := range textRend.Focused.Body {
 		switch {
-		case varInt32.MatchString(line):
-			result := varInt32.FindStringSubmatch(line)
-			con.Add(fmt.Sprintf("%d: variable (%s) declaration\n", i, result[3]))
+		case declaredVar.MatchString(line):
+			result := declaredVar.FindStringSubmatch(line)
+			var s = fmt.Sprintf("%d: var (%s) declared", i, result[3])
 			//printIntsFrom(currFunc)
 
 			if result[8] == "" {
@@ -86,17 +88,18 @@ func parse() {
 			} else {
 				value, err := strconv.Atoi(result[8])
 				if err != nil {
-					con.Add(fmt.Sprintf("COULDN'T CONVERT ASSIGNMENT TO NUMBER!"))
+					s = fmt.Sprintf("%s... BUT COULDN'T CONVERT ASSIGNMENT (%s) TO A NUMBER!", s, result[8])
 				} else {
 					currFunc.VarInt32s = append(currFunc.VarInt32s, VarInt32{result[3], int32(value)})
-					con.Add(fmt.Sprintf("....assigned value of: %d\n", value))
+					s = fmt.Sprintf("%s & assigned: %d", s, value)
 				}
 			}
 
+			con.Add(fmt.Sprintf("%s\n", s))
 			//printIntsFrom(currFunc)
 		case declFuncStart.MatchString(line):
 			result := declFuncStart.FindStringSubmatch(line)
-			con.Add(fmt.Sprintf("%d: function (%s) declaration, with parameters: %s\n", i, result[1], result[3]))
+			con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
 
 			if currFunc.Name == "root" {
 				currFunc = &Func{Name: result[1]}
@@ -105,7 +108,7 @@ func parse() {
 				con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
 			}
 		case declFuncEnd.MatchString(line):
-			con.Add(fmt.Sprintf("function close...\n"))
+			//con.Add(fmt.Sprintf("func close...\n"))
 			//printIntsFrom(rootFunc)
 			//printIntsFrom(currFunc)
 
@@ -114,9 +117,9 @@ func parse() {
 			} else {
 				currFunc = rootFunc
 			}
-		case funcCall.MatchString(line): // FIXME: hardwired for 4 undefined math functions, with 2 params each
-			result := funcCall.FindStringSubmatch(line)
-			con.Add(fmt.Sprintf("%d: storing function call(%s)\n", i, result[2]))
+		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
+			result := calledFunc.FindStringSubmatch(line)
+			con.Add(fmt.Sprintf("%d: func call (%s) stored\n", i, result[2]))
 			currFunc.FuncCalls = append(currFunc.FuncCalls, line)
 			/*
 				currFunc.FuncCalls = append(currFunc.FuncCalls, result[2])
@@ -144,9 +147,9 @@ func parse() {
 func run() {
 	for i, line := range rootFunc.FuncCalls {
 		switch {
-		case funcCall.MatchString(line): // FIXME: hardwired for 4 undefined math functions, with 2 params each
-			result := funcCall.FindStringSubmatch(line)
-			con.Add(fmt.Sprintf("%d: calling function (%s) with param 1 (%s) and param 2 (%s)\n", i, result[2], result[3], result[5]))
+		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
+			result := calledFunc.FindStringSubmatch(line)
+			con.Add(fmt.Sprintf("%d: calling func (%s) with params: %s, %s\n", i, result[2], result[3], result[5]))
 
 			a := getInt32(result[3])
 			if /* not legit num */ a == math.MaxInt32 {
@@ -168,7 +171,7 @@ func run() {
 				con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
 			default:
 				for _, fun := range rootFunc.Funcs {
-					con.Add((fmt.Sprintf("user func called (%s)\n", fun.Name)))
+					con.Add((fmt.Sprintf("user func: %s\n", fun.Name)))
 				}
 			}
 		}
