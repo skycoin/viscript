@@ -26,8 +26,16 @@ make sure names are unique within a partic scope
 */
 
 var types = []string{"bool", "int32", "string"} // FIXME: should allow [] and [42] prefixes
-var rootFunc = &Func{Name: "root"}              // the top/alpha/entry level of the program
+var builtinFuncs = []string{"add32", "sub32", "mult32", "div32"}
+var rootFunc = &Func{Name: "root"} // the top/alpha/entry level of the program
 var currFunc = rootFunc
+
+// REGEX (raw strings to avoid having to quote backslashes)
+var varInt32 = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32(( +)?=( +)?([0-9]+))?$`)
+var declFuncStart = regexp.MustCompile(`^func ([a-zA-Z]\w*)( +)?\((.*)\)( +)?\{$`)
+var declFuncEnd = regexp.MustCompile(`^( +)?\}( +)?$`)
+var funcCall = regexp.MustCompile(`^( +)?([a-zA-Z]\w*)\(([0-9]+|[a-zA-Z]\w*),( +)?([0-9]+|[a-zA-Z]\w*)\)$`)
+var comment = regexp.MustCompile(`^//.*`)
 
 type VarBool struct {
 	name  string
@@ -50,8 +58,9 @@ type Func struct {
 	VarInt32s  []VarInt32
 	VarStrings []VarString
 	Funcs      []Func
-	// next is just temporary?
-	Parameters []string
+	// next 2 should be synchronized (and have same number of entries)
+	FuncCalls  []string
+	Parameters []string // atm there are exactly 2 entries per func call, while hardwired for 2 parameters
 }
 
 func initParser() {
@@ -61,16 +70,10 @@ func initParser() {
 		}
 	*/
 	parse()
+	run()
 }
 
 func parse() {
-	// Use raw strings to avoid having to quote the backslashes.
-	var varInt32 = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32(( +)?=( +)?([0-9]+))?$`)
-	var declFuncStart = regexp.MustCompile(`^func ([a-zA-Z]\w*)( +)?\((.*)\)( +)?\{$`)
-	var declFuncEnd = regexp.MustCompile(`^( +)?\}( +)?$`)
-	var funcCall = regexp.MustCompile(`^( +)?(add32|sub32|mult32|div32)\(([0-9]+|[a-zA-Z]\w*),( +)?([0-9]+|[a-zA-Z]\w*)\)$`)
-	var comment = regexp.MustCompile(`^//.*`)
-
 	for i, line := range textRend.Focused.Body {
 		switch {
 		case varInt32.MatchString(line):
@@ -113,7 +116,13 @@ func parse() {
 			}
 		case funcCall.MatchString(line): // FIXME: hardwired for 4 undefined math functions, with 2 params each
 			result := funcCall.FindStringSubmatch(line)
-			con.Add(fmt.Sprintf("%d: function call\n", i))
+			con.Add(fmt.Sprintf("%d: storing function call(%s)\n", i, result[2]))
+			currFunc.FuncCalls = append(currFunc.FuncCalls, line)
+			/*
+				currFunc.FuncCalls = append(currFunc.FuncCalls, result[2])
+				currFunc.Parameters = append(currFunc.Parameters, result[3])
+				currFunc.Parameters = append(currFunc.Parameters, result[5])
+			*/
 			//printIntsFrom(currFunc)
 
 			/*
@@ -122,6 +131,22 @@ func parse() {
 					con.Add(fmt.Sprintf("%d. %s\n", i, v))
 				}
 			*/
+		case comment.MatchString(line): // allow "//" comments
+			fallthrough
+		case line == "":
+			// just ignore
+		default:
+			con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
+		}
+	}
+}
+
+func run() {
+	for i, line := range rootFunc.FuncCalls {
+		switch {
+		case funcCall.MatchString(line): // FIXME: hardwired for 4 undefined math functions, with 2 params each
+			result := funcCall.FindStringSubmatch(line)
+			con.Add(fmt.Sprintf("%d: calling function (%s) with param 1 (%s) and param 2 (%s)\n", i, result[2], result[3], result[5]))
 
 			a := getInt32(result[3])
 			if /* not legit num */ a == math.MaxInt32 {
@@ -141,13 +166,11 @@ func parse() {
 				con.Add(fmt.Sprintf("%d * %d = %d\n", a, b, a*b))
 			case "div32":
 				con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
+			default:
+				for _, fun := range rootFunc.Funcs {
+					con.Add((fmt.Sprintf("user func called (%s)\n", fun.Name)))
+				}
 			}
-		case comment.MatchString(line): // allow "//" comments
-			fallthrough
-		case line == "":
-			// just ignore
-		default:
-			con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
 		}
 	}
 }

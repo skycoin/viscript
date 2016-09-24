@@ -55,10 +55,8 @@ func (tp *TextPanel) RespondToMouseClick() {
 	// diffs/deltas from home position of panel (top left corner)
 	glDeltaXFromHome := curs.MouseGlX - tp.Left
 	glDeltaYFromHome := curs.MouseGlY - tp.Top
-	//fmt.Printf("glDeltaYFromHome: %.2f\n", glDeltaYFromHome)
 	tp.MouseX = int((glDeltaXFromHome + tp.Bar.ScrollDeltaX) / textRend.CharWid)
 	tp.MouseY = int(-(glDeltaYFromHome + tp.Bar.ScrollDeltaY) / textRend.CharHei)
-	//fmt.Printf("tp.MouseY: %d\n", tp.MouseY)
 
 	if tp.MouseY < 0 {
 		tp.MouseY = 0
@@ -187,14 +185,7 @@ func (tp *TextPanel) SetupDemoProgram() {
 	tp.Body = append(tp.Body, "var a int32 = 42")
 	tp.Body = append(tp.Body, "var b int32 = 58")
 	tp.Body = append(tp.Body, "")
-	tp.Body = append(tp.Body, "// ------- function declarations -------")
-	tp.Body = append(tp.Body, "func myFunc(a,b){")
-	tp.Body = append(tp.Body, "}")
-	tp.Body = append(tp.Body, "func nuthaFunc (a, b) {")
-	tp.Body = append(tp.Body, "        var myLocal int32")
-	tp.Body = append(tp.Body, "    }    ")
-	tp.Body = append(tp.Body, "")
-	tp.Body = append(tp.Body, "// ------- function calls -------")
+	tp.Body = append(tp.Body, "// ------- builtin function calls -------")
 	tp.Body = append(tp.Body, "    sub32(7, 9)")
 	tp.Body = append(tp.Body, "sub32(4,8)")
 	tp.Body = append(tp.Body, "mult32(7, 7)")
@@ -204,8 +195,22 @@ func (tp *TextPanel) SetupDemoProgram() {
 	tp.Body = append(tp.Body, "add32(2,3)")
 	tp.Body = append(tp.Body, "add32(a, b)")
 	tp.Body = append(tp.Body, "")
+	tp.Body = append(tp.Body, "// ------- user function calls -------")
+	tp.Body = append(tp.Body, "myFunc(a, b)")
+	tp.Body = append(tp.Body, "")
+	tp.Body = append(tp.Body, "// ------- function declarations -------")
+	tp.Body = append(tp.Body, "func myFunc(a int32, b int32){")
+	tp.Body = append(tp.Body, "")
+	tp.Body = append(tp.Body, "        innerFunc(a,b)")
+	tp.Body = append(tp.Body, "}")
+	tp.Body = append(tp.Body, "func innerFunc (a, b int32) {")
+	tp.Body = append(tp.Body, "        var myLocal int32")
+	tp.Body = append(tp.Body, "    }    ")
+	tp.Body = append(tp.Body, "")
 
-	for i := 0; i < 22; i++ {
-		tp.Body = append(tp.Body, fmt.Sprintf("%d: put lots of text on screen", i))
-	}
+	/*
+		for i := 0; i < 22; i++ {
+			tp.Body = append(tp.Body, fmt.Sprintf("%d: put lots of text on screen", i))
+		}
+	*/
 }
