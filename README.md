@@ -394,8 +394,6 @@ But in IDE and editor, where you are typing, it will look like normal language (
 we will have an internal language, which is the s-expressions and parens and (func a b) and then have it look like C to user in IDE, but will just start with S expression and autocomplete
 
 
-buy "mesogold, collodial gold" and take 1 tea spoon a day (or less if its too strong)
-
 
 [8/7/2016 1:07:21 PM] HaltingState: lets do some simple types like uint32
 [8/7/2016 1:07:26 PM] HaltingState: and do add, sub, new variable etc
@@ -506,17 +504,141 @@ http://www2.cisl.ucar.edu/sites/default/files/users/bjsmith/ipython-notebook_0.p
 
 
 
+[8/11/2016 11:33:07 PM] HaltingState: i like bash promp or python notebook style for prototyping and testing and runnign small snippets (like python)
+[8/11/2016 11:33:25 PM] HaltingState: but then functions, structs, modules; are good for libraries and stuff that does not break
+[8/11/2016 11:34:08 PM] HaltingState: and meta programming (ability to write program that creates new functions in the module etc) is used for video game programming and "templates" and generating code for other things, using existing code
+[8/11/2016 11:34:46 PM] HaltingState: because a template is just a program that takes in some parameters and then outputs code that calls the module and creates new structs and new functions, (such as object list template takes in an object type and outputs the code for that object)
+[8/11/2016 11:35:14 PM] HaltingState: I have some more documentation that is important and will add to readme later
+
+
+[8/12/2016 4:02:32 AM] HaltingState: by editing software objects or embedding software objects, what I mean is. Look at the text document. It can either be an array of lines and characters on each line.
+
+or it can be an array, that can contain structs or types. And the text lines are actually a "text lines" type
+[8/12/2016 4:03:03 AM] HaltingState: but ignore that right now, too complex; expecially because it has to be reverse draw back to the grid of characters
+
+
+[8/22/2016 10:06:54 PM] HaltingState: 'i haven't the foggiest idea how we would do pointers, if that's something you want.' Me either
+[8/22/2016 10:07:50 PM] HaltingState: I think we have "functions of" and "functions on" an object, but i have no idea what a reference to an object is; a function of an object cannot change it; so if you copied whole object, it would be same as a pointer because you would get same result, so does not matter
+[8/22/2016 10:08:34 PM] HaltingState: and for a "function on" an object it changes the object, so you either perform the function on the object itself, or a copy of it and have to choose
+[8/22/2016 10:11:06 PM] HaltingState: I actually think, that each object has a UUID and its sort of like a "pointer", that identifies the object. Internally it is a pointer because all objects sit in memory
 
 
 
+[8/23/2016 5:10:27 AM] HaltingState: looks good so far
+[8/23/2016 5:11:06 AM] HaltingState: console log is good; can use console to toggle displaying mouse updates on and off etc
+[8/23/2016 11:35:48 AM] HaltingState: ok how about this
+[8/23/2016 11:38:52 AM] HaltingState: for each object
+1> first 32 bytes is object type
+2> next 32 bytes is the object "UUID"
+[8/23/2016 11:40:12 AM] HaltingState: when you malloc something
+1> 4 byte length, then data (as malloc overhead header)
+[8/23/2016 11:46:11 AM] HaltingState: pointers and objects are difficult.
+[8/23/2016 11:52:52 AM] HaltingState: when an object contains another object as a member and you want a reference or pointer to the object contained then it gets complex
+[8/23/2016 11:53:05 AM] HaltingState: I think we can do what C does for now and keep it same and keep more complex "objects" as higher level than the base
+[8/23/2016 11:55:07 AM] HaltingState: a pointer is just an "int" that references memory and program state or memory is just array of bytes, laid out one by one. then pointer is an index into that. A pointer needs a type so you can look up the object's members and index.
+
+So if you have struct A {int x, int y}, then you do A.y, then it looks at the object metadata and looks at what offset for y is and then adds the pointer to the offset and casts to int; i guess
+[8/23/2016 11:55:27 AM] HaltingState: another important thing or very important thing; I need to be able to see all the objects in the program.
+[8/23/2016 11:56:05 AM] HaltingState: 
+so all the variables that have been allocated in the program, all the types. I want to be able to browse through them and have an "object browser" and look at the programs state and interograte it
+[8/23/2016 12:01:06 PM] HaltingState: using notation (func <NAME> (<TYPE> <NAME>) .... code)
+
+have an "Expression class" which the () thing and have (op in1 in2) and have an op for introducing variable at each scope. op for defining new struct, op for defining a function.
+
+ex.
+
+A func def op, takes NAME, then array of (TYPE, NAME) for inputs and then array of (TYPE) for outputs for functions.
+
+A pointer type is struct POINTER { type TYPE, index uint32)
+[8/23/2016 12:05:55 PM] HaltingState: except, i want to be able to do 
+
+(VAR X INT32) //defines variables
+(uint32.add X 3) //next line,expression, that uses a variable defined in local scope
+
+Then go line by line, executing but maybe write the lines in infix
+[8/23/2016 12:06:22 PM] HaltingState: or just do 
+
+(+ X 3) and that is shorthand
+[8/23/2016 12:10:38 PM] HaltingState: So like BASIC (Where it executes line 1, then line 2, line 3 etc and one expression per line
+
+But made the expressions in scheme like infix notation.
+
+define a macro or somethign so you can write it in itself
+
+then add functions, modules etc to make it structurally like golang
+[8/23/2016 12:10:51 PM] HaltingState: I think we will figure it out
+[8/23/2016 12:11:17 PM] HaltingState: S notation (The parents and doing (OP var1 var2) is allot easier to parser than doing the text and making it look like golang
+[8/23/2016 12:11:24 PM] HaltingState: look at scheme or lisp
+
+http://zhehaomao.com/project/2014/03/28/glisp.html
+
+[8/23/2016 12:23:30 PM] HaltingState: except I want
+1> functions (a function has a name, a list of inputs that are statically typed and return type, and a list of expressions; one expression per line)
+[8/23/2016 12:23:37 PM] HaltingState: 2> structs
+[8/23/2016 12:23:42 PM] HaltingState: 3> statically typed
+[8/23/2016 12:23:48 PM] HaltingState: look at lisp implementations in golang
+
+https://pkelchte.wordpress.com/2013/12/31/scm-go/
+
+https://gist.github.com/pkelchte/c2bd76b9f8f9cd603b3c
+
+http://norvig.com/lispy.html
+
+https://gist.github.com/pkelchte/c2bd76b9f8f9cd603b3c
+
+like this, but statically typed and with structs and funcs
+
+
+[8/24/2016 1:24:58 AM] HaltingState: 1> like basic (line one, line two, line thee, one expression per line
+2> expressions like C in terms of line introducing variable or assigning variable etc
+3> statically typed like C (constraints on expressions that must be satisifed, ability to enumerate the valid set of things you could put into a place), getting set of variables that are in local scope, enumerating set of variables in global scope
+4> etc
+[8/24/2016 10:53:32 AM] HaltingState: notice how small the lisp interpreter is? like 800 lines or 200 lines
+[8/24/2016 10:53:49 AM] HaltingState: once you have the language working. then you can write everything in the language itself as a macro
 
 
 
+[8/28/2016 7:09:04 AM] HaltingState: ideally, there should be a runtime process and then it should accept messages and then should emit messages (for rendering etc)
+[8/28/2016 7:09:13 AM] HaltingState: and eventually the thing running the console will be in CX itself
+[8/28/2016 7:09:33 AM] HaltingState: also look at DOM or "Virtual DOM". a DOM is a  datastructure, and then there is a function that renders it
+[8/28/2016 7:09:52 AM] HaltingState: virtual DOM is where you create the DOM in javascript and build it out as a software object
+[8/28/2016 7:10:11 AM] HaltingState: for instance, a DOM element might be a code box, where you can insert code and run it
+
+
+https://github.com/Matt-Esch/virtual-dom
 
 
 
+Me: i'm not sure what "emit messages " means
 
 
+
+http://stackoverflow.com/questions/21109361/why-is-reacts-concept-of-virtual-dom-said-to-be-more-performant-than-dirty-mode
+
+https://github.com/teropa/angular-virtual-dom
+
+http://stackoverflow.com/questions/21965738/what-is-virtual-dom
+
+
+[8/28/2016 7:11:58 AM] HaltingState: "virtual DOM" is just a DOM made out of structs; so you can do thing like, goto a DOM node and then do "add code box" and it will insert an element into the document, that you can add code to and run from the box
+[8/28/2016 7:12:12 AM] HaltingState: or a DOM for a document, might be a list of paragraphs of text and each paragraph is one DOM element
+[8/28/2016 7:12:32 AM] HaltingState: then you have a DOM renderer, that maps the DOM to the characters on screen and window and how it looks
+[8/28/2016 7:12:58 AM] HaltingState: and DOM elements can have names or tags and then you have a CSS type language that gives hints on how to display them
+[8/28/2016 7:13:12 AM] HaltingState: but ignore that for now; maybe virtual DOM will be in CX eventually and not golang
+[8/28/2016 7:13:27 AM] HaltingState: golang should just be base layer to build up a good language for this maybe
+[8/28/2016 7:14:24 AM] HaltingState: or one line of text or code can be a DOM element
+
+
+
+[8/29/2016 6:30:06 AM] HaltingState: eventually may have multiple "windows" as an abstraction you might do; 
+
+But windows are really recursive. there is a window and then another window in the windows and its windows all the way down; because each box or grid, is contained within the parent
+[8/29/2016 7:11:08 AM] HaltingState: A "DOM" is a datastructure. that represents the document. So you can have a "function" DOM element or a "struct" DOM element, or a "Code box" DOM element, or a "text paragraph" DOM element
+[8/29/2016 7:11:55 AM] HaltingState: and there needs to be an "active object" that you have selected (what the cursor is on), then you need to have an "action key" and then dropbox box for what actions you can take (add dom element, enter element , run element etc).
+
+
+
+https://media.8ch.net/file_store/182f81c50b3263c84c2269056bde7221026adc7971d119b1c04062c26f81c7c9.png
 
 
 
