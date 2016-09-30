@@ -502,3 +502,51 @@ struct Module {
 Each of these is written as S notation
 
 (def_func Name (in...) (out...) (expression_array...) )
+
+
+System Level Enumeration
+========================
+
+System Level Enumerations
+- give me a list of nodes I controll
+- give me list of programs running on a node
+- give me a list of channels (communication channels) between nodes
+
+- deploy a process on a node
+- shutdown process on node
+
+- get CPU/ ram usage, etc
+
+Language Level Enumeration
+==========================
+
+In a given line of source code
+- enumerate the variables (types, name) in the current scope
+- enumerate the variables (types, name) passed into the current function
+- enumerate the variables, modules, functions that can be called from the current line/scope
+- enumerate the variables in the local scope
+- enumerate the variables passed into a function
+- enumerate the variables at global, current module level
+- enumerate the current modules that are imported in the current module
+
+- enumerate the defined functions in the current module
+- enumerate the defined global variables in the current module
+
+(var x uint32) adds a new variable to the local scope
+
+A function that enumerates the list of atomic/base types
+A function that enumerates the list of defined types
+
+Types
+- A function that enumerates the list of atomic/base types
+- A function that enumerates the list of defined types
+- enumerate the fields of a type (struct)
+- enumerate the functions OF a type (functions that do not modify its state, function of an instance)
+- enumerate the functtions ON a type (functoins that change its state, functions ON a type instance)
+- enumerate state (name, type) pairs for struct type and the functions on the tpe
+
+- enumerate the dependencies on an object
+-- example: What external functions, objects, modules are used by a particular function
+-- what external functions, objects, modules are used by a line in a particular function
+
+
