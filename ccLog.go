@@ -16,7 +16,10 @@ func (log CcLog) Add(s string) {
 	fmt.Printf(s)
 	s = strings.Replace(s, "\n", "", -1)
 	log.Lines = append(log.Lines, s)
-	textRend.Panels[1].Body = append(textRend.Panels[1].Body, s)
+
+	if len(textRend.Panels) > 1 {
+		textRend.Panels[1].Body = append(textRend.Panels[1].Body, s)
+	}
 }
 
 func (log CcLog) Draw() {
