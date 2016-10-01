@@ -211,7 +211,6 @@ func (tp *TextPanel) SetupDemoProgram() {
 	tp.Body = append(tp.Body, "func innerFunc (a, b int32) {")
 	tp.Body = append(tp.Body, "        var myLocal int32")
 	tp.Body = append(tp.Body, "    }    ")
-	tp.Body = append(tp.Body, "")
 
 	/*
 		for i := 0; i < 22; i++ {

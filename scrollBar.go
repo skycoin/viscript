@@ -5,16 +5,14 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
-/*
-mouse position updates use pixels, so the smallest drag motions will be
-a jump of at least 1 pixel height.
-the ratio of that height / LenOfVoid (bar representing the page size),
-compared to the void/offscreen length of the text body,
-gives us the jump size in scrolling through the text body
-*/
+/* TODO:
+* genericize draw name
+* remove x/y dupes
+ */
 
 type ScrollBar struct {
-	PosX            float32
+	IsHorizontal    bool
+	PosX            float32 // ... position of the grabbable handle
 	PosY            float32
 	LenOfBar        float32
 	LenOfVoid       float32 // length of the negative space representing the length of entire document
@@ -49,30 +47,43 @@ func (bar *ScrollBar) DragHandleContainsMouseCursor() bool {
 	return false
 }
 
-func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, incrementY float32) {
-	bar.PosY -= incrementY
+func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, delta float32) {
+	/*
+		mouse position updates use pixels, so the smallest drag motions will be
+		a jump of at least 1 pixel height.
+		the ratio of that height / LenOfVoid (bar representing the page size),
+		compared to the void/offscreen length of the text body,
+		gives us the jump size in scrolling through the text body
+	*/
 
-	if bar.PosY < tp.Bottom+bar.LenOfBar {
-		bar.PosY = tp.Bottom + bar.LenOfBar
-	}
-	if bar.PosY > tp.Top {
-		bar.PosY = tp.Top
-	}
-
-	bar.ScrollDeltaY -= incrementY / bar.LenOfVoid * bar.LenOfOffscreenY
-
-	if bar.ScrollDeltaY > 0 {
-		bar.ScrollDeltaY = 0
+	if bar.IsHorizontal {
+		bar.PosX += delta
+		bar.PosX = bar.Clamp(bar.PosX, tp.Left, tp.Right-bar.LenOfBar)
+	} else {
+		bar.PosY -= delta
+		bar.PosY = bar.Clamp(bar.PosY, tp.Bottom+bar.LenOfBar, tp.Top)
 	}
 
-	if bar.ScrollDeltaY < -bar.LenOfOffscreenY {
-		bar.ScrollDeltaY = -bar.LenOfOffscreenY
+	bar.ScrollDeltaY -= delta / bar.LenOfVoid * bar.LenOfOffscreenY
+	bar.ScrollDeltaY = bar.Clamp(bar.ScrollDeltaY, -bar.LenOfOffscreenY, 0)
+}
+
+// params: position in relevant dimension, negativemost, & positivemost bounds
+func (bar *ScrollBar) Clamp(pos, negBoundary, posBoundary float32) float32 {
+
+	if pos < negBoundary {
+		pos = negBoundary
 	}
+	if pos > posBoundary {
+		pos = posBoundary
+	}
+
+	return pos
 }
 
 func (bar *ScrollBar) DrawVertical(atlasX, atlasY float32) {
 	rad := textRend.ScreenRad
-	sp := textRend.UvSpan
+	sp /* span */ := textRend.UvSpan
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp
 
