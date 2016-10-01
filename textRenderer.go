@@ -67,9 +67,9 @@ func (tr *TextRenderer) DrawAll() {
 	}
 }
 
-func (tr *TextRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaY float64) {
+func (tr *TextRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {
 	for _, pan := range tr.Panels {
-		pan.ScrollIfMouseOver(mousePixelDeltaY)
+		pan.ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY)
 	}
 }
 

@@ -18,8 +18,7 @@ type ScrollBar struct {
 	LenOfVoid       float32 // length of the negative space representing the length of entire document
 	LenOfOffscreenX float32
 	LenOfOffscreenY float32
-	ScrollDeltaX    float32 // distance/offset from leftmost of document
-	ScrollDeltaY    float32 // distance/offset from top of document (negative number cuz Y goes down screen)
+	ScrollDelta     float32 // distance/offset from home/start of document (negative in Y cuz Y increases upwards)
 }
 
 func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
@@ -56,21 +55,23 @@ func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, delta float32) {
 		gives us the jump size in scrolling through the text body
 	*/
 
+	amount := delta / bar.LenOfVoid * bar.LenOfOffscreenY
+
 	if bar.IsHorizontal {
 		bar.PosX += delta
 		bar.PosX = bar.Clamp(bar.PosX, tp.Left, tp.Right-bar.LenOfBar)
+		bar.ScrollDelta += amount
+		bar.ScrollDelta = bar.Clamp(bar.ScrollDelta, 0, bar.LenOfOffscreenY)
 	} else {
 		bar.PosY -= delta
 		bar.PosY = bar.Clamp(bar.PosY, tp.Bottom+bar.LenOfBar, tp.Top)
+		bar.ScrollDelta -= amount
+		bar.ScrollDelta = bar.Clamp(bar.ScrollDelta, -bar.LenOfOffscreenY, 0)
 	}
-
-	bar.ScrollDeltaY -= delta / bar.LenOfVoid * bar.LenOfOffscreenY
-	bar.ScrollDeltaY = bar.Clamp(bar.ScrollDeltaY, -bar.LenOfOffscreenY, 0)
 }
 
 // params: position in relevant dimension, negativemost, & positivemost bounds
 func (bar *ScrollBar) Clamp(pos, negBoundary, posBoundary float32) float32 {
-
 	if pos < negBoundary {
 		pos = negBoundary
 	}
@@ -81,30 +82,41 @@ func (bar *ScrollBar) Clamp(pos, negBoundary, posBoundary float32) float32 {
 	return pos
 }
 
-func (bar *ScrollBar) DrawVertical(atlasX, atlasY float32) {
+func (bar *ScrollBar) Draw(atlasX, atlasY float32) {
+	// for now, this draws all bars whether you can see them or not (not == content fits entirely inside panel)
+	// not worth optimizing, but mentioning it in case of some weird future bug
+
 	rad := textRend.ScreenRad
 	sp /* span */ := textRend.UvSpan
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp
 
-	top := bar.PosY                 //rad - 1
-	bott := bar.PosY - bar.LenOfBar //-rad + 1
+	top := bar.PosY
+	bott := bar.PosY - bar.LenOfBar // bottom
+	l := rad - textRend.CharWid     // left
+	r := rad                        // right
+
+	if bar.IsHorizontal {
+		l = bar.PosX                // left
+		r = bar.PosX + bar.LenOfBar // right
+	} else {
+	}
 
 	gl.Normal3f(0, 0, 1)
 
 	// bottom left   0, 1
 	gl.TexCoord2f(u, v+sp)
-	gl.Vertex3f(rad-textRend.CharWid, bott, 0)
+	gl.Vertex3f(l, bott, 0)
 
 	// bottom right   1, 1
 	gl.TexCoord2f(u+sp, v+sp)
-	gl.Vertex3f(rad, bott, 0)
+	gl.Vertex3f(r, bott, 0)
 
 	// top right   1, 0
 	gl.TexCoord2f(u+sp, v)
-	gl.Vertex3f(rad, top, 0)
+	gl.Vertex3f(r, top, 0)
 
 	// top left   0, 0
 	gl.TexCoord2f(u, v)
-	gl.Vertex3f(rad-textRend.CharWid, top, 0)
+	gl.Vertex3f(l, top, 0)
 }

@@ -40,7 +40,7 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	prevMousePixelY = y
 
 	if /* LMB held */ w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		textRend.ScrollPanelThatIsHoveredOver(mousePixelDeltaY)
+		textRend.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
 	}
 
 	// build message
@@ -48,8 +48,13 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	dispatchWithPrefix(content, MessageMousePos)
 }
 
-func onMouseScroll(w *glfw.Window, xOff float64, yOff float64) {
-	textRend.ScrollPanelThatIsHoveredOver(yOff * -30)
+func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
+	// if horizontal
+	if w.GetKey(glfw.KeyLeftShift) == glfw.Press || w.GetKey(glfw.KeyRightShift) == glfw.Press {
+		textRend.ScrollPanelThatIsHoveredOver(xOff*30, 0)
+	} else {
+		textRend.ScrollPanelThatIsHoveredOver(0, yOff*-30)
+	}
 
 	// build message
 	content := append(getBytesOfFloat64(xOff), getBytesOfFloat64(yOff)...)
