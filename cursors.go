@@ -9,27 +9,14 @@ import (
 
 var curs Cursors = Cursors{NextBlinkChange: time.Now(), Visible: true}
 
-/*					2 cursors:
-
-* mouse:           keeps updated to current pointer position
-* text insert:     keyboard typing will be inserted here
-
- */
-
 type Cursors struct {
 	NextBlinkChange time.Time
 	Visible         bool
-	MouseGlX        float32 // current mouse position in "analog" OpenGL space
+	MouseGlX        float32 // current mouse position in OpenGL space
 	MouseGlY        float32
 }
 
 func (c *Cursors) Update() {
-	// mouse
-	// (don't know that we ever need this, but it only worked properly
-	// when we had just 1 panel that took up the whole client area of this app)
-	//c.DrawCharAt('#', .MouseX, .MouseY)
-
-	// text/char insert
 	if c.NextBlinkChange.Before(time.Now()) {
 		c.NextBlinkChange = time.Now().Add(time.Millisecond * 170)
 		c.Visible = !c.Visible
@@ -42,7 +29,7 @@ func (c *Cursors) UpdatePosition(x, y float32) {
 }
 
 // this function was designed for a single panel, and before scrolling was added
-func (c *Cursors) DrawCharAt(char rune, posX, posY int) {
+func (c *Cursors) DEPRECATED_DrawCharAt(char rune, posX, posY int) {
 	rad := textRend.ScreenRad
 	sp := textRend.UvSpan
 	u := sp * float32(int(char)%16)
