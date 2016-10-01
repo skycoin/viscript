@@ -73,7 +73,7 @@ func (tr *TextRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaY float64) {
 	}
 }
 
-func drawCurrentChar(char rune, clipSpan float32) {
+func (tr *TextRenderer) DrawCharAtCurrentPosition(char rune, clipSpan *Rectangle) {
 	u := float32(int(char) % 16)
 	v := float32(int(char) / 16)
 	w := textRend.CharWid // char width
@@ -83,16 +83,16 @@ func drawCurrentChar(char rune, clipSpan float32) {
 	gl.Normal3f(0, 0, 1)
 
 	gl.TexCoord2f(u*sp, v*sp+sp) // bl  0, 1
-	gl.Vertex3f(textRend.CurrX, textRend.CurrY-h, 0)
+	gl.Vertex3f(textRend.CurrX, textRend.CurrY-h-clipSpan.Bottom, 0)
 
 	gl.TexCoord2f(u*sp+sp, v*sp+sp) // br  1, 1
-	gl.Vertex3f(textRend.CurrX+w, textRend.CurrY-h, 0)
+	gl.Vertex3f(textRend.CurrX+w, textRend.CurrY-h-clipSpan.Bottom, 0)
 
 	gl.TexCoord2f(u*sp+sp, v*sp) // tr  1, 0
-	gl.Vertex3f(textRend.CurrX+w, textRend.CurrY-clipSpan, 0)
+	gl.Vertex3f(textRend.CurrX+w, textRend.CurrY-clipSpan.Top, 0)
 
 	gl.TexCoord2f(u*sp, v*sp) // tl  0, 0
-	gl.Vertex3f(textRend.CurrX, textRend.CurrY-clipSpan, 0)
+	gl.Vertex3f(textRend.CurrX, textRend.CurrY-clipSpan.Top, 0)
 
 	textRend.CurrX += w
 }

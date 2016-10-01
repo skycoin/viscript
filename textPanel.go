@@ -86,31 +86,36 @@ func (tp *TextPanel) Draw() {
 
 	// body of text
 	for y, line := range tp.Body {
-		if textRend.CurrY <= tp.Top+textRend.CharHei { // if line visible
-			var clipSpan float32
+		// if line visible
+		if textRend.CurrY <= tp.Top+textRend.CharHei && textRend.CurrY >= tp.Bottom {
+			clipSpan := &Rectangle{}
 
-			if textRend.CurrY > tp.Top { // if line needs its top clipped
-				clipSpan = textRend.CurrY - tp.Top
+			// if line needs clipping
+			if textRend.CurrY > tp.Top {
+				clipSpan.Top = textRend.CurrY - tp.Top
+			}
+			if textRend.CurrY-textRend.CharHei < tp.Bottom {
+				clipSpan.Bottom = (textRend.CurrY - textRend.CharHei) - tp.Bottom
 			}
 
 			// draw line of text
 			for x, c := range line {
-				drawCurrentChar(c, clipSpan)
+				textRend.DrawCharAtCurrentPosition(c, clipSpan)
 
 				if tp.IsEditable && curs.Visible == true {
 					//fmt.Printf("tp.CursX, tp.CursY: %d,%d\n", tp.CursX, tp.CursY)
 
 					if x == tp.CursX && y == tp.CursY {
 						textRend.CurrX -= textRend.CharWid
-						drawCurrentChar('_', clipSpan)
+						textRend.DrawCharAtCurrentPosition('_', clipSpan)
 					}
 				}
 			}
 
-			// draw at the end of line if needed
+			// draw cursor at the end of line if needed
 			if y == tp.CursY && tp.CursX == len(line) {
 				if tp.IsEditable && curs.Visible == true {
-					drawCurrentChar('_', clipSpan)
+					textRend.DrawCharAtCurrentPosition('_', clipSpan)
 				}
 			}
 

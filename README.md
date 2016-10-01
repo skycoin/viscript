@@ -654,4 +654,47 @@ https://media.8ch.net/file_store/182f81c50b3263c84c2269056bde7221026adc7971d119b
 [12:31:22 PM] HaltingState: also, label line numbers in the editor; each line needs to have line numbers on left hand side, like sublime
 
 
+
+[9/27/2016 7:05:12 AM] HaltingState: 
+1> All code must be in a function
+2> you call function
+[9/27/2016 7:07:42 AM] HaltingState: 
+3> functions have line 1, line 2, line 3, line 4 etc.
+4> Functions have "blocks" which are like "if X, block Y else Block Y" the blocks are embedded recursively. So there is a top block, then subblocks. 
+5> each line is an expression. start with basic things like "introduce variable X" and "set x value" and (set x (add32 5 8))   , (new x int32), or (int32.new x) //introduce type int32, with label x
+
+
+
+
+
+
+[9/30/2016 3:00:31 AM] HaltingState: yes
+[9/30/2016 3:01:00 AM] HaltingState: so (* 3 (+ 5 6)) instead of 3* (5+6) so you do not have to do any work to parse and no order of precidence
+[9/30/2016 3:01:13 AM] HaltingState: and it is clear exactly what is being called and no ambiguity
+[9/30/2016 3:02:17 AM] HaltingState: however, for coding, we can display at it as 3*(5+6) for the programmer but on backend it is (*3 (+ 5 6)) or (mult32 3 (add32 5 6)), or (int32.mult 3 ( int32.add 5 6))
+[9/30/2016 3:02:40 AM] HaltingState: right now, we are just doing the backend and the abstract syntax tree;
+[9/30/2016 3:05:22 AM] HaltingState: !!!! go buy Citrulline Malate. Take three times per day. Do it right now. Also get B1 (at least 50mg)  https://www.amazon.com/Primaforce-Citrulline-Malate-Powder-Unflavored/dp/B00J5MUZ6I
+[9/30/2016 3:26:53 AM] HaltingState: do
+1. a command for introducing a variable into scope
+2. a command for setting the value of a variable
+3. int32 type and add, mult, div, sub, int32.add, int32.sub, int32.mult etc is ok/good. sort of like assembly
+4. function for creating a new module
+5. function for creating a new function (Adding a function to a module)
+6. function for adding a new type (struct, to a module)
+[9/30/2016 3:27:17 AM] HaltingState: the program has to be built up, from calling the commands to build up the program
+[9/30/2016 3:27:35 AM] HaltingState: and then being able to call functions
+[9/30/2016 3:27:48 AM] HaltingState: and a function is a series of lines
+[9/30/2016 3:29:44 AM] HaltingState: you must do the Citrulline Malate, for ~3 months, to get rid of aluminum and then will have more energy
+[9/30/2016 3:44:40 AM] HaltingState: so to start
+1> define a function (input, output)
+2> add lines to the tuple (Expressions) and keep the expressions simple and types minumum
+3> be able to run the function
+
+being able to create structs etc and just start simple
+[9/30/2016 3:45:21 AM] HaltingState: look up "abstract syntax tree", that is what it is
+[9/30/2016 5:26:08 AM] HaltingState: also, hurry, have customers who need it
+[9/30/2016 10:52:14 AM] HaltingState: look up "Abstract Syntax Tree" , that is what it is (not even lisp)
+[9/30/2016 11:11:33 AM] HaltingState: https://en.wikipedia.org/wiki/Abstract_syntax_tree
+[9/30/2016 11:11:39 AM] HaltingState: that what it really is
+
 "
