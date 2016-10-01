@@ -22,17 +22,45 @@ type ScrollBar struct {
 }
 
 func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
-	hei := textRend.CharHei * float32(tp.NumCharsY) /* height of panel */
+	if bar.IsHorizontal {
+		// OPTIMIZEME in the future?  idealistically, the below should only be calculated
+		// whenever user changes the size of a line such as by:
+		// 		typing/deleting/hitting-enter (could be splitting the biggest line in 2)
 
-	if /* content smaller than screen */ len(tp.Body) <= tp.NumCharsY {
-		// NO BAR
-		bar.LenOfBar = 0
-		bar.LenOfVoid = hei
-		bar.LenOfOffscreenY = 0
+		// find....
+		numCharsInLongest := 0 // ...line of the document
+		for _, line := range tp.Body {
+			if numCharsInLongest < len(line) {
+				numCharsInLongest = len(line)
+			}
+		}
+
+		// the rest of this block is an altered copy of the else block
+		wid := textRend.CharWid * float32(tp.NumCharsX) /* width of panel */
+
+		if /* content smaller than screen */ numCharsInLongest <= tp.NumCharsX {
+			// NO BAR
+			bar.LenOfBar = 0
+			bar.LenOfVoid = wid
+			bar.LenOfOffscreenY = 0
+		} else {
+			bar.LenOfBar = float32(tp.NumCharsX) / float32(numCharsInLongest) * wid
+			bar.LenOfVoid = wid - bar.LenOfBar
+			bar.LenOfOffscreenY = float32(numCharsInLongest-tp.NumCharsX) * textRend.CharWid
+		}
 	} else {
-		bar.LenOfBar = float32(tp.NumCharsY) / float32(len(tp.Body)) * hei
-		bar.LenOfVoid = hei - bar.LenOfBar
-		bar.LenOfOffscreenY = float32(len(tp.Body)-tp.NumCharsY) * textRend.CharHei
+		hei := textRend.CharHei * float32(tp.NumCharsY) /* height of panel */
+
+		if /* content smaller than screen */ len(tp.Body) <= tp.NumCharsY {
+			// NO BAR
+			bar.LenOfBar = 0
+			bar.LenOfVoid = hei
+			bar.LenOfOffscreenY = 0
+		} else {
+			bar.LenOfBar = float32(tp.NumCharsY) / float32(len(tp.Body)) * hei
+			bar.LenOfVoid = hei - bar.LenOfBar
+			bar.LenOfOffscreenY = float32(len(tp.Body)-tp.NumCharsY) * textRend.CharHei
+		}
 	}
 }
 
@@ -91,15 +119,17 @@ func (bar *ScrollBar) Draw(atlasX, atlasY float32) {
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp
 
-	top := bar.PosY
-	bott := bar.PosY - bar.LenOfBar // bottom
-	l := rad - textRend.CharWid     // left
-	r := rad                        // right
+	top := -rad + textRend.CharHei
+	bott := -rad                // bottom
+	l := rad - textRend.CharWid // left
+	r := rad                    // right
 
 	if bar.IsHorizontal {
 		l = bar.PosX                // left
 		r = bar.PosX + bar.LenOfBar // right
 	} else {
+		top = bar.PosY
+		bott = bar.PosY - bar.LenOfBar // bottom
 	}
 
 	gl.Normal3f(0, 0, 1)

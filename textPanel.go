@@ -36,7 +36,7 @@ func (tp *TextPanel) Init() {
 
 	tp.Bottom = tp.Top - float32(tp.NumCharsY)*textRend.CharHei
 
-	tp.BarHori = &ScrollBar{}
+	tp.BarHori = &ScrollBar{IsHorizontal: true}
 	tp.BarVert = &ScrollBar{}
 	tp.BarHori.PosX = tp.Left
 	tp.BarHori.PosY = tp.Bottom - textRend.CharHei
@@ -129,8 +129,8 @@ func (tp *TextPanel) Draw() {
 		textRend.CurrY -= textRend.CharHei // go down a line height
 	}
 
-	tp.BarHori.Draw(11, 13) //2, 11)
-	tp.BarVert.Draw(11, 13) //2, 11)
+	tp.BarHori.Draw(2, 11)
+	tp.BarVert.Draw(2, 11)
 }
 
 func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
@@ -192,7 +192,7 @@ func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {
 }
 
 func (tp *TextPanel) SetupDemoProgram() {
-	tp.Body = append(tp.Body, "// ------- variable declarations -------")
+	tp.Body = append(tp.Body, "// ------- variable declarations ------- ------- ------- ------- ------- ------- ------- -------")
 	tp.Body = append(tp.Body, "var myVar int32")
 	tp.Body = append(tp.Body, "var a int32 = 42")
 	tp.Body = append(tp.Body, "var b int32 = 58")
