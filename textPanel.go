@@ -39,8 +39,8 @@ func (tp *TextPanel) Init() {
 	tp.BarHori = &ScrollBar{IsHorizontal: true}
 	tp.BarVert = &ScrollBar{}
 	tp.BarHori.PosX = tp.Left
-	tp.BarHori.PosY = tp.Bottom - textRend.CharHei
-	tp.BarVert.PosX = tp.Right - textRend.CharWid
+	tp.BarHori.PosY = tp.Bottom //- textRend.CharHei
+	tp.BarVert.PosX = tp.Right  //- textRend.CharWid
 	tp.BarVert.PosY = tp.Top
 
 	if tp.NumCharsX == 0 {
@@ -160,7 +160,7 @@ func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 
 func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float64) {
 	if tp.ContainsMouseCursor() {
-		// position increments (for scrollbars) in gl space
+		// position increments in gl space
 		xInc := float32(mousePixelDeltaX) * textRend.PixelWid
 		yInc := float32(mousePixelDeltaY) * textRend.PixelHei
 		tp.BarHori.ScrollThisMuch(tp, xInc)

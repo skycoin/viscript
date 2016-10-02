@@ -1,3 +1,16 @@
+/* TODO:
+
+* LOWER PRIORITY POLISH
+
+* if typing goes past right of screen, auto-horizontal-scroll as you type
+* same for when newlines/enters/returns push cursor past the bottom of visible space
+* scrollbars should have a bottom right corner, and a thickness sized background
+		for void space, reserved for only that, so the bar never covers up the rightmost
+		character/cursor
+* when pressing delete at/after the end of a line, should pull up the line below
+
+*/
+
 package main
 
 import (
