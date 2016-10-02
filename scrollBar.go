@@ -33,6 +33,7 @@ func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
 				numCharsInLongest = len(line)
 			}
 		}
+		numCharsInLongest++ // adding extra space so we have room to show cursor at end of longest
 
 		// the rest of this block is an altered copy of the else block
 		wid := textRend.CharWid * float32(tp.NumCharsX) /* width of panel */

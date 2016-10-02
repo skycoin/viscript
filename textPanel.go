@@ -59,7 +59,7 @@ func (tp *TextPanel) RespondToMouseClick() {
 	// diffs/deltas from home position of panel (top left corner)
 	glDeltaXFromHome := curs.MouseGlX - tp.Left
 	glDeltaYFromHome := curs.MouseGlY - tp.Top
-	tp.MouseX = int((glDeltaXFromHome + tp.BarVert.ScrollDelta) / textRend.CharWid)
+	tp.MouseX = int((glDeltaXFromHome + tp.BarHori.ScrollDelta) / textRend.CharWid)
 	tp.MouseY = int(-(glDeltaYFromHome + tp.BarVert.ScrollDelta) / textRend.CharHei)
 
 	if tp.MouseY < 0 {
@@ -75,7 +75,7 @@ func (tp *TextPanel) GoToTopEdge() {
 	textRend.CurrY = tp.Top - tp.BarVert.ScrollDelta
 }
 func (tp *TextPanel) GoToLeftEdge() {
-	textRend.CurrX = tp.Left + tp.BarHori.ScrollDelta
+	textRend.CurrX = tp.Left - tp.BarHori.ScrollDelta
 }
 func (tp *TextPanel) GoToTopLeftCorner() {
 	tp.GoToTopEdge()
