@@ -80,6 +80,12 @@ func (tr *TextRenderer) DrawCharAtCurrentPosition(char rune, clipSpan *Rectangle
 	h := textRend.CharHei // char height
 	sp := textRend.UvSpan
 
+	/*
+		if clipSpan.Bottom < 0 {
+			clipSpan.Bottom = -clipSpan.Bottom
+		}
+	*/
+
 	gl.Normal3f(0, 0, 1)
 
 	gl.TexCoord2f(u*sp, v*sp+sp) // bl  0, 1

@@ -91,15 +91,15 @@ func (tp *TextPanel) Draw() {
 	// body of text
 	for y, line := range tp.Body {
 		// if line visible
-		if textRend.CurrY <= tp.Top+textRend.CharHei && textRend.CurrY >= tp.Bottom {
+		if textRend.CurrY <= tp.Top+textRend.CharHei && textRend.CurrY >= tp.BarHori.PosY {
 			clipSpan := &Rectangle{}
 
 			// if line needs clipping
 			if textRend.CurrY > tp.Top {
 				clipSpan.Top = textRend.CurrY - tp.Top
 			}
-			if textRend.CurrY-textRend.CharHei < tp.Bottom {
-				clipSpan.Bottom = (textRend.CurrY - textRend.CharHei) - tp.Bottom
+			if textRend.CurrY-textRend.CharHei < tp.BarHori.PosY {
+				clipSpan.Bottom = (textRend.CurrY - textRend.CharHei) - tp.BarHori.PosY
 			}
 
 			// draw line of text
