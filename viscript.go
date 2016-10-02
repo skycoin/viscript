@@ -1,5 +1,8 @@
 /* TODO:
 
+* when there is no scrollbar, should be able to see/interact with text in that area
+
+
 * LOWER PRIORITY POLISH
 
 * if typing goes past right of screen, auto-horizontal-scroll as you type

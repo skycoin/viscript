@@ -131,10 +131,11 @@ func (tp *TextPanel) Draw() {
 
 	tp.BarHori.Draw(2, 11, *tp)
 	tp.BarVert.Draw(2, 11, *tp)
+	tp.DrawScrollbarCorner(12, 11)
 }
 
-func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
-	rad := textRend.ScreenRad
+// ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)
+func (tp *TextPanel) DrawScrollbarCorner(atlasCellX, atlasCellY float32) {
 	sp := textRend.UvSpan
 	u := float32(atlasCellX) * sp
 	v := float32(atlasCellY) * sp
@@ -143,19 +144,43 @@ func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 
 	// bottom left   0, 1
 	gl.TexCoord2f(u, v+sp)
-	gl.Vertex3f(-rad, tp.Bottom, 0)
+	gl.Vertex3f(tp.BarVert.PosX, tp.Bottom, 0)
 
 	// bottom right   1, 1
 	gl.TexCoord2f(u+sp, v+sp)
-	gl.Vertex3f(rad, tp.Bottom, 0)
+	gl.Vertex3f(tp.Right, tp.Bottom, 0)
 
 	// top right   1, 0
 	gl.TexCoord2f(u+sp, v)
-	gl.Vertex3f(rad, tp.Top, 0)
+	gl.Vertex3f(tp.Right, tp.BarHori.PosY, 0)
 
 	// top left   0, 0
 	gl.TexCoord2f(u, v)
-	gl.Vertex3f(-rad, tp.Top, 0)
+	gl.Vertex3f(tp.BarVert.PosX, tp.BarHori.PosY, 0)
+}
+
+func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
+	sp := textRend.UvSpan
+	u := float32(atlasCellX) * sp
+	v := float32(atlasCellY) * sp
+
+	gl.Normal3f(0, 0, 1)
+
+	// bottom left   0, 1
+	gl.TexCoord2f(u, v+sp)
+	gl.Vertex3f(tp.Left, tp.Bottom, 0)
+
+	// bottom right   1, 1
+	gl.TexCoord2f(u+sp, v+sp)
+	gl.Vertex3f(tp.Right, tp.Bottom, 0)
+
+	// top right   1, 0
+	gl.TexCoord2f(u+sp, v)
+	gl.Vertex3f(tp.Right, tp.Top, 0)
+
+	// top left   0, 0
+	gl.TexCoord2f(u, v)
+	gl.Vertex3f(tp.Left, tp.Top, 0)
 }
 
 func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float64) {

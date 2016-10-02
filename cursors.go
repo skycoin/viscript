@@ -65,8 +65,8 @@ func (c *Cursors) ConvertMouseClickToTextCursorPosition(button, action uint8) {
 		foc := textRend.Focused
 
 		if foc.IsEditable && foc.ContainsMouseCursor() {
-			if !foc.BarHori.DragHandleContainsMouseCursor() {
-				if !foc.BarVert.DragHandleContainsMouseCursor() {
+			if !foc.BarHori.ContainsMouseCursor(foc) {
+				if !foc.BarVert.ContainsMouseCursor(foc) {
 					if foc.MouseY < len(foc.Body) {
 						foc.CursY = foc.MouseY
 

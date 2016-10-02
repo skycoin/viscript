@@ -66,22 +66,15 @@ func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
 	}
 }
 
-func (bar *ScrollBar) DragHandleContainsMouseCursor() bool {
+func (bar *ScrollBar) ContainsMouseCursor(tp *TextPanel) bool {
 	if bar.IsHorizontal {
-		// if in the vertical space
-		if curs.MouseGlY <= bar.PosY && curs.MouseGlY >= bar.PosY-bar.Thickness {
-			// if in the horizontal space
-			if curs.MouseGlX <= bar.PosX+bar.LenOfBar && curs.MouseGlX >= bar.PosX {
-				return true
-			}
+		if curs.MouseGlY <= bar.PosY {
+			return true
 		}
 	} else { // vertical bar
-		if curs.MouseGlY <= bar.PosY && curs.MouseGlY >= bar.PosY-bar.LenOfBar {
-			if curs.MouseGlX <= bar.PosX+bar.Thickness && curs.MouseGlX >= bar.PosX {
-				return true
-			}
+		if curs.MouseGlX >= bar.PosX {
+			return true
 		}
-
 	}
 
 	return false
@@ -133,6 +126,10 @@ func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
 		// FIXME (hack, because with current projection a unit span in x does not look the same as in y)
 		if bar.IsHorizontal {
 			bar.Thickness *= 1.4
+
+			bar.PosY = tp.Bottom + bar.Thickness
+		} else {
+			bar.PosX = tp.Right - bar.Thickness
 		}
 	}
 
@@ -140,16 +137,12 @@ func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp
 
-	top := tp.Bottom + bar.Thickness
-	bott := tp.Bottom             // bottom
-	l := tp.Right - bar.Thickness // left
-	r := tp.Right                 // right
+	bott := tp.Bottom
+	right := tp.Right
 
 	if bar.IsHorizontal {
-		l = bar.PosX
-		r = bar.PosX + bar.LenOfBar
+		right = bar.PosX + bar.LenOfBar
 	} else {
-		top = bar.PosY
 		bott = bar.PosY - bar.LenOfBar
 	}
 
@@ -157,17 +150,17 @@ func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
 
 	// bottom left   0, 1
 	gl.TexCoord2f(u, v+sp)
-	gl.Vertex3f(l, bott, 0)
+	gl.Vertex3f(bar.PosX, bott, 0)
 
 	// bottom right   1, 1
 	gl.TexCoord2f(u+sp, v+sp)
-	gl.Vertex3f(r, bott, 0)
+	gl.Vertex3f(right, bott, 0)
 
 	// top right   1, 0
 	gl.TexCoord2f(u+sp, v)
-	gl.Vertex3f(r, top, 0)
+	gl.Vertex3f(right, bar.PosY, 0)
 
 	// top left   0, 0
 	gl.TexCoord2f(u, v)
-	gl.Vertex3f(l, top, 0)
+	gl.Vertex3f(bar.PosX, bar.PosY, 0)
 }
