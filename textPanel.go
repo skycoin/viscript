@@ -17,14 +17,14 @@ type TextPanel struct {
 	MouseX     int // current mouse position in character grid space (units/cells)
 	MouseY     int
 	IsEditable bool
-	Selection  SelectionRange
+	Selection  *SelectionRange
 	BarHori    *ScrollBar // horizontal
 	BarVert    *ScrollBar // vertical
 	Body       []string
 }
 
 func (tp *TextPanel) Init() {
-	tp.Selection = SelectionRange{}
+	tp.Selection = &SelectionRange{}
 	tp.Selection.Init()
 
 	tp.Left = -textRend.ScreenRad
@@ -129,8 +129,8 @@ func (tp *TextPanel) Draw() {
 		textRend.CurrY -= textRend.CharHei // go down a line height
 	}
 
-	tp.BarHori.Draw(2, 11)
-	tp.BarVert.Draw(2, 11)
+	tp.BarHori.Draw(2, 11, *tp)
+	tp.BarVert.Draw(2, 11, *tp)
 }
 
 func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
@@ -192,7 +192,7 @@ func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {
 }
 
 func (tp *TextPanel) SetupDemoProgram() {
-	tp.Body = append(tp.Body, "// ------- variable declarations ------- ------- ------- ------- ------- ------- ------- -------")
+	tp.Body = append(tp.Body, "// ------- variable declarations ------- ------- ------- ------- ------- ------- ------- ------- end")
 	tp.Body = append(tp.Body, "var myVar int32")
 	tp.Body = append(tp.Body, "var a int32 = 42")
 	tp.Body = append(tp.Body, "var b int32 = 58")

@@ -44,7 +44,6 @@ func processMessage(message []byte) {
 			getAndShowUInt8("Button", message),
 			getAndShowUInt8("Action", message))
 		getAndShowUInt8("Mod", message)
-		fmt.Printf("textRend.Focused.CursY: %d\n", textRend.Focused.CursY)
 
 	case MessageCharacter:
 		s("MessageCharacter", message)

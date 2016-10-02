@@ -51,9 +51,9 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 	// if horizontal
 	if w.GetKey(glfw.KeyLeftShift) == glfw.Press || w.GetKey(glfw.KeyRightShift) == glfw.Press {
-		textRend.ScrollPanelThatIsHoveredOver(xOff*30, 0)
+		textRend.ScrollPanelThatIsHoveredOver(yOff*30, 0)
 	} else {
-		textRend.ScrollPanelThatIsHoveredOver(0, yOff*-30)
+		textRend.ScrollPanelThatIsHoveredOver(xOff*30, yOff*-30)
 	}
 
 	// build message

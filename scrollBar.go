@@ -11,14 +11,13 @@ import (
  */
 
 type ScrollBar struct {
-	IsHorizontal    bool
-	PosX            float32 // ... position of the grabbable handle
-	PosY            float32
-	LenOfBar        float32
-	LenOfVoid       float32 // length of the negative space representing the length of entire document
-	LenOfOffscreenX float32
-	LenOfOffscreenY float32
-	ScrollDelta     float32 // distance/offset from home/start of document (negative in Y cuz Y increases upwards)
+	IsHorizontal   bool
+	PosX           float32 // ... position of the grabbable handle
+	PosY           float32
+	LenOfBar       float32
+	LenOfVoid      float32 // length of the negative space representing the length of entire document
+	LenOfOffscreen float32
+	ScrollDelta    float32 // distance/offset from home/start of document (negative in Y cuz Y increases upwards)
 }
 
 func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
@@ -42,11 +41,11 @@ func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
 			// NO BAR
 			bar.LenOfBar = 0
 			bar.LenOfVoid = wid
-			bar.LenOfOffscreenY = 0
+			bar.LenOfOffscreen = 0
 		} else {
 			bar.LenOfBar = float32(tp.NumCharsX) / float32(numCharsInLongest) * wid
 			bar.LenOfVoid = wid - bar.LenOfBar
-			bar.LenOfOffscreenY = float32(numCharsInLongest-tp.NumCharsX) * textRend.CharWid
+			bar.LenOfOffscreen = float32(numCharsInLongest-tp.NumCharsX) * textRend.CharWid
 		}
 	} else {
 		hei := textRend.CharHei * float32(tp.NumCharsY) /* height of panel */
@@ -55,20 +54,31 @@ func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
 			// NO BAR
 			bar.LenOfBar = 0
 			bar.LenOfVoid = hei
-			bar.LenOfOffscreenY = 0
+			bar.LenOfOffscreen = 0
 		} else {
 			bar.LenOfBar = float32(tp.NumCharsY) / float32(len(tp.Body)) * hei
 			bar.LenOfVoid = hei - bar.LenOfBar
-			bar.LenOfOffscreenY = float32(len(tp.Body)-tp.NumCharsY) * textRend.CharHei
+			bar.LenOfOffscreen = float32(len(tp.Body)-tp.NumCharsY) * textRend.CharHei
 		}
 	}
 }
 
 func (bar *ScrollBar) DragHandleContainsMouseCursor() bool {
-	if curs.MouseGlY <= bar.PosY && curs.MouseGlY >= bar.PosY-bar.LenOfBar {
-		if curs.MouseGlX <= bar.PosX+textRend.CharWid && curs.MouseGlX >= bar.PosX {
-			return true
+	if bar.IsHorizontal {
+		// if in the vertical space
+		if curs.MouseGlY <= bar.PosY && curs.MouseGlY >= bar.PosY-textRend.CharHei {
+			// if in the horizontal space
+			if curs.MouseGlX <= bar.PosX+bar.LenOfBar && curs.MouseGlX >= bar.PosX {
+				return true
+			}
 		}
+	} else { // vertical bar
+		if curs.MouseGlY <= bar.PosY && curs.MouseGlY >= bar.PosY-bar.LenOfBar {
+			if curs.MouseGlX <= bar.PosX+textRend.CharWid && curs.MouseGlX >= bar.PosX {
+				return true
+			}
+		}
+
 	}
 
 	return false
@@ -83,18 +93,18 @@ func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, delta float32) {
 		gives us the jump size in scrolling through the text body
 	*/
 
-	amount := delta / bar.LenOfVoid * bar.LenOfOffscreenY
+	amount := delta / bar.LenOfVoid * bar.LenOfOffscreen
 
 	if bar.IsHorizontal {
 		bar.PosX += delta
 		bar.PosX = bar.Clamp(bar.PosX, tp.Left, tp.Right-bar.LenOfBar)
 		bar.ScrollDelta += amount
-		bar.ScrollDelta = bar.Clamp(bar.ScrollDelta, 0, bar.LenOfOffscreenY)
+		bar.ScrollDelta = bar.Clamp(bar.ScrollDelta, 0, bar.LenOfOffscreen)
 	} else {
 		bar.PosY -= delta
 		bar.PosY = bar.Clamp(bar.PosY, tp.Bottom+bar.LenOfBar, tp.Top)
 		bar.ScrollDelta -= amount
-		bar.ScrollDelta = bar.Clamp(bar.ScrollDelta, -bar.LenOfOffscreenY, 0)
+		bar.ScrollDelta = bar.Clamp(bar.ScrollDelta, -bar.LenOfOffscreen, 0)
 	}
 }
 
@@ -110,26 +120,25 @@ func (bar *ScrollBar) Clamp(pos, negBoundary, posBoundary float32) float32 {
 	return pos
 }
 
-func (bar *ScrollBar) Draw(atlasX, atlasY float32) {
-	// for now, this draws all bars whether you can see them or not (not == content fits entirely inside panel)
+func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
+	// this draws all bars whether you can see them or not (not is when content fits entirely inside panel)
 	// not worth optimizing, but mentioning it in case of some weird future bug
 
-	rad := textRend.ScreenRad
 	sp /* span */ := textRend.UvSpan
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp
 
-	top := -rad + textRend.CharHei
-	bott := -rad                // bottom
-	l := rad - textRend.CharWid // left
-	r := rad                    // right
+	top := tp.Bottom + textRend.CharHei/2
+	bott := tp.Bottom                // bottom
+	l := tp.Right - textRend.CharWid // left
+	r := tp.Right                    // right
 
 	if bar.IsHorizontal {
-		l = bar.PosX                // left
-		r = bar.PosX + bar.LenOfBar // right
+		l = bar.PosX
+		r = bar.PosX + bar.LenOfBar
 	} else {
 		top = bar.PosY
-		bott = bar.PosY - bar.LenOfBar // bottom
+		bott = bar.PosY - bar.LenOfBar
 	}
 
 	gl.Normal3f(0, 0, 1)
