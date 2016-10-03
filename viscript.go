@@ -1,5 +1,6 @@
 /* TODO:
 
+* bars won't move you QUITE far enough to see the last line without it being squished.  fix.
 * when there is no scrollbar, should be able to see/interact with text in that area
 
 

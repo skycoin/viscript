@@ -83,8 +83,6 @@ func (tp *TextPanel) GoToTopLeftCorner() {
 }
 
 func (tp *TextPanel) Draw() {
-	tp.BarHori.UpdateSize(tp)
-	tp.BarVert.UpdateSize(tp)
 	tp.GoToTopLeftCorner()
 	tp.DrawBackground(11, 13)
 
@@ -104,14 +102,16 @@ func (tp *TextPanel) Draw() {
 
 			// draw line of text
 			for x, c := range line {
-				textRend.DrawCharAtCurrentPosition(c, clipSpan)
+				if true /* this char is visible */ {
+					textRend.DrawCharAtCurrentPosition(c, clipSpan)
 
-				if tp.IsEditable && curs.Visible == true {
-					//fmt.Printf("tp.CursX, tp.CursY: %d,%d\n", tp.CursX, tp.CursY)
+					if tp.IsEditable && curs.Visible == true {
+						//fmt.Printf("tp.CursX, tp.CursY: %d,%d\n", tp.CursX, tp.CursY)
 
-					if x == tp.CursX && y == tp.CursY {
-						textRend.CurrX -= textRend.CharWid
-						textRend.DrawCharAtCurrentPosition('_', clipSpan)
+						if x == tp.CursX && y == tp.CursY {
+							textRend.CurrX -= textRend.CharWid
+							textRend.DrawCharAtCurrentPosition('_', clipSpan)
+						}
 					}
 				}
 			}

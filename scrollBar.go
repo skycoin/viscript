@@ -21,7 +21,7 @@ type ScrollBar struct {
 	ScrollDelta    float32 // distance/offset from home/start of document (negative in Y cuz Y increases upwards)
 }
 
-func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
+func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 	if bar.IsHorizontal {
 		// OPTIMIZEME in the future?  idealistically, the below should only be calculated
 		// whenever user changes the size of a line such as by:
@@ -38,7 +38,7 @@ func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
 		numCharsInLongest++ // adding extra space so we have room to show cursor at end of longest
 
 		// the rest of this block is an altered copy of the else block
-		wid := tp.Right - tp.Left - bar.Thickness //textRend.CharWid * float32(tp.NumCharsX) /* width of panel */
+		wid := tp.Right - tp.Left - tp.BarVert.Thickness //textRend.CharWid * float32(tp.NumCharsX) /* width of panel */
 
 		if /* content smaller than screen */ numCharsInLongest <= tp.NumCharsX {
 			// NO BAR
@@ -50,18 +50,21 @@ func (bar *ScrollBar) UpdateSize(tp *TextPanel) {
 			bar.LenOfVoid = wid - bar.LenOfBar
 			bar.LenOfOffscreen = float32(numCharsInLongest-tp.NumCharsX) * textRend.CharWid
 		}
-	} else {
-		hei := tp.Top - tp.Bottom - bar.Thickness //textRend.CharHei * float32(tp.NumCharsY) /* height of panel */
+	} else { // vertical bar
+		panHei := tp.Top - tp.Bottom - tp.BarHori.Thickness //textRend.CharHei * float32(tp.NumCharsY) /* height of panel */
 
 		if /* content smaller than screen */ len(tp.Body) <= tp.NumCharsY {
 			// NO BAR
 			bar.LenOfBar = 0
-			bar.LenOfVoid = hei
+			bar.LenOfVoid = panHei
 			bar.LenOfOffscreen = 0
 		} else {
-			bar.LenOfBar = float32(tp.NumCharsY) / float32(len(tp.Body)) * hei
-			bar.LenOfVoid = hei - bar.LenOfBar
-			bar.LenOfOffscreen = float32(len(tp.Body)-tp.NumCharsY) * textRend.CharHei
+			totalTextHei := float32(len(tp.Body)) * textRend.CharHei
+			//bar.LenOfOffscreen = float32(len(tp.Body)-tp.NumCharsY) * textRend.CharHei
+			bar.LenOfOffscreen = totalTextHei - panHei
+			//bar.LenOfBar = float32(tp.NumCharsY) / float32(len(tp.Body)) * panHei
+			bar.LenOfBar = panHei / totalTextHei * panHei
+			bar.LenOfVoid = panHei - bar.LenOfBar
 		}
 	}
 }
@@ -119,6 +122,8 @@ func (bar *ScrollBar) Clamp(pos, negBoundary, posBoundary float32) float32 {
 func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
 	// this draws all bars whether you can see them or not (not is when content fits entirely inside panel)
 	// not worth optimizing, but mentioning it in case of some weird future bug
+
+	bar.UpdateSize(tp)
 
 	if bar.Thickness == 0 {
 		bar.Thickness = textRend.ScreenRad / 30
