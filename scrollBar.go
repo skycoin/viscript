@@ -38,20 +38,21 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 		numCharsInLongest++ // adding extra space so we have room to show cursor at end of longest
 
 		// the rest of this block is an altered copy of the else block
-		wid := tp.Right - tp.Left - tp.BarVert.Thickness //textRend.CharWid * float32(tp.NumCharsX) /* width of panel */
+		panWid := tp.Right - tp.Left - tp.BarVert.Thickness // width of panel (MINUS scrollbar space)
 
 		if /* content smaller than screen */ numCharsInLongest <= tp.NumCharsX {
 			// NO BAR
 			bar.LenOfBar = 0
-			bar.LenOfVoid = wid
+			bar.LenOfVoid = panWid
 			bar.LenOfOffscreen = 0
 		} else {
-			bar.LenOfBar = float32(tp.NumCharsX) / float32(numCharsInLongest) * wid
-			bar.LenOfVoid = wid - bar.LenOfBar
-			bar.LenOfOffscreen = float32(numCharsInLongest-tp.NumCharsX) * textRend.CharWid
+			totalTextWid := float32(numCharsInLongest) * textRend.CharWid
+			bar.LenOfOffscreen = totalTextWid - panWid
+			bar.LenOfBar = panWid / totalTextWid * panWid
+			bar.LenOfVoid = panWid - bar.LenOfBar
 		}
 	} else { // vertical bar
-		panHei := tp.Top - tp.Bottom - tp.BarHori.Thickness //textRend.CharHei * float32(tp.NumCharsY) /* height of panel */
+		panHei := tp.Top - tp.Bottom - tp.BarHori.Thickness // height of panel (MINUS scrollbar space)
 
 		if /* content smaller than screen */ len(tp.Body) <= tp.NumCharsY {
 			// NO BAR
@@ -60,9 +61,7 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 			bar.LenOfOffscreen = 0
 		} else {
 			totalTextHei := float32(len(tp.Body)) * textRend.CharHei
-			//bar.LenOfOffscreen = float32(len(tp.Body)-tp.NumCharsY) * textRend.CharHei
 			bar.LenOfOffscreen = totalTextHei - panHei
-			//bar.LenOfBar = float32(tp.NumCharsY) / float32(len(tp.Body)) * panHei
 			bar.LenOfBar = panHei / totalTextHei * panHei
 			bar.LenOfVoid = panHei - bar.LenOfBar
 		}
