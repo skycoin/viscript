@@ -76,8 +76,8 @@ func (tr *TextRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixe
 func (tr *TextRenderer) DrawCharAtCurrentPosition(char rune, clipSpan *Rectangle) {
 	u := float32(int(char) % 16)
 	v := float32(int(char) / 16)
-	w := textRend.CharWid // char width
-	h := textRend.CharHei // char height
+	w := textRend.CharWid // width
+	h := textRend.CharHei // height
 	sp := textRend.UvSpan
 
 	/*
@@ -99,6 +99,4 @@ func (tr *TextRenderer) DrawCharAtCurrentPosition(char rune, clipSpan *Rectangle
 
 	gl.TexCoord2f(u*sp, v*sp) // tl  0, 0
 	gl.Vertex3f(textRend.CurrX, textRend.CurrY-clipSpan.Top, 0)
-
-	textRend.CurrX += w
 }
