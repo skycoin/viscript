@@ -84,27 +84,40 @@ func (tp *TextPanel) GoToTopLeftCorner() {
 
 func (tp *TextPanel) Draw() {
 	cw := textRend.CharWid
+	ch := textRend.CharHei
+
 	tp.GoToTopLeftCorner()
 	tp.DrawBackground(11, 13)
 
 	// body of text
 	for y, line := range tp.Body {
 		// if line visible
-		if textRend.CurrY <= tp.Top+textRend.CharHei && textRend.CurrY >= tp.BarHori.PosY {
+		if textRend.CurrY <= tp.Top+ch && textRend.CurrY >= tp.BarHori.PosY {
 			clipSpan := &Rectangle{}
 
 			// if line needs vertical clipping
 			if textRend.CurrY > tp.Top {
 				clipSpan.Top = textRend.CurrY - tp.Top
 			}
-			if textRend.CurrY-textRend.CharHei < tp.BarHori.PosY {
-				clipSpan.Bottom = (textRend.CurrY - textRend.CharHei) - tp.BarHori.PosY
+			if textRend.CurrY-ch < tp.BarHori.PosY {
+				clipSpan.Bottom = (textRend.CurrY - ch) - tp.BarHori.PosY
 			}
 
-			// draw line of text
+			// process line of text
 			for x, c := range line {
 				// if char visible
-				if textRend.CurrX >= tp.Left /*-cw*/ && textRend.CurrX <= tp.Right-tp.BarVert.Thickness {
+				if textRend.CurrX >= tp.Left-cw && textRend.CurrX <= tp.Right-tp.BarVert.Thickness {
+					// if line needs horizontal clipping
+					l := textRend.CurrX // left point of char
+					if l < tp.Left {
+						clipSpan.Left = l - tp.Left
+					}
+
+					r := textRend.CurrX + cw // right point of char
+					if r > tp.Right {
+						clipSpan.Right = r - tp.Right
+					}
+
 					textRend.DrawCharAtCurrentPosition(c, clipSpan)
 
 					if tp.IsEditable && curs.Visible == true {
@@ -115,6 +128,8 @@ func (tp *TextPanel) Draw() {
 				}
 
 				textRend.CurrX += cw
+				clipSpan.Left = 0
+				clipSpan.Right = 0
 			}
 
 			// draw cursor at the end of line if needed
@@ -127,7 +142,7 @@ func (tp *TextPanel) Draw() {
 			tp.GoToLeftEdge()
 		}
 
-		textRend.CurrY -= textRend.CharHei // go down a line height
+		textRend.CurrY -= ch // go down a line height
 	}
 
 	tp.BarHori.Draw(2, 11, *tp)
