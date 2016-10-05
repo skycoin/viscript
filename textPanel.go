@@ -121,12 +121,11 @@ func (tp *TextPanel) Draw() {
 						r.Right = tp.BarVert.PosX
 					}
 
-					//fmt.Println("char is visible")
-					textRend.DrawCharAtCurrentPosition(c, r)
+					textRend.DrawCharAtRect(c, r)
 
 					if tp.IsEditable && curs.Visible == true {
 						if x == tp.CursX && y == tp.CursY {
-							textRend.DrawCharAtCurrentPosition('_', r)
+							textRend.DrawCharAtRect('_', r)
 						}
 					}
 				}
@@ -139,7 +138,7 @@ func (tp *TextPanel) Draw() {
 			// draw cursor at the end of line if needed
 			if y == tp.CursY && tp.CursX == len(line) {
 				if tp.IsEditable && curs.Visible == true {
-					textRend.DrawCharAtCurrentPosition('_', r)
+					textRend.DrawCharAtRect('_', r)
 				}
 			}
 

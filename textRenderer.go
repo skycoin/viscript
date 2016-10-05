@@ -73,7 +73,7 @@ func (tr *TextRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixe
 	}
 }
 
-func (tr *TextRenderer) DrawCharAtCurrentPosition(char rune, r *Rectangle) {
+func (tr *TextRenderer) DrawCharAtRect(char rune, r *Rectangle) {
 	u := float32(int(char) % 16)
 	v := float32(int(char) / 16)
 	sp := textRend.UvSpan

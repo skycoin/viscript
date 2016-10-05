@@ -95,27 +95,15 @@ func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, delta float32) {
 
 	if bar.IsHorizontal {
 		bar.PosX += delta
-		bar.PosX = bar.Clamp(bar.PosX, tp.Left, tp.Right-bar.LenOfBar-tp.BarVert.Thickness)
+		bar.PosX = Clamp(bar.PosX, tp.Left, tp.Right-bar.LenOfBar-tp.BarVert.Thickness)
 		bar.ScrollDelta += amount
-		bar.ScrollDelta = bar.Clamp(bar.ScrollDelta, 0, bar.LenOfOffscreen)
+		bar.ScrollDelta = Clamp(bar.ScrollDelta, 0, bar.LenOfOffscreen)
 	} else {
 		bar.PosY -= delta
-		bar.PosY = bar.Clamp(bar.PosY, tp.Bottom+bar.LenOfBar+tp.BarHori.Thickness, tp.Top)
+		bar.PosY = Clamp(bar.PosY, tp.Bottom+bar.LenOfBar+tp.BarHori.Thickness, tp.Top)
 		bar.ScrollDelta -= amount
-		bar.ScrollDelta = bar.Clamp(bar.ScrollDelta, -bar.LenOfOffscreen, 0)
+		bar.ScrollDelta = Clamp(bar.ScrollDelta, -bar.LenOfOffscreen, 0)
 	}
-}
-
-// params: position in relevant dimension, negativemost, & positivemost bounds
-func (bar *ScrollBar) Clamp(pos, negBoundary, posBoundary float32) float32 {
-	if pos < negBoundary {
-		pos = negBoundary
-	}
-	if pos > posBoundary {
-		pos = posBoundary
-	}
-
-	return pos
 }
 
 func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
