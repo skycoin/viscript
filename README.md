@@ -673,7 +673,6 @@ https://media.8ch.net/file_store/182f81c50b3263c84c2269056bde7221026adc7971d119b
 [9/30/2016 3:01:13 AM] HaltingState: and it is clear exactly what is being called and no ambiguity
 [9/30/2016 3:02:17 AM] HaltingState: however, for coding, we can display at it as 3*(5+6) for the programmer but on backend it is (*3 (+ 5 6)) or (mult32 3 (add32 5 6)), or (int32.mult 3 ( int32.add 5 6))
 [9/30/2016 3:02:40 AM] HaltingState: right now, we are just doing the backend and the abstract syntax tree;
-[9/30/2016 3:05:22 AM] HaltingState: !!!! go buy Citrulline Malate. Take three times per day. Do it right now. Also get B1 (at least 50mg)  https://www.amazon.com/Primaforce-Citrulline-Malate-Powder-Unflavored/dp/B00J5MUZ6I
 [9/30/2016 3:26:53 AM] HaltingState: do
 1. a command for introducing a variable into scope
 2. a command for setting the value of a variable
@@ -696,5 +695,13 @@ being able to create structs etc and just start simple
 [9/30/2016 10:52:14 AM] HaltingState: look up "Abstract Syntax Tree" , that is what it is (not even lisp)
 [9/30/2016 11:11:33 AM] HaltingState: https://en.wikipedia.org/wiki/Abstract_syntax_tree
 [9/30/2016 11:11:39 AM] HaltingState: that what it really is
+
+
+
+[7:05:21 AM] HaltingState: there are different types of stylign an rendering, such as horizontal scroll on current line, or only expanding to multiple lines for the selection
+[7:05:52 AM] HaltingState: and we should have a DOM or virtual DOM, which is virtual document object model, like react has and then have an object that renders the DOM and have the options in that object
+
+But doesnt matter for now
+[7:19:28 AM] HaltingState: A virtual DOM, then an object that renders it into the square buffer
 
 "

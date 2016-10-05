@@ -39,8 +39,8 @@ func (tp *TextPanel) Init() {
 	tp.BarHori = &ScrollBar{IsHorizontal: true}
 	tp.BarVert = &ScrollBar{}
 	tp.BarHori.PosX = tp.Left
-	tp.BarHori.PosY = tp.Bottom //- textRend.CharHei
-	tp.BarVert.PosX = tp.Right  //- textRend.CharWid
+	tp.BarHori.PosY = tp.Bottom
+	tp.BarVert.PosX = tp.Right
 	tp.BarVert.PosY = tp.Top
 
 	if tp.NumCharsX == 0 {
@@ -85,6 +85,7 @@ func (tp *TextPanel) GoToTopLeftCorner() {
 func (tp *TextPanel) Draw() {
 	cw := textRend.CharWid
 	ch := textRend.CharHei
+	b := tp.BarHori.PosY // bottom of text area
 
 	tp.GoToTopLeftCorner()
 	tp.DrawBackground(11, 13)
@@ -92,50 +93,50 @@ func (tp *TextPanel) Draw() {
 	// body of text
 	for y, line := range tp.Body {
 		// if line visible
-		if textRend.CurrY <= tp.Top+ch && textRend.CurrY >= tp.BarHori.PosY {
-			clipSpan := &Rectangle{}
+		if textRend.CurrY <= tp.Top+ch && textRend.CurrY >= b {
+			r := &Rectangle{}
 
 			// if line needs vertical clipping
 			if textRend.CurrY > tp.Top {
-				clipSpan.Top = textRend.CurrY - tp.Top
+				r.Top = textRend.CurrY - tp.Top
 			}
-			if textRend.CurrY-ch < tp.BarHori.PosY {
-				clipSpan.Bottom = (textRend.CurrY - ch) - tp.BarHori.PosY
+			if textRend.CurrY-ch < b {
+				r.Bottom = (textRend.CurrY - ch) - b
 			}
 
 			// process line of text
 			for x, c := range line {
 				// if char visible
 				if textRend.CurrX >= tp.Left-cw && textRend.CurrX <= tp.Right-tp.BarVert.Thickness {
-					// if line needs horizontal clipping
+					// if character needs horizontal clipping
 					l := textRend.CurrX // left point of char
 					if l < tp.Left {
-						clipSpan.Left = l - tp.Left
+						r.Left = l - tp.Left
 					}
 
-					r := textRend.CurrX + cw // right point of char
-					if r > tp.Right {
-						clipSpan.Right = r - tp.Right
+					cR := textRend.CurrX + cw // right point of char
+					if cR > tp.Right {
+						r.Right = cR - tp.BarHori.PosX
 					}
 
-					textRend.DrawCharAtCurrentPosition(c, clipSpan)
+					textRend.DrawCharAtCurrentPosition(c, r)
 
 					if tp.IsEditable && curs.Visible == true {
 						if x == tp.CursX && y == tp.CursY {
-							textRend.DrawCharAtCurrentPosition('_', clipSpan)
+							textRend.DrawCharAtCurrentPosition('_', r)
 						}
 					}
 				}
 
 				textRend.CurrX += cw
-				clipSpan.Left = 0
-				clipSpan.Right = 0
+				r.Left = 0
+				r.Right = 0
 			}
 
 			// draw cursor at the end of line if needed
 			if y == tp.CursY && tp.CursX == len(line) {
 				if tp.IsEditable && curs.Visible == true {
-					textRend.DrawCharAtCurrentPosition('_', clipSpan)
+					textRend.DrawCharAtCurrentPosition('_', r)
 				}
 			}
 
@@ -155,12 +156,14 @@ func (tp *TextPanel) DrawScrollbarCorner(atlasCellX, atlasCellY float32) {
 	sp := textRend.UvSpan
 	u := float32(atlasCellX) * sp
 	v := float32(atlasCellY) * sp
+	t := tp.Bottom + tp.BarHori.Thickness // top
+	l := tp.Right - tp.BarVert.Thickness
 
 	gl.Normal3f(0, 0, 1)
 
 	// bottom left   0, 1
 	gl.TexCoord2f(u, v+sp)
-	gl.Vertex3f(tp.BarVert.PosX, tp.Bottom, 0)
+	gl.Vertex3f(l, tp.Bottom, 0)
 
 	// bottom right   1, 1
 	gl.TexCoord2f(u+sp, v+sp)
@@ -168,11 +171,11 @@ func (tp *TextPanel) DrawScrollbarCorner(atlasCellX, atlasCellY float32) {
 
 	// top right   1, 0
 	gl.TexCoord2f(u+sp, v)
-	gl.Vertex3f(tp.Right, tp.BarHori.PosY, 0)
+	gl.Vertex3f(tp.Right, t, 0)
 
 	// top left   0, 0
 	gl.TexCoord2f(u, v)
-	gl.Vertex3f(tp.BarVert.PosX, tp.BarHori.PosY, 0)
+	gl.Vertex3f(l, t, 0)
 }
 
 func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
@@ -233,12 +236,12 @@ func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {
 }
 
 func (tp *TextPanel) SetupDemoProgram() {
-	tp.Body = append(tp.Body, "// ------- variable declarations ------- ------- ------- ------- ------- ------- ------- ------- end")
+	tp.Body = append(tp.Body, "// ------- variable declarations ------- -------")
 	tp.Body = append(tp.Body, "var myVar int32")
 	tp.Body = append(tp.Body, "var a int32 = 42")
 	tp.Body = append(tp.Body, "var b int32 = 58")
 	tp.Body = append(tp.Body, "")
-	tp.Body = append(tp.Body, "// ------- builtin function calls -------")
+	tp.Body = append(tp.Body, "// ------- builtin function calls ------- ------- ------- ------- ------- ------- ------- end")
 	tp.Body = append(tp.Body, "    sub32(7, 9)")
 	tp.Body = append(tp.Body, "sub32(4,8)")
 	tp.Body = append(tp.Body, "mult32(7, 7)")
