@@ -76,25 +76,19 @@ func (tr *TextRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixe
 func (tr *TextRenderer) DrawCharAtCurrentPosition(char rune, r *Rectangle) {
 	u := float32(int(char) % 16)
 	v := float32(int(char) / 16)
-	w := textRend.CharWid // width
-	h := textRend.CharHei // height
 	sp := textRend.UvSpan
 
 	gl.Normal3f(0, 0, 1)
 
-	gl.TexCoord2f(u*sp, v*sp+sp) // bl  0, 1
-	gl.Vertex3f(textRend.CurrX-r.Left,
-		textRend.CurrY-h-r.Bottom, 0)
+	gl.TexCoord2f(u*sp, v*sp+sp)
+	gl.Vertex3f(r.Left, r.Bottom, 0)
 
-	gl.TexCoord2f(u*sp+sp, v*sp+sp) // br  1, 1
-	gl.Vertex3f(textRend.CurrX+w-r.Right,
-		textRend.CurrY-h-r.Bottom, 0)
+	gl.TexCoord2f(u*sp+sp, v*sp+sp)
+	gl.Vertex3f(r.Right, r.Bottom, 0)
 
-	gl.TexCoord2f(u*sp+sp, v*sp) // tr  1, 0
-	gl.Vertex3f(textRend.CurrX+w-r.Right,
-		textRend.CurrY-r.Top, 0)
+	gl.TexCoord2f(u*sp+sp, v*sp)
+	gl.Vertex3f(r.Right, r.Top, 0)
 
-	gl.TexCoord2f(u*sp, v*sp) // tl  0, 0
-	gl.Vertex3f(textRend.CurrX-r.Left,
-		textRend.CurrY-r.Top, 0)
+	gl.TexCoord2f(u*sp, v*sp)
+	gl.Vertex3f(r.Left, r.Top, 0)
 }

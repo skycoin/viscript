@@ -74,8 +74,9 @@ func (tp *TextPanel) RespondToMouseClick() {
 func (tp *TextPanel) GoToTopEdge() {
 	textRend.CurrY = tp.Top - tp.BarVert.ScrollDelta
 }
-func (tp *TextPanel) GoToLeftEdge() {
+func (tp *TextPanel) GoToLeftEdge() float32 {
 	textRend.CurrX = tp.Left - tp.BarHori.ScrollDelta
+	return textRend.CurrX
 }
 func (tp *TextPanel) GoToTopLeftCorner() {
 	tp.GoToTopEdge()
@@ -83,42 +84,44 @@ func (tp *TextPanel) GoToTopLeftCorner() {
 }
 
 func (tp *TextPanel) Draw() {
-	cw := textRend.CharWid
-	ch := textRend.CharHei
-	b := tp.BarHori.PosY // bottom of text area
-
 	tp.GoToTopLeftCorner()
 	tp.DrawBackground(11, 13)
+
+	cX := textRend.CurrX // current (internal/logic cursor) drawing position
+	cY := textRend.CurrY
+	cW := textRend.CharWid
+	cH := textRend.CharHei
+	b := tp.BarHori.PosY // bottom of text area
 
 	// body of text
 	for y, line := range tp.Body {
 		// if line visible
-		if textRend.CurrY <= tp.Top+ch && textRend.CurrY >= b {
-			r := &Rectangle{}
+		if cY <= tp.Top+cH && cY >= b {
+			r := &Rectangle{cY, cX + cW, cY - cH, cX} // t, r, b, l
 
-			// if line needs vertical clipping
-			if textRend.CurrY > tp.Top {
-				r.Top = textRend.CurrY - tp.Top
+			// if line needs vertical adjustment
+			if cY > tp.Top {
+				r.Top = tp.Top
 			}
-			if textRend.CurrY-ch < b {
-				r.Bottom = (textRend.CurrY - ch) - b
+			if cY-cH < b {
+				r.Bottom = b
 			}
 
 			// process line of text
 			for x, c := range line {
 				// if char visible
-				if textRend.CurrX >= tp.Left-cw && textRend.CurrX <= tp.Right-tp.BarVert.Thickness {
-					// if character needs horizontal clipping
-					l := textRend.CurrX // left point of char
-					if l < tp.Left {
-						r.Left = l - tp.Left
+				if cX >= tp.Left-cW && cX <= tp.Right-tp.BarVert.Thickness {
+					// if character needs horizontal adjustment
+					if cX < tp.Left {
+						r.Left = tp.Left
 					}
 
-					cR := textRend.CurrX + cw // right point of char
-					if cR > tp.Right {
-						r.Right = cR - tp.BarHori.PosX
+					cR := cX + cW // right point of char
+					if cR > tp.BarVert.PosX {
+						r.Right = tp.BarVert.PosX
 					}
 
+					//fmt.Println("char is visible")
 					textRend.DrawCharAtCurrentPosition(c, r)
 
 					if tp.IsEditable && curs.Visible == true {
@@ -128,9 +131,9 @@ func (tp *TextPanel) Draw() {
 					}
 				}
 
-				textRend.CurrX += cw
-				r.Left = 0
-				r.Right = 0
+				cX /*textRend.CurrX*/ += cW
+				r.Left = cX
+				r.Right = cX + cW
 			}
 
 			// draw cursor at the end of line if needed
@@ -140,10 +143,10 @@ func (tp *TextPanel) Draw() {
 				}
 			}
 
-			tp.GoToLeftEdge()
+			cX = tp.GoToLeftEdge()
 		}
 
-		textRend.CurrY -= ch // go down a line height
+		cY /*textRend.CurrY*/ -= cH // go down a line height
 	}
 
 	tp.BarHori.Draw(2, 11, *tp)
