@@ -110,17 +110,8 @@ func (tp *TextPanel) Draw() {
 			// process line of text
 			for x, c := range line {
 				// if char visible
-				if cX >= tp.Left-cW && cX <= tp.Right-tp.BarVert.Thickness {
-					// if character needs horizontal adjustment
-					if cX < tp.Left {
-						r.Left = tp.Left
-					}
-
-					cR := cX + cW // right point of char
-					if cR > tp.BarVert.PosX {
-						r.Right = tp.BarVert.PosX
-					}
-
+				if cX >= tp.Left-cW && cX < tp.BarVert.PosX {
+					ClampLeftAndRightOf(r, tp.Left, tp.BarVert.PosX)
 					textRend.DrawCharAtRect(c, r)
 
 					if tp.IsEditable && curs.Visible == true {
@@ -136,8 +127,9 @@ func (tp *TextPanel) Draw() {
 			}
 
 			// draw cursor at the end of line if needed
-			if y == tp.CursY && tp.CursX == len(line) {
+			if cX < tp.BarVert.PosX && y == tp.CursY && tp.CursX == len(line) {
 				if tp.IsEditable && curs.Visible == true {
+					ClampLeftAndRightOf(r, tp.Left, tp.BarVert.PosX)
 					textRend.DrawCharAtRect('_', r)
 				}
 			}

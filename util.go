@@ -15,3 +15,15 @@ func Clamp(f, negBoundary, posBoundary float32) float32 {
 
 	return f
 }
+
+// params: Rectangle, negativemost, & positivemost bounds
+func ClampLeftAndRightOf(r *Rectangle, negBoundary, posBoundary float32) *Rectangle {
+	if r.Left < negBoundary {
+		r.Left = negBoundary
+	}
+	if r.Right > posBoundary {
+		r.Right = posBoundary
+	}
+
+	return r
+}
