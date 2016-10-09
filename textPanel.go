@@ -17,13 +17,14 @@ type TextPanel struct {
 	MouseX     int // current mouse position in character grid space (units/cells)
 	MouseY     int
 	IsEditable bool
-	Selection  SelectionRange
-	Bar        *ScrollBar
+	Selection  *SelectionRange
+	BarHori    *ScrollBar // horizontal
+	BarVert    *ScrollBar // vertical
 	Body       []string
 }
 
 func (tp *TextPanel) Init() {
-	tp.Selection = SelectionRange{}
+	tp.Selection = &SelectionRange{}
 	tp.Selection.Init()
 
 	tp.Left = -textRend.ScreenRad
@@ -35,9 +36,12 @@ func (tp *TextPanel) Init() {
 
 	tp.Bottom = tp.Top - float32(tp.NumCharsY)*textRend.CharHei
 
-	tp.Bar = &ScrollBar{}
-	tp.Bar.PosX = tp.Right - textRend.CharWid
-	tp.Bar.PosY = tp.Top
+	tp.BarHori = &ScrollBar{IsHorizontal: true}
+	tp.BarVert = &ScrollBar{}
+	tp.BarHori.PosX = tp.Left
+	tp.BarHori.PosY = tp.Bottom
+	tp.BarVert.PosX = tp.Right
+	tp.BarVert.PosY = tp.Top
 
 	if tp.NumCharsX == 0 {
 		tp.NumCharsX = textRend.MaxCharsX
@@ -55,8 +59,8 @@ func (tp *TextPanel) RespondToMouseClick() {
 	// diffs/deltas from home position of panel (top left corner)
 	glDeltaXFromHome := curs.MouseGlX - tp.Left
 	glDeltaYFromHome := curs.MouseGlY - tp.Top
-	tp.MouseX = int((glDeltaXFromHome + tp.Bar.ScrollDeltaX) / textRend.CharWid)
-	tp.MouseY = int(-(glDeltaYFromHome + tp.Bar.ScrollDeltaY) / textRend.CharHei)
+	tp.MouseX = int((glDeltaXFromHome + tp.BarHori.ScrollDelta) / textRend.CharWid)
+	tp.MouseY = int(-(glDeltaYFromHome + tp.BarVert.ScrollDelta) / textRend.CharHei)
 
 	if tp.MouseY < 0 {
 		tp.MouseY = 0
@@ -68,11 +72,11 @@ func (tp *TextPanel) RespondToMouseClick() {
 }
 
 func (tp *TextPanel) GoToTopEdge() {
-	//fmt.Printf("GoToTopEdge() tp.ScrollDeltaY: %.2f\n", tp.ScrollDeltaY)
-	textRend.CurrY = tp.Top - tp.Bar.ScrollDeltaY //tp.Bar.OffsetY
+	textRend.CurrY = tp.Top - tp.BarVert.ScrollDelta
 }
-func (tp *TextPanel) GoToLeftEdge() {
-	textRend.CurrX = tp.Left
+func (tp *TextPanel) GoToLeftEdge() float32 {
+	textRend.CurrX = tp.Left - tp.BarHori.ScrollDelta
+	return textRend.CurrX
 }
 func (tp *TextPanel) GoToTopLeftCorner() {
 	tp.GoToTopEdge()
@@ -80,51 +84,95 @@ func (tp *TextPanel) GoToTopLeftCorner() {
 }
 
 func (tp *TextPanel) Draw() {
-	tp.Bar.UpdateSize(tp)
 	tp.GoToTopLeftCorner()
 	tp.DrawBackground(11, 13)
 
+	cX := textRend.CurrX // current (internal/logic cursor) drawing position
+	cY := textRend.CurrY
+	cW := textRend.CharWid
+	cH := textRend.CharHei
+	b := tp.BarHori.PosY // bottom of text area
+
 	// body of text
 	for y, line := range tp.Body {
-		if textRend.CurrY <= tp.Top+textRend.CharHei { // if line visible
-			var clipSpan float32
+		// if line visible
+		if cY <= tp.Top+cH && cY >= b {
+			r := &Rectangle{cY, cX + cW, cY - cH, cX} // t, r, b, l
 
-			if textRend.CurrY > tp.Top { // if line needs its top clipped
-				clipSpan = textRend.CurrY - tp.Top
+			// if line needs vertical adjustment
+			if cY > tp.Top {
+				r.Top = tp.Top
+			}
+			if cY-cH < b {
+				r.Bottom = b
 			}
 
-			// draw line of text
+			// process line of text
 			for x, c := range line {
-				drawCurrentChar(c, clipSpan)
+				// if char visible
+				if cX >= tp.Left-cW && cX < tp.BarVert.PosX {
+					ClampLeftAndRightOf(r, tp.Left, tp.BarVert.PosX)
+					textRend.DrawCharAtRect(c, r)
 
-				if tp.IsEditable && curs.Visible == true {
-					//fmt.Printf("tp.CursX, tp.CursY: %d,%d\n", tp.CursX, tp.CursY)
-
-					if x == tp.CursX && y == tp.CursY {
-						textRend.CurrX -= textRend.CharWid
-						drawCurrentChar('_', clipSpan)
+					if tp.IsEditable && curs.Visible == true {
+						if x == tp.CursX && y == tp.CursY {
+							textRend.DrawCharAtRect('_', r)
+						}
 					}
 				}
+
+				cX /*textRend.CurrX*/ += cW
+				r.Left = cX
+				r.Right = cX + cW
 			}
 
-			// draw at the end of line if needed
-			if y == tp.CursY && tp.CursX == len(line) {
+			// draw cursor at the end of line if needed
+			if cX < tp.BarVert.PosX && y == tp.CursY && tp.CursX == len(line) {
 				if tp.IsEditable && curs.Visible == true {
-					drawCurrentChar('_', clipSpan)
+					ClampLeftAndRightOf(r, tp.Left, tp.BarVert.PosX)
+					textRend.DrawCharAtRect('_', r)
 				}
 			}
 
-			tp.GoToLeftEdge()
+			cX = tp.GoToLeftEdge()
 		}
 
-		textRend.CurrY -= textRend.CharHei // go down a line height
+		cY /*textRend.CurrY*/ -= cH // go down a line height
 	}
 
-	tp.Bar.DrawVertical(2, 11)
+	tp.BarHori.Draw(2, 11, *tp)
+	tp.BarVert.Draw(2, 11, *tp)
+	tp.DrawScrollbarCorner(12, 11)
+}
+
+// ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)
+func (tp *TextPanel) DrawScrollbarCorner(atlasCellX, atlasCellY float32) {
+	sp := textRend.UvSpan
+	u := float32(atlasCellX) * sp
+	v := float32(atlasCellY) * sp
+	t := tp.Bottom + tp.BarHori.Thickness // top
+	l := tp.Right - tp.BarVert.Thickness
+
+	gl.Normal3f(0, 0, 1)
+
+	// bottom left   0, 1
+	gl.TexCoord2f(u, v+sp)
+	gl.Vertex3f(l, tp.Bottom, 0)
+
+	// bottom right   1, 1
+	gl.TexCoord2f(u+sp, v+sp)
+	gl.Vertex3f(tp.Right, tp.Bottom, 0)
+
+	// top right   1, 0
+	gl.TexCoord2f(u+sp, v)
+	gl.Vertex3f(tp.Right, t, 0)
+
+	// top left   0, 0
+	gl.TexCoord2f(u, v)
+	gl.Vertex3f(l, t, 0)
 }
 
 func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
-	rad := textRend.ScreenRad
 	sp := textRend.UvSpan
 	u := float32(atlasCellX) * sp
 	v := float32(atlasCellY) * sp
@@ -133,26 +181,28 @@ func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 
 	// bottom left   0, 1
 	gl.TexCoord2f(u, v+sp)
-	gl.Vertex3f(-rad, tp.Bottom, 0)
+	gl.Vertex3f(tp.Left, tp.Bottom, 0)
 
 	// bottom right   1, 1
 	gl.TexCoord2f(u+sp, v+sp)
-	gl.Vertex3f(rad, tp.Bottom, 0)
+	gl.Vertex3f(tp.Right, tp.Bottom, 0)
 
 	// top right   1, 0
 	gl.TexCoord2f(u+sp, v)
-	gl.Vertex3f(rad, tp.Top, 0)
+	gl.Vertex3f(tp.Right, tp.Top, 0)
 
 	// top left   0, 0
 	gl.TexCoord2f(u, v)
-	gl.Vertex3f(-rad, tp.Top, 0)
+	gl.Vertex3f(tp.Left, tp.Top, 0)
 }
 
-func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaY float64) {
+func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float64) {
 	if tp.ContainsMouseCursor() {
-		// y position increment (for bar) in gl space
+		// position increments in gl space
+		xInc := float32(mousePixelDeltaX) * textRend.PixelWid
 		yInc := float32(mousePixelDeltaY) * textRend.PixelHei
-		tp.Bar.ScrollThisMuch(tp, yInc)
+		tp.BarHori.ScrollThisMuch(tp, xInc)
+		tp.BarVert.ScrollThisMuch(tp, yInc)
 	}
 }
 
@@ -180,12 +230,12 @@ func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {
 }
 
 func (tp *TextPanel) SetupDemoProgram() {
-	tp.Body = append(tp.Body, "// ------- variable declarations -------")
+	tp.Body = append(tp.Body, "// ------- variable declarations ------- -------")
 	tp.Body = append(tp.Body, "var myVar int32")
 	tp.Body = append(tp.Body, "var a int32 = 42")
 	tp.Body = append(tp.Body, "var b int32 = 58")
 	tp.Body = append(tp.Body, "")
-	tp.Body = append(tp.Body, "// ------- builtin function calls -------")
+	tp.Body = append(tp.Body, "// ------- builtin function calls ------- ------- ------- ------- ------- ------- ------- end")
 	tp.Body = append(tp.Body, "    sub32(7, 9)")
 	tp.Body = append(tp.Body, "sub32(4,8)")
 	tp.Body = append(tp.Body, "mult32(7, 7)")
@@ -206,7 +256,6 @@ func (tp *TextPanel) SetupDemoProgram() {
 	tp.Body = append(tp.Body, "func innerFunc (a, b int32) {")
 	tp.Body = append(tp.Body, "        var myLocal int32")
 	tp.Body = append(tp.Body, "    }    ")
-	tp.Body = append(tp.Body, "")
 
 	/*
 		for i := 0; i < 22; i++ {

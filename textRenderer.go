@@ -28,7 +28,7 @@ type TextRenderer struct {
 	UvSpan          float32 // looking into 16/16 atlas/grid of character tiles
 	ScreenRad       float32 // entire screen radius (distance to edge
 	// in the cardinal directions from the center, corners would be farther away)
-	MaxCharsX int
+	MaxCharsX int // this is used to give us proportions like an 80x25 text console screen, from a 3f by 3f gl space
 	MaxCharsY int
 	// current position renderer draws to
 	CurrX   float32
@@ -67,32 +67,28 @@ func (tr *TextRenderer) DrawAll() {
 	}
 }
 
-func (tr *TextRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaY float64) {
+func (tr *TextRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {
 	for _, pan := range tr.Panels {
-		pan.ScrollIfMouseOver(mousePixelDeltaY)
+		pan.ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY)
 	}
 }
 
-func drawCurrentChar(char rune, clipSpan float32) {
+func (tr *TextRenderer) DrawCharAtRect(char rune, r *Rectangle) {
 	u := float32(int(char) % 16)
 	v := float32(int(char) / 16)
-	w := textRend.CharWid // char width
-	h := textRend.CharHei // char height
 	sp := textRend.UvSpan
 
 	gl.Normal3f(0, 0, 1)
 
-	gl.TexCoord2f(u*sp, v*sp+sp) // bl  0, 1
-	gl.Vertex3f(textRend.CurrX, textRend.CurrY-h, 0)
+	gl.TexCoord2f(u*sp, v*sp+sp)
+	gl.Vertex3f(r.Left, r.Bottom, 0)
 
-	gl.TexCoord2f(u*sp+sp, v*sp+sp) // br  1, 1
-	gl.Vertex3f(textRend.CurrX+w, textRend.CurrY-h, 0)
+	gl.TexCoord2f(u*sp+sp, v*sp+sp)
+	gl.Vertex3f(r.Right, r.Bottom, 0)
 
-	gl.TexCoord2f(u*sp+sp, v*sp) // tr  1, 0
-	gl.Vertex3f(textRend.CurrX+w, textRend.CurrY-clipSpan, 0)
+	gl.TexCoord2f(u*sp+sp, v*sp)
+	gl.Vertex3f(r.Right, r.Top, 0)
 
-	gl.TexCoord2f(u*sp, v*sp) // tl  0, 0
-	gl.Vertex3f(textRend.CurrX, textRend.CurrY-clipSpan, 0)
-
-	textRend.CurrX += w
+	gl.TexCoord2f(u*sp, v*sp)
+	gl.Vertex3f(r.Left, r.Top, 0)
 }
