@@ -144,7 +144,11 @@ func parse() {
 }
 
 func run(pFunc *Func) { // passed function
+	con.Add(fmt.Sprintf("running function: '%s'\n", pFunc.Name))
+
 	for i, line := range pFunc.Expressions {
+		con.Add(fmt.Sprintf("running expression: '%s' in function: '%s'\n", line, pFunc.Name))
+
 		switch {
 		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
 			result := calledFunc.FindStringSubmatch(line)
@@ -170,11 +174,10 @@ func run(pFunc *Func) { // passed function
 				con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
 			default:
 				for _, fun := range pFunc.Funcs {
-					con.Add((fmt.Sprintf("user  fun: %s == result%s\n", fun, result[2])))
 					//con.Add((fmt.Sprintf("user func: %s == %s\n", fun.Name, result[2])))
 
 					if fun.Name == result[2] {
-						con.Add((fmt.Sprintf("muh %s matched %s\n", fun, result[2])))
+						con.Add((fmt.Sprintf("'%s' matched '%s'\n", fun.Name, result[2])))
 						run(&fun)
 					}
 				}
