@@ -62,7 +62,7 @@ type CodeBlock struct {
 	VarInt32s   []VarInt32
 	VarStrings  []VarString
 	CodeBlocks  []*CodeBlock
-	Expressions []*string
+	Expressions []string
 	Parameters  []string // unused atm
 }
 
@@ -124,7 +124,7 @@ func parse() {
 			result := calledFunc.FindStringSubmatch(line)
 			con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
 			con.Add(fmt.Sprintf("currFunc: %s\n", currFunc))
-			currFunc.Expressions = append(currFunc.Expressions, &line)
+			currFunc.Expressions = append(currFunc.Expressions, line)
 			/*
 				currFunc.Expressions = append(currFunc.Expressions, result[2])
 				currFunc.Parameters = append(currFunc.Parameters, result[3])
@@ -152,11 +152,11 @@ func run(pb *CodeBlock) { // passed block of code
 	con.Add(fmt.Sprintf("running function: '%s'\n", pb.Name))
 
 	for i, line := range pb.Expressions {
-		con.Add(fmt.Sprintf("running expression: '%s' in function: '%s'\n", *line, pb.Name))
+		con.Add(fmt.Sprintf("running expression: '%s' in function: '%s'\n", line, pb.Name))
 
 		switch {
-		case calledFunc.MatchString(*line): // FIXME: hardwired for 2 params each
-			result := calledFunc.FindStringSubmatch(*line)
+		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
+			result := calledFunc.FindStringSubmatch(line)
 			con.Add(fmt.Sprintf("%d: calling func (%s) with params: %s, %s\n", i, result[2], result[3], result[5]))
 
 			a := getInt32(result[3])
