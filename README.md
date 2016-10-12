@@ -704,4 +704,30 @@ being able to create structs etc and just start simple
 But doesnt matter for now
 [7:19:28 AM] HaltingState: A virtual DOM, then an object that renders it into the square buffer
 
+
+
+
+
+[10/11/2016 5:10:54 AM] HaltingState: go on rise up and create an etherpad
+[10/11/2016 5:11:50 AM] HaltingState: https://pad.riseup.net/
+[10/11/2016 6:37:45 AM] HaltingState: write down what you think it is
+[10/11/2016 6:37:56 AM] HaltingState: and then i will make notes or reply
+[10/11/2016 6:40:40 AM] HaltingState: basicly, you are implementing 
+1> a very simply "base language"
+2> the more complicated things will be in the base language itself, written in terms of itself, instead of golang
+
+you need to have an atom, an operation, a piece of data. Then a rule for when it can be used (A context is fed in) and there will be a slot (ex for a data item in an operand) and there will be a rule for what can occupy that.
+
+So if you add (int32.add X 3), then X int32.add may say "X has to be an int32 or an unknown and then valid X would be a list of (literal, or int32 in local scope, or module.var which is an int 32 etc) and we can enumerate exhaustively, everything valid that can go in that slot. People could select it from a dropdown
+
+The environment is current line, current function, current module; then we can look at vars in the local scope and can look at vars at the module scope and can look at vars passed into the function and see if any of them matched
+[10/11/2016 6:43:01 AM] HaltingState: There is an idea of "enumeration" (ability to list all possibilties and it must be finite) (Similar idea to counting).
+
+We build up programs by applying operations to them.
+
+So we do
+1> add new line operator
+2> Add operator (int32.add X Y)
+3> substitute or set X, or select X and see options for thigns that could go in there (a function that returns int32, an int32 literal, a function that casts something else to int, an int32 at local scope etc)
+
 "

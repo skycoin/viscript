@@ -22,12 +22,16 @@ closing curly brace of function only recognized as a "}" amidst spaces
 // NOTES
 
 /*
-make sure names are unique within a partic scope
+
+TODO:
+* make sure names are unique within a partic scope
+* allow // comments at any position
+
 */
 
 var types = []string{"bool", "int32", "string"} // FIXME: should allow [] and [42] prefixes
 var builtinFuncs = []string{"add32", "sub32", "mult32", "div32"}
-var mainFunc = &Func{Name: "main"} // the root/top/alpha/entry level of the program
+var mainFunc = &CodeBlock{Name: "main"} // the root/top/alpha/entry level of the program
 var currFunc = mainFunc
 
 // REGEX (raw strings to avoid having to quote backslashes)
@@ -52,13 +56,13 @@ type VarString struct {
 	value string
 }
 
-type Func struct {
+type CodeBlock struct {
 	Name        string
 	VarBools    []VarBool
 	VarInt32s   []VarInt32
 	VarStrings  []VarString
-	Funcs       []Func
-	Expressions []string
+	CodeBlocks  []*CodeBlock
+	Expressions []*string
 	Parameters  []string // unused atm
 }
 
@@ -101,13 +105,13 @@ func parse() {
 			con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
 
 			if currFunc.Name == "main" {
-				currFunc = &Func{Name: result[1]}
-				mainFunc.Funcs = append(mainFunc.Funcs, *currFunc) // FIXME: methods in structs shouldn't be on main/root func
+				currFunc = &CodeBlock{Name: result[1]}
+				mainFunc.CodeBlocks = append(mainFunc.CodeBlocks, currFunc) // FUTURE FIXME: methods in structs shouldn't be on main/root func
 			} else {
 				con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
 			}
 		case declFuncEnd.MatchString(line):
-			//con.Add(fmt.Sprintf("func close...\n"))
+			con.Add(fmt.Sprintf("func close...\n"))
 			//printIntsFrom(mainFunc)
 			//printIntsFrom(currFunc)
 
@@ -119,7 +123,8 @@ func parse() {
 		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
 			result := calledFunc.FindStringSubmatch(line)
 			con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
-			currFunc.Expressions = append(currFunc.Expressions, line)
+			con.Add(fmt.Sprintf("currFunc: %s\n", currFunc))
+			currFunc.Expressions = append(currFunc.Expressions, &line)
 			/*
 				currFunc.Expressions = append(currFunc.Expressions, result[2])
 				currFunc.Parameters = append(currFunc.Parameters, result[3])
@@ -143,15 +148,15 @@ func parse() {
 	}
 }
 
-func run(pFunc *Func) { // passed function
-	con.Add(fmt.Sprintf("running function: '%s'\n", pFunc.Name))
+func run(pb *CodeBlock) { // passed block of code
+	con.Add(fmt.Sprintf("running function: '%s'\n", pb.Name))
 
-	for i, line := range pFunc.Expressions {
-		con.Add(fmt.Sprintf("running expression: '%s' in function: '%s'\n", line, pFunc.Name))
+	for i, line := range pb.Expressions {
+		con.Add(fmt.Sprintf("running expression: '%s' in function: '%s'\n", *line, pb.Name))
 
 		switch {
-		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
-			result := calledFunc.FindStringSubmatch(line)
+		case calledFunc.MatchString(*line): // FIXME: hardwired for 2 params each
+			result := calledFunc.FindStringSubmatch(*line)
 			con.Add(fmt.Sprintf("%d: calling func (%s) with params: %s, %s\n", i, result[2], result[3], result[5]))
 
 			a := getInt32(result[3])
@@ -173,12 +178,12 @@ func run(pFunc *Func) { // passed function
 			case "div32":
 				con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
 			default:
-				for _, fun := range pFunc.Funcs {
+				for _, fun := range pb.CodeBlocks {
 					//con.Add((fmt.Sprintf("user func: %s == %s\n", fun.Name, result[2])))
 
 					if fun.Name == result[2] {
 						con.Add((fmt.Sprintf("'%s' matched '%s'\n", fun.Name, result[2])))
-						run(&fun)
+						run(fun)
 					}
 				}
 			}
@@ -211,7 +216,7 @@ func getInt32(s string) int32 {
 	return int32(value)
 }
 
-func printIntsFrom(f *Func) {
+func printIntsFrom(f *CodeBlock) {
 	if len(f.VarInt32s) == 0 {
 		con.Add(fmt.Sprintf("%s has no elements!\n", f.Name))
 	} else {
