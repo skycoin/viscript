@@ -140,8 +140,8 @@ func (tp *TextPanel) Draw() {
 		cY /*textRend.CurrY*/ -= cH // go down a line height
 	}
 
-	tp.BarHori.Draw(2, 11, *tp)
-	tp.BarVert.Draw(2, 11, *tp)
+	tp.BarHori.Draw(13, 12, *tp) // 2,11 (pixel checkerboard)   // 14, 15 (square in the middle)
+	tp.BarVert.Draw(10, 11, *tp)
 	tp.DrawScrollbarCorner(12, 11)
 }
 

@@ -1,8 +1,8 @@
 package main
 
 import (
-	//"fmt"
-	"github.com/go-gl/gl/v2.1/gl"
+//"fmt"
+//"github.com/go-gl/gl/v2.1/gl"
 )
 
 /* TODO:
@@ -66,6 +66,19 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 			bar.LenOfVoid = panHei - bar.LenOfBar
 		}
 	}
+
+	if bar.Thickness == 0 {
+		bar.Thickness = textRend.ScreenRad / 30
+
+		// FIXME (hack, because with current projection a unit span in x does not look the same as in y)
+		if bar.IsHorizontal {
+			bar.Thickness *= 1.4
+
+			bar.PosY = tp.Bottom + bar.Thickness
+		} else {
+			bar.PosX = tp.Right - bar.Thickness
+		}
+	}
 }
 
 func (bar *ScrollBar) ContainsMouseCursor(tp *TextPanel) bool {
@@ -112,47 +125,37 @@ func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
 
 	bar.UpdateSize(tp)
 
-	if bar.Thickness == 0 {
-		bar.Thickness = textRend.ScreenRad / 30
+	l := bar.PosX
+	t := bar.PosY
+	b := tp.Bottom
+	r := tp.Right
 
-		// FIXME (hack, because with current projection a unit span in x does not look the same as in y)
-		if bar.IsHorizontal {
-			bar.Thickness *= 1.4
-
-			bar.PosY = tp.Bottom + bar.Thickness
-		} else {
-			bar.PosX = tp.Right - bar.Thickness
-		}
-	}
-
-	sp /* span */ := textRend.UvSpan
-	u := float32(atlasX) * sp
-	v := float32(atlasY) * sp
-
-	bott := tp.Bottom
-	right := tp.Right
-
+	// potential future FIXME:
+	// with the current "double line" graphic used this doesn't matter,
+	// but the .IsVertical case should copy the horizontal case,
+	// in order to prevent unwanted texture stretching
 	if bar.IsHorizontal {
-		right = bar.PosX + bar.LenOfBar
+		th := tp.BarVert.Thickness
+		if th < 1 { // at some point it is, which would cause infinite loop
+			th = bar.Thickness
+		}
+
+		r = l + th
+		max := bar.PosX + bar.LenOfBar
+
+		for l < max {
+			if r > max {
+				r = max
+			}
+
+			textRend.DrawQuad(atlasX, atlasY, &Rectangle{t, r, b, l})
+
+			l += th
+			r += th
+		}
 	} else {
-		bott = bar.PosY - bar.LenOfBar
+		b = bar.PosY - bar.LenOfBar
+
+		textRend.DrawQuad(atlasX, atlasY, &Rectangle{t, r, b, l})
 	}
-
-	gl.Normal3f(0, 0, 1)
-
-	// bottom left   0, 1
-	gl.TexCoord2f(u, v+sp)
-	gl.Vertex3f(bar.PosX, bott, 0)
-
-	// bottom right   1, 1
-	gl.TexCoord2f(u+sp, v+sp)
-	gl.Vertex3f(right, bott, 0)
-
-	// top right   1, 0
-	gl.TexCoord2f(u+sp, v)
-	gl.Vertex3f(right, bar.PosY, 0)
-
-	// top left   0, 0
-	gl.TexCoord2f(u, v)
-	gl.Vertex3f(bar.PosX, bar.PosY, 0)
 }

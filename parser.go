@@ -179,7 +179,7 @@ func run(pb *CodeBlock) { // passed block of code
 				con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
 			default:
 				for _, fun := range pb.CodeBlocks {
-					//con.Add((fmt.Sprintf("user func: %s == %s\n", fun.Name, result[2])))
+					con.Add((fmt.Sprintf("CodeBlock.Name considered: %s   switching on: %s\n", fun.Name, result[2])))
 
 					if fun.Name == result[2] {
 						con.Add((fmt.Sprintf("'%s' matched '%s'\n", fun.Name, result[2])))

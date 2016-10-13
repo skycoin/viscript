@@ -92,3 +92,23 @@ func (tr *TextRenderer) DrawCharAtRect(char rune, r *Rectangle) {
 	gl.TexCoord2f(u*sp, v*sp)
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
+
+func (tr *TextRenderer) DrawQuad(atlasX, atlasY float32, r *Rectangle) {
+	sp /* span */ := textRend.UvSpan
+	u := float32(atlasX) * sp
+	v := float32(atlasY) * sp
+
+	gl.Normal3f(0, 0, 1)
+
+	gl.TexCoord2f(u, v+sp)
+	gl.Vertex3f(r.Left, r.Bottom, 0)
+
+	gl.TexCoord2f(u+sp, v+sp)
+	gl.Vertex3f(r.Right, r.Bottom, 0)
+
+	gl.TexCoord2f(u+sp, v)
+	gl.Vertex3f(r.Right, r.Top, 0)
+
+	gl.TexCoord2f(u, v)
+	gl.Vertex3f(r.Left, r.Top, 0)
+}
