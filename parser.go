@@ -79,7 +79,7 @@ func initParser() {
 }
 
 func parse() {
-	for i, line := range textRend.Focused.Body {
+	for i, line := range rend.Focused.Body {
 		switch {
 		case declaredVar.MatchString(line):
 			result := declaredVar.FindStringSubmatch(line)

@@ -15,8 +15,6 @@ import (
 	//"github.com/go-gl/glfw/v3.1/glfw"
 )
 
-var textRend = TextRenderer{}
-
 var (
 	// gl graphics
 	resX, resY int = 800, 600
@@ -28,7 +26,7 @@ var (
 func initRenderer() {
 	fmt.Println("initRenderer()")
 
-	textRend.Init()
+	rend.Init()
 
 	gl.Enable(gl.DEPTH_TEST)
 	gl.Enable(gl.LIGHTING)
@@ -66,7 +64,7 @@ func drawScene() {
 	gl.Color4f(1, 1, 1, 1)
 
 	gl.Begin(gl.QUADS)
-	textRend.DrawAll()
+	rend.DrawAll()
 	gl.End()
 }
 

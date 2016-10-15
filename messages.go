@@ -96,7 +96,7 @@ func insertRuneIntoDocument(s string, message []byte) {
 	} else {
 		fmt.Printf("   [%s: %s]", s, string(value))
 
-		foc := textRend.Focused
+		foc := rend.Focused
 		foc.Body[foc.CursY] = foc.Body[foc.CursY][:foc.CursX] + string(value) + foc.Body[foc.CursY][foc.CursX:len(foc.Body[foc.CursY])]
 		foc.CursX++
 	}

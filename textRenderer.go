@@ -18,7 +18,9 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
-type TextRenderer struct {
+var rend = CcRenderer{}
+
+type CcRenderer struct {
 	PixelWid        float32
 	PixelHei        float32
 	CharWid         float32
@@ -37,7 +39,7 @@ type TextRenderer struct {
 	Panels  []*TextPanel
 }
 
-func (tr *TextRenderer) Init() {
+func (tr *CcRenderer) Init() {
 	tr.UvSpan = float32(1.0) / 16
 	tr.ScreenRad = float32(3)
 	tr.MaxCharsX = 80
@@ -59,7 +61,7 @@ func (tr *TextRenderer) Init() {
 	tr.Panels[1].Init()
 }
 
-func (tr *TextRenderer) DrawAll() {
+func (tr *CcRenderer) DrawAll() {
 	curs.Update()
 
 	for _, pan := range tr.Panels {
@@ -67,16 +69,16 @@ func (tr *TextRenderer) DrawAll() {
 	}
 }
 
-func (tr *TextRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {
+func (tr *CcRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {
 	for _, pan := range tr.Panels {
 		pan.ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY)
 	}
 }
 
-func (tr *TextRenderer) DrawCharAtRect(char rune, r *Rectangle) {
+func (tr *CcRenderer) DrawCharAtRect(char rune, r *Rectangle) {
 	u := float32(int(char) % 16)
 	v := float32(int(char) / 16)
-	sp := textRend.UvSpan
+	sp := rend.UvSpan
 
 	gl.Normal3f(0, 0, 1)
 
@@ -93,8 +95,8 @@ func (tr *TextRenderer) DrawCharAtRect(char rune, r *Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
-func (tr *TextRenderer) DrawQuad(atlasX, atlasY float32, r *Rectangle) {
-	sp /* span */ := textRend.UvSpan
+func (tr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *Rectangle) {
+	sp /* span */ := rend.UvSpan
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp
 

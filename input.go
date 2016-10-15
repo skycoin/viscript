@@ -40,7 +40,7 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	prevMousePixelY = y
 
 	if /* LMB held */ w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		textRend.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
+		rend.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
 	}
 
 	// build message
@@ -51,9 +51,9 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 	// if horizontal
 	if w.GetKey(glfw.KeyLeftShift) == glfw.Press || w.GetKey(glfw.KeyRightShift) == glfw.Press {
-		textRend.ScrollPanelThatIsHoveredOver(yOff*-30, 0)
+		rend.ScrollPanelThatIsHoveredOver(yOff*-30, 0)
 	} else {
-		textRend.ScrollPanelThatIsHoveredOver(xOff*30, yOff*-30)
+		rend.ScrollPanelThatIsHoveredOver(xOff*30, yOff*-30)
 	}
 
 	// build message
@@ -71,7 +71,7 @@ func onMouseButton(
 	if action == glfw.Press {
 		switch glfw.MouseButton(b) {
 		case glfw.MouseButtonLeft:
-			for _, pan := range textRend.Panels {
+			for _, pan := range rend.Panels {
 				if pan.ContainsMouseCursor() {
 					pan.RespondToMouseClick()
 				}
@@ -103,7 +103,7 @@ func onKey(
 	action glfw.Action,
 	mod glfw.ModifierKey) {
 
-	foc := textRend.Focused
+	foc := rend.Focused
 
 	if action == glfw.Release {
 		switch key {
@@ -246,7 +246,7 @@ func dispatchWithPrefix(content []byte, msgType uint8) {
 
 func getWordSkipPos(xIn int, change int) int {
 	peekPos := xIn
-	foc := textRend.Focused
+	foc := rend.Focused
 
 	for {
 		peekPos += change
@@ -266,7 +266,7 @@ func getWordSkipPos(xIn int, change int) int {
 }
 
 func commonMovementKeyHandling() {
-	foc := textRend.Focused
+	foc := rend.Focused
 
 	if foc.Selection.CurrentlySelecting {
 		foc.Selection.EndX = foc.CursX

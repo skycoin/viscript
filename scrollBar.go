@@ -46,7 +46,7 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 			bar.LenOfVoid = panWid
 			bar.LenOfOffscreen = 0
 		} else {
-			totalTextWid := float32(numCharsInLongest) * textRend.CharWid
+			totalTextWid := float32(numCharsInLongest) * rend.CharWid
 			bar.LenOfOffscreen = totalTextWid - panWid
 			bar.LenOfBar = panWid / totalTextWid * panWid
 			bar.LenOfVoid = panWid - bar.LenOfBar
@@ -60,7 +60,7 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 			bar.LenOfVoid = panHei
 			bar.LenOfOffscreen = 0
 		} else {
-			totalTextHei := float32(len(tp.Body)) * textRend.CharHei
+			totalTextHei := float32(len(tp.Body)) * rend.CharHei
 			bar.LenOfOffscreen = totalTextHei - panHei
 			bar.LenOfBar = panHei / totalTextHei * panHei
 			bar.LenOfVoid = panHei - bar.LenOfBar
@@ -68,7 +68,7 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 	}
 
 	if bar.Thickness == 0 {
-		bar.Thickness = textRend.ScreenRad / 30
+		bar.Thickness = rend.ScreenRad / 30
 
 		// FIXME (hack, because with current projection a unit span in x does not look the same as in y)
 		if bar.IsHorizontal {
@@ -148,7 +148,7 @@ func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
 				r = max
 			}
 
-			textRend.DrawQuad(atlasX, atlasY, &Rectangle{t, r, b, l})
+			rend.DrawQuad(atlasX, atlasY, &Rectangle{t, r, b, l})
 
 			l += th
 			r += th
@@ -156,6 +156,6 @@ func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
 	} else {
 		b = bar.PosY - bar.LenOfBar
 
-		textRend.DrawQuad(atlasX, atlasY, &Rectangle{t, r, b, l})
+		rend.DrawQuad(atlasX, atlasY, &Rectangle{t, r, b, l})
 	}
 }

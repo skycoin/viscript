@@ -24,18 +24,18 @@ func (c *Cursors) Update() {
 }
 
 func (c *Cursors) UpdatePosition(x, y float32) {
-	c.MouseGlX = -textRend.ScreenRad + x*textRend.PixelWid
-	c.MouseGlY = textRend.ScreenRad - y*textRend.PixelHei
+	c.MouseGlX = -rend.ScreenRad + x*rend.PixelWid
+	c.MouseGlY = rend.ScreenRad - y*rend.PixelHei
 }
 
 // this function was designed for a single panel, and before scrolling was added
 func (c *Cursors) DEPRECATED_DrawCharAt(char rune, posX, posY int) {
-	rad := textRend.ScreenRad
-	sp := textRend.UvSpan
+	rad := rend.ScreenRad
+	sp := rend.UvSpan
 	u := sp * float32(int(char)%16)
 	v := sp * float32(int(char)/16)
-	w := textRend.CharWid // char width
-	h := textRend.CharHei // char height
+	w := rend.CharWid // char width
+	h := rend.CharHei // char height
 	x := -rad + float32(posX)*w
 	y := rad - float32(posY)*h
 
@@ -62,7 +62,7 @@ func (c *Cursors) ConvertMouseClickToTextCursorPosition(button, action uint8) {
 	if glfw.MouseButton(button) == glfw.MouseButtonLeft &&
 		glfw.Action(action) == glfw.Press {
 
-		foc := textRend.Focused
+		foc := rend.Focused
 
 		if foc.IsEditable && foc.ContainsMouseCursor() {
 			if !foc.BarHori.ContainsMouseCursor(foc) {
