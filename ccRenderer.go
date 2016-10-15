@@ -39,43 +39,44 @@ type CcRenderer struct {
 	Panels  []*TextPanel
 }
 
-func (tr *CcRenderer) Init() {
-	tr.UvSpan = float32(1.0) / 16
-	tr.ScreenRad = float32(3)
-	tr.MaxCharsX = 80
-	tr.MaxCharsY = 25
-	tr.PixelWid = tr.ScreenRad * 2 / float32(resX)
-	tr.PixelHei = tr.ScreenRad * 2 / float32(resY)
-	tr.CharWid = float32(tr.ScreenRad * 2 / float32(tr.MaxCharsX))
-	tr.CharHei = float32(tr.ScreenRad * 2 / float32(tr.MaxCharsY))
-	tr.CharWidInPixels = int(float32(resX) / float32(tr.MaxCharsX))
-	tr.CharHeiInPixels = int(float32(resY) / float32(tr.MaxCharsY))
+func (cr *CcRenderer) Init() {
+	cr.UvSpan = float32(1.0) / 16
+	cr.ScreenRad = float32(3)
+	cr.MaxCharsX = 80
+	cr.MaxCharsY = 25
+	cr.PixelWid = cr.ScreenRad * 2 / float32(resX)
+	cr.PixelHei = cr.ScreenRad * 2 / float32(resY)
+	cr.CharWid = float32(cr.ScreenRad * 2 / float32(cr.MaxCharsX))
+	cr.CharHei = float32(cr.ScreenRad * 2 / float32(cr.MaxCharsY))
+	cr.CharWidInPixels = int(float32(resX) / float32(cr.MaxCharsX))
+	cr.CharHeiInPixels = int(float32(resY) / float32(cr.MaxCharsY))
 
-	tr.Panels = append(tr.Panels, &TextPanel{NumCharsY: 14, IsEditable: true})
-	tr.Panels = append(tr.Panels, &TextPanel{NumCharsY: 10, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
-	tr.Focused = tr.Panels[0]
+	cr.Panels = append(cr.Panels, &TextPanel{NumCharsY: 14, IsEditable: true})
+	cr.Panels = append(cr.Panels, &TextPanel{NumCharsY: 10, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
+	cr.Focused = cr.Panels[0]
 
-	tr.Panels[0].Init()
-	tr.Panels[0].SetupDemoProgram()
-	tr.Panels[1].Top = tr.ScreenRad - float32(tr.Focused.NumCharsY+1)*tr.CharHei
-	tr.Panels[1].Init()
+	cr.Panels[0].Init()
+	cr.Panels[0].SetupDemoProgram()
+	cr.Panels[1].Top = cr.ScreenRad - float32(cr.Focused.NumCharsY+1)*cr.CharHei
+	cr.Panels[1].Init()
 }
 
-func (tr *CcRenderer) DrawAll() {
+func (cr *CcRenderer) DrawAll() {
 	curs.Update()
+	menu.Draw()
 
-	for _, pan := range tr.Panels {
+	for _, pan := range cr.Panels {
 		pan.Draw()
 	}
 }
 
-func (tr *CcRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {
-	for _, pan := range tr.Panels {
+func (cr *CcRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {
+	for _, pan := range cr.Panels {
 		pan.ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY)
 	}
 }
 
-func (tr *CcRenderer) DrawCharAtRect(char rune, r *Rectangle) {
+func (cr *CcRenderer) DrawCharAtRect(char rune, r *Rectangle) {
 	u := float32(int(char) % 16)
 	v := float32(int(char) / 16)
 	sp := rend.UvSpan
@@ -95,7 +96,7 @@ func (tr *CcRenderer) DrawCharAtRect(char rune, r *Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
-func (tr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *Rectangle) {
+func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *Rectangle) {
 	sp /* span */ := rend.UvSpan
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp

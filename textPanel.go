@@ -207,13 +207,7 @@ func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float6
 }
 
 func (tp *TextPanel) ContainsMouseCursor() bool {
-	if curs.MouseGlY < tp.Top && curs.MouseGlY > tp.Bottom {
-		if curs.MouseGlX < tp.Right && curs.MouseGlX > tp.Left {
-			return true
-		}
-	}
-
-	return false
+	return MouseCursorIsInside(&Rectangle{tp.Top, tp.Right, tp.Bottom, tp.Left})
 }
 
 func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {

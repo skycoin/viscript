@@ -10,3 +10,11 @@ type Rectangle struct {
 	Bottom float32
 	Left   float32
 }
+
+func (r *Rectangle) Width() float32 {
+	return r.Right - r.Left
+}
+
+func (r *Rectangle) Height() float32 {
+	return r.Top - r.Bottom
+}

@@ -71,6 +71,17 @@ func onMouseButton(
 	if action == glfw.Press {
 		switch glfw.MouseButton(b) {
 		case glfw.MouseButtonLeft:
+			// handle button push
+			if MouseCursorIsInside(menu.Rect) {
+				for _, bu := range menu.Buttons {
+					if MouseCursorIsInside(bu.Rect) {
+						bu.Activated = !bu.Activated
+						con.Add(fmt.Sprintf("%s toggled", bu.Name))
+					}
+				}
+			}
+
+			// handle click in text panel
 			for _, pan := range rend.Panels {
 				if pan.ContainsMouseCursor() {
 					pan.RespondToMouseClick()
