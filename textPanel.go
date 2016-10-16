@@ -94,6 +94,7 @@ func (tp *TextPanel) Draw() {
 	b := tp.BarHori.PosY // bottom of text area
 
 	// body of text
+	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &gray[0])
 	for y, line := range tp.Body {
 		// if line visible
 		if cY <= tp.Top+cH && cY >= b {
@@ -106,6 +107,8 @@ func (tp *TextPanel) Draw() {
 			if cY-cH < b {
 				r.Bottom = b
 			}
+
+			parseLine(y, line, true)
 
 			// process line of text
 			for x, c := range line {
@@ -129,6 +132,7 @@ func (tp *TextPanel) Draw() {
 			// draw cursor at the end of line if needed
 			if cX < tp.BarVert.PosX && y == tp.CursY && tp.CursX == len(line) {
 				if tp.IsEditable && curs.Visible == true {
+					gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &white[0])
 					ClampLeftAndRightOf(r, tp.Left, tp.BarVert.PosX)
 					rend.DrawCharAtRect('_', r)
 				}
@@ -140,10 +144,11 @@ func (tp *TextPanel) Draw() {
 		cY /*rend.CurrY*/ -= cH // go down a line height
 	}
 
+	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &grayDark[0])
 	tp.DrawScrollbarCorner(10, 11, tp.Right-tp.BarVert.Thickness, tp.Top)   // actually, draw vertical bar background     FIXME IMMEDIATELY
 	tp.DrawScrollbarCorner(13, 12, tp.Left, tp.Bottom+tp.BarHori.Thickness) // actually, draw horizontal bar background   FIXME IMMEDIATELY
 	tp.DrawScrollbarCorner(12, 11, tp.Right-tp.BarVert.Thickness, tp.Bottom+tp.BarHori.Thickness)
-	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &tan[0])
+	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &gray[0])
 	tp.BarHori.Draw(11, 13, *tp) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
 	tp.BarVert.Draw(11, 13, *tp) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
 	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &white[0])
@@ -179,6 +184,7 @@ func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 	u := float32(atlasCellX) * sp
 	v := float32(atlasCellY) * sp
 
+	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &grayDark[0])
 	gl.Normal3f(0, 0, 1)
 
 	// bottom left   0, 1
