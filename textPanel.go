@@ -140,18 +140,18 @@ func (tp *TextPanel) Draw() {
 		cY /*rend.CurrY*/ -= cH // go down a line height
 	}
 
-	tp.BarHori.Draw(13, 12, *tp) // 2,11 (pixel checkerboard)   // 14, 15 (square in the middle)
-	tp.BarVert.Draw(10, 11, *tp)
-	tp.DrawScrollbarCorner(12, 11)
+	tp.DrawScrollbarCorner(10, 11, tp.Right-tp.BarVert.Thickness, tp.Top)   // actually, draw vertical bar background     FIXME IMMEDIATELY
+	tp.DrawScrollbarCorner(13, 12, tp.Left, tp.Bottom+tp.BarHori.Thickness) // actually, draw horizontal bar background     FIXME IMMEDIATELY
+	tp.DrawScrollbarCorner(12, 11, tp.Right-tp.BarVert.Thickness, tp.Bottom+tp.BarHori.Thickness)
+	tp.BarHori.Draw(11, 13, *tp) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
+	tp.BarVert.Draw(11, 13, *tp) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
 }
 
 // ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)
-func (tp *TextPanel) DrawScrollbarCorner(atlasCellX, atlasCellY float32) {
+func (tp *TextPanel) DrawScrollbarCorner(atlasCellX, atlasCellY, l, t float32) { // left, top
 	sp := rend.UvSpan
 	u := float32(atlasCellX) * sp
 	v := float32(atlasCellY) * sp
-	t := tp.Bottom + tp.BarHori.Thickness // top
-	l := tp.Right - tp.BarVert.Thickness
 
 	gl.Normal3f(0, 0, 1)
 
@@ -181,15 +181,15 @@ func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 
 	// bottom left   0, 1
 	gl.TexCoord2f(u, v+sp)
-	gl.Vertex3f(tp.Left, tp.Bottom, 0)
+	gl.Vertex3f(tp.Left, tp.Bottom+tp.BarHori.Thickness, 0)
 
 	// bottom right   1, 1
 	gl.TexCoord2f(u+sp, v+sp)
-	gl.Vertex3f(tp.Right, tp.Bottom, 0)
+	gl.Vertex3f(tp.Right-tp.BarVert.Thickness, tp.Bottom+tp.BarHori.Thickness, 0)
 
 	// top right   1, 0
 	gl.TexCoord2f(u+sp, v)
-	gl.Vertex3f(tp.Right, tp.Top, 0)
+	gl.Vertex3f(tp.Right-tp.BarVert.Thickness, tp.Top, 0)
 
 	// top left   0, 0
 	gl.TexCoord2f(u, v)

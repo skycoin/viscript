@@ -4,6 +4,9 @@ import (
 //"fmt"
 )
 
+var goldenRatio = 1.61803398875
+var goldenPercentage = float32(goldenRatio / (goldenRatio + 1))
+
 func MouseCursorIsInside(r *Rectangle) bool {
 	if curs.MouseGlY < r.Top && curs.MouseGlY > r.Bottom {
 		if curs.MouseGlX < r.Right && curs.MouseGlX > r.Left {
