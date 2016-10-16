@@ -19,6 +19,19 @@ import (
 )
 
 var rend = CcRenderer{}
+var black = []float32{0, 0, 0, 1}
+var blue = []float32{0, 0, 1, 1}
+var cyan = []float32{0, 0.5, 1, 1}
+var fuschia = []float32{0.9, 0.2, 0.6, 1}
+var green = []float32{0, 1, 0, 1}
+var magenta = []float32{1, 0, 1, 1}
+var orange = []float32{0.8, 0.35, 0, 1}
+var purple = []float32{0.6, 0, 0.8, 1}
+var red = []float32{1, 0, 0, 1}
+var tan = []float32{0.55, 0.47, 0.37, 1}
+var violet = []float32{0.7, 0, 1, 1}
+var white = []float32{1, 1, 1, 1}
+var yellow = []float32{1, 1, 0, 1}
 
 type CcRenderer struct {
 	PixelWid        float32

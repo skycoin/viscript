@@ -31,6 +31,7 @@ func initRenderer() {
 
 	gl.Enable(gl.DEPTH_TEST)
 	gl.Enable(gl.LIGHTING)
+	gl.Enable(gl.ALPHA_TEST)
 
 	gl.ClearColor(0.5, 0.5, 0.5, 0.0)
 	gl.ClearDepth(1)
@@ -39,6 +40,7 @@ func initRenderer() {
 	ambient := []float32{0.5, 0.5, 0.5, 1}
 	diffuse := []float32{1, 1, 1, 1}
 	lightPosition := []float32{-5, 5, 10, 0}
+	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &white[0])
 	gl.Lightfv(gl.LIGHT0, gl.AMBIENT, &ambient[0])
 	gl.Lightfv(gl.LIGHT0, gl.DIFFUSE, &diffuse[0])
 	gl.Lightfv(gl.LIGHT0, gl.POSITION, &lightPosition[0])
@@ -62,7 +64,6 @@ func drawScene() {
 	//gl.Rotatef(rotationY, 0, 1, 0)
 
 	gl.BindTexture(gl.TEXTURE_2D, texture)
-	gl.Color4f(1, 1, 1, 1)
 
 	gl.Begin(gl.QUADS)
 	rend.DrawAll()
