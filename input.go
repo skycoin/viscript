@@ -76,7 +76,7 @@ func onMouseButton(
 				for _, bu := range menu.Buttons {
 					if MouseCursorIsInside(bu.Rect) {
 						bu.Activated = !bu.Activated
-						con.Add(fmt.Sprintf("%s toggled", bu.Name))
+						con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
 					}
 				}
 			}

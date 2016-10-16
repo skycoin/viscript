@@ -141,7 +141,7 @@ func (tp *TextPanel) Draw() {
 	}
 
 	tp.DrawScrollbarCorner(10, 11, tp.Right-tp.BarVert.Thickness, tp.Top)   // actually, draw vertical bar background     FIXME IMMEDIATELY
-	tp.DrawScrollbarCorner(13, 12, tp.Left, tp.Bottom+tp.BarHori.Thickness) // actually, draw horizontal bar background     FIXME IMMEDIATELY
+	tp.DrawScrollbarCorner(13, 12, tp.Left, tp.Bottom+tp.BarHori.Thickness) // actually, draw horizontal bar background   FIXME IMMEDIATELY
 	tp.DrawScrollbarCorner(12, 11, tp.Right-tp.BarVert.Thickness, tp.Bottom+tp.BarHori.Thickness)
 	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &tan[0])
 	tp.BarHori.Draw(11, 13, *tp) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)

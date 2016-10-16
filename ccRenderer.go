@@ -75,6 +75,7 @@ func (cr *CcRenderer) Init() {
 }
 
 func (cr *CcRenderer) DrawAll() {
+	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &white[0])
 	curs.Update()
 	menu.Draw()
 

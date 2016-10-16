@@ -14,6 +14,8 @@ type Button struct {
 func (bu *Button) Draw() {
 	if bu.Activated {
 		gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &green[0])
+	} else {
+		gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &white[0])
 	}
 
 	span := bu.Rect.Height() * goldenPercentage // ...of both dimensions of each character
@@ -27,6 +29,4 @@ func (bu *Button) Draw() {
 		rend.DrawCharAtRect(c, &Rectangle{bu.Rect.Top - verticalLipSpan, x + span, bu.Rect.Bottom + verticalLipSpan, x})
 		x += span
 	}
-
-	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &white[0])
 }
