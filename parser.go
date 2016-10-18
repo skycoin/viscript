@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/go-gl/gl/v2.1/gl"
+	//"github.com/go-gl/gl/v2.1/gl"
 	"math"
 	"regexp"
 	"strconv"
@@ -91,7 +91,7 @@ func parseLine(i int, line string, coloring bool) {
 		result := declaredVar.FindStringSubmatch(line)
 
 		if coloring {
-			gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &violet[0])
+			rend.Color(violet)
 		} else {
 			var s = fmt.Sprintf("%d: var (%s) declared", i, result[3])
 			//printIntsFrom(currFunc)
@@ -114,7 +114,7 @@ func parseLine(i int, line string, coloring bool) {
 		result := declFuncStart.FindStringSubmatch(line)
 
 		if coloring {
-			gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &fuschia[0])
+			rend.Color(fuschia)
 		} else {
 			con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
 
@@ -127,7 +127,7 @@ func parseLine(i int, line string, coloring bool) {
 		}
 	case declFuncEnd.MatchString(line):
 		if coloring {
-			gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &fuschia[0])
+			rend.Color(fuschia)
 		} else {
 			con.Add(fmt.Sprintf("func close...\n"))
 			//printIntsFrom(mainFunc)
@@ -143,7 +143,7 @@ func parseLine(i int, line string, coloring bool) {
 		result := calledFunc.FindStringSubmatch(line)
 
 		if coloring {
-			gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &fuschia[0])
+			rend.Color(fuschia)
 		} else {
 			con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
 			con.Add(fmt.Sprintf("currFunc: %s\n", currFunc))
@@ -164,13 +164,13 @@ func parseLine(i int, line string, coloring bool) {
 		}
 	case comment.MatchString(line): // allow "//" comments    FIXME to allow this at any later point in the line
 		if coloring {
-			gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &grayDark[0])
+			rend.Color(grayDark)
 		}
 	case line == "":
 		// just ignore
 	default:
 		if coloring {
-			gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &white[0])
+			rend.Color(white)
 		} else {
 			con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
 		}

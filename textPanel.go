@@ -94,7 +94,7 @@ func (tp *TextPanel) Draw() {
 	b := tp.BarHori.PosY // bottom of text area
 
 	// body of text
-	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &gray[0])
+	rend.Color(gray)
 	for y, line := range tp.Body {
 		// if line visible
 		if cY <= tp.Top+cH && cY >= b {
@@ -124,7 +124,7 @@ func (tp *TextPanel) Draw() {
 					}
 				}
 
-				cX /*rend.CurrX*/ += cW
+				cX += cW
 				r.Left = cX
 				r.Right = cX + cW
 			}
@@ -132,7 +132,7 @@ func (tp *TextPanel) Draw() {
 			// draw cursor at the end of line if needed
 			if cX < tp.BarVert.PosX && y == tp.CursY && tp.CursX == len(line) {
 				if tp.IsEditable && curs.Visible == true {
-					gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &white[0])
+					rend.Color(white)
 					ClampLeftAndRightOf(r, tp.Left, tp.BarVert.PosX)
 					rend.DrawCharAtRect('_', r)
 				}
@@ -141,21 +141,21 @@ func (tp *TextPanel) Draw() {
 			cX = tp.GoToLeftEdge()
 		}
 
-		cY /*rend.CurrY*/ -= cH // go down a line height
+		cY -= cH // go down a line height
 	}
 
-	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &grayDark[0])
-	tp.DrawScrollbarCorner(10, 11, tp.Right-tp.BarVert.Thickness, tp.Top)   // actually, draw vertical bar background     FIXME IMMEDIATELY
-	tp.DrawScrollbarCorner(13, 12, tp.Left, tp.Bottom+tp.BarHori.Thickness) // actually, draw horizontal bar background   FIXME IMMEDIATELY
-	tp.DrawScrollbarCorner(12, 11, tp.Right-tp.BarVert.Thickness, tp.Bottom+tp.BarHori.Thickness)
-	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &gray[0])
+	rend.Color(grayDark)
+	tp.DrawScrollbarChrome(10, 11, tp.Right-tp.BarVert.Thickness, tp.Top)                         // vertical bar background
+	tp.DrawScrollbarChrome(13, 12, tp.Left, tp.Bottom+tp.BarHori.Thickness)                       // horizontal bar background
+	tp.DrawScrollbarChrome(12, 11, tp.Right-tp.BarVert.Thickness, tp.Bottom+tp.BarHori.Thickness) // corner elbow piece
+	rend.Color(gray)
 	tp.BarHori.Draw(11, 13, *tp) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
 	tp.BarVert.Draw(11, 13, *tp) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
-	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &white[0])
+	rend.Color(white)
 }
 
 // ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)
-func (tp *TextPanel) DrawScrollbarCorner(atlasCellX, atlasCellY, l, t float32) { // left, top
+func (tp *TextPanel) DrawScrollbarChrome(atlasCellX, atlasCellY, l, t float32) { // left, top
 	sp := rend.UvSpan
 	u := float32(atlasCellX) * sp
 	v := float32(atlasCellY) * sp
@@ -184,7 +184,7 @@ func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 	u := float32(atlasCellX) * sp
 	v := float32(atlasCellY) * sp
 
-	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &grayDark[0])
+	rend.Color(grayDark)
 	gl.Normal3f(0, 0, 1)
 
 	// bottom left   0, 1

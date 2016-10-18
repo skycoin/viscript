@@ -77,6 +77,10 @@ func (cr *CcRenderer) Init() {
 	cr.Panels[1].Init()
 }
 
+func (cr *CcRenderer) Color(newColor []float32) {
+	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &newColor[0])
+}
+
 func (cr *CcRenderer) DrawAll() {
 	curs.Update()
 	menu.Draw()
