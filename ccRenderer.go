@@ -49,13 +49,17 @@ type CcRenderer struct {
 	MaxCharsX int // this is used to give us proportions like an 80x25 text console screen, from a 3f by 3f gl space
 	MaxCharsY int
 	// current position renderer draws to
-	CurrX   float32
-	CurrY   float32
-	Focused *TextPanel
-	Panels  []*TextPanel
+	CurrX     float32
+	CurrY     float32
+	PrevColor []float32 // previous
+	CurrColor []float32
+	Focused   *TextPanel
+	Panels    []*TextPanel
 }
 
 func (cr *CcRenderer) Init() {
+	cr.PrevColor = grayDark
+	cr.CurrColor = grayDark
 	cr.UvSpan = float32(1.0) / 16
 	cr.ScreenRad = float32(3)
 	cr.MaxCharsX = 80
@@ -78,6 +82,8 @@ func (cr *CcRenderer) Init() {
 }
 
 func (cr *CcRenderer) Color(newColor []float32) {
+	cr.PrevColor = cr.CurrColor
+	cr.CurrColor = newColor
 	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &newColor[0])
 }
 

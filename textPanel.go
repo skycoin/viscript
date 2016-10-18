@@ -94,7 +94,6 @@ func (tp *TextPanel) Draw() {
 	b := tp.BarHori.PosY // bottom of text area
 
 	// body of text
-	rend.Color(gray)
 	for y, line := range tp.Body {
 		// if line visible
 		if cY <= tp.Top+cH && cY >= b {
@@ -119,7 +118,9 @@ func (tp *TextPanel) Draw() {
 
 					if tp.IsEditable && curs.Visible == true {
 						if x == tp.CursX && y == tp.CursY {
+							rend.Color(white)
 							rend.DrawCharAtRect('_', r)
+							rend.Color(rend.PrevColor)
 						}
 					}
 				}
@@ -256,6 +257,7 @@ func (tp *TextPanel) SetupDemoProgram() {
 	tp.Body = append(tp.Body, "        div32(6, 2)")
 	tp.Body = append(tp.Body, "        innerFunc(a,b)")
 	tp.Body = append(tp.Body, "}")
+	tp.Body = append(tp.Body, "")
 	tp.Body = append(tp.Body, "func innerFunc (a, b int32) {")
 	tp.Body = append(tp.Body, "        var locA int32 = 71")
 	tp.Body = append(tp.Body, "        var locB int32 = 29")
