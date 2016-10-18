@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-gl/gl/v2.1/gl"
 	"math"
 	"regexp"
 	"strconv"
@@ -73,16 +74,25 @@ func initParser() {
 		}
 	*/
 	makeHighlyVisibleRuntimeLogHeader(`PARSING`, 5)
-	parse()
+	parseAll()
 	makeHighlyVisibleRuntimeLogHeader("RUNNING", 5)
 	run(mainFunc)
 }
 
-func parse() {
-	for i, line := range textRend.Focused.Body {
-		switch {
-		case declaredVar.MatchString(line):
-			result := declaredVar.FindStringSubmatch(line)
+func parseAll() {
+	for i, line := range rend.Focused.Body {
+		parseLine(i, line, false)
+	}
+}
+
+func parseLine(i int, line string, coloring bool) {
+	switch {
+	case declaredVar.MatchString(line):
+		result := declaredVar.FindStringSubmatch(line)
+
+		if coloring {
+			gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &violet[0])
+		} else {
 			var s = fmt.Sprintf("%d: var (%s) declared", i, result[3])
 			//printIntsFrom(currFunc)
 
@@ -99,9 +109,13 @@ func parse() {
 			}
 
 			con.Add(fmt.Sprintf("%s\n", s))
-			//printIntsFrom(currFunc)
-		case declFuncStart.MatchString(line):
-			result := declFuncStart.FindStringSubmatch(line)
+		}
+	case declFuncStart.MatchString(line):
+		result := declFuncStart.FindStringSubmatch(line)
+
+		if coloring {
+			gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &fuschia[0])
+		} else {
 			con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
 
 			if currFunc.Name == "main" {
@@ -110,7 +124,11 @@ func parse() {
 			} else {
 				con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
 			}
-		case declFuncEnd.MatchString(line):
+		}
+	case declFuncEnd.MatchString(line):
+		if coloring {
+			gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &fuschia[0])
+		} else {
 			con.Add(fmt.Sprintf("func close...\n"))
 			//printIntsFrom(mainFunc)
 			//printIntsFrom(currFunc)
@@ -120,8 +138,13 @@ func parse() {
 			} else {
 				currFunc = mainFunc
 			}
-		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
-			result := calledFunc.FindStringSubmatch(line)
+		}
+	case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
+		result := calledFunc.FindStringSubmatch(line)
+
+		if coloring {
+			gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &fuschia[0])
+		} else {
 			con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
 			con.Add(fmt.Sprintf("currFunc: %s\n", currFunc))
 			currFunc.Expressions = append(currFunc.Expressions, line)
@@ -138,11 +161,17 @@ func parse() {
 					con.Add(fmt.Sprintf("%d. %s\n", i, v))
 				}
 			*/
-		case comment.MatchString(line): // allow "//" comments
-			fallthrough
-		case line == "":
-			// just ignore
-		default:
+		}
+	case comment.MatchString(line): // allow "//" comments    FIXME to allow this at any later point in the line
+		if coloring {
+			gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &grayDark[0])
+		}
+	case line == "":
+		// just ignore
+	default:
+		if coloring {
+			gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &white[0])
+		} else {
 			con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
 		}
 	}
