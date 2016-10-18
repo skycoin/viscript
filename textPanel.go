@@ -140,8 +140,8 @@ func (tp *TextPanel) Draw() {
 		cY /*textRend.CurrY*/ -= cH // go down a line height
 	}
 
-	tp.BarHori.Draw(2, 11, *tp)
-	tp.BarVert.Draw(2, 11, *tp)
+	tp.BarHori.Draw(13, 12, *tp) // 2,11 (pixel checkerboard)   // 14, 15 (square in the middle)
+	tp.BarVert.Draw(10, 11, *tp)
 	tp.DrawScrollbarCorner(12, 11)
 }
 
@@ -231,19 +231,19 @@ func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {
 
 func (tp *TextPanel) SetupDemoProgram() {
 	tp.Body = append(tp.Body, "// ------- variable declarations ------- -------")
-	tp.Body = append(tp.Body, "var myVar int32")
+	//tp.Body = append(tp.Body, "var myVar int32")
 	tp.Body = append(tp.Body, "var a int32 = 42")
 	tp.Body = append(tp.Body, "var b int32 = 58")
 	tp.Body = append(tp.Body, "")
 	tp.Body = append(tp.Body, "// ------- builtin function calls ------- ------- ------- ------- ------- ------- ------- end")
-	tp.Body = append(tp.Body, "    sub32(7, 9)")
-	tp.Body = append(tp.Body, "sub32(4,8)")
-	tp.Body = append(tp.Body, "mult32(7, 7)")
-	tp.Body = append(tp.Body, "mult32(3,5)")
-	tp.Body = append(tp.Body, "div32(8,2)")
-	tp.Body = append(tp.Body, "div32(15,  3)")
-	tp.Body = append(tp.Body, "add32(2,3)")
-	tp.Body = append(tp.Body, "add32(a, b)")
+	tp.Body = append(tp.Body, "//    sub32(7, 9)")
+	//tp.Body = append(tp.Body, "sub32(4,8)")
+	//tp.Body = append(tp.Body, "mult32(7, 7)")
+	//tp.Body = append(tp.Body, "mult32(3,5)")
+	//tp.Body = append(tp.Body, "div32(8,2)")
+	//tp.Body = append(tp.Body, "div32(15,  3)")
+	//tp.Body = append(tp.Body, "add32(2,3)")
+	//tp.Body = append(tp.Body, "add32(a, b)")
 	tp.Body = append(tp.Body, "")
 	tp.Body = append(tp.Body, "// ------- user function calls -------")
 	tp.Body = append(tp.Body, "myFunc(a, b)")
@@ -251,10 +251,13 @@ func (tp *TextPanel) SetupDemoProgram() {
 	tp.Body = append(tp.Body, "// ------- function declarations -------")
 	tp.Body = append(tp.Body, "func myFunc(a int32, b int32){")
 	tp.Body = append(tp.Body, "")
+	tp.Body = append(tp.Body, "        div32(6, 2)")
 	tp.Body = append(tp.Body, "        innerFunc(a,b)")
 	tp.Body = append(tp.Body, "}")
 	tp.Body = append(tp.Body, "func innerFunc (a, b int32) {")
-	tp.Body = append(tp.Body, "        var myLocal int32")
+	tp.Body = append(tp.Body, "        var locA int32 = 71")
+	tp.Body = append(tp.Body, "        var locB int32 = 29")
+	tp.Body = append(tp.Body, "        sub32(locA, locB)")
 	tp.Body = append(tp.Body, "    }    ")
 
 	/*

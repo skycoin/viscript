@@ -22,13 +22,17 @@ closing curly brace of function only recognized as a "}" amidst spaces
 // NOTES
 
 /*
-make sure names are unique within a partic scope
+
+TODO:
+* make sure names are unique within a partic scope
+* allow // comments at any position
+
 */
 
 var types = []string{"bool", "int32", "string"} // FIXME: should allow [] and [42] prefixes
 var builtinFuncs = []string{"add32", "sub32", "mult32", "div32"}
-var rootFunc = &Func{Name: "root"} // the top/alpha/entry level of the program
-var currFunc = rootFunc
+var mainFunc = &CodeBlock{Name: "main"} // the root/top/alpha/entry level of the program
+var currFunc = mainFunc
 
 // REGEX (raw strings to avoid having to quote backslashes)
 var declaredVar = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32(( +)?=( +)?([0-9]+))?$`)
@@ -52,15 +56,14 @@ type VarString struct {
 	value string
 }
 
-type Func struct {
-	Name       string
-	VarBools   []VarBool
-	VarInt32s  []VarInt32
-	VarStrings []VarString
-	Funcs      []Func
-	// next 2 should be synchronized (and have same number of entries)
-	FuncCalls  []string
-	Parameters []string // atm there are exactly 2 entries per func call, while hardwired for 2 parameters
+type CodeBlock struct {
+	Name        string
+	VarBools    []VarBool
+	VarInt32s   []VarInt32
+	VarStrings  []VarString
+	CodeBlocks  []*CodeBlock
+	Expressions []string
+	Parameters  []string // unused atm
 }
 
 func initParser() {
@@ -72,7 +75,7 @@ func initParser() {
 	makeHighlyVisibleRuntimeLogHeader(`PARSING`, 5)
 	parse()
 	makeHighlyVisibleRuntimeLogHeader("RUNNING", 5)
-	run()
+	run(mainFunc)
 }
 
 func parse() {
@@ -101,28 +104,29 @@ func parse() {
 			result := declFuncStart.FindStringSubmatch(line)
 			con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
 
-			if currFunc.Name == "root" {
-				currFunc = &Func{Name: result[1]}
-				rootFunc.Funcs = append(rootFunc.Funcs, *currFunc) // FIXME: methods in structs shouldn't be on root
+			if currFunc.Name == "main" {
+				currFunc = &CodeBlock{Name: result[1]}
+				mainFunc.CodeBlocks = append(mainFunc.CodeBlocks, currFunc) // FUTURE FIXME: methods in structs shouldn't be on main/root func
 			} else {
 				con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
 			}
 		case declFuncEnd.MatchString(line):
-			//con.Add(fmt.Sprintf("func close...\n"))
-			//printIntsFrom(rootFunc)
+			con.Add(fmt.Sprintf("func close...\n"))
+			//printIntsFrom(mainFunc)
 			//printIntsFrom(currFunc)
 
-			if currFunc.Name == "root" {
-				con.Add(fmt.Sprintf("ERROR! Root level function doesn't need enclosure!\n"))
+			if currFunc.Name == "main" {
+				con.Add(fmt.Sprintf("ERROR! Main\\Root level function doesn't need enclosure!\n"))
 			} else {
-				currFunc = rootFunc
+				currFunc = mainFunc
 			}
 		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
 			result := calledFunc.FindStringSubmatch(line)
-			con.Add(fmt.Sprintf("%d: func call (%s) stored\n", i, result[2]))
-			currFunc.FuncCalls = append(currFunc.FuncCalls, line)
+			con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
+			con.Add(fmt.Sprintf("currFunc: %s\n", currFunc))
+			currFunc.Expressions = append(currFunc.Expressions, line)
 			/*
-				currFunc.FuncCalls = append(currFunc.FuncCalls, result[2])
+				currFunc.Expressions = append(currFunc.Expressions, result[2])
 				currFunc.Parameters = append(currFunc.Parameters, result[3])
 				currFunc.Parameters = append(currFunc.Parameters, result[5])
 			*/
@@ -144,8 +148,12 @@ func parse() {
 	}
 }
 
-func run() {
-	for i, line := range rootFunc.FuncCalls {
+func run(pb *CodeBlock) { // passed block of code
+	con.Add(fmt.Sprintf("running function: '%s'\n", pb.Name))
+
+	for i, line := range pb.Expressions {
+		con.Add(fmt.Sprintf("running expression: '%s' in function: '%s'\n", line, pb.Name))
+
 		switch {
 		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
 			result := calledFunc.FindStringSubmatch(line)
@@ -170,8 +178,13 @@ func run() {
 			case "div32":
 				con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
 			default:
-				for _, fun := range rootFunc.Funcs {
-					con.Add((fmt.Sprintf("user func: %s\n", fun.Name)))
+				for _, fun := range pb.CodeBlocks {
+					con.Add((fmt.Sprintf("CodeBlock.Name considered: %s   switching on: %s\n", fun.Name, result[2])))
+
+					if fun.Name == result[2] {
+						con.Add((fmt.Sprintf("'%s' matched '%s'\n", fun.Name, result[2])))
+						run(fun)
+					}
 				}
 			}
 		}
@@ -188,8 +201,8 @@ func getInt32(s string) int32 {
 			}
 		}
 
-		if currFunc.Name != "root" {
-			for _, v := range rootFunc.VarInt32s {
+		if currFunc.Name != "main" {
+			for _, v := range mainFunc.VarInt32s {
 				if s == v.name {
 					return v.value
 				}
@@ -203,7 +216,7 @@ func getInt32(s string) int32 {
 	return int32(value)
 }
 
-func printIntsFrom(f *Func) {
+func printIntsFrom(f *CodeBlock) {
 	if len(f.VarInt32s) == 0 {
 		con.Add(fmt.Sprintf("%s has no elements!\n", f.Name))
 	} else {
