@@ -62,7 +62,7 @@ func (cr *CcRenderer) Init() {
 	cr.CurrColor = grayDark
 	cr.UvSpan = float32(1.0) / 16
 	cr.ScreenRad = float32(3)
-	cr.MaxCharsX = 80
+	cr.MaxCharsX = 80 // FIXME: this is no longer a maximum of what fits on a panel (which is maximized to take up the whole app window) anymore.  but is still used as a guide for sizes
 	cr.MaxCharsY = 25
 	cr.PixelWid = cr.ScreenRad * 2 / float32(resX)
 	cr.PixelHei = cr.ScreenRad * 2 / float32(resY)
@@ -71,14 +71,16 @@ func (cr *CcRenderer) Init() {
 	cr.CharWidInPixels = int(float32(resX) / float32(cr.MaxCharsX))
 	cr.CharHeiInPixels = int(float32(resY) / float32(cr.MaxCharsY))
 
-	cr.Panels = append(cr.Panels, &TextPanel{NumCharsY: 14, IsEditable: true})
-	cr.Panels = append(cr.Panels, &TextPanel{NumCharsY: 10, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
-	cr.Focused = cr.Panels[0]
+	if len(cr.Panels) == 0 {
+		cr.Panels = append(cr.Panels, &TextPanel{NumCharsY: 14, IsEditable: true})
+		cr.Panels = append(cr.Panels, &TextPanel{NumCharsY: 10, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
+		cr.Focused = cr.Panels[0]
 
-	cr.Panels[0].Init()
-	cr.Panels[0].SetupDemoProgram()
-	cr.Panels[1].Top = cr.ScreenRad - float32(cr.Focused.NumCharsY+1)*cr.CharHei
-	cr.Panels[1].Init()
+		cr.Panels[0].Init()
+		cr.Panels[0].SetupDemoProgram()
+		cr.Panels[1].Top = cr.ScreenRad - float32(cr.Focused.NumCharsY+1)*cr.CharHei
+		cr.Panels[1].Init()
+	}
 }
 
 func (cr *CcRenderer) Color(newColor []float32) {

@@ -1,8 +1,13 @@
 /* TODO:
 
-* bars won't move you QUITE far enough to see the last line without it being squished.  fix.
+* resize window
+* organize files.go into folders
+* hook up Run button
+* 9 slice stretched quads
+* draw better background for above
 * when there is no scrollbar, should be able to see/interact with text in that area
-
+* when auto appending to the end of a text panel, scroll all the way down
+		(manual activity in the middle could increase size, so do this only when appending to body)
 
 * LOWER PRIORITY POLISH
 
@@ -46,7 +51,7 @@ func main() {
 
 	defer glfw.Terminate()
 
-	glfw.WindowHint(glfw.Resizable, glfw.False)
+	glfw.WindowHint(glfw.Resizable, glfw.True)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
 	window, err := glfw.CreateWindow(resX, resY, appName, nil, nil)

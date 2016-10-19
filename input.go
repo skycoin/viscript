@@ -21,15 +21,15 @@ func initInputEvents(w *glfw.Window) {
 	w.SetMouseButtonCallback(onMouseButton)
 	w.SetScrollCallback(onMouseScroll)
 	w.SetCursorPosCallback(onMouseCursorPos)
+	w.SetFramebufferSizeCallback(onFramebufferSize)
 }
 
 func pollEventsAndHandleAnInput(w *glfw.Window) {
 	glfw.PollEvents()
+}
 
-	// (at the moment we have no reason to poll/detect keys being held)
-	//if w.GetKey(glfw.KeyEscape) == glfw.Press {
-	//	fmt.Println("PRESSED ESCape")
-	//}
+func onFramebufferSize(w *glfw.Window, width, height int) {
+	fmt.Printf("glViewport(0, 0, width, height): %d, %d\n", width, height)
 }
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
