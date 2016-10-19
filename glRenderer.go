@@ -16,11 +16,9 @@ import (
 )
 
 var (
-	// gl graphics
-	resX, resY int = 800, 600
-	texture    uint32
-	rotationX  float32
-	rotationY  float32
+	texture   uint32
+	rotationX float32
+	rotationY float32
 )
 
 func initRenderer() {

@@ -35,6 +35,10 @@ var tan = []float32{0.55, 0.47, 0.37, 1}
 var violet = []float32{0.4, 0.2, 1, 1}
 var white = []float32{1, 1, 1, 1}
 var yellow = []float32{1, 1, 0, 1}
+var initAppWidth int = 800
+var initAppHeight int = 600
+var currAppWidth int = 800
+var currAppHeight int = 600
 
 type CcRenderer struct {
 	PixelWid        float32
@@ -44,9 +48,11 @@ type CcRenderer struct {
 	CharWidInPixels int
 	CharHeiInPixels int
 	UvSpan          float32 // looking into 16/16 atlas/grid of character tiles
-	ScreenRad       float32 // entire screen radius (distance to edge
-	// in the cardinal directions from the center, corners would be farther away)
-	MaxCharsX int // this is used to give us proportions like an 80x25 text console screen, from a 3f by 3f gl space
+	ScreenRad       float32 // entire screen radius (distance to edge...
+	// ....in the cardinal directions from the center, corners would be farther away)
+	// FIXME: below is no longer a maximum of what fits on a max-sized panel (taking up the whole app window) anymore.
+	// 		but is still used as a guide for sizes
+	MaxCharsX int // this is used to give us proportions like an 80x25 text console screen, from a 3x3 gl space
 	MaxCharsY int
 	// current position renderer draws to
 	CurrX     float32
@@ -62,14 +68,14 @@ func (cr *CcRenderer) Init() {
 	cr.CurrColor = grayDark
 	cr.UvSpan = float32(1.0) / 16
 	cr.ScreenRad = float32(3)
-	cr.MaxCharsX = 80 // FIXME: this is no longer a maximum of what fits on a panel (which is maximized to take up the whole app window) anymore.  but is still used as a guide for sizes
+	cr.MaxCharsX = 80
 	cr.MaxCharsY = 25
-	cr.PixelWid = cr.ScreenRad * 2 / float32(resX)
-	cr.PixelHei = cr.ScreenRad * 2 / float32(resY)
+	cr.PixelWid = cr.ScreenRad * 2 / float32(currAppWidth)
+	cr.PixelHei = cr.ScreenRad * 2 / float32(currAppHeight)
 	cr.CharWid = float32(cr.ScreenRad * 2 / float32(cr.MaxCharsX))
 	cr.CharHei = float32(cr.ScreenRad * 2 / float32(cr.MaxCharsY))
-	cr.CharWidInPixels = int(float32(resX) / float32(cr.MaxCharsX))
-	cr.CharHeiInPixels = int(float32(resY) / float32(cr.MaxCharsY))
+	cr.CharWidInPixels = int(float32(currAppWidth) / float32(cr.MaxCharsX))
+	cr.CharHeiInPixels = int(float32(currAppHeight) / float32(cr.MaxCharsY))
 
 	if len(cr.Panels) == 0 {
 		cr.Panels = append(cr.Panels, &TextPanel{NumCharsY: 14, IsEditable: true})
