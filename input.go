@@ -24,14 +24,17 @@ func initInputEvents(w *glfw.Window) {
 	w.SetFramebufferSizeCallback(onFramebufferSize)
 }
 
-func pollEventsAndHandleAnInput(w *glfw.Window) {
-	glfw.PollEvents()
-}
-
 func onFramebufferSize(w *glfw.Window, width, height int) {
-	//fmt.Printf("glViewport(0, 0, width, height): %d, %d\n", width, height)
+	fmt.Printf("glViewport(0, 0, width, height): %d, %d\n", width, height)
+	fmt.Printf("glViewport(0, 0, width, height): %d, %d\n", width, height)
+	fmt.Printf("glViewport(0, 0, width, height): %d, %d\n", width, height)
+	fmt.Printf("glViewport(0, 0, width, height): %d, %d\n", width, height)
+	fmt.Printf("glViewport(0, 0, width, height): %d, %d\n", width, height)
+	prevAppWidth = currAppWidth
+	prevAppHeight = currAppHeight
 	currAppWidth = width
 	currAppHeight = height
+	rend.Init()
 }
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {

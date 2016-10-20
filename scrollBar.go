@@ -68,7 +68,7 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 	}
 
 	if bar.Thickness == 0 {
-		bar.Thickness = rend.ScreenRad / 30
+		bar.Thickness = rend.ClientExtentY / 30
 
 		// FIXME (hack, because with current projection a unit span in x does not look the same as in y)
 		if bar.IsHorizontal {

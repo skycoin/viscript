@@ -24,14 +24,14 @@ type TextPanel struct {
 }
 
 func (tp *TextPanel) Init() {
+	fmt.Printf("TextPanel.Init()\n")
 	tp.Selection = &SelectionRange{}
 	tp.Selection.Init()
-
-	tp.Left = -rend.ScreenRad
-	tp.Right = rend.ScreenRad
+	tp.Left = -rend.ClientExtentX
+	tp.Right = rend.ClientExtentX
 
 	if tp.Top == 0 {
-		tp.Top = rend.ScreenRad - rend.CharHei
+		tp.Top = rend.ClientExtentY - rend.CharHei
 	}
 
 	tp.Bottom = tp.Top - float32(tp.NumCharsY)*rend.CharHei
@@ -49,8 +49,6 @@ func (tp *TextPanel) Init() {
 	if tp.NumCharsY == 0 {
 		tp.NumCharsY = rend.MaxCharsY
 	}
-
-	fmt.Printf("TextPanel.Init()    t: %.2f, b: %.2f\n", tp.Top, tp.Bottom)
 }
 
 func (tp *TextPanel) RespondToMouseClick() {

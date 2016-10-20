@@ -75,7 +75,7 @@ func main() {
 
 	for !window.ShouldClose() {
 		monitorEvents(events)
-		pollEventsAndHandleAnInput(window)
+		glfw.PollEvents()
 		drawScene()
 		window.SwapBuffers()
 	}

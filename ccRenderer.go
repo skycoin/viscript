@@ -14,7 +14,7 @@
 package main
 
 import (
-	//"fmt"
+	"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
@@ -35,12 +35,17 @@ var tan = []float32{0.55, 0.47, 0.37, 1}
 var violet = []float32{0.4, 0.2, 1, 1}
 var white = []float32{1, 1, 1, 1}
 var yellow = []float32{1, 1, 0, 1}
-var initAppWidth int = 800
-var initAppHeight int = 600
+
+// dimensions (in pixel units)
+var prevAppWidth int = 800
+var prevAppHeight int = 600
 var currAppWidth int = 800
 var currAppHeight int = 600
 
 type CcRenderer struct {
+	ClientExtentX float32 // distance from the center to an edge of the app's root/client area
+	ClientExtentY float32
+	// ....in the cardinal directions from the center, corners would be farther away)
 	PixelWid        float32
 	PixelHei        float32
 	CharWid         float32
@@ -48,8 +53,6 @@ type CcRenderer struct {
 	CharWidInPixels int
 	CharHeiInPixels int
 	UvSpan          float32 // looking into 16/16 atlas/grid of character tiles
-	ScreenRad       float32 // entire screen radius (distance to edge...
-	// ....in the cardinal directions from the center, corners would be farther away)
 	// FIXME: below is no longer a maximum of what fits on a max-sized panel (taking up the whole app window) anymore.
 	// 		but is still used as a guide for sizes
 	MaxCharsX int // this is used to give us proportions like an 80x25 text console screen, from a 3x3 gl space
@@ -64,16 +67,25 @@ type CcRenderer struct {
 }
 
 func (cr *CcRenderer) Init() {
+	if cr.ClientExtentX == 0.0 || cr.ClientExtentY == 0.0 {
+		fmt.Println("== 0.0")
+		cr.ClientExtentX = float32(3)
+		cr.ClientExtentY = float32(3)
+	} else {
+		fmt.Println("!= 0.0")
+		cr.ClientExtentX = float32(currAppWidth) * cr.PixelWid
+		cr.ClientExtentY = float32(currAppHeight) * cr.PixelHei
+	}
+
 	cr.PrevColor = grayDark
 	cr.CurrColor = grayDark
-	cr.UvSpan = float32(1.0) / 16
-	cr.ScreenRad = float32(3)
+	cr.UvSpan = float32(1.0) / 16 // how much uv a pixel spans
 	cr.MaxCharsX = 80
 	cr.MaxCharsY = 25
-	cr.PixelWid = cr.ScreenRad * 2 / float32(currAppWidth)
-	cr.PixelHei = cr.ScreenRad * 2 / float32(currAppHeight)
-	cr.CharWid = float32(cr.ScreenRad * 2 / float32(cr.MaxCharsX))
-	cr.CharHei = float32(cr.ScreenRad * 2 / float32(cr.MaxCharsY))
+	cr.PixelWid = cr.ClientExtentX * 2 / float32(currAppWidth)
+	cr.PixelHei = cr.ClientExtentY * 2 / float32(currAppHeight)
+	cr.CharWid = float32(cr.ClientExtentX * 2 / float32(cr.MaxCharsX))
+	cr.CharHei = float32(cr.ClientExtentY * 2 / float32(cr.MaxCharsY))
 	cr.CharWidInPixels = int(float32(currAppWidth) / float32(cr.MaxCharsX))
 	cr.CharHeiInPixels = int(float32(currAppHeight) / float32(cr.MaxCharsY))
 
@@ -84,7 +96,7 @@ func (cr *CcRenderer) Init() {
 
 		cr.Panels[0].Init()
 		cr.Panels[0].SetupDemoProgram()
-		cr.Panels[1].Top = cr.ScreenRad - float32(cr.Focused.NumCharsY+1)*cr.CharHei
+		cr.Panels[1].Top = cr.ClientExtentY - float32(cr.Focused.NumCharsY+1)*cr.CharHei
 		cr.Panels[1].Init()
 	}
 }
