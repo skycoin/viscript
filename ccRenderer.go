@@ -37,10 +37,10 @@ var white = []float32{1, 1, 1, 1}
 var yellow = []float32{1, 1, 0, 1}
 
 // dimensions (in pixel units)
-var prevAppWidth int = 800
-var prevAppHeight int = 600
-var currAppWidth int = 800
-var currAppHeight int = 600
+var prevAppWidth int32 = 800
+var prevAppHeight int32 = 600
+var currAppWidth int32 = 800
+var currAppHeight int32 = 600
 
 type CcRenderer struct {
 	DistanceFromOrigin float32
@@ -70,20 +70,21 @@ type CcRenderer struct {
 
 func (cr *CcRenderer) Init() {
 	if cr.ClientExtentX == 0.0 || cr.ClientExtentY == 0.0 {
-		fmt.Println("CcRenderer.Init(): FIRST TIME")
+		cr.MaxCharsX = 80
+		cr.MaxCharsY = 25
 		cr.DistanceFromOrigin = 3
 		cr.UvSpan = float32(1.0) / 16 // how much uv a pixel spans
 		cr.RunPanelHeiPerc = 0.4
 		cr.PrevColor = grayDark
 		cr.CurrColor = grayDark
+
+		fmt.Println("CcRenderer.Init(): FIRST TIME")
 		cr.ClientExtentX = cr.DistanceFromOrigin
 		cr.ClientExtentY = cr.DistanceFromOrigin
 		cr.PixelWid = cr.ClientExtentX * 2 / float32(currAppWidth)
 		cr.PixelHei = cr.ClientExtentY * 2 / float32(currAppHeight)
-		cr.MaxCharsX = 80
-		cr.MaxCharsY = 25
-		cr.CharWid = float32(6) / float32(cr.MaxCharsX)
-		cr.CharHei = float32(6) / float32(cr.MaxCharsY)
+		cr.CharWid = float32(cr.DistanceFromOrigin*2) / float32(cr.MaxCharsX)
+		cr.CharHei = float32(cr.DistanceFromOrigin*2) / float32(cr.MaxCharsY)
 		cr.CharWidInPixels = int(float32(currAppWidth) / float32(cr.MaxCharsX))
 		cr.CharHeiInPixels = int(float32(currAppHeight) / float32(cr.MaxCharsY))
 	} else {
@@ -91,21 +92,22 @@ func (cr *CcRenderer) Init() {
 		cr.ClientExtentY = float32(currAppHeight) * cr.PixelHei / 2
 		fmt.Printf("CcRenderer.Init(): for resize changes - ClientExtentX: %.2f\n", cr.ClientExtentX)
 
-		for _, pan := range cr.Panels {
-			pan.Rect.Right = -cr.DistanceFromOrigin + 2*cr.ClientExtentX
-			pan.BarVert.PosX = pan.Rect.Right - pan.BarVert.Thickness
+		/*
+			for _, pan := range cr.Panels {
+				pan.Rect.Right = -cr.DistanceFromOrigin + 2*cr.ClientExtentX
+				pan.BarVert.PosX = pan.Rect.Right - pan.BarVert.Thickness
 
-			//pan.Init()
-			/*
-				if i == 0 {
-					pan.Rect.Top = -cr.DistanceFromOrigin + 2*cr.ClientExtentY - rend.CharHei
-					pan.Rect.Bottom = pan.Rect.Top - cr.ClientExtentY*2*pan.BandPercent
-					pan.BarHori.PosY = pan.Rect.Bottom + pan.BarHori.Thickness
-				} else {
+				//pan.Init()
+				/*
+					if i == 0 {
+						pan.Rect.Top = -cr.DistanceFromOrigin + 2*cr.ClientExtentY - rend.CharHei
+						pan.Rect.Bottom = pan.Rect.Top - cr.ClientExtentY*2*pan.BandPercent
+						pan.BarHori.PosY = pan.Rect.Bottom + pan.BarHori.Thickness
+					} else {
 
-				}
-			*/
-		}
+					}
+			}
+		*/
 	}
 
 	if len(cr.Panels) == 0 {

@@ -54,7 +54,7 @@ func main() {
 	glfw.WindowHint(glfw.Resizable, glfw.True)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-	window, err := glfw.CreateWindow(currAppWidth, currAppHeight, appName, nil, nil)
+	window, err := glfw.CreateWindow(int(currAppWidth), int(currAppHeight), appName, nil, nil)
 
 	if err != nil {
 		panic(err)

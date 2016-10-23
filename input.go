@@ -25,16 +25,17 @@ func initInputEvents(w *glfw.Window) {
 }
 
 func onFramebufferSize(w *glfw.Window, width, height int) {
-	fmt.Printf("glViewport(0, 0, width, height): %d, %d\n", width, height)
-	fmt.Printf("glViewport(0, 0, width, height): %d, %d\n", width, height)
-	fmt.Printf("glViewport(0, 0, width, height): %d, %d\n", width, height)
-	fmt.Printf("glViewport(0, 0, width, height): %d, %d\n", width, height)
-	fmt.Printf("glViewport(0, 0, width, height): %d, %d\n", width, height)
+	fmt.Printf("width, height: %d, %d\n", width, height)
+	fmt.Printf("width, height: %d, %d\n", width, height)
+	fmt.Printf("width, height: %d, %d\n", width, height)
+	fmt.Printf("width, height: %d, %d\n", width, height)
+	fmt.Printf("width, height: %d, %d\n", width, height)
 	prevAppWidth = currAppWidth
 	prevAppHeight = currAppHeight
-	currAppWidth = width
-	currAppHeight = height
-	w.SetSize(width, height)
+	currAppWidth = int32(width)
+	currAppHeight = int32(height)
+	//. gl.Perspective(45.0, 16.0/9.0*float(Width)/float(Height), 0.1, 100.0)
+	//rend.DistanceFromOrigin
 	rend.Init()
 }
 
@@ -55,7 +56,7 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 }
 
 func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
-	delta := 30
+	var delta float64 = 30
 
 	// if horizontal
 	if w.GetKey(glfw.KeyLeftShift) == glfw.Press || w.GetKey(glfw.KeyRightShift) == glfw.Press {
