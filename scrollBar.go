@@ -97,7 +97,7 @@ func (bar *ScrollBar) ContainsMouseCursor(tp *TextPanel) bool {
 	return false
 }
 
-func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, delta float32) {
+func (bar *ScrollBar) Scroll(tp *TextPanel, delta float32) {
 	/*
 		mouse position updates use pixels, so the smallest drag motions will be
 		a jump of at least 1 pixel height.

@@ -147,7 +147,7 @@ func (tp *TextPanel) Draw() {
 	tp.BarHori.Draw(11, 13, *tp) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
 	tp.BarVert.Draw(11, 13, *tp) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
 	rend.Color(white)
-	rend.DrawCharAtRect('+', &Rectangle{rend.CharHei, rend.CharWid, -rend.CharHei, -rend.CharWid})
+	rend.DrawCharAtRect('+', &Rectangle{rend.CharHei, rend.CharHei, -rend.CharHei, -rend.CharHei}) // center indicator
 }
 
 // ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)
@@ -205,8 +205,8 @@ func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float6
 		// position increments in gl space
 		xInc := float32(mousePixelDeltaX) * rend.PixelWid
 		yInc := float32(mousePixelDeltaY) * rend.PixelHei
-		tp.BarHori.ScrollThisMuch(tp, xInc)
-		tp.BarVert.ScrollThisMuch(tp, yInc)
+		tp.BarHori.Scroll(tp, xInc)
+		tp.BarVert.Scroll(tp, yInc)
 	}
 }
 

@@ -56,7 +56,7 @@ func drawScene() {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 	gl.MatrixMode(gl.MODELVIEW)
 	gl.LoadIdentity()
-	gl.Translatef(0, 0, -3.0)
+	gl.Translatef(0, 0, -rend.DistanceFromOrigin)
 	//gl.Rotatef(rotationX, 1, 0, 0)
 	//gl.Rotatef(rotationY, 0, 1, 0)
 

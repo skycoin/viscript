@@ -34,6 +34,7 @@ func onFramebufferSize(w *glfw.Window, width, height int) {
 	prevAppHeight = currAppHeight
 	currAppWidth = width
 	currAppHeight = height
+	w.SetSize(width, height)
 	rend.Init()
 }
 
@@ -54,11 +55,13 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 }
 
 func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
+	delta := 30
+
 	// if horizontal
 	if w.GetKey(glfw.KeyLeftShift) == glfw.Press || w.GetKey(glfw.KeyRightShift) == glfw.Press {
-		rend.ScrollPanelThatIsHoveredOver(yOff*-30, 0)
+		rend.ScrollPanelThatIsHoveredOver(yOff*-delta, 0)
 	} else {
-		rend.ScrollPanelThatIsHoveredOver(xOff*30, yOff*-30)
+		rend.ScrollPanelThatIsHoveredOver(xOff*delta, yOff*-delta)
 	}
 
 	// build message
