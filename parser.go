@@ -32,8 +32,8 @@ TODO:
 
 var types = []string{"bool", "int32", "string"} // FIXME: should allow [] and [42] prefixes
 var builtinFuncs = []string{"add32", "sub32", "mult32", "div32"}
-var mainFunc = &CodeBlock{Name: "main"} // the root/top/alpha/entry level of the program
-var currFunc = mainFunc
+var mainBlock = &CodeBlock{Name: "main"} // the root/entry/top/alpha level of the program
+var currBlock = mainBlock
 
 // REGEX (raw strings to avoid having to quote backslashes)
 var declaredVar = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32(( +)?=( +)?([0-9]+))?$`)
@@ -76,7 +76,7 @@ func initParser() {
 	makeHighlyVisibleRuntimeLogHeader(`PARSING`, 5)
 	parseAll()
 	makeHighlyVisibleRuntimeLogHeader("RUNNING", 5)
-	run(mainFunc)
+	run(mainBlock)
 }
 
 func parseAll() {
@@ -94,16 +94,16 @@ func parseLine(i int, line string, coloring bool) {
 			rend.Color(violet)
 		} else {
 			var s = fmt.Sprintf("%d: var (%s) declared", i, result[3])
-			//printIntsFrom(currFunc)
+			//printIntsFrom(currBlock)
 
 			if result[8] == "" {
-				currFunc.VarInt32s = append(currFunc.VarInt32s, VarInt32{result[3], 0})
+				currBlock.VarInt32s = append(currBlock.VarInt32s, VarInt32{result[3], 0})
 			} else {
 				value, err := strconv.Atoi(result[8])
 				if err != nil {
 					s = fmt.Sprintf("%s... BUT COULDN'T CONVERT ASSIGNMENT (%s) TO A NUMBER!", s, result[8])
 				} else {
-					currFunc.VarInt32s = append(currFunc.VarInt32s, VarInt32{result[3], int32(value)})
+					currBlock.VarInt32s = append(currBlock.VarInt32s, VarInt32{result[3], int32(value)})
 					s = fmt.Sprintf("%s & assigned: %d", s, value)
 				}
 			}
@@ -118,9 +118,9 @@ func parseLine(i int, line string, coloring bool) {
 		} else {
 			con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
 
-			if currFunc.Name == "main" {
-				currFunc = &CodeBlock{Name: result[1]}
-				mainFunc.CodeBlocks = append(mainFunc.CodeBlocks, currFunc) // FUTURE FIXME: methods in structs shouldn't be on main/root func
+			if currBlock.Name == "main" {
+				currBlock = &CodeBlock{Name: result[1]}
+				mainBlock.CodeBlocks = append(mainBlock.CodeBlocks, currBlock) // FUTURE FIXME: methods in structs shouldn't be on main/root func
 			} else {
 				con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
 			}
@@ -130,13 +130,13 @@ func parseLine(i int, line string, coloring bool) {
 			rend.Color(fuschia)
 		} else {
 			con.Add(fmt.Sprintf("func close...\n"))
-			//printIntsFrom(mainFunc)
-			//printIntsFrom(currFunc)
+			//printIntsFrom(mainBlock)
+			//printIntsFrom(currBlock)
 
-			if currFunc.Name == "main" {
+			if currBlock.Name == "main" {
 				con.Add(fmt.Sprintf("ERROR! Main\\Root level function doesn't need enclosure!\n"))
 			} else {
-				currFunc = mainFunc
+				currBlock = mainBlock
 			}
 		}
 	case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
@@ -146,14 +146,14 @@ func parseLine(i int, line string, coloring bool) {
 			rend.Color(fuschia)
 		} else {
 			con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
-			con.Add(fmt.Sprintf("currFunc: %s\n", currFunc))
-			currFunc.Expressions = append(currFunc.Expressions, line)
+			con.Add(fmt.Sprintf("currBlock: %s\n", currBlock))
+			currBlock.Expressions = append(currBlock.Expressions, line)
 			/*
-				currFunc.Expressions = append(currFunc.Expressions, result[2])
-				currFunc.Parameters = append(currFunc.Parameters, result[3])
-				currFunc.Parameters = append(currFunc.Parameters, result[5])
+				currBlock.Expressions = append(currBlock.Expressions, result[2])
+				currBlock.Parameters = append(currBlock.Parameters, result[3])
+				currBlock.Parameters = append(currBlock.Parameters, result[5])
 			*/
-			//printIntsFrom(currFunc)
+			//printIntsFrom(currBlock)
 
 			/*
 				// prints out all captures
@@ -224,14 +224,14 @@ func getInt32(s string) int32 {
 	value, err := strconv.Atoi(s)
 
 	if err != nil {
-		for _, v := range currFunc.VarInt32s {
+		for _, v := range currBlock.VarInt32s {
 			if s == v.name {
 				return v.value
 			}
 		}
 
-		if currFunc.Name != "main" {
-			for _, v := range mainFunc.VarInt32s {
+		if currBlock.Name != "main" {
+			for _, v := range mainBlock.VarInt32s {
 				if s == v.name {
 					return v.value
 				}

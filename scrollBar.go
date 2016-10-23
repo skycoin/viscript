@@ -38,9 +38,10 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 		numCharsInLongest++ // adding extra space so we have room to show cursor at end of longest
 
 		// the rest of this block is an altered copy of the else block
-		panWid := tp.Right - tp.Left - tp.BarVert.Thickness // width of panel (MINUS scrollbar space)
+		panWid := tp.Rect.Right - tp.Rect.Left - tp.BarVert.Thickness // width of panel (MINUS scrollbar space)
 
-		if /* content smaller than screen */ numCharsInLongest <= tp.NumCharsX {
+		/* if content smaller than panel width */
+		if float32(numCharsInLongest)*rend.CharWid <= tp.Rect.Width()-tp.BarVert.Thickness {
 			// NO BAR
 			bar.LenOfBar = 0
 			bar.LenOfVoid = panWid
@@ -52,9 +53,10 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 			bar.LenOfVoid = panWid - bar.LenOfBar
 		}
 	} else { // vertical bar
-		panHei := tp.Top - tp.Bottom - tp.BarHori.Thickness // height of panel (MINUS scrollbar space)
+		panHei := tp.Rect.Top - tp.Rect.Bottom - tp.BarHori.Thickness // height of panel (MINUS scrollbar space)
 
-		if /* content smaller than screen */ len(tp.Body) <= tp.NumCharsY {
+		/* if content smaller than panel height */
+		if float32(len(tp.Body))*rend.CharHei <= tp.Rect.Height()-tp.BarHori.Thickness {
 			// NO BAR
 			bar.LenOfBar = 0
 			bar.LenOfVoid = panHei
@@ -74,9 +76,9 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 		if bar.IsHorizontal {
 			bar.Thickness *= 1.4
 
-			bar.PosY = tp.Bottom + bar.Thickness
+			bar.PosY = tp.Rect.Bottom + bar.Thickness
 		} else {
-			bar.PosX = tp.Right - bar.Thickness
+			bar.PosX = tp.Rect.Right - bar.Thickness
 		}
 	}
 }
@@ -108,12 +110,12 @@ func (bar *ScrollBar) ScrollThisMuch(tp *TextPanel, delta float32) {
 
 	if bar.IsHorizontal {
 		bar.PosX += delta
-		bar.PosX = Clamp(bar.PosX, tp.Left, tp.Right-bar.LenOfBar-tp.BarVert.Thickness)
+		bar.PosX = Clamp(bar.PosX, tp.Rect.Left, tp.Rect.Right-bar.LenOfBar-tp.BarVert.Thickness)
 		bar.ScrollDelta += amount
 		bar.ScrollDelta = Clamp(bar.ScrollDelta, 0, bar.LenOfOffscreen)
 	} else {
 		bar.PosY -= delta
-		bar.PosY = Clamp(bar.PosY, tp.Bottom+bar.LenOfBar+tp.BarHori.Thickness, tp.Top)
+		bar.PosY = Clamp(bar.PosY, tp.Rect.Bottom+bar.LenOfBar+tp.BarHori.Thickness, tp.Rect.Top)
 		bar.ScrollDelta -= amount
 		bar.ScrollDelta = Clamp(bar.ScrollDelta, -bar.LenOfOffscreen, 0)
 	}
@@ -127,8 +129,8 @@ func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
 
 	l := bar.PosX
 	t := bar.PosY
-	b := tp.Bottom
-	r := tp.Right
+	b := tp.Rect.Bottom
+	r := tp.Rect.Right
 
 	// potential future FIXME:
 	// with the current "double line" graphic used this doesn't matter,

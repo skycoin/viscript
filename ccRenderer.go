@@ -43,8 +43,9 @@ var currAppWidth int = 800
 var currAppHeight int = 600
 
 type CcRenderer struct {
-	ClientExtentX float32 // distance from the center to an edge of the app's root/client area
-	ClientExtentY float32
+	RunPanelHeiPerc float32 // FIXME: hardwired value for a specific use case
+	ClientExtentX   float32 // distance from the center to an edge of the app's root/client area
+	ClientExtentY   float32
 	// ....in the cardinal directions from the center, corners would be farther away)
 	PixelWid        float32
 	PixelHei        float32
@@ -68,35 +69,40 @@ type CcRenderer struct {
 
 func (cr *CcRenderer) Init() {
 	if cr.ClientExtentX == 0.0 || cr.ClientExtentY == 0.0 {
-		fmt.Println("== 0.0")
+		fmt.Println("CcRenderer.Init(): FIRST TIME")
+		cr.UvSpan = float32(1.0) / 16 // how much uv a pixel spans
+		cr.RunPanelHeiPerc = 0.4
+		cr.PrevColor = grayDark
+		cr.CurrColor = grayDark
 		cr.ClientExtentX = float32(3)
 		cr.ClientExtentY = float32(3)
+		cr.PixelWid = cr.ClientExtentX * 2 / float32(currAppWidth)
+		cr.PixelHei = cr.ClientExtentY * 2 / float32(currAppHeight)
+		cr.MaxCharsX = 80
+		cr.MaxCharsY = 25
+		cr.CharWid = float32(6) / float32(cr.MaxCharsX)
+		cr.CharHei = float32(6) / float32(cr.MaxCharsY)
+		cr.CharWidInPixels = int(float32(currAppWidth) / float32(cr.MaxCharsX))
+		cr.CharHeiInPixels = int(float32(currAppHeight) / float32(cr.MaxCharsY))
 	} else {
-		fmt.Println("!= 0.0")
-		cr.ClientExtentX = float32(currAppWidth) * cr.PixelWid
-		cr.ClientExtentY = float32(currAppHeight) * cr.PixelHei
+		cr.ClientExtentX = float32(currAppWidth) * cr.PixelWid / 2
+		cr.ClientExtentY = float32(currAppHeight) * cr.PixelHei / 2
+		fmt.Printf("CcRenderer.Init(): for resize changes - ClientExtentX: %.2f\n", cr.ClientExtentX)
+
+		for _, pan := range cr.Panels {
+			//pan.Rect.Left =
+			pan.Rect.Right = -3 + 2*cr.ClientExtentX
+			pan.BarVert.PosX = pan.Rect.Right - pan.BarVert.Thickness
+		}
 	}
 
-	cr.PrevColor = grayDark
-	cr.CurrColor = grayDark
-	cr.UvSpan = float32(1.0) / 16 // how much uv a pixel spans
-	cr.MaxCharsX = 80
-	cr.MaxCharsY = 25
-	cr.PixelWid = cr.ClientExtentX * 2 / float32(currAppWidth)
-	cr.PixelHei = cr.ClientExtentY * 2 / float32(currAppHeight)
-	cr.CharWid = float32(cr.ClientExtentX * 2 / float32(cr.MaxCharsX))
-	cr.CharHei = float32(cr.ClientExtentY * 2 / float32(cr.MaxCharsY))
-	cr.CharWidInPixels = int(float32(currAppWidth) / float32(cr.MaxCharsX))
-	cr.CharHeiInPixels = int(float32(currAppHeight) / float32(cr.MaxCharsY))
-
 	if len(cr.Panels) == 0 {
-		cr.Panels = append(cr.Panels, &TextPanel{NumCharsY: 14, IsEditable: true})
-		cr.Panels = append(cr.Panels, &TextPanel{NumCharsY: 10, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
+		cr.Panels = append(cr.Panels, &TextPanel{BandPercent: 1 - cr.RunPanelHeiPerc, IsEditable: true})
+		cr.Panels = append(cr.Panels, &TextPanel{BandPercent: cr.RunPanelHeiPerc, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
 		cr.Focused = cr.Panels[0]
 
 		cr.Panels[0].Init()
 		cr.Panels[0].SetupDemoProgram()
-		cr.Panels[1].Top = cr.ClientExtentY - float32(cr.Focused.NumCharsY+1)*cr.CharHei
 		cr.Panels[1].Init()
 	}
 }
