@@ -12,15 +12,13 @@ import (
 		"runtime"
 	*/
 	"github.com/go-gl/gl/v2.1/gl"
-	//"github.com/go-gl/glfw/v3.1/glfw"
+	//"github.com/go-gl/glfw/v3.2/glfw"
 )
 
 var (
-	// gl graphics
-	resX, resY int = 800, 600
-	texture    uint32
-	rotationX  float32
-	rotationY  float32
+	texture   uint32
+	rotationX float32
+	rotationY float32
 )
 
 func initRenderer() {
@@ -31,7 +29,7 @@ func initRenderer() {
 
 	gl.Enable(gl.DEPTH_TEST)
 	gl.Enable(gl.LIGHTING)
-	gl.Enable(gl.ALPHA_TEST)
+	//gl.Enable(gl.ALPHA_TEST)
 
 	gl.ClearColor(0.5, 0.5, 0.5, 0.0)
 	gl.ClearDepth(1)
@@ -40,7 +38,6 @@ func initRenderer() {
 	ambient := []float32{0.5, 0.5, 0.5, 1}
 	diffuse := []float32{1, 1, 1, 1}
 	lightPosition := []float32{-5, 5, 10, 0}
-	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &white[0])
 	gl.Lightfv(gl.LIGHT0, gl.AMBIENT, &ambient[0])
 	gl.Lightfv(gl.LIGHT0, gl.DIFFUSE, &diffuse[0])
 	gl.Lightfv(gl.LIGHT0, gl.POSITION, &lightPosition[0])
@@ -56,10 +53,11 @@ func initRenderer() {
 func drawScene() {
 	//rotationX += 0.5
 	//rotationY += 0.5
-	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-	gl.MatrixMode(gl.MODELVIEW)
+	gl.Viewport(0, 0, currAppWidth, currAppHeight) // OPTIMIZEME?  could set flag upon frame buffer size change event
+	gl.MatrixMode(gl.MODELVIEW)                    //PROJECTION)                   //.MODELVIEW)
 	gl.LoadIdentity()
-	gl.Translatef(0, 0, -3.0)
+	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+	gl.Translatef(0, 0, -rend.DistanceFromOrigin)
 	//gl.Rotatef(rotationX, 1, 0, 0)
 	//gl.Rotatef(rotationY, 0, 1, 0)
 

@@ -3,7 +3,7 @@ package main
 import (
 	//"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
-	"github.com/go-gl/glfw/v3.1/glfw"
+	"github.com/go-gl/glfw/v3.2/glfw"
 	"time"
 )
 
@@ -24,20 +24,19 @@ func (c *Cursors) Update() {
 }
 
 func (c *Cursors) UpdatePosition(x, y float32) {
-	c.MouseGlX = -rend.ScreenRad + x*rend.PixelWid
-	c.MouseGlY = rend.ScreenRad - y*rend.PixelHei
+	c.MouseGlX = -rend.ClientExtentX + x*rend.PixelWid
+	c.MouseGlY = rend.ClientExtentY - y*rend.PixelHei
 }
 
 // this function was designed for a single panel, and before scrolling was added
 func (c *Cursors) DEPRECATED_DrawCharAt(char rune, posX, posY int) {
-	rad := rend.ScreenRad
 	sp := rend.UvSpan
 	u := sp * float32(int(char)%16)
 	v := sp * float32(int(char)/16)
 	w := rend.CharWid // char width
 	h := rend.CharHei // char height
-	x := -rad + float32(posX)*w
-	y := rad - float32(posY)*h
+	x := -rend.ClientExtentX + float32(posX)*w
+	y := rend.ClientExtentY - float32(posY)*h
 
 	gl.Normal3f(0, 0, 1)
 

@@ -53,8 +53,8 @@ func (m *Menu) Draw() {
 
 func (m *Menu) GetMenuSizedRect() *Rectangle {
 	return &Rectangle{
-		rend.ScreenRad,
-		rend.ScreenRad,
-		rend.ScreenRad - rend.CharHei,
-		-rend.ScreenRad}
+		rend.ClientExtentY,
+		rend.ClientExtentX,
+		rend.ClientExtentY - rend.CharHei,
+		-rend.ClientExtentX}
 }

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/go-gl/glfw/v3.1/glfw"
+	"github.com/go-gl/glfw/v3.2/glfw"
 	"math"
 )
 
@@ -21,15 +21,22 @@ func initInputEvents(w *glfw.Window) {
 	w.SetMouseButtonCallback(onMouseButton)
 	w.SetScrollCallback(onMouseScroll)
 	w.SetCursorPosCallback(onMouseCursorPos)
+	w.SetFramebufferSizeCallback(onFramebufferSize)
 }
 
-func pollEventsAndHandleAnInput(w *glfw.Window) {
-	glfw.PollEvents()
-
-	// (at the moment we have no reason to poll/detect keys being held)
-	//if w.GetKey(glfw.KeyEscape) == glfw.Press {
-	//	fmt.Println("PRESSED ESCape")
-	//}
+func onFramebufferSize(w *glfw.Window, width, height int) {
+	fmt.Printf("width, height: %d, %d\n", width, height)
+	fmt.Printf("width, height: %d, %d\n", width, height)
+	fmt.Printf("width, height: %d, %d\n", width, height)
+	fmt.Printf("width, height: %d, %d\n", width, height)
+	fmt.Printf("width, height: %d, %d\n", width, height)
+	prevAppWidth = currAppWidth
+	prevAppHeight = currAppHeight
+	currAppWidth = int32(width)
+	currAppHeight = int32(height)
+	//. gl.Perspective(45.0, 16.0/9.0*float(Width)/float(Height), 0.1, 100.0)
+	//rend.DistanceFromOrigin
+	rend.Init()
 }
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
@@ -49,11 +56,13 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 }
 
 func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
+	var delta float64 = 30
+
 	// if horizontal
 	if w.GetKey(glfw.KeyLeftShift) == glfw.Press || w.GetKey(glfw.KeyRightShift) == glfw.Press {
-		rend.ScrollPanelThatIsHoveredOver(yOff*-30, 0)
+		rend.ScrollPanelThatIsHoveredOver(yOff*-delta, 0)
 	} else {
-		rend.ScrollPanelThatIsHoveredOver(xOff*30, yOff*-30)
+		rend.ScrollPanelThatIsHoveredOver(xOff*delta, yOff*-delta)
 	}
 
 	// build message
@@ -71,7 +80,7 @@ func onMouseButton(
 	if action == glfw.Press {
 		switch glfw.MouseButton(b) {
 		case glfw.MouseButtonLeft:
-			// handle button push
+			// respond to button push
 			if MouseCursorIsInside(menu.Rect) {
 				for _, bu := range menu.Buttons {
 					if MouseCursorIsInside(bu.Rect) {
@@ -81,7 +90,7 @@ func onMouseButton(
 				}
 			}
 
-			// handle click in text panel
+			// respond to click in text panel
 			for _, pan := range rend.Panels {
 				if pan.ContainsMouseCursor() {
 					pan.RespondToMouseClick()

@@ -1,8 +1,8 @@
 package main
 
 import (
-	//"fmt"
-	"github.com/go-gl/gl/v2.1/gl"
+//"fmt"
+//"github.com/go-gl/gl/v2.1/gl"
 )
 
 type Button struct {
@@ -13,9 +13,9 @@ type Button struct {
 
 func (bu *Button) Draw() {
 	if bu.Activated {
-		gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &green[0])
+		rend.Color(green)
 	} else {
-		gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &white[0])
+		rend.Color(white)
 	}
 
 	span := bu.Rect.Height() * goldenPercentage // ...of both dimensions of each character
