@@ -26,7 +26,8 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 		// OPTIMIZEME in the future?  idealistically, the below should only be calculated
 		// whenever user changes the size of a line such as by:
 		// 		typing/deleting/hitting-enter (could be splitting the biggest line in 2).
-		// but it probably will never matter.
+		// or changes window size
+		// ....but it probably will never really matter.
 
 		// find....
 		numCharsInLongest := 0 // ...line of the document
@@ -38,7 +39,7 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 		numCharsInLongest++ // adding extra space so we have room to show cursor at end of longest
 
 		// the rest of this block is an altered copy of the else block
-		panWid := tp.Rect.Right - tp.Rect.Left - tp.BarVert.Thickness // width of panel (MINUS scrollbar space)
+		panWid := tp.Rect.Width() - tp.BarVert.Thickness // width of panel (MINUS scrollbar space)
 
 		/* if content smaller than panel width */
 		if float32(numCharsInLongest)*rend.CharWid <= tp.Rect.Width()-tp.BarVert.Thickness {
@@ -53,7 +54,7 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 			bar.LenOfVoid = panWid - bar.LenOfBar
 		}
 	} else { // vertical bar
-		panHei := tp.Rect.Top - tp.Rect.Bottom - tp.BarHori.Thickness // height of panel (MINUS scrollbar space)
+		panHei := tp.Rect.Height() - tp.BarHori.Thickness // height of panel (MINUS scrollbar space)
 
 		/* if content smaller than panel height */
 		if float32(len(tp.Body))*rend.CharHei <= tp.Rect.Height()-tp.BarHori.Thickness {
@@ -66,6 +67,7 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 			bar.LenOfOffscreen = totalTextHei - panHei
 			bar.LenOfBar = panHei / totalTextHei * panHei
 			bar.LenOfVoid = panHei - bar.LenOfBar
+			bar.PosY = tp.Rect.Top ------         bar.ScrollDelta / bar.LenOfOffscreen * panHei
 		}
 	}
 
@@ -111,8 +113,8 @@ func (bar *ScrollBar) Scroll(tp *TextPanel, delta float32) {
 		bar.ScrollDelta += amount
 		bar.ScrollDelta = Clamp(bar.ScrollDelta, 0, bar.LenOfOffscreen)
 	} else {
-		bar.PosY -= delta
-		bar.PosY = Clamp(bar.PosY, tp.Rect.Bottom+bar.LenOfBar+tp.BarHori.Thickness, tp.Rect.Top)
+		//bar.PosY -= delta
+		//bar.PosY = Clamp(bar.PosY, tp.Rect.Bottom+bar.LenOfBar+tp.BarHori.Thickness, tp.Rect.Top)
 		bar.ScrollDelta -= amount
 		bar.ScrollDelta = Clamp(bar.ScrollDelta, -bar.LenOfOffscreen, 0)
 	}

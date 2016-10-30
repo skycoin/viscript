@@ -30,6 +30,10 @@ func (tp *TextPanel) Init() {
 	tp.BarVert = &ScrollBar{}
 
 	tp.SetSize()
+
+	// home positions
+	tp.BarHori.PosX = tp.Rect.Left
+	tp.BarVert.PosY = tp.Rect.Top
 }
 
 func (tp *TextPanel) SetSize() {
@@ -48,10 +52,8 @@ func (tp *TextPanel) SetSize() {
 	}
 
 	// scrollbar
-	tp.BarHori.PosX = tp.Rect.Left
 	tp.BarHori.PosY = tp.Rect.Bottom + tp.BarHori.Thickness
 	tp.BarVert.PosX = tp.Rect.Right - tp.BarVert.Thickness
-	tp.BarVert.PosY = tp.Rect.Top
 }
 
 func (tp *TextPanel) RespondToMouseClick() {
