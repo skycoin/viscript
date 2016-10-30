@@ -105,27 +105,15 @@ func (cr *CcRenderer) Init() {
 		fmt.Printf("CcRenderer.Init(): for resize changes - prevFrustum.Left: %.3f\n", prevFrustum.Left)
 		fmt.Printf("CcRenderer.Init(): for resize changes - currFrustum.Left: %.3f\n", currFrustum.Left)
 
-		cr.ClientExtentX = cr.DistanceFromOrigin * currFrustum.Right * longerDimension
+		cr.ClientExtentX = cr.DistanceFromOrigin * currFrustum.Right
 		cr.ClientExtentY = cr.DistanceFromOrigin * currFrustum.Top
 
-		// TODO: resize scroll bar thickness
+		// things that weren't initialized in this func
+		menu.SetSize()
 
-		/*
-			for _, pan := range cr.Panels {
-				pan.Rect.Right = -cr.DistanceFromOrigin + 2*cr.ClientExtentX
-				pan.BarVert.PosX = pan.Rect.Right - pan.BarVert.Thickness
-
-				//pan.Init()
-				/*
-					if i == 0 {
-						pan.Rect.Top = -cr.DistanceFromOrigin + 2*cr.ClientExtentY - rend.CharHei
-						pan.Rect.Bottom = pan.Rect.Top - cr.ClientExtentY*2*pan.BandPercent
-						pan.BarHori.PosY = pan.Rect.Bottom + pan.BarHori.Thickness
-					} else {
-
-					}
-			}
-		*/
+		for _, pan := range cr.Panels {
+			pan.SetSize()
+		}
 	}
 
 	if len(cr.Panels) == 0 {

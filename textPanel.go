@@ -25,7 +25,16 @@ func (tp *TextPanel) Init() {
 	tp.Selection = &SelectionRange{}
 	tp.Selection.Init()
 
-	// size
+	// scrollbar
+	tp.BarHori = &ScrollBar{IsHorizontal: true}
+	tp.BarVert = &ScrollBar{}
+
+	tp.SetSize()
+}
+
+func (tp *TextPanel) SetSize() {
+	fmt.Printf("TextPanel.SetSize()\n")
+
 	tp.Rect = &Rectangle{
 		rend.ClientExtentY - rend.CharHei,
 		rend.ClientExtentX,
@@ -39,11 +48,9 @@ func (tp *TextPanel) Init() {
 	}
 
 	// scrollbar
-	tp.BarHori = &ScrollBar{IsHorizontal: true}
-	tp.BarVert = &ScrollBar{}
 	tp.BarHori.PosX = tp.Rect.Left
-	tp.BarHori.PosY = tp.Rect.Bottom
-	tp.BarVert.PosX = tp.Rect.Right
+	tp.BarHori.PosY = tp.Rect.Bottom + tp.BarHori.Thickness
+	tp.BarVert.PosX = tp.Rect.Right - tp.BarVert.Thickness
 	tp.BarVert.PosY = tp.Rect.Top
 }
 

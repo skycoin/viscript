@@ -13,12 +13,16 @@ type Menu struct {
 }
 
 func (m *Menu) Init() {
-	m.Rect = m.GetMenuSizedRect()
 	fmt.Println("menu.Init()")
-	fmt.Printf("m.Rect: %s\n", m.Rect)
 	m.Buttons = append(m.Buttons, &Button{Name: "Run"})
 	m.Buttons = append(m.Buttons, &Button{Name: "Syntax Tree"})
 	m.Buttons = append(m.Buttons, &Button{Name: "Menu Item 3"})
+	m.SetSize()
+}
+
+func (m *Menu) SetSize() {
+	m.Rect = m.GetMenuSizedRect()
+	fmt.Printf("m.Rect: %s\n", m.Rect)
 
 	// depending on vertical or horizontal layout, only 1 dimension (of the below 4 variables) is used
 	x := m.Rect.Left
