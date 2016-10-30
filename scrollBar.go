@@ -52,6 +52,7 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 			bar.LenOfOffscreen = totalTextWid - panWid
 			bar.LenOfBar = panWid / totalTextWid * panWid
 			bar.LenOfVoid = panWid - bar.LenOfBar
+			bar.PosX = tp.Rect.Left + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
 		}
 	} else { // vertical bar
 		panHei := tp.Rect.Height() - tp.BarHori.Thickness // height of panel (MINUS scrollbar space)
@@ -108,8 +109,8 @@ func (bar *ScrollBar) Scroll(tp *TextPanel, delta float32) {
 	amount := delta / bar.LenOfVoid * bar.LenOfOffscreen
 
 	if bar.IsHorizontal {
-		bar.PosX += delta
-		bar.PosX = Clamp(bar.PosX, tp.Rect.Left, tp.Rect.Right-bar.LenOfBar-tp.BarVert.Thickness)
+		//bar.PosX += delta
+		//bar.PosX = Clamp(bar.PosX, tp.Rect.Left, tp.Rect.Right-bar.LenOfBar-tp.BarVert.Thickness)
 		bar.ScrollDelta += amount
 		bar.ScrollDelta = Clamp(bar.ScrollDelta, 0, bar.LenOfOffscreen)
 	} else {
