@@ -45,16 +45,35 @@ func initRenderer() {
 
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadIdentity()
-	gl.Frustum(-1, 1, -1, 1, 1.0, 10.0)
+	setFrustum(initFrustum)
+	//gl.Frustum(-1, 1, -1, 1, 1.0, 10.0)
+	//gl.Frustum(left, right, bottom, top, zNear, zFar)
 	gl.MatrixMode(gl.MODELVIEW)
 	gl.LoadIdentity()
+}
+
+func setFrustum(r *Rectangle) {
+	gl.Frustum(
+		float64(r.Left),
+		float64(r.Right),
+		float64(r.Bottom),
+		float64(r.Top), 1.0, 10.0)
 }
 
 func drawScene() {
 	//rotationX += 0.5
 	//rotationY += 0.5
 	gl.Viewport(0, 0, currAppWidth, currAppHeight) // OPTIMIZEME?  could set flag upon frame buffer size change event
-	gl.MatrixMode(gl.MODELVIEW)                    //PROJECTION)                   //.MODELVIEW)
+	if *prevFrustum != *currFrustum {
+		*prevFrustum = *currFrustum
+		gl.MatrixMode(gl.PROJECTION)
+		gl.LoadIdentity()
+		setFrustum(currFrustum)
+		fmt.Println("CHANGE OF FRUSTUM")
+		fmt.Printf("rend.Panels[0].Rect.Right: %.2f\n", rend.Panels[0].Rect.Right)
+		fmt.Printf("rend.Panels[0].Rect.Top: %.2f\n", rend.Panels[0].Rect.Top)
+	}
+	gl.MatrixMode(gl.MODELVIEW) //.PROJECTION)                   //.MODELVIEW)
 	gl.LoadIdentity()
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 	gl.Translatef(0, 0, -rend.DistanceFromOrigin)
@@ -109,7 +128,6 @@ func newTexture(file string) uint32 {
 }
 
 func destroyScene() {
-
 }
 
 func makeCube() {

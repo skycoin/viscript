@@ -29,7 +29,7 @@ func (tp *TextPanel) Init() {
 	tp.Rect = &Rectangle{
 		rend.ClientExtentY - rend.CharHei,
 		rend.ClientExtentX,
-		-rend.ClientExtentX,
+		-rend.ClientExtentY,
 		-rend.ClientExtentX}
 
 	if tp.BandPercent == rend.RunPanelHeiPerc { // FIXME: this is hardwired for one use case for now
@@ -147,7 +147,6 @@ func (tp *TextPanel) Draw() {
 	tp.BarHori.Draw(11, 13, *tp) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
 	tp.BarVert.Draw(11, 13, *tp) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
 	rend.Color(white)
-	rend.DrawCharAtRect('+', &Rectangle{rend.CharHei, rend.CharHei, -rend.CharHei, -rend.CharHei}) // center indicator
 }
 
 // ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)

@@ -25,17 +25,9 @@ func initInputEvents(w *glfw.Window) {
 }
 
 func onFramebufferSize(w *glfw.Window, width, height int) {
-	fmt.Printf("width, height: %d, %d\n", width, height)
-	fmt.Printf("width, height: %d, %d\n", width, height)
-	fmt.Printf("width, height: %d, %d\n", width, height)
-	fmt.Printf("width, height: %d, %d\n", width, height)
-	fmt.Printf("width, height: %d, %d\n", width, height)
-	prevAppWidth = currAppWidth
-	prevAppHeight = currAppHeight
+	fmt.Printf("onFramebufferSize() - width, height: %d, %d\n", width, height)
 	currAppWidth = int32(width)
 	currAppHeight = int32(height)
-	//. gl.Perspective(45.0, 16.0/9.0*float(Width)/float(Height), 0.1, 100.0)
-	//rend.DistanceFromOrigin
 	rend.Init()
 }
 
@@ -72,7 +64,7 @@ func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 
 // apparently every time this is fired, a mouse position event is ALSO fired
 func onMouseButton(
-	window *glfw.Window,
+	w *glfw.Window,
 	b glfw.MouseButton,
 	action glfw.Action,
 	mod glfw.ModifierKey) {

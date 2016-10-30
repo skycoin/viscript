@@ -38,7 +38,6 @@ func (m *Menu) Init() {
 		}
 
 		b.Rect = nr
-		fmt.Printf("nr: %s\n", nr)
 
 		x += wid
 		y -= hei
