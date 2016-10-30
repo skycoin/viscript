@@ -67,7 +67,7 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 			bar.LenOfOffscreen = totalTextHei - panHei
 			bar.LenOfBar = panHei / totalTextHei * panHei
 			bar.LenOfVoid = panHei - bar.LenOfBar
-			bar.PosY = tp.Rect.Top ------         bar.ScrollDelta / bar.LenOfOffscreen * panHei
+			bar.PosY = tp.Rect.Top + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
 		}
 	}
 
