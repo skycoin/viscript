@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
+	"viscript/ui"
 )
 
 type TextPanel struct {
@@ -13,7 +14,7 @@ type TextPanel struct {
 	MouseY      int
 	IsEditable  bool
 	Rect        *Rectangle
-	Selection   *SelectionRange
+	Selection   *ui.SelectionRange
 	BarHori     *ScrollBar // horizontal
 	BarVert     *ScrollBar // vertical
 	Body        []string
@@ -22,7 +23,7 @@ type TextPanel struct {
 func (tp *TextPanel) Init() {
 	fmt.Printf("TextPanel.Init()\n")
 
-	tp.Selection = &SelectionRange{}
+	tp.Selection = &ui.SelectionRange{}
 	tp.Selection.Init()
 
 	// scrollbar

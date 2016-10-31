@@ -53,6 +53,7 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 			bar.LenOfBar = panWid / totalTextWid * panWid
 			bar.LenOfVoid = panWid - bar.LenOfBar
 			bar.PosX = tp.Rect.Left + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
+			bar.ClampX() // OPTIMIZEME: only do when app resized
 		}
 	} else { // vertical bar
 		panHei := tp.Rect.Height() - tp.BarHori.Thickness // height of panel (MINUS scrollbar space)
@@ -69,6 +70,7 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 			bar.LenOfBar = panHei / totalTextHei * panHei
 			bar.LenOfVoid = panHei - bar.LenOfBar
 			bar.PosY = tp.Rect.Top + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
+			bar.ClampY() // OPTIMIZEME: only do when app resized
 		}
 	}
 
@@ -112,13 +114,21 @@ func (bar *ScrollBar) Scroll(tp *TextPanel, delta float32) {
 		//bar.PosX += delta
 		//bar.PosX = Clamp(bar.PosX, tp.Rect.Left, tp.Rect.Right-bar.LenOfBar-tp.BarVert.Thickness)
 		bar.ScrollDelta += amount
-		bar.ScrollDelta = Clamp(bar.ScrollDelta, 0, bar.LenOfOffscreen)
-	} else {
+		bar.ClampX()
+	} else { // vertical
 		//bar.PosY -= delta
 		//bar.PosY = Clamp(bar.PosY, tp.Rect.Bottom+bar.LenOfBar+tp.BarHori.Thickness, tp.Rect.Top)
 		bar.ScrollDelta -= amount
-		bar.ScrollDelta = Clamp(bar.ScrollDelta, -bar.LenOfOffscreen, 0)
+		bar.ClampY()
 	}
+}
+
+func (bar *ScrollBar) ClampX() {
+	bar.ScrollDelta = Clamp(bar.ScrollDelta, 0, bar.LenOfOffscreen)
+}
+
+func (bar *ScrollBar) ClampY() {
+	bar.ScrollDelta = Clamp(bar.ScrollDelta, -bar.LenOfOffscreen, 0)
 }
 
 func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
