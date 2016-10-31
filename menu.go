@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"viscript/common"
 )
 
 var menu = Menu{}
 
 type Menu struct {
 	IsVertical bool // controls which dimension gets divided up for button sizes
-	Rect       *Rectangle
+	Rect       *common.Rectangle
 	Buttons    []*Button
 }
 
@@ -54,8 +55,8 @@ func (m *Menu) Draw() {
 	}
 }
 
-func (m *Menu) GetMenuSizedRect() *Rectangle {
-	return &Rectangle{
+func (m *Menu) GetMenuSizedRect() *common.Rectangle {
+	return &common.Rectangle{
 		rend.ClientExtentY,
 		rend.ClientExtentX,
 		rend.ClientExtentY - rend.CharHei,

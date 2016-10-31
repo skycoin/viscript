@@ -16,6 +16,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
+	"viscript/common"
 )
 
 var rend = CcRenderer{}
@@ -42,9 +43,9 @@ var initAppHeight int32 = 600
 var currAppWidth int32 = initAppWidth
 var currAppHeight int32 = initAppHeight
 var longerDimension = float32(initAppWidth) / float32(initAppHeight)
-var initFrustum = &Rectangle{1, longerDimension, -1, -longerDimension}
-var prevFrustum = &Rectangle{initFrustum.Top, initFrustum.Right, initFrustum.Bottom, initFrustum.Left}
-var currFrustum = &Rectangle{initFrustum.Top, initFrustum.Right, initFrustum.Bottom, initFrustum.Left}
+var initFrustum = &common.Rectangle{1, longerDimension, -1, -longerDimension}
+var prevFrustum = &common.Rectangle{initFrustum.Top, initFrustum.Right, initFrustum.Bottom, initFrustum.Left}
+var currFrustum = &common.Rectangle{initFrustum.Top, initFrustum.Right, initFrustum.Bottom, initFrustum.Left}
 
 type CcRenderer struct {
 	DistanceFromOrigin float32
@@ -147,8 +148,8 @@ func (cr *CcRenderer) DrawAll() {
 	// show width of client area
 	if bu.Rect == nil {
 		var f float32 = 1.3
-		bu.Rect = &Rectangle{rend.CharHei + 0.4, f, rend.CharHei + 0.1, -f} // OPTIMIZEME? is this causing slow GC thrashing?
-		b2.Rect = &Rectangle{rend.CharHei + 0.8, f, rend.CharHei + 0.5, -f} // OPTIMIZEME? is this causing slow GC thrashing?
+		bu.Rect = &common.Rectangle{rend.CharHei + 0.4, f, rend.CharHei + 0.1, -f} // OPTIMIZEME? is this causing slow GC thrashing?
+		b2.Rect = &common.Rectangle{rend.CharHei + 0.8, f, rend.CharHei + 0.5, -f} // OPTIMIZEME? is this causing slow GC thrashing?
 	}
 	bu.Name = fmt.Sprintf("extentX: %.2f", cr.ClientExtentX)
 	bu.Draw()
@@ -157,7 +158,7 @@ func (cr *CcRenderer) DrawAll() {
 
 	// 'crosshair' center indicator
 	var f float32 = rend.CharHei
-	rend.DrawCharAtRect('+', &Rectangle{f, f, -f, -f})
+	rend.DrawCharAtRect('+', &common.Rectangle{f, f, -f, -f})
 }
 
 func (cr *CcRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {
@@ -166,7 +167,7 @@ func (cr *CcRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelD
 	}
 }
 
-func (cr *CcRenderer) DrawCharAtRect(char rune, r *Rectangle) {
+func (cr *CcRenderer) DrawCharAtRect(char rune, r *common.Rectangle) {
 	u := float32(int(char) % 16)
 	v := float32(int(char) / 16)
 	sp := rend.UvSpan
@@ -186,7 +187,7 @@ func (cr *CcRenderer) DrawCharAtRect(char rune, r *Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
-func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *Rectangle) {
+func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *common.Rectangle) {
 	sp /* span */ := rend.UvSpan
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp

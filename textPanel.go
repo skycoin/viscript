@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
+	"viscript/common"
 	"viscript/ui"
 )
 
@@ -13,7 +14,7 @@ type TextPanel struct {
 	MouseX      int // current mouse position in character grid space (units/cells)
 	MouseY      int
 	IsEditable  bool
-	Rect        *Rectangle
+	Rect        *common.Rectangle
 	Selection   *ui.SelectionRange
 	BarHori     *ScrollBar // horizontal
 	BarVert     *ScrollBar // vertical
@@ -40,7 +41,7 @@ func (tp *TextPanel) Init() {
 func (tp *TextPanel) SetSize() {
 	fmt.Printf("TextPanel.SetSize()\n")
 
-	tp.Rect = &Rectangle{
+	tp.Rect = &common.Rectangle{
 		rend.ClientExtentY - rend.CharHei,
 		rend.ClientExtentX,
 		-rend.ClientExtentY,
@@ -101,7 +102,7 @@ func (tp *TextPanel) Draw() {
 	for y, line := range tp.Body {
 		// if line visible
 		if cY <= tp.Rect.Top+cH && cY >= b {
-			r := &Rectangle{cY, cX + cW, cY - cH, cX} // t, r, b, l
+			r := &common.Rectangle{cY, cX + cW, cY - cH, cX} // t, r, b, l
 
 			// if line needs vertical adjustment
 			if cY > tp.Rect.Top {

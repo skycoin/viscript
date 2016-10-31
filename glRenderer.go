@@ -12,7 +12,7 @@ import (
 		"runtime"
 	*/
 	"github.com/go-gl/gl/v2.1/gl"
-	//"github.com/go-gl/glfw/v3.2/glfw"
+	"viscript/common"
 )
 
 var (
@@ -52,7 +52,7 @@ func initRenderer() {
 	gl.LoadIdentity()
 }
 
-func setFrustum(r *Rectangle) {
+func setFrustum(r *common.Rectangle) {
 	gl.Frustum(
 		float64(r.Left),
 		float64(r.Right),

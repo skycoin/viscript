@@ -1,8 +1,8 @@
 package main
 
 import (
-//"fmt"
-//"github.com/go-gl/gl/v2.1/gl"
+	//"fmt"
+	"viscript/common"
 )
 
 /* TODO:
@@ -160,7 +160,7 @@ func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
 				r = max
 			}
 
-			rend.DrawQuad(atlasX, atlasY, &Rectangle{t, r, b, l})
+			rend.DrawQuad(atlasX, atlasY, &common.Rectangle{t, r, b, l})
 
 			l += th
 			r += th
@@ -168,6 +168,6 @@ func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
 	} else {
 		b = bar.PosY - bar.LenOfBar
 
-		rend.DrawQuad(atlasX, atlasY, &Rectangle{t, r, b, l})
+		rend.DrawQuad(atlasX, atlasY, &common.Rectangle{t, r, b, l})
 	}
 }
