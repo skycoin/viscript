@@ -1,8 +1,8 @@
 package main
 
 import (
-//"fmt"
-//"github.com/go-gl/gl/v2.1/gl"
+	//"fmt"
+	"viscript/common"
 )
 
 /* TODO:
@@ -26,7 +26,8 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 		// OPTIMIZEME in the future?  idealistically, the below should only be calculated
 		// whenever user changes the size of a line such as by:
 		// 		typing/deleting/hitting-enter (could be splitting the biggest line in 2).
-		// but it probably will never matter.
+		// or changes window size
+		// ....but it probably will never really matter.
 
 		// find....
 		numCharsInLongest := 0 // ...line of the document
@@ -38,7 +39,7 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 		numCharsInLongest++ // adding extra space so we have room to show cursor at end of longest
 
 		// the rest of this block is an altered copy of the else block
-		panWid := tp.Rect.Right - tp.Rect.Left - tp.BarVert.Thickness // width of panel (MINUS scrollbar space)
+		panWid := tp.Rect.Width() - tp.BarVert.Thickness // width of panel (MINUS scrollbar space)
 
 		/* if content smaller than panel width */
 		if float32(numCharsInLongest)*rend.CharWid <= tp.Rect.Width()-tp.BarVert.Thickness {
@@ -51,9 +52,11 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 			bar.LenOfOffscreen = totalTextWid - panWid
 			bar.LenOfBar = panWid / totalTextWid * panWid
 			bar.LenOfVoid = panWid - bar.LenOfBar
+			bar.PosX = tp.Rect.Left + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
+			bar.ClampX() // OPTIMIZEME: only do when app resized
 		}
 	} else { // vertical bar
-		panHei := tp.Rect.Top - tp.Rect.Bottom - tp.BarHori.Thickness // height of panel (MINUS scrollbar space)
+		panHei := tp.Rect.Height() - tp.BarHori.Thickness // height of panel (MINUS scrollbar space)
 
 		/* if content smaller than panel height */
 		if float32(len(tp.Body))*rend.CharHei <= tp.Rect.Height()-tp.BarHori.Thickness {
@@ -66,16 +69,15 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 			bar.LenOfOffscreen = totalTextHei - panHei
 			bar.LenOfBar = panHei / totalTextHei * panHei
 			bar.LenOfVoid = panHei - bar.LenOfBar
+			bar.PosY = tp.Rect.Top + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
+			bar.ClampY() // OPTIMIZEME: only do when app resized
 		}
 	}
 
 	if bar.Thickness == 0 {
-		bar.Thickness = rend.ClientExtentY / 30
+		bar.Thickness = rend.ClientExtentY / 25
 
-		// FIXME (hack, because with current projection a unit span in x does not look the same as in y)
 		if bar.IsHorizontal {
-			bar.Thickness *= 1.4
-
 			bar.PosY = tp.Rect.Bottom + bar.Thickness
 		} else {
 			bar.PosX = tp.Rect.Right - bar.Thickness
@@ -109,16 +111,24 @@ func (bar *ScrollBar) Scroll(tp *TextPanel, delta float32) {
 	amount := delta / bar.LenOfVoid * bar.LenOfOffscreen
 
 	if bar.IsHorizontal {
-		bar.PosX += delta
-		bar.PosX = Clamp(bar.PosX, tp.Rect.Left, tp.Rect.Right-bar.LenOfBar-tp.BarVert.Thickness)
+		//bar.PosX += delta
+		//bar.PosX = Clamp(bar.PosX, tp.Rect.Left, tp.Rect.Right-bar.LenOfBar-tp.BarVert.Thickness)
 		bar.ScrollDelta += amount
-		bar.ScrollDelta = Clamp(bar.ScrollDelta, 0, bar.LenOfOffscreen)
-	} else {
-		bar.PosY -= delta
-		bar.PosY = Clamp(bar.PosY, tp.Rect.Bottom+bar.LenOfBar+tp.BarHori.Thickness, tp.Rect.Top)
+		bar.ClampX()
+	} else { // vertical
+		//bar.PosY -= delta
+		//bar.PosY = Clamp(bar.PosY, tp.Rect.Bottom+bar.LenOfBar+tp.BarHori.Thickness, tp.Rect.Top)
 		bar.ScrollDelta -= amount
-		bar.ScrollDelta = Clamp(bar.ScrollDelta, -bar.LenOfOffscreen, 0)
+		bar.ClampY()
 	}
+}
+
+func (bar *ScrollBar) ClampX() {
+	bar.ScrollDelta = Clamp(bar.ScrollDelta, 0, bar.LenOfOffscreen)
+}
+
+func (bar *ScrollBar) ClampY() {
+	bar.ScrollDelta = Clamp(bar.ScrollDelta, -bar.LenOfOffscreen, 0)
 }
 
 func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
@@ -150,7 +160,7 @@ func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
 				r = max
 			}
 
-			rend.DrawQuad(atlasX, atlasY, &Rectangle{t, r, b, l})
+			rend.DrawQuad(atlasX, atlasY, &common.Rectangle{t, r, b, l})
 
 			l += th
 			r += th
@@ -158,6 +168,6 @@ func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
 	} else {
 		b = bar.PosY - bar.LenOfBar
 
-		rend.DrawQuad(atlasX, atlasY, &Rectangle{t, r, b, l})
+		rend.DrawQuad(atlasX, atlasY, &common.Rectangle{t, r, b, l})
 	}
 }

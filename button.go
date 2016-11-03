@@ -1,14 +1,14 @@
 package main
 
 import (
-//"fmt"
-//"github.com/go-gl/gl/v2.1/gl"
+	//"fmt"
+	"viscript/common"
 )
 
 type Button struct {
 	Name      string
 	Activated bool
-	Rect      *Rectangle
+	Rect      *common.Rectangle
 }
 
 func (bu *Button) Draw() {
@@ -26,7 +26,7 @@ func (bu *Button) Draw() {
 	rend.DrawQuad(11, 13, bu.Rect)
 
 	for _, c := range bu.Name {
-		rend.DrawCharAtRect(c, &Rectangle{bu.Rect.Top - verticalLipSpan, x + span, bu.Rect.Bottom + verticalLipSpan, x})
+		rend.DrawCharAtRect(c, &common.Rectangle{bu.Rect.Top - verticalLipSpan, x + span, bu.Rect.Bottom + verticalLipSpan, x})
 		x += span
 	}
 }

@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
+	"viscript/common"
+	"viscript/ui"
 )
 
 type TextPanel struct {
@@ -12,8 +14,8 @@ type TextPanel struct {
 	MouseX      int // current mouse position in character grid space (units/cells)
 	MouseY      int
 	IsEditable  bool
-	Rect        *Rectangle
-	Selection   *SelectionRange
+	Rect        *common.Rectangle
+	Selection   *ui.SelectionRange
 	BarHori     *ScrollBar // horizontal
 	BarVert     *ScrollBar // vertical
 	Body        []string
@@ -22,14 +24,27 @@ type TextPanel struct {
 func (tp *TextPanel) Init() {
 	fmt.Printf("TextPanel.Init()\n")
 
-	tp.Selection = &SelectionRange{}
+	tp.Selection = &ui.SelectionRange{}
 	tp.Selection.Init()
 
-	// size
-	tp.Rect = &Rectangle{
+	// scrollbar
+	tp.BarHori = &ScrollBar{IsHorizontal: true}
+	tp.BarVert = &ScrollBar{}
+
+	tp.SetSize()
+
+	// home positions
+	tp.BarHori.PosX = tp.Rect.Left
+	tp.BarVert.PosY = tp.Rect.Top
+}
+
+func (tp *TextPanel) SetSize() {
+	fmt.Printf("TextPanel.SetSize()\n")
+
+	tp.Rect = &common.Rectangle{
 		rend.ClientExtentY - rend.CharHei,
 		rend.ClientExtentX,
-		-rend.ClientExtentX,
+		-rend.ClientExtentY,
 		-rend.ClientExtentX}
 
 	if tp.BandPercent == rend.RunPanelHeiPerc { // FIXME: this is hardwired for one use case for now
@@ -39,12 +54,8 @@ func (tp *TextPanel) Init() {
 	}
 
 	// scrollbar
-	tp.BarHori = &ScrollBar{IsHorizontal: true}
-	tp.BarVert = &ScrollBar{}
-	tp.BarHori.PosX = tp.Rect.Left
-	tp.BarHori.PosY = tp.Rect.Bottom
-	tp.BarVert.PosX = tp.Rect.Right
-	tp.BarVert.PosY = tp.Rect.Top
+	tp.BarHori.PosY = tp.Rect.Bottom + tp.BarHori.Thickness
+	tp.BarVert.PosX = tp.Rect.Right - tp.BarVert.Thickness
 }
 
 func (tp *TextPanel) RespondToMouseClick() {
@@ -91,7 +102,7 @@ func (tp *TextPanel) Draw() {
 	for y, line := range tp.Body {
 		// if line visible
 		if cY <= tp.Rect.Top+cH && cY >= b {
-			r := &Rectangle{cY, cX + cW, cY - cH, cX} // t, r, b, l
+			r := &common.Rectangle{cY, cX + cW, cY - cH, cX} // t, r, b, l
 
 			// if line needs vertical adjustment
 			if cY > tp.Rect.Top {
@@ -147,7 +158,6 @@ func (tp *TextPanel) Draw() {
 	tp.BarHori.Draw(11, 13, *tp) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
 	tp.BarVert.Draw(11, 13, *tp) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
 	rend.Color(white)
-	rend.DrawCharAtRect('+', &Rectangle{rend.CharHei, rend.CharHei, -rend.CharHei, -rend.CharHei}) // center indicator
 }
 
 // ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)

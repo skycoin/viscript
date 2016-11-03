@@ -1,13 +1,14 @@
 package main
 
 import (
-//"fmt"
+	//"fmt"
+	"viscript/common"
 )
 
 var goldenRatio = 1.61803398875
 var goldenPercentage = float32(goldenRatio / (goldenRatio + 1))
 
-func MouseCursorIsInside(r *Rectangle) bool {
+func MouseCursorIsInside(r *common.Rectangle) bool {
 	if curs.MouseGlY < r.Top && curs.MouseGlY > r.Bottom {
 		if curs.MouseGlX < r.Right && curs.MouseGlX > r.Left {
 			return true
@@ -30,7 +31,7 @@ func Clamp(f, negBoundary, posBoundary float32) float32 {
 }
 
 // params: Rectangle, negativemost, & positivemost bounds
-func ClampLeftAndRightOf(r *Rectangle, negBoundary, posBoundary float32) *Rectangle {
+func ClampLeftAndRightOf(r *common.Rectangle, negBoundary, posBoundary float32) *common.Rectangle {
 	if r.Left < negBoundary {
 		r.Left = negBoundary
 	}

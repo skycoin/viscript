@@ -16,6 +16,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-gl/gl/v2.1/gl"
+	"viscript/common"
 )
 
 var rend = CcRenderer{}
@@ -37,10 +38,14 @@ var white = []float32{1, 1, 1, 1}
 var yellow = []float32{1, 1, 0, 1}
 
 // dimensions (in pixel units)
-var prevAppWidth int32 = 800
-var prevAppHeight int32 = 600
-var currAppWidth int32 = 800
-var currAppHeight int32 = 600
+var initAppWidth int32 = 800
+var initAppHeight int32 = 600
+var currAppWidth int32 = initAppWidth
+var currAppHeight int32 = initAppHeight
+var longerDimension = float32(initAppWidth) / float32(initAppHeight)
+var initFrustum = &common.Rectangle{1, longerDimension, -1, -longerDimension}
+var prevFrustum = &common.Rectangle{initFrustum.Top, initFrustum.Right, initFrustum.Bottom, initFrustum.Left}
+var currFrustum = &common.Rectangle{initFrustum.Top, initFrustum.Right, initFrustum.Bottom, initFrustum.Left}
 
 type CcRenderer struct {
 	DistanceFromOrigin float32
@@ -79,35 +84,37 @@ func (cr *CcRenderer) Init() {
 		cr.CurrColor = grayDark
 
 		fmt.Println("CcRenderer.Init(): FIRST TIME")
-		cr.ClientExtentX = cr.DistanceFromOrigin
+		cr.ClientExtentX = cr.DistanceFromOrigin * longerDimension
 		cr.ClientExtentY = cr.DistanceFromOrigin
-		cr.PixelWid = cr.ClientExtentX * 2 / float32(currAppWidth)
-		cr.PixelHei = cr.ClientExtentY * 2 / float32(currAppHeight)
-		cr.CharWid = float32(cr.DistanceFromOrigin*2) / float32(cr.MaxCharsX)
-		cr.CharHei = float32(cr.DistanceFromOrigin*2) / float32(cr.MaxCharsY)
+		cr.CharWid = float32(cr.ClientExtentX*2) / float32(cr.MaxCharsX)
+		cr.CharHei = float32(cr.ClientExtentY*2) / float32(cr.MaxCharsY)
 		cr.CharWidInPixels = int(float32(currAppWidth) / float32(cr.MaxCharsX))
 		cr.CharHeiInPixels = int(float32(currAppHeight) / float32(cr.MaxCharsY))
+		cr.PixelWid = cr.ClientExtentX * 2 / float32(currAppWidth)
+		cr.PixelHei = cr.ClientExtentY * 2 / float32(currAppHeight)
 	} else {
-		cr.ClientExtentX = float32(currAppWidth) * cr.PixelWid / 2
-		cr.ClientExtentY = float32(currAppHeight) * cr.PixelHei / 2
 		fmt.Printf("CcRenderer.Init(): for resize changes - ClientExtentX: %.2f\n", cr.ClientExtentX)
+		//cr.ClientExtentX = cr.DistanceFromOrigin * (currFrustum.Right / initFrustum.Right)
+		//cr.ClientExtentY = cr.DistanceFromOrigin * (currFrustum.Top / initFrustum.Top)
+		*prevFrustum = *currFrustum
 
-		/*
-			for _, pan := range cr.Panels {
-				pan.Rect.Right = -cr.DistanceFromOrigin + 2*cr.ClientExtentX
-				pan.BarVert.PosX = pan.Rect.Right - pan.BarVert.Thickness
+		currFrustum.Right = float32(currAppWidth) / float32(initAppWidth) * initFrustum.Right
+		currFrustum.Left = -currFrustum.Right
+		currFrustum.Top = float32(currAppHeight) / float32(initAppHeight) * initFrustum.Top
+		currFrustum.Bottom = -currFrustum.Top
 
-				//pan.Init()
-				/*
-					if i == 0 {
-						pan.Rect.Top = -cr.DistanceFromOrigin + 2*cr.ClientExtentY - rend.CharHei
-						pan.Rect.Bottom = pan.Rect.Top - cr.ClientExtentY*2*pan.BandPercent
-						pan.BarHori.PosY = pan.Rect.Bottom + pan.BarHori.Thickness
-					} else {
+		fmt.Printf("CcRenderer.Init(): for resize changes - prevFrustum.Left: %.3f\n", prevFrustum.Left)
+		fmt.Printf("CcRenderer.Init(): for resize changes - currFrustum.Left: %.3f\n", currFrustum.Left)
 
-					}
-			}
-		*/
+		cr.ClientExtentX = cr.DistanceFromOrigin * currFrustum.Right
+		cr.ClientExtentY = cr.DistanceFromOrigin * currFrustum.Top
+
+		// things that weren't initialized in this func
+		menu.SetSize()
+
+		for _, pan := range cr.Panels {
+			pan.SetSize()
+		}
 	}
 
 	if len(cr.Panels) == 0 {
@@ -127,6 +134,9 @@ func (cr *CcRenderer) Color(newColor []float32) {
 	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &newColor[0])
 }
 
+var bu *Button = &Button{}
+var b2 *Button = &Button{}
+
 func (cr *CcRenderer) DrawAll() {
 	curs.Update()
 	menu.Draw()
@@ -134,6 +144,21 @@ func (cr *CcRenderer) DrawAll() {
 	for _, pan := range cr.Panels {
 		pan.Draw()
 	}
+
+	// show width of client area
+	if bu.Rect == nil {
+		var f float32 = 1.3
+		bu.Rect = &common.Rectangle{rend.CharHei + 0.4, f, rend.CharHei + 0.1, -f} // OPTIMIZEME? is this causing slow GC thrashing?
+		b2.Rect = &common.Rectangle{rend.CharHei + 0.8, f, rend.CharHei + 0.5, -f} // OPTIMIZEME? is this causing slow GC thrashing?
+	}
+	bu.Name = fmt.Sprintf("extentX: %.2f", cr.ClientExtentX)
+	bu.Draw()
+	b2.Name = fmt.Sprintf("extentY: %.2f", cr.ClientExtentY)
+	b2.Draw()
+
+	// 'crosshair' center indicator
+	var f float32 = rend.CharHei
+	rend.DrawCharAtRect('+', &common.Rectangle{f, f, -f, -f})
 }
 
 func (cr *CcRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {
@@ -142,7 +167,7 @@ func (cr *CcRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelD
 	}
 }
 
-func (cr *CcRenderer) DrawCharAtRect(char rune, r *Rectangle) {
+func (cr *CcRenderer) DrawCharAtRect(char rune, r *common.Rectangle) {
 	u := float32(int(char) % 16)
 	v := float32(int(char) / 16)
 	sp := rend.UvSpan
@@ -162,7 +187,7 @@ func (cr *CcRenderer) DrawCharAtRect(char rune, r *Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
-func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *Rectangle) {
+func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *common.Rectangle) {
 	sp /* span */ := rend.UvSpan
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp
