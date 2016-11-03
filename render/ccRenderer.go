@@ -1,8 +1,13 @@
-/* TODO:
+/*
+--- TODO: ---
 
 * KEY-BASED NAVIGATION (CTRL-HOME/END - PGUP/DN)
-* ??DONE?? BACKSPACE/DELETE at the ends of lines
+* BACKSPACE/DELETE at the ends of lines
 	pulls us up to prev line, or pulls up next line
+
+
+--- OPTIONAL NICETIES: ---
+
 * HORIZONTAL SCROLLBARS
 	horizontal could be charHei thickness
 	vertical could easily be a smaller rendering of the first ~40 chars?
@@ -11,7 +16,7 @@
 		would alter the width of the scrollbar
 */
 
-package main
+package render
 
 import (
 	"fmt"
@@ -73,7 +78,7 @@ type CcRenderer struct {
 	Panels    []*TextPanel
 }
 
-func (cr *CcRenderer) Init() {
+func (cr *CcRenderer) Init() { // FIXME: part should be split into something like .Setup/Set___()
 	if cr.ClientExtentX == 0.0 || cr.ClientExtentY == 0.0 {
 		cr.MaxCharsX = 80
 		cr.MaxCharsY = 25
