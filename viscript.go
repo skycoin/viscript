@@ -30,6 +30,7 @@ import (
 	_ "os"
 	"runtime"
 
+	"github.com/corpusc/viscript/render"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
@@ -54,7 +55,7 @@ func main() {
 	glfw.WindowHint(glfw.Resizable, glfw.True)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-	window, err := glfw.CreateWindow(int(currAppWidth), int(currAppHeight), appName, nil, nil)
+	window, err := glfw.CreateWindow(int(render.CurrAppWidth), int(render.CurrAppHeight), appName, nil, nil)
 
 	if err != nil {
 		panic(err)
@@ -151,6 +152,6 @@ func predPrint(osOnly bool, s string) {
 	if osOnly {
 		fmt.Println(s)
 	} else {
-		con.Add(fmt.Sprintf("%s\n", s))
+		render.Con.Add(fmt.Sprintf("%s\n", s))
 	}
 }

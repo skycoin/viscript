@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"github.com/corpusc/viscript/render"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"math"
 )
@@ -26,20 +27,20 @@ func initInputEvents(w *glfw.Window) {
 
 func onFramebufferSize(w *glfw.Window, width, height int) {
 	fmt.Printf("onFramebufferSize() - width, height: %d, %d\n", width, height)
-	currAppWidth = int32(width)
-	currAppHeight = int32(height)
-	rend.Init()
+	render.CurrAppWidth = int32(width)
+	render.CurrAppHeight = int32(height)
+	render.Rend.Init()
 }
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
-	curs.UpdatePosition(float32(x), float32(y))
+	render.Curs.UpdatePosition(float32(x), float32(y))
 	mousePixelDeltaX = x - prevMousePixelX
 	mousePixelDeltaY = y - prevMousePixelY
 	prevMousePixelX = x
 	prevMousePixelY = y
 
 	if /* LMB held */ w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		rend.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
+		render.Rend.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
 	}
 
 	// build message
@@ -52,9 +53,9 @@ func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 
 	// if horizontal
 	if w.GetKey(glfw.KeyLeftShift) == glfw.Press || w.GetKey(glfw.KeyRightShift) == glfw.Press {
-		rend.ScrollPanelThatIsHoveredOver(yOff*-delta, 0)
+		render.Rend.ScrollPanelThatIsHoveredOver(yOff*-delta, 0)
 	} else {
-		rend.ScrollPanelThatIsHoveredOver(xOff*delta, yOff*-delta)
+		render.Rend.ScrollPanelThatIsHoveredOver(xOff*delta, yOff*-delta)
 	}
 
 	// build message
@@ -73,17 +74,17 @@ func onMouseButton(
 		switch glfw.MouseButton(b) {
 		case glfw.MouseButtonLeft:
 			// respond to button push
-			if MouseCursorIsInside(menu.Rect) {
-				for _, bu := range menu.Buttons {
-					if MouseCursorIsInside(bu.Rect) {
+			if render.MouseCursorIsInside(render.MenuInst.Rect) {
+				for _, bu := range render.MenuInst.Buttons {
+					if render.MouseCursorIsInside(bu.Rect) {
 						bu.Activated = !bu.Activated
-						con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
+						render.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
 					}
 				}
 			}
 
 			// respond to click in text panel
-			for _, pan := range rend.Panels {
+			for _, pan := range render.Rend.Panels {
 				if pan.ContainsMouseCursor() {
 					pan.RespondToMouseClick()
 				}
@@ -115,7 +116,7 @@ func onKey(
 	action glfw.Action,
 	mod glfw.ModifierKey) {
 
-	foc := rend.Focused
+	foc := render.Rend.Focused
 
 	if action == glfw.Release {
 		switch key {
@@ -159,10 +160,10 @@ func onKey(
 			b := foc.Body
 			startOfLine := b[foc.CursY][:foc.CursX]
 			restOfLine := b[foc.CursY][foc.CursX:len(b[foc.CursY])]
-			fmt.Printf("startOfLine: \"%s\"\n", startOfLine)
-			fmt.Printf(" restOfLine: \"%s\"\n", restOfLine)
+			//fmt.Printf("startOfLine: \"%s\"\n", startOfLine)
+			//fmt.Printf(" restOfLine: \"%s\"\n", restOfLine)
 			b[foc.CursY] = startOfLine
-			fmt.Printf("foc.CursX: \"%d\"  -  foc.CursY: \"%d\"\n", foc.CursX, foc.CursY)
+			//fmt.Printf("foc.CursX: \"%d\"  -  foc.CursY: \"%d\"\n", foc.CursX, foc.CursY)
 			foc.Body = insert(b, foc.CursY+1, restOfLine)
 
 			foc.CursX = 0
@@ -258,7 +259,7 @@ func dispatchWithPrefix(content []byte, msgType uint8) {
 
 func getWordSkipPos(xIn int, change int) int {
 	peekPos := xIn
-	foc := rend.Focused
+	foc := render.Rend.Focused
 
 	for {
 		peekPos += change
@@ -278,7 +279,7 @@ func getWordSkipPos(xIn int, change int) int {
 }
 
 func commonMovementKeyHandling() {
-	foc := rend.Focused
+	foc := render.Rend.Focused
 
 	if foc.Selection.CurrentlySelecting {
 		foc.Selection.EndX = foc.CursX

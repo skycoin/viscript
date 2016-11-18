@@ -1,7 +1,7 @@
-package main
+package render
 
 import (
-	"fmt"
+//"fmt"
 )
 
 type PanelBand struct {

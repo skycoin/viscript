@@ -1,10 +1,10 @@
-package main
+package render
 
 import (
 	"fmt"
+	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/gl/v2.1/gl"
-	"viscript/common"
-	"viscript/ui"
 )
 
 type TextPanel struct {
@@ -42,15 +42,15 @@ func (tp *TextPanel) SetSize() {
 	fmt.Printf("TextPanel.SetSize()\n")
 
 	tp.Rect = &common.Rectangle{
-		rend.ClientExtentY - rend.CharHei,
-		rend.ClientExtentX,
-		-rend.ClientExtentY,
-		-rend.ClientExtentX}
+		Rend.ClientExtentY - Rend.CharHei,
+		Rend.ClientExtentX,
+		-Rend.ClientExtentY,
+		-Rend.ClientExtentX}
 
-	if tp.BandPercent == rend.RunPanelHeiPerc { // FIXME: this is hardwired for one use case for now
+	if tp.BandPercent == Rend.RunPanelHeiPerc { // FIXME: this is hardwired for one use case for now
 		tp.Rect.Top = tp.Rect.Bottom + tp.Rect.Height()*tp.BandPercent
 	} else {
-		tp.Rect.Bottom = tp.Rect.Bottom + tp.Rect.Height()*rend.RunPanelHeiPerc
+		tp.Rect.Bottom = tp.Rect.Bottom + tp.Rect.Height()*Rend.RunPanelHeiPerc
 	}
 
 	// scrollbar
@@ -59,13 +59,13 @@ func (tp *TextPanel) SetSize() {
 }
 
 func (tp *TextPanel) RespondToMouseClick() {
-	rend.Focused = tp
+	Rend.Focused = tp
 
 	// diffs/deltas from home position of panel (top left corner)
-	glDeltaXFromHome := curs.MouseGlX - tp.Rect.Left
-	glDeltaYFromHome := curs.MouseGlY - tp.Rect.Top
-	tp.MouseX = int((glDeltaXFromHome + tp.BarHori.ScrollDelta) / rend.CharWid)
-	tp.MouseY = int(-(glDeltaYFromHome + tp.BarVert.ScrollDelta) / rend.CharHei)
+	glDeltaXFromHome := Curs.MouseGlX - tp.Rect.Left
+	glDeltaYFromHome := Curs.MouseGlY - tp.Rect.Top
+	tp.MouseX = int((glDeltaXFromHome + tp.BarHori.ScrollDelta) / Rend.CharWid)
+	tp.MouseY = int(-(glDeltaYFromHome + tp.BarVert.ScrollDelta) / Rend.CharHei)
 
 	if tp.MouseY < 0 {
 		tp.MouseY = 0
@@ -77,11 +77,11 @@ func (tp *TextPanel) RespondToMouseClick() {
 }
 
 func (tp *TextPanel) GoToTopEdge() {
-	rend.CurrY = tp.Rect.Top - tp.BarVert.ScrollDelta
+	Rend.CurrY = tp.Rect.Top - tp.BarVert.ScrollDelta
 }
 func (tp *TextPanel) GoToLeftEdge() float32 {
-	rend.CurrX = tp.Rect.Left - tp.BarHori.ScrollDelta
-	return rend.CurrX
+	Rend.CurrX = tp.Rect.Left - tp.BarHori.ScrollDelta
+	return Rend.CurrX
 }
 func (tp *TextPanel) GoToTopLeftCorner() {
 	tp.GoToTopEdge()
@@ -92,10 +92,10 @@ func (tp *TextPanel) Draw() {
 	tp.GoToTopLeftCorner()
 	tp.DrawBackground(11, 13)
 
-	cX := rend.CurrX // current (internal/logic cursor) drawing position
-	cY := rend.CurrY
-	cW := rend.CharWid
-	cH := rend.CharHei
+	cX := Rend.CurrX // current (internal/logic cursor) drawing position
+	cY := Rend.CurrY
+	cW := Rend.CharWid
+	cH := Rend.CharHei
 	b := tp.BarHori.PosY // bottom of text area
 
 	// body of text
@@ -112,20 +112,20 @@ func (tp *TextPanel) Draw() {
 				r.Bottom = b
 			}
 
-			parseLine(y, line, true)
+			//parseLine(y, line, true)
 
 			// process line of text
 			for x, c := range line {
 				// if char visible
 				if cX >= tp.Rect.Left-cW && cX < tp.BarVert.PosX {
 					ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.PosX)
-					rend.DrawCharAtRect(c, r)
+					Rend.DrawCharAtRect(c, r)
 
-					if tp.IsEditable && curs.Visible == true {
+					if tp.IsEditable && Curs.Visible == true {
 						if x == tp.CursX && y == tp.CursY {
-							rend.Color(white)
-							rend.DrawCharAtRect('_', r)
-							rend.Color(rend.PrevColor)
+							Rend.Color(White)
+							Rend.DrawCharAtRect('_', r)
+							Rend.Color(Rend.PrevColor)
 						}
 					}
 				}
@@ -137,10 +137,10 @@ func (tp *TextPanel) Draw() {
 
 			// draw cursor at the end of line if needed
 			if cX < tp.BarVert.PosX && y == tp.CursY && tp.CursX == len(line) {
-				if tp.IsEditable && curs.Visible == true {
-					rend.Color(white)
+				if tp.IsEditable && Curs.Visible == true {
+					Rend.Color(White)
 					ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.PosX)
-					rend.DrawCharAtRect('_', r)
+					Rend.DrawCharAtRect('_', r)
 				}
 			}
 
@@ -150,19 +150,19 @@ func (tp *TextPanel) Draw() {
 		cY -= cH // go down a line height
 	}
 
-	rend.Color(grayDark)
+	Rend.Color(GrayDark)
 	tp.DrawScrollbarChrome(10, 11, tp.Rect.Right-tp.BarVert.Thickness, tp.Rect.Top)                         // vertical bar background
 	tp.DrawScrollbarChrome(13, 12, tp.Rect.Left, tp.Rect.Bottom+tp.BarHori.Thickness)                       // horizontal bar background
 	tp.DrawScrollbarChrome(12, 11, tp.Rect.Right-tp.BarVert.Thickness, tp.Rect.Bottom+tp.BarHori.Thickness) // corner elbow piece
-	rend.Color(gray)
+	Rend.Color(Gray)
 	tp.BarHori.Draw(11, 13, *tp) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
 	tp.BarVert.Draw(11, 13, *tp) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
-	rend.Color(white)
+	Rend.Color(White)
 }
 
 // ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)
 func (tp *TextPanel) DrawScrollbarChrome(atlasCellX, atlasCellY, l, t float32) { // left, top
-	sp := rend.UvSpan
+	sp := Rend.UvSpan
 	u := float32(atlasCellX) * sp
 	v := float32(atlasCellY) * sp
 
@@ -186,11 +186,11 @@ func (tp *TextPanel) DrawScrollbarChrome(atlasCellX, atlasCellY, l, t float32) {
 }
 
 func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
-	sp := rend.UvSpan
+	sp := Rend.UvSpan
 	u := float32(atlasCellX) * sp
 	v := float32(atlasCellY) * sp
 
-	rend.Color(grayDark)
+	Rend.Color(GrayDark)
 	gl.Normal3f(0, 0, 1)
 
 	// bottom left   0, 1
@@ -213,8 +213,8 @@ func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float64) {
 	if tp.ContainsMouseCursor() {
 		// position increments in gl space
-		xInc := float32(mousePixelDeltaX) * rend.PixelWid
-		yInc := float32(mousePixelDeltaY) * rend.PixelHei
+		xInc := float32(mousePixelDeltaX) * Rend.PixelWid
+		yInc := float32(mousePixelDeltaY) * Rend.PixelHei
 		tp.BarHori.Scroll(tp, xInc)
 		tp.BarVert.Scroll(tp, yInc)
 	}

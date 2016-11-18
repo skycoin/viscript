@@ -1,11 +1,11 @@
-package main
+package render
 
 import (
 	"fmt"
 	"strings"
 )
 
-var con = CcLog{} // console log, displays runtime feedback (including parsing errors)
+var Con = CcLog{} // console log, displays runtime feedback (including parsing errors)
 
 type CcLog struct {
 	Name  string
@@ -17,8 +17,8 @@ func (log CcLog) Add(s string) {
 	s = strings.Replace(s, "\n", "", -1)
 	log.Lines = append(log.Lines, s)
 
-	if len(rend.Panels) > 1 {
-		rend.Panels[1].Body = append(rend.Panels[1].Body, s)
+	if len(Rend.Panels) > 1 {
+		Rend.Panels[1].Body = append(Rend.Panels[1].Body, s)
 	}
 }
 

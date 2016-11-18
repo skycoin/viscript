@@ -1,11 +1,11 @@
-package main
+package render
 
 import (
 	"fmt"
-	"viscript/common"
+	"github.com/corpusc/viscript/common"
 )
 
-var menu = Menu{}
+var MenuInst = Menu{}
 
 type Menu struct {
 	IsVertical bool // controls which dimension gets divided up for button sizes
@@ -57,8 +57,8 @@ func (m *Menu) Draw() {
 
 func (m *Menu) GetMenuSizedRect() *common.Rectangle {
 	return &common.Rectangle{
-		rend.ClientExtentY,
-		rend.ClientExtentX,
-		rend.ClientExtentY - rend.CharHei,
-		-rend.ClientExtentX}
+		Rend.ClientExtentY,
+		Rend.ClientExtentX,
+		Rend.ClientExtentY - Rend.CharHei,
+		-Rend.ClientExtentX}
 }

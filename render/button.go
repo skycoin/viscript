@@ -1,8 +1,8 @@
-package main
+package render
 
 import (
 	//"fmt"
-	"viscript/common"
+	"github.com/corpusc/viscript/common"
 )
 
 type Button struct {
@@ -13,9 +13,9 @@ type Button struct {
 
 func (bu *Button) Draw() {
 	if bu.Activated {
-		rend.Color(green)
+		Rend.Color(green)
 	} else {
-		rend.Color(white)
+		Rend.Color(White)
 	}
 
 	span := bu.Rect.Height() * goldenPercentage // ...of both dimensions of each character
@@ -23,10 +23,10 @@ func (bu *Button) Draw() {
 	x := bu.Rect.Left + (bu.Rect.Width()-glTextWidth)/2
 	verticalLipSpan := (bu.Rect.Height() - span) / 2 // lip or frame edge
 
-	rend.DrawQuad(11, 13, bu.Rect)
+	Rend.DrawQuad(11, 13, bu.Rect)
 
 	for _, c := range bu.Name {
-		rend.DrawCharAtRect(c, &common.Rectangle{bu.Rect.Top - verticalLipSpan, x + span, bu.Rect.Bottom + verticalLipSpan, x})
+		Rend.DrawCharAtRect(c, &common.Rectangle{bu.Rect.Top - verticalLipSpan, x + span, bu.Rect.Bottom + verticalLipSpan, x})
 		x += span
 	}
 }

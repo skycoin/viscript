@@ -1,8 +1,8 @@
-package main
+package render
 
 import (
 	//"fmt"
-	"viscript/common"
+	"github.com/corpusc/viscript/common"
 )
 
 /* TODO:
@@ -24,7 +24,7 @@ type ScrollBar struct {
 func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 	if bar.IsHorizontal {
 		// OPTIMIZEME in the future?  idealistically, the below should only be calculated
-		// whenever user changes the size of a line such as by:
+		// whenever user changes the size of a line, such as by:
 		// 		typing/deleting/hitting-enter (could be splitting the biggest line in 2).
 		// or changes window size
 		// ....but it probably will never really matter.
@@ -42,13 +42,13 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 		panWid := tp.Rect.Width() - tp.BarVert.Thickness // width of panel (MINUS scrollbar space)
 
 		/* if content smaller than panel width */
-		if float32(numCharsInLongest)*rend.CharWid <= tp.Rect.Width()-tp.BarVert.Thickness {
+		if float32(numCharsInLongest)*Rend.CharWid <= tp.Rect.Width()-tp.BarVert.Thickness {
 			// NO BAR
 			bar.LenOfBar = 0
 			bar.LenOfVoid = panWid
 			bar.LenOfOffscreen = 0
 		} else {
-			totalTextWid := float32(numCharsInLongest) * rend.CharWid
+			totalTextWid := float32(numCharsInLongest) * Rend.CharWid
 			bar.LenOfOffscreen = totalTextWid - panWid
 			bar.LenOfBar = panWid / totalTextWid * panWid
 			bar.LenOfVoid = panWid - bar.LenOfBar
@@ -59,13 +59,13 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 		panHei := tp.Rect.Height() - tp.BarHori.Thickness // height of panel (MINUS scrollbar space)
 
 		/* if content smaller than panel height */
-		if float32(len(tp.Body))*rend.CharHei <= tp.Rect.Height()-tp.BarHori.Thickness {
+		if float32(len(tp.Body))*Rend.CharHei <= tp.Rect.Height()-tp.BarHori.Thickness {
 			// NO BAR
 			bar.LenOfBar = 0
 			bar.LenOfVoid = panHei
 			bar.LenOfOffscreen = 0
 		} else {
-			totalTextHei := float32(len(tp.Body)) * rend.CharHei
+			totalTextHei := float32(len(tp.Body)) * Rend.CharHei
 			bar.LenOfOffscreen = totalTextHei - panHei
 			bar.LenOfBar = panHei / totalTextHei * panHei
 			bar.LenOfVoid = panHei - bar.LenOfBar
@@ -75,7 +75,7 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 	}
 
 	if bar.Thickness == 0 {
-		bar.Thickness = rend.ClientExtentY / 25
+		bar.Thickness = Rend.ClientExtentY / 25
 
 		if bar.IsHorizontal {
 			bar.PosY = tp.Rect.Bottom + bar.Thickness
@@ -87,11 +87,11 @@ func (bar *ScrollBar) UpdateSize(tp TextPanel) {
 
 func (bar *ScrollBar) ContainsMouseCursor(tp *TextPanel) bool {
 	if bar.IsHorizontal {
-		if curs.MouseGlY <= bar.PosY {
+		if Curs.MouseGlY <= bar.PosY {
 			return true
 		}
 	} else { // vertical bar
-		if curs.MouseGlX >= bar.PosX {
+		if Curs.MouseGlX >= bar.PosX {
 			return true
 		}
 	}
@@ -160,7 +160,7 @@ func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
 				r = max
 			}
 
-			rend.DrawQuad(atlasX, atlasY, &common.Rectangle{t, r, b, l})
+			Rend.DrawQuad(atlasX, atlasY, &common.Rectangle{t, r, b, l})
 
 			l += th
 			r += th
@@ -168,6 +168,6 @@ func (bar *ScrollBar) Draw(atlasX, atlasY float32, tp TextPanel) {
 	} else {
 		b = bar.PosY - bar.LenOfBar
 
-		rend.DrawQuad(atlasX, atlasY, &common.Rectangle{t, r, b, l})
+		Rend.DrawQuad(atlasX, atlasY, &common.Rectangle{t, r, b, l})
 	}
 }
