@@ -142,9 +142,6 @@ func (cr *CcRenderer) Color(newColor []float32) {
 	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &newColor[0])
 }
 
-var bu *Button = &Button{}
-var b2 *Button = &Button{}
-
 func (cr *CcRenderer) DrawAll() {
 	Curs.Update()
 	MenuInst.Draw()
@@ -152,17 +149,6 @@ func (cr *CcRenderer) DrawAll() {
 	for _, pan := range cr.Panels {
 		pan.Draw()
 	}
-
-	// show width of client area
-	if bu.Rect == nil {
-		var f float32 = 1.3
-		bu.Rect = &common.Rectangle{Rend.CharHei + 0.4, f, Rend.CharHei + 0.1, -f} // OPTIMIZEME? is this causing slow GC thrashing?
-		b2.Rect = &common.Rectangle{Rend.CharHei + 0.8, f, Rend.CharHei + 0.5, -f} // OPTIMIZEME? is this causing slow GC thrashing?
-	}
-	bu.Name = fmt.Sprintf("extentX: %.2f", cr.ClientExtentX)
-	bu.Draw()
-	b2.Name = fmt.Sprintf("extentY: %.2f", cr.ClientExtentY)
-	b2.Draw()
 
 	// 'crosshair' center indicator
 	var f float32 = Rend.CharHei
