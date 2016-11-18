@@ -26,22 +26,22 @@ import (
 
 var Rend = CcRenderer{}
 
-var black = []float32{0, 0, 0, 1}
-var blue = []float32{0, 0, 1, 1}
-var cyan = []float32{0, 0.5, 1, 1}
+var Black = []float32{0, 0, 0, 1}
+var Blue = []float32{0, 0, 1, 1}
+var Cyan = []float32{0, 0.5, 1, 1}
 var Fuschia = []float32{0.6, 0.2, 0.3, 1}
 var Gray = []float32{0.25, 0.25, 0.25, 1}
 var GrayDark = []float32{0.15, 0.15, 0.15, 1}
 var GrayLight = []float32{0.4, 0.4, 0.4, 1}
-var green = []float32{0, 1, 0, 1}
-var magenta = []float32{1, 0, 1, 1}
-var orange = []float32{0.8, 0.35, 0, 1}
-var purple = []float32{0.6, 0, 0.8, 1}
-var red = []float32{1, 0, 0, 1}
-var tan = []float32{0.55, 0.47, 0.37, 1}
+var Green = []float32{0, 1, 0, 1}
+var Magenta = []float32{1, 0, 1, 1}
+var Orange = []float32{0.8, 0.35, 0, 1}
+var Purple = []float32{0.6, 0, 0.8, 1}
+var Red = []float32{1, 0, 0, 1}
+var Tan = []float32{0.55, 0.47, 0.37, 1}
 var Violet = []float32{0.4, 0.2, 1, 1}
 var White = []float32{1, 1, 1, 1}
-var yellow = []float32{1, 1, 0, 1}
+var Yellow = []float32{1, 1, 0, 1}
 
 // dimensions (in pixel units)
 var InitAppWidth int32 = 800
@@ -55,10 +55,34 @@ var CurrFrustum = &common.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrus
 
 func init() {
 	fmt.Println("package render - init()")
-}
 
-func Get() CcRenderer {
-	return Rend
+	// one-time setup
+	Rend.MaxCharsX = 80
+	Rend.MaxCharsY = 25
+	Rend.DistanceFromOrigin = 3
+	Rend.UvSpan = float32(1.0) / 16 // how much uv a pixel spans
+	Rend.RunPanelHeiPerc = 0.4
+	Rend.PrevColor = GrayDark
+	Rend.CurrColor = GrayDark
+
+	// things to resize later
+	Rend.ClientExtentX = Rend.DistanceFromOrigin * longerDimension
+	Rend.ClientExtentY = Rend.DistanceFromOrigin
+	Rend.CharWid = float32(Rend.ClientExtentX*2) / float32(Rend.MaxCharsX)
+	Rend.CharHei = float32(Rend.ClientExtentY*2) / float32(Rend.MaxCharsY)
+	Rend.CharWidInPixels = int(float32(CurrAppWidth) / float32(Rend.MaxCharsX))
+	Rend.CharHeiInPixels = int(float32(CurrAppHeight) / float32(Rend.MaxCharsY))
+	Rend.PixelWid = Rend.ClientExtentX * 2 / float32(CurrAppWidth)
+	Rend.PixelHei = Rend.ClientExtentY * 2 / float32(CurrAppHeight)
+
+	// one-time setup of panels
+	Rend.Panels = append(Rend.Panels, &TextPanel{BandPercent: 1 - Rend.RunPanelHeiPerc, IsEditable: true})
+	Rend.Panels = append(Rend.Panels, &TextPanel{BandPercent: Rend.RunPanelHeiPerc, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
+	Rend.Focused = Rend.Panels[0]
+
+	Rend.Panels[0].Init()
+	Rend.Panels[0].SetupDemoProgram()
+	Rend.Panels[1].Init()
 }
 
 type CcRenderer struct {
@@ -87,58 +111,28 @@ type CcRenderer struct {
 	Panels    []*TextPanel
 }
 
-func (cr *CcRenderer) Init() { // FIXME: part should be split into something like .Setup/Set___()
-	if cr.ClientExtentX == 0.0 || cr.ClientExtentY == 0.0 {
-		cr.MaxCharsX = 80
-		cr.MaxCharsY = 25
-		cr.DistanceFromOrigin = 3
-		cr.UvSpan = float32(1.0) / 16 // how much uv a pixel spans
-		cr.RunPanelHeiPerc = 0.4
-		cr.PrevColor = GrayDark
-		cr.CurrColor = GrayDark
+func (cr *CcRenderer) SetSize() {
+	fmt.Printf("CcRenderer.SetSize() - ClientExtentX: %.2f\n", cr.ClientExtentX)
+	//cr.ClientExtentX = cr.DistanceFromOrigin * (CurrFrustum.Right / InitFrustum.Right)
+	//cr.ClientExtentY = cr.DistanceFromOrigin * (CurrFrustum.Top / InitFrustum.Top)
+	*PrevFrustum = *CurrFrustum
 
-		fmt.Println("CcRenderer.Init(): FIRST TIME")
-		cr.ClientExtentX = cr.DistanceFromOrigin * longerDimension
-		cr.ClientExtentY = cr.DistanceFromOrigin
-		cr.CharWid = float32(cr.ClientExtentX*2) / float32(cr.MaxCharsX)
-		cr.CharHei = float32(cr.ClientExtentY*2) / float32(cr.MaxCharsY)
-		cr.CharWidInPixels = int(float32(CurrAppWidth) / float32(cr.MaxCharsX))
-		cr.CharHeiInPixels = int(float32(CurrAppHeight) / float32(cr.MaxCharsY))
-		cr.PixelWid = cr.ClientExtentX * 2 / float32(CurrAppWidth)
-		cr.PixelHei = cr.ClientExtentY * 2 / float32(CurrAppHeight)
-	} else {
-		fmt.Printf("CcRenderer.Init(): for resize changes - ClientExtentX: %.2f\n", cr.ClientExtentX)
-		//cr.ClientExtentX = cr.DistanceFromOrigin * (CurrFrustum.Right / InitFrustum.Right)
-		//cr.ClientExtentY = cr.DistanceFromOrigin * (CurrFrustum.Top / InitFrustum.Top)
-		*PrevFrustum = *CurrFrustum
+	CurrFrustum.Right = float32(CurrAppWidth) / float32(InitAppWidth) * InitFrustum.Right
+	CurrFrustum.Left = -CurrFrustum.Right
+	CurrFrustum.Top = float32(CurrAppHeight) / float32(InitAppHeight) * InitFrustum.Top
+	CurrFrustum.Bottom = -CurrFrustum.Top
 
-		CurrFrustum.Right = float32(CurrAppWidth) / float32(InitAppWidth) * InitFrustum.Right
-		CurrFrustum.Left = -CurrFrustum.Right
-		CurrFrustum.Top = float32(CurrAppHeight) / float32(InitAppHeight) * InitFrustum.Top
-		CurrFrustum.Bottom = -CurrFrustum.Top
+	fmt.Printf("CcRenderer.SetSize() - PrevFrustum.Left: %.3f\n", PrevFrustum.Left)
+	fmt.Printf("CcRenderer.SetSize() - CurrFrustum.Left: %.3f\n", CurrFrustum.Left)
 
-		fmt.Printf("CcRenderer.Init(): for resize changes - PrevFrustum.Left: %.3f\n", PrevFrustum.Left)
-		fmt.Printf("CcRenderer.Init(): for resize changes - CurrFrustum.Left: %.3f\n", CurrFrustum.Left)
+	cr.ClientExtentX = cr.DistanceFromOrigin * CurrFrustum.Right
+	cr.ClientExtentY = cr.DistanceFromOrigin * CurrFrustum.Top
 
-		cr.ClientExtentX = cr.DistanceFromOrigin * CurrFrustum.Right
-		cr.ClientExtentY = cr.DistanceFromOrigin * CurrFrustum.Top
+	// things that weren't initialized in this func
+	MenuInst.SetSize()
 
-		// things that weren't initialized in this func
-		MenuInst.SetSize()
-
-		for _, pan := range cr.Panels {
-			pan.SetSize()
-		}
-	}
-
-	if len(cr.Panels) == 0 {
-		cr.Panels = append(cr.Panels, &TextPanel{BandPercent: 1 - cr.RunPanelHeiPerc, IsEditable: true})
-		cr.Panels = append(cr.Panels, &TextPanel{BandPercent: cr.RunPanelHeiPerc, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
-		cr.Focused = cr.Panels[0]
-
-		cr.Panels[0].Init()
-		cr.Panels[0].SetupDemoProgram()
-		cr.Panels[1].Init()
+	for _, pan := range cr.Panels {
+		pan.SetSize()
 	}
 }
 

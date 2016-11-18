@@ -25,7 +25,6 @@ var (
 func initRenderer() {
 	fmt.Println("initRenderer()")
 
-	render.Rend.Init()
 	render.MenuInst.Init()
 
 	gl.Enable(gl.DEPTH_TEST)
@@ -71,8 +70,8 @@ func drawScene() {
 		gl.LoadIdentity()
 		setFrustum(render.CurrFrustum)
 		fmt.Println("CHANGE OF FRUSTUM")
-		fmt.Printf(".Panels[0].Rect.Right: %.2f\n", render.Get().Panels[0].Rect.Right)
-		fmt.Printf(".Panels[0].Rect.Top: %.2f\n", render.Get().Panels[0].Rect.Top)
+		fmt.Printf(".Panels[0].Rect.Right: %.2f\n", render.Rend.Panels[0].Rect.Right)
+		fmt.Printf(".Panels[0].Rect.Top: %.2f\n", render.Rend.Panels[0].Rect.Top)
 	}
 	gl.MatrixMode(gl.MODELVIEW) //.PROJECTION)                   //.MODELVIEW)
 	gl.LoadIdentity()

@@ -29,7 +29,7 @@ func onFramebufferSize(w *glfw.Window, width, height int) {
 	fmt.Printf("onFramebufferSize() - width, height: %d, %d\n", width, height)
 	render.CurrAppWidth = int32(width)
 	render.CurrAppHeight = int32(height)
-	render.Rend.Init()
+	render.Rend.SetSize()
 }
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {

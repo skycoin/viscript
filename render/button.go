@@ -13,7 +13,7 @@ type Button struct {
 
 func (bu *Button) Draw() {
 	if bu.Activated {
-		Rend.Color(green)
+		Rend.Color(Green)
 	} else {
 		Rend.Color(White)
 	}
