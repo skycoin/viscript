@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/render"
+	"github.com/corpusc/viscript/gfx"
 	"math"
 	"regexp"
 	"strconv"

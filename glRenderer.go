@@ -12,7 +12,7 @@ import (
 		"runtime"
 	*/
 	"github.com/corpusc/viscript/common"
-	"github.com/corpusc/viscript/render"
+	"github.com/corpusc/viscript/gfx"
 	"github.com/go-gl/gl/v2.1/gl"
 )
 

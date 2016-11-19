@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/corpusc/viscript/render"
+	"github.com/corpusc/viscript/gfx"
 )
 
 const (

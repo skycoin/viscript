@@ -30,7 +30,7 @@ import (
 	_ "os"
 	"runtime"
 
-	"github.com/corpusc/viscript/render"
+	"github.com/corpusc/viscript/gfx"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
