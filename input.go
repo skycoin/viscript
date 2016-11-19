@@ -75,8 +75,8 @@ func onMouseButton(
 		switch glfw.MouseButton(b) {
 		case glfw.MouseButtonLeft:
 			// respond to button push
-			if render.MouseCursorIsInside(ui.MenuInst.Rect) {
-				for _, bu := range ui.MenuInst.Buttons {
+			if render.MouseCursorIsInside(ui.MainMenu.Rect) {
+				for _, bu := range ui.MainMenu.Buttons {
 					if render.MouseCursorIsInside(bu.Rect) {
 						bu.Activated = !bu.Activated
 						render.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))

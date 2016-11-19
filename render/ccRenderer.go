@@ -85,7 +85,7 @@ func init() {
 	Rend.Panels[0].SetupDemoProgram()
 	Rend.Panels[1].Init()
 
-	ui.MenuInst.SetSize(Rend.GetMenuSizedRect())
+	ui.MainMenu.SetSize(Rend.GetMenuSizedRect())
 }
 
 type CcRenderer struct {
@@ -132,7 +132,7 @@ func (cr *CcRenderer) SetSize() {
 	cr.ClientExtentY = cr.DistanceFromOrigin * CurrFrustum.Top
 
 	// things that weren't initialized in this func
-	ui.MenuInst.SetSize(cr.GetMenuSizedRect())
+	ui.MainMenu.SetSize(cr.GetMenuSizedRect())
 
 	for _, pan := range cr.Panels {
 		pan.SetSize()
@@ -167,7 +167,7 @@ func (cr *CcRenderer) DrawAll() {
 }
 
 func (cr *CcRenderer) DrawMenu() {
-	for _, bu := range ui.MenuInst.Buttons {
+	for _, bu := range ui.MainMenu.Buttons {
 		if bu.Activated {
 			Rend.Color(Green)
 		} else {

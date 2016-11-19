@@ -5,14 +5,14 @@ import (
 	"github.com/corpusc/viscript/common"
 )
 
-var MenuInst = Menu{}
+var MainMenu = Menu{}
 
 func init() {
 	fmt.Println("ui.init()")
-	MenuInst.Buttons = append(MenuInst.Buttons, &Button{Name: "Run"})
-	MenuInst.Buttons = append(MenuInst.Buttons, &Button{Name: "Syntax Tree"})
-	MenuInst.Buttons = append(MenuInst.Buttons, &Button{Name: "Item 3"})
-	MenuInst.Buttons = append(MenuInst.Buttons, &Button{Name: "Item 4"})
+	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Run"})
+	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Syntax Tree"})
+	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Item 3"})
+	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Item 4"})
 }
 
 type Menu struct {
