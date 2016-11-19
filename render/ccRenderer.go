@@ -16,7 +16,7 @@
 		would alter the width of the scrollbar
 */
 
-package render
+package gfx
 
 import (
 	"fmt"

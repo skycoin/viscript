@@ -28,20 +28,20 @@ func initInputEvents(w *glfw.Window) {
 
 func onFramebufferSize(w *glfw.Window, width, height int) {
 	fmt.Printf("onFramebufferSize() - width, height: %d, %d\n", width, height)
-	render.CurrAppWidth = int32(width)
-	render.CurrAppHeight = int32(height)
-	render.Rend.SetSize()
+	gfx.CurrAppWidth = int32(width)
+	gfx.CurrAppHeight = int32(height)
+	gfx.Rend.SetSize()
 }
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
-	render.Curs.UpdatePosition(float32(x), float32(y))
+	gfx.Curs.UpdatePosition(float32(x), float32(y))
 	mousePixelDeltaX = x - prevMousePixelX
 	mousePixelDeltaY = y - prevMousePixelY
 	prevMousePixelX = x
 	prevMousePixelY = y
 
 	if /* LMB held */ w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		render.Rend.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
+		gfx.Rend.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
 	}
 
 	// build message
@@ -54,9 +54,9 @@ func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 
 	// if horizontal
 	if w.GetKey(glfw.KeyLeftShift) == glfw.Press || w.GetKey(glfw.KeyRightShift) == glfw.Press {
-		render.Rend.ScrollPanelThatIsHoveredOver(yOff*-delta, 0)
+		gfx.Rend.ScrollPanelThatIsHoveredOver(yOff*-delta, 0)
 	} else {
-		render.Rend.ScrollPanelThatIsHoveredOver(xOff*delta, yOff*-delta)
+		gfx.Rend.ScrollPanelThatIsHoveredOver(xOff*delta, yOff*-delta)
 	}
 
 	// build message
@@ -75,17 +75,17 @@ func onMouseButton(
 		switch glfw.MouseButton(b) {
 		case glfw.MouseButtonLeft:
 			// respond to button push
-			if render.MouseCursorIsInside(ui.MainMenu.Rect) {
+			if gfx.MouseCursorIsInside(ui.MainMenu.Rect) {
 				for _, bu := range ui.MainMenu.Buttons {
-					if render.MouseCursorIsInside(bu.Rect) {
+					if gfx.MouseCursorIsInside(bu.Rect) {
 						bu.Activated = !bu.Activated
-						render.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
+						gfx.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
 					}
 				}
 			}
 
 			// respond to click in text panel
-			for _, pan := range render.Rend.Panels {
+			for _, pan := range gfx.Rend.Panels {
 				if pan.ContainsMouseCursor() {
 					pan.RespondToMouseClick()
 				}
@@ -117,7 +117,7 @@ func onKey(
 	action glfw.Action,
 	mod glfw.ModifierKey) {
 
-	foc := render.Rend.Focused
+	foc := gfx.Rend.Focused
 
 	if action == glfw.Release {
 		switch key {
@@ -260,7 +260,7 @@ func dispatchWithPrefix(content []byte, msgType uint8) {
 
 func getWordSkipPos(xIn int, change int) int {
 	peekPos := xIn
-	foc := render.Rend.Focused
+	foc := gfx.Rend.Focused
 
 	for {
 		peekPos += change
@@ -280,7 +280,7 @@ func getWordSkipPos(xIn int, change int) int {
 }
 
 func commonMovementKeyHandling() {
-	foc := render.Rend.Focused
+	foc := gfx.Rend.Focused
 
 	if foc.Selection.CurrentlySelecting {
 		foc.Selection.EndX = foc.CursX

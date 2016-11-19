@@ -41,7 +41,7 @@ func processMessage(message []byte) {
 
 	case MessageMouseButton:
 		s("MessageMouseButton", message)
-		render.Curs.ConvertMouseClickToTextCursorPosition(
+		gfx.Curs.ConvertMouseClickToTextCursorPosition(
 			getAndShowUInt8("Button", message),
 			getAndShowUInt8("Action", message))
 		getAndShowUInt8("Mod", message)
@@ -97,7 +97,7 @@ func insertRuneIntoDocument(s string, message []byte) {
 	} else {
 		fmt.Printf("   [%s: %s]", s, string(value))
 
-		f := render.Rend.Focused
+		f := gfx.Rend.Focused
 		f.Body[f.CursY] = f.Body[f.CursY][:f.CursX] + string(value) + f.Body[f.CursY][f.CursX:len(f.Body[f.CursY])]
 		f.CursX++
 	}

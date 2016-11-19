@@ -55,7 +55,7 @@ func main() {
 	glfw.WindowHint(glfw.Resizable, glfw.True)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-	window, err := glfw.CreateWindow(int(render.CurrAppWidth), int(render.CurrAppHeight), appName, nil, nil)
+	window, err := glfw.CreateWindow(int(gfx.CurrAppWidth), int(gfx.CurrAppHeight), appName, nil, nil)
 
 	if err != nil {
 		panic(err)
@@ -152,6 +152,6 @@ func predPrint(osOnly bool, s string) {
 	if osOnly {
 		fmt.Println(s)
 	} else {
-		render.Con.Add(fmt.Sprintf("%s\n", s))
+		gfx.Con.Add(fmt.Sprintf("%s\n", s))
 	}
 }

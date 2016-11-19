@@ -69,7 +69,7 @@ type CodeBlock struct {
 func initParser() {
 	/*
 		for _, f := range funcs {
-			render.Con.Add(fmt.Sprintf(f))
+			gfx.Con.Add(fmt.Sprintf(f))
 		}
 	*/
 	makeHighlyVisibleRuntimeLogHeader(`PARSING`, 5)
@@ -79,7 +79,7 @@ func initParser() {
 }
 
 func parseAll() {
-	for i, line := range render.Rend.Focused.Body {
+	for i, line := range gfx.Rend.Focused.Body {
 		parseLine(i, line, false)
 	}
 }
@@ -90,7 +90,7 @@ func parseLine(i int, line string, coloring bool) {
 		result := declaredVar.FindStringSubmatch(line)
 
 		if coloring {
-			render.Rend.Color(render.Violet)
+			gfx.Rend.Color(gfx.Violet)
 		} else {
 			var s = fmt.Sprintf("%d: var (%s) declared", i, result[3])
 			//printIntsFrom(currBlock)
@@ -107,33 +107,33 @@ func parseLine(i int, line string, coloring bool) {
 				}
 			}
 
-			render.Con.Add(fmt.Sprintf("%s\n", s))
+			gfx.Con.Add(fmt.Sprintf("%s\n", s))
 		}
 	case declFuncStart.MatchString(line):
 		result := declFuncStart.FindStringSubmatch(line)
 
 		if coloring {
-			render.Rend.Color(render.Fuschia)
+			gfx.Rend.Color(gfx.Fuschia)
 		} else {
-			render.Con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
+			gfx.Con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
 
 			if currBlock.Name == "main" {
 				currBlock = &CodeBlock{Name: result[1]}
 				mainBlock.CodeBlocks = append(mainBlock.CodeBlocks, currBlock) // FUTURE FIXME: methods in structs shouldn't be on main/root func
 			} else {
-				render.Con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
+				gfx.Con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
 			}
 		}
 	case declFuncEnd.MatchString(line):
 		if coloring {
-			render.Rend.Color(render.Fuschia)
+			gfx.Rend.Color(gfx.Fuschia)
 		} else {
-			render.Con.Add(fmt.Sprintf("func close...\n"))
+			gfx.Con.Add(fmt.Sprintf("func close...\n"))
 			//printIntsFrom(mainBlock)
 			//printIntsFrom(currBlock)
 
 			if currBlock.Name == "main" {
-				render.Con.Add(fmt.Sprintf("ERROR! Main\\Root level function doesn't need enclosure!\n"))
+				gfx.Con.Add(fmt.Sprintf("ERROR! Main\\Root level function doesn't need enclosure!\n"))
 			} else {
 				currBlock = mainBlock
 			}
@@ -142,10 +142,10 @@ func parseLine(i int, line string, coloring bool) {
 		result := calledFunc.FindStringSubmatch(line)
 
 		if coloring {
-			render.Rend.Color(render.Fuschia)
+			gfx.Rend.Color(gfx.Fuschia)
 		} else {
-			render.Con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
-			render.Con.Add(fmt.Sprintf("currBlock: %s\n", currBlock))
+			gfx.Con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
+			gfx.Con.Add(fmt.Sprintf("currBlock: %s\n", currBlock))
 			currBlock.Expressions = append(currBlock.Expressions, line)
 			/*
 				currBlock.Expressions = append(currBlock.Expressions, result[2])
@@ -157,35 +157,35 @@ func parseLine(i int, line string, coloring bool) {
 			/*
 				// prints out all captures
 				for i, v := range result {
-					render.Con.Add(fmt.Sprintf("%d. %s\n", i, v))
+					gfx.Con.Add(fmt.Sprintf("%d. %s\n", i, v))
 				}
 			*/
 		}
 	case comment.MatchString(line): // allow "//" comments    FIXME to allow this at any later point in the line
 		if coloring {
-			render.Rend.Color(render.GrayDark)
+			gfx.Rend.Color(gfx.GrayDark)
 		}
 	case line == "":
 		// just ignore
 	default:
 		if coloring {
-			render.Rend.Color(render.White)
+			gfx.Rend.Color(gfx.White)
 		} else {
-			render.Con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
+			gfx.Con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
 		}
 	}
 }
 
 func run(pb *CodeBlock) { // passed block of code
-	render.Con.Add(fmt.Sprintf("running function: '%s'\n", pb.Name))
+	gfx.Con.Add(fmt.Sprintf("running function: '%s'\n", pb.Name))
 
 	for i, line := range pb.Expressions {
-		render.Con.Add(fmt.Sprintf("running expression: '%s' in function: '%s'\n", line, pb.Name))
+		gfx.Con.Add(fmt.Sprintf("running expression: '%s' in function: '%s'\n", line, pb.Name))
 
 		switch {
 		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
 			result := calledFunc.FindStringSubmatch(line)
-			render.Con.Add(fmt.Sprintf("%d: calling func (%s) with params: %s, %s\n", i, result[2], result[3], result[5]))
+			gfx.Con.Add(fmt.Sprintf("%d: calling func (%s) with params: %s, %s\n", i, result[2], result[3], result[5]))
 
 			a := getInt32(result[3])
 			if /* not legit num */ a == math.MaxInt32 {
@@ -198,19 +198,19 @@ func run(pb *CodeBlock) { // passed block of code
 
 			switch result[2] {
 			case "add32":
-				render.Con.Add(fmt.Sprintf("%d + %d = %d\n", a, b, a+b))
+				gfx.Con.Add(fmt.Sprintf("%d + %d = %d\n", a, b, a+b))
 			case "sub32":
-				render.Con.Add(fmt.Sprintf("%d - %d = %d\n", a, b, a-b))
+				gfx.Con.Add(fmt.Sprintf("%d - %d = %d\n", a, b, a-b))
 			case "mult32":
-				render.Con.Add(fmt.Sprintf("%d * %d = %d\n", a, b, a*b))
+				gfx.Con.Add(fmt.Sprintf("%d * %d = %d\n", a, b, a*b))
 			case "div32":
-				render.Con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
+				gfx.Con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
 			default:
 				for _, fun := range pb.CodeBlocks {
-					render.Con.Add((fmt.Sprintf("CodeBlock.Name considered: %s   switching on: %s\n", fun.Name, result[2])))
+					gfx.Con.Add((fmt.Sprintf("CodeBlock.Name considered: %s   switching on: %s\n", fun.Name, result[2])))
 
 					if fun.Name == result[2] {
-						render.Con.Add((fmt.Sprintf("'%s' matched '%s'\n", fun.Name, result[2])))
+						gfx.Con.Add((fmt.Sprintf("'%s' matched '%s'\n", fun.Name, result[2])))
 						run(fun)
 					}
 				}
@@ -237,7 +237,7 @@ func getInt32(s string) int32 {
 			}
 		}
 
-		render.Con.Add(fmt.Sprintf("ERROR!  '%s' IS NOT A VALID VARIABLE/FUNCTION!\n", s))
+		gfx.Con.Add(fmt.Sprintf("ERROR!  '%s' IS NOT A VALID VARIABLE/FUNCTION!\n", s))
 		return math.MaxInt32
 	}
 
@@ -246,10 +246,10 @@ func getInt32(s string) int32 {
 
 func printIntsFrom(f *CodeBlock) {
 	if len(f.VarInt32s) == 0 {
-		render.Con.Add(fmt.Sprintf("%s has no elements!\n", f.Name))
+		gfx.Con.Add(fmt.Sprintf("%s has no elements!\n", f.Name))
 	} else {
 		for i, v := range f.VarInt32s {
-			render.Con.Add(fmt.Sprintf("%s.VarInt32s[%d]: %s = %d\n", f.Name, i, v.name, v.value))
+			gfx.Con.Add(fmt.Sprintf("%s.VarInt32s[%d]: %s = %d\n", f.Name, i, v.name, v.value))
 		}
 	}
 }

@@ -43,7 +43,7 @@ func initRenderer() {
 
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadIdentity()
-	setFrustum(render.InitFrustum)
+	setFrustum(gfx.InitFrustum)
 	//gl.Frustum(-1, 1, -1, 1, 1.0, 10.0)
 	//gl.Frustum(left, right, bottom, top, zNear, zFar)
 	gl.MatrixMode(gl.MODELVIEW)
@@ -61,27 +61,27 @@ func setFrustum(r *common.Rectangle) {
 func drawScene() {
 	//rotationX += 0.5
 	//rotationY += 0.5
-	gl.Viewport(0, 0, render.CurrAppWidth, render.CurrAppHeight) // OPTIMIZEME?  could set flag upon frame buffer size change event
-	if *render.PrevFrustum != *render.CurrFrustum {
-		*render.PrevFrustum = *render.CurrFrustum
+	gl.Viewport(0, 0, gfx.CurrAppWidth, gfx.CurrAppHeight) // OPTIMIZEME?  could set flag upon frame buffer size change event
+	if *gfx.PrevFrustum != *gfx.CurrFrustum {
+		*gfx.PrevFrustum = *gfx.CurrFrustum
 		gl.MatrixMode(gl.PROJECTION)
 		gl.LoadIdentity()
-		setFrustum(render.CurrFrustum)
+		setFrustum(gfx.CurrFrustum)
 		fmt.Println("CHANGE OF FRUSTUM")
-		fmt.Printf(".Panels[0].Rect.Right: %.2f\n", render.Rend.Panels[0].Rect.Right)
-		fmt.Printf(".Panels[0].Rect.Top: %.2f\n", render.Rend.Panels[0].Rect.Top)
+		fmt.Printf(".Panels[0].Rect.Right: %.2f\n", gfx.Rend.Panels[0].Rect.Right)
+		fmt.Printf(".Panels[0].Rect.Top: %.2f\n", gfx.Rend.Panels[0].Rect.Top)
 	}
 	gl.MatrixMode(gl.MODELVIEW) //.PROJECTION)                   //.MODELVIEW)
 	gl.LoadIdentity()
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-	gl.Translatef(0, 0, -render.Rend.DistanceFromOrigin)
+	gl.Translatef(0, 0, -gfx.Rend.DistanceFromOrigin)
 	//gl.Rotatef(rotationX, 1, 0, 0)
 	//gl.Rotatef(rotationY, 0, 1, 0)
 
 	gl.BindTexture(gl.TEXTURE_2D, texture)
 
 	gl.Begin(gl.QUADS)
-	render.Rend.DrawAll()
+	gfx.Rend.DrawAll()
 	gl.End()
 }
 
