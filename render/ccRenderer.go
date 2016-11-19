@@ -21,6 +21,7 @@ package render
 import (
 	"fmt"
 	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
@@ -54,7 +55,7 @@ var PrevFrustum = &common.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrus
 var CurrFrustum = &common.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
 
 func init() {
-	fmt.Println("package render - init()")
+	fmt.Println("gfx.init()")
 
 	// one-time setup
 	Rend.MaxCharsX = 80
@@ -83,6 +84,8 @@ func init() {
 	Rend.Panels[0].Init()
 	Rend.Panels[0].SetupDemoProgram()
 	Rend.Panels[1].Init()
+
+	ui.MenuInst.SetSize(Rend.GetMenuSizedRect())
 }
 
 type CcRenderer struct {
@@ -129,11 +132,19 @@ func (cr *CcRenderer) SetSize() {
 	cr.ClientExtentY = cr.DistanceFromOrigin * CurrFrustum.Top
 
 	// things that weren't initialized in this func
-	MenuInst.SetSize()
+	ui.MenuInst.SetSize(cr.GetMenuSizedRect())
 
 	for _, pan := range cr.Panels {
 		pan.SetSize()
 	}
+}
+
+func (cr *CcRenderer) GetMenuSizedRect() *common.Rectangle {
+	return &common.Rectangle{
+		Rend.ClientExtentY,
+		Rend.ClientExtentX,
+		Rend.ClientExtentY - Rend.CharHei,
+		-Rend.ClientExtentX}
 }
 
 func (cr *CcRenderer) Color(newColor []float32) {
@@ -144,7 +155,7 @@ func (cr *CcRenderer) Color(newColor []float32) {
 
 func (cr *CcRenderer) DrawAll() {
 	Curs.Update()
-	MenuInst.Draw()
+	cr.DrawMenu()
 
 	for _, pan := range cr.Panels {
 		pan.Draw()
@@ -153,6 +164,28 @@ func (cr *CcRenderer) DrawAll() {
 	// 'crosshair' center indicator
 	var f float32 = Rend.CharHei
 	Rend.DrawCharAtRect('+', &common.Rectangle{f, f, -f, -f})
+}
+
+func (cr *CcRenderer) DrawMenu() {
+	for _, bu := range ui.MenuInst.Buttons {
+		if bu.Activated {
+			Rend.Color(Green)
+		} else {
+			Rend.Color(White)
+		}
+
+		span := bu.Rect.Height() * goldenPercentage // ...of both dimensions of each character
+		glTextWidth := float32(len(bu.Name)) * span // in terms of OpenGL/float32 space
+		x := bu.Rect.Left + (bu.Rect.Width()-glTextWidth)/2
+		verticalLipSpan := (bu.Rect.Height() - span) / 2 // lip or frame edge
+
+		Rend.DrawQuad(11, 13, bu.Rect)
+
+		for _, c := range bu.Name {
+			Rend.DrawCharAtRect(c, &common.Rectangle{bu.Rect.Top - verticalLipSpan, x + span, bu.Rect.Bottom + verticalLipSpan, x})
+			x += span
+		}
+	}
 }
 
 func (cr *CcRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {

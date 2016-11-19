@@ -25,8 +25,6 @@ var (
 func initRenderer() {
 	fmt.Println("initRenderer()")
 
-	render.MenuInst.Init()
-
 	gl.Enable(gl.DEPTH_TEST)
 	gl.Enable(gl.LIGHTING)
 	//gl.Enable(gl.ALPHA_TEST)

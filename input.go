@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/corpusc/viscript/render"
+	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"math"
 )
@@ -74,8 +75,8 @@ func onMouseButton(
 		switch glfw.MouseButton(b) {
 		case glfw.MouseButtonLeft:
 			// respond to button push
-			if render.MouseCursorIsInside(render.MenuInst.Rect) {
-				for _, bu := range render.MenuInst.Buttons {
+			if render.MouseCursorIsInside(ui.MenuInst.Rect) {
+				for _, bu := range ui.MenuInst.Buttons {
 					if render.MouseCursorIsInside(bu.Rect) {
 						bu.Activated = !bu.Activated
 						render.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
