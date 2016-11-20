@@ -16,8 +16,8 @@ type TextPanel struct {
 	IsEditable  bool
 	Rect        *common.Rectangle
 	Selection   *ui.SelectionRange
-	BarHori     *ScrollBar // horizontal
-	BarVert     *ScrollBar // vertical
+	BarHori     *ui.ScrollBar // horizontal
+	BarVert     *ui.ScrollBar // vertical
 	Body        []string
 }
 
@@ -28,8 +28,8 @@ func (tp *TextPanel) Init() {
 	tp.Selection.Init()
 
 	// scrollbar
-	tp.BarHori = &ScrollBar{IsHorizontal: true}
-	tp.BarVert = &ScrollBar{}
+	tp.BarHori = &ui.ScrollBar{IsHorizontal: true}
+	tp.BarVert = &ui.ScrollBar{}
 
 	tp.SetSize()
 
@@ -54,8 +54,8 @@ func (tp *TextPanel) SetSize() {
 	}
 
 	// scrollbar
-	tp.BarHori.PosY = tp.Rect.Bottom + tp.BarHori.Thickness
-	tp.BarVert.PosX = tp.Rect.Right - tp.BarVert.Thickness
+	tp.BarHori.PosY = tp.Rect.Bottom + ui.ScrollBarThickness
+	tp.BarVert.PosX = tp.Rect.Right - ui.ScrollBarThickness
 }
 
 func (tp *TextPanel) RespondToMouseClick() {
@@ -118,7 +118,7 @@ func (tp *TextPanel) Draw() {
 			for x, c := range line {
 				// if char visible
 				if cX >= tp.Rect.Left-cW && cX < tp.BarVert.PosX {
-					ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.PosX)
+					common.ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.PosX)
 					Rend.DrawCharAtRect(c, r)
 
 					if tp.IsEditable && Curs.Visible == true {
@@ -139,7 +139,7 @@ func (tp *TextPanel) Draw() {
 			if cX < tp.BarVert.PosX && y == tp.CursY && tp.CursX == len(line) {
 				if tp.IsEditable && Curs.Visible == true {
 					Rend.Color(White)
-					ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.PosX)
+					common.ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.PosX)
 					Rend.DrawCharAtRect('_', r)
 				}
 			}
@@ -151,12 +151,14 @@ func (tp *TextPanel) Draw() {
 	}
 
 	Rend.Color(GrayDark)
-	tp.DrawScrollbarChrome(10, 11, tp.Rect.Right-tp.BarVert.Thickness, tp.Rect.Top)                         // vertical bar background
-	tp.DrawScrollbarChrome(13, 12, tp.Rect.Left, tp.Rect.Bottom+tp.BarHori.Thickness)                       // horizontal bar background
-	tp.DrawScrollbarChrome(12, 11, tp.Rect.Right-tp.BarVert.Thickness, tp.Rect.Bottom+tp.BarHori.Thickness) // corner elbow piece
+	tp.DrawScrollbarChrome(10, 11, tp.Rect.Right-ui.ScrollBarThickness, tp.Rect.Top)                          // vertical bar background
+	tp.DrawScrollbarChrome(13, 12, tp.Rect.Left, tp.Rect.Bottom+ui.ScrollBarThickness)                        // horizontal bar background
+	tp.DrawScrollbarChrome(12, 11, tp.Rect.Right-ui.ScrollBarThickness, tp.Rect.Bottom+ui.ScrollBarThickness) // corner elbow piece
 	Rend.Color(Gray)
-	tp.BarHori.Draw(11, 13, *tp) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
-	tp.BarVert.Draw(11, 13, *tp) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
+	tp.BarHori.SetSize(tp.Rect, tp.Body, Rend.CharWid, Rend.CharHei)
+	tp.BarVert.SetSize(tp.Rect, tp.Body, Rend.CharWid, Rend.CharHei)
+	Rend.DrawQuad(11, 13, tp.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
+	Rend.DrawQuad(11, 13, tp.BarVert.Rect) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
 	Rend.Color(White)
 }
 
@@ -195,15 +197,15 @@ func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 
 	// bottom left   0, 1
 	gl.TexCoord2f(u, v+sp)
-	gl.Vertex3f(tp.Rect.Left, tp.Rect.Bottom+tp.BarHori.Thickness, 0)
+	gl.Vertex3f(tp.Rect.Left, tp.Rect.Bottom+ui.ScrollBarThickness, 0)
 
 	// bottom right   1, 1
 	gl.TexCoord2f(u+sp, v+sp)
-	gl.Vertex3f(tp.Rect.Right-tp.BarVert.Thickness, tp.Rect.Bottom+tp.BarHori.Thickness, 0)
+	gl.Vertex3f(tp.Rect.Right-ui.ScrollBarThickness, tp.Rect.Bottom+ui.ScrollBarThickness, 0)
 
 	// top right   1, 0
 	gl.TexCoord2f(u+sp, v)
-	gl.Vertex3f(tp.Rect.Right-tp.BarVert.Thickness, tp.Rect.Top, 0)
+	gl.Vertex3f(tp.Rect.Right-ui.ScrollBarThickness, tp.Rect.Top, 0)
 
 	// top left   0, 0
 	gl.TexCoord2f(u, v)
@@ -215,13 +217,20 @@ func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float6
 		// position increments in gl space
 		xInc := float32(mousePixelDeltaX) * Rend.PixelWid
 		yInc := float32(mousePixelDeltaY) * Rend.PixelHei
-		tp.BarHori.Scroll(tp, xInc)
-		tp.BarVert.Scroll(tp, yInc)
+		tp.BarHori.Scroll(xInc)
+		tp.BarVert.Scroll(yInc)
 	}
 }
 
 func (tp *TextPanel) ContainsMouseCursor() bool {
 	return MouseCursorIsInside(tp.Rect)
+}
+
+func (tp *TextPanel) ContainsMouseCursorInsideOfScrollBars() bool {
+	r := *tp.Rect
+	r.Right -= ui.ScrollBarThickness
+	r.Bottom += ui.ScrollBarThickness
+	return MouseCursorIsInside(&r)
 }
 
 func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {
