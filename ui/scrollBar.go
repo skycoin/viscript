@@ -1,14 +1,9 @@
-package gfx
+package ui
 
 import (
 	//"fmt"
 	"github.com/corpusc/viscript/common"
 )
-
-/* TODO:
-* genericize draw name
-* remove x/y dupes
- */
 
 type ScrollBar struct {
 	IsHorizontal   bool
