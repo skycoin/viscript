@@ -80,19 +80,20 @@ func onMouseButton(
 				for _, bu := range ui.MainMenu.Buttons {
 					if gfx.MouseCursorIsInside(bu.Rect) {
 						bu.Activated = !bu.Activated
-						gfx.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
 
 						if bu.Activated && bu.Name == "Run" {
 							parser.Parse()
 						}
+
+						gfx.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
 					}
 				}
-			}
-
-			// respond to click in text panel
-			for _, pan := range gfx.Rend.Panels {
-				if pan.ContainsMouseCursor() {
-					pan.RespondToMouseClick()
+			} else {
+				// respond to click in text panel
+				for _, pan := range gfx.Rend.Panels {
+					if pan.ContainsMouseCursor() {
+						pan.RespondToMouseClick()
+					}
 				}
 			}
 		default:

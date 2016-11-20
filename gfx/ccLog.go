@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-var Con = CcLog{} // console log, displays runtime feedback (including parsing errors)
+var Con = CcLog{} // console log, displays runtime feedback
 
 type CcLog struct {
 	Name  string
@@ -20,8 +20,4 @@ func (log CcLog) Add(s string) {
 	if len(Rend.Panels) > 1 {
 		Rend.Panels[1].Body = append(Rend.Panels[1].Body, s)
 	}
-}
-
-func (log CcLog) Draw() {
-	// TODO: add the graphical drawing
 }

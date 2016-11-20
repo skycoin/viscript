@@ -61,7 +61,7 @@ type CodeBlock struct {
 	VarBools    []VarBool
 	VarInt32s   []VarInt32
 	VarStrings  []VarString
-	CodeBlocks  []*CodeBlock
+	SubBlocks   []*CodeBlock
 	Expressions []string
 	Parameters  []string // unused atm
 }
@@ -72,6 +72,13 @@ func Parse() {
 			gfx.Con.Add(fmt.Sprintf(f))
 		}
 	*/
+
+	// clear entry point
+	mainBlock = &CodeBlock{Name: "main"}
+	// clear the OS and graphical consoles
+	gfx.Con.Lines = []string{}
+	gfx.Rend.Panels[1].Body = []string{}
+
 	fmt.Println("makeHighlyVisibleRuntimeLogHeader(`PARSING`, 5)")
 	parseAll()
 	fmt.Println("makeHighlyVisibleRuntimeLogHeader(`RUNNING`, 5)")
@@ -119,7 +126,7 @@ func parseLine(i int, line string, coloring bool) {
 
 			if currBlock.Name == "main" {
 				currBlock = &CodeBlock{Name: result[1]}
-				mainBlock.CodeBlocks = append(mainBlock.CodeBlocks, currBlock) // FUTURE FIXME: methods in structs shouldn't be on main/root func
+				mainBlock.SubBlocks = append(mainBlock.SubBlocks, currBlock) // FUTURE FIXME: methods in structs shouldn't be on main/root func
 			} else {
 				gfx.Con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
 			}
@@ -180,7 +187,7 @@ func run(pb *CodeBlock) { // passed block of code
 	gfx.Con.Add(fmt.Sprintf("running function: '%s'\n", pb.Name))
 
 	for i, line := range pb.Expressions {
-		gfx.Con.Add(fmt.Sprintf("running expression: '%s' in function: '%s'\n", line, pb.Name))
+		gfx.Con.Add(fmt.Sprintf("------evaluating expression: '%s\n", line))
 
 		switch {
 		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
@@ -206,12 +213,12 @@ func run(pb *CodeBlock) { // passed block of code
 			case "div32":
 				gfx.Con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
 			default:
-				for _, fun := range pb.CodeBlocks {
-					gfx.Con.Add((fmt.Sprintf("CodeBlock.Name considered: %s   switching on: %s\n", fun.Name, result[2])))
+				for _, cb := range pb.SubBlocks {
+					gfx.Con.Add((fmt.Sprintf("CodeBlock.Name considered: %s   switching on: %s\n", cb.Name, result[2])))
 
-					if fun.Name == result[2] {
-						gfx.Con.Add((fmt.Sprintf("'%s' matched '%s'\n", fun.Name, result[2])))
-						run(fun)
+					if cb.Name == result[2] {
+						gfx.Con.Add((fmt.Sprintf("'%s' matched '%s'\n", cb.Name, result[2])))
+						run(cb)
 					}
 				}
 			}
