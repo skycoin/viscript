@@ -1,11 +1,11 @@
 package ui
 
 import (
-	"fmt"
+	//"fmt"
 	"github.com/corpusc/viscript/common"
 )
 
-var ScrollBarThickness float32 = 6 / 25 // FUTURE FIXME: base this on screen size, so UHD+ users get thick enough bars
+var ScrollBarThickness float32 = 0.14 // FUTURE FIXME: base this on screen size, so UHD+ users get thick enough bars
 
 type ScrollBar struct {
 	IsHorizontal   bool
@@ -67,7 +67,7 @@ func (bar *ScrollBar) SetSize(panel *common.Rectangle, body []string, charWid, c
 		/* if content smaller than panel width */
 		if float32(numCharsInLongest)*charWid <= panel.Width()-ScrollBarThickness {
 			// NO BAR
-			bar.LenOfBar = .2 //0
+			bar.LenOfBar = 0
 			bar.LenOfVoid = panWid
 			bar.LenOfOffscreen = 0
 		} else {
@@ -84,18 +84,18 @@ func (bar *ScrollBar) SetSize(panel *common.Rectangle, body []string, charWid, c
 		/* if content smaller than panel height */
 		if float32(len(body))*charHei <= panel.Height()-ScrollBarThickness {
 			// NO BAR
-			bar.LenOfBar = .2 //0
+			bar.LenOfBar = 0
 			bar.LenOfVoid = panHei
 			bar.LenOfOffscreen = 0
 		} else {
 			totalTextHei := float32(len(body)) * charHei
-			fmt.Printf("totalTextHei: %.2f\n", totalTextHei)
+			//fmt.Printf("totalTextHei: %.2f\n", totalTextHei)
 			bar.LenOfOffscreen = totalTextHei - panHei
-			fmt.Printf("LenOfOffscreen: %.2f\n", bar.LenOfOffscreen)
+			//fmt.Printf("LenOfOffscreen: %.2f\n", bar.LenOfOffscreen)
 			bar.LenOfBar = panHei / totalTextHei * panHei
-			fmt.Printf("LenOfBar: %.2f\n", bar.LenOfBar)
+			//fmt.Printf("LenOfBar: %.2f\n", bar.LenOfBar)
 			bar.LenOfVoid = panHei - bar.LenOfBar
-			fmt.Printf("LenOfVoid: %.2f\n", bar.LenOfVoid)
+			//fmt.Printf("LenOfVoid: %.2f\n", bar.LenOfVoid)
 			bar.Rect.Top = panel.Top + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
 			bar.ClampY() // OPTIMIZEME: only do when app resized
 		}

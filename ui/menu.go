@@ -8,7 +8,7 @@ import (
 var MainMenu = Menu{}
 
 func init() {
-	fmt.Println("ui.init()")
+	fmt.Println("ui.init() in menu.go")
 	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Run"})
 	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Syntax Tree"})
 	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Item 3"})
@@ -23,7 +23,6 @@ type Menu struct {
 
 func (m *Menu) SetSize(rect *common.Rectangle) {
 	m.Rect = rect
-	fmt.Printf("Menu.SetSize() --- m.Rect: %s\n", m.Rect)
 
 	// depending on vertical or horizontal layout, only 1 dimension (of the below 4 variables) is used
 	x := m.Rect.Left
