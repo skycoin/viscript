@@ -57,7 +57,7 @@ func MakeHighlyVisibleLogHeader(s string, numLines int) {
 	}
 }
 
-// prints only to OS console window if it's for the appName
+// prints only to OS console window if it's for the app's name
 func predPrint(osOnly bool, s string) {
 	if osOnly {
 		fmt.Println(s)

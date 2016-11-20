@@ -83,11 +83,11 @@ func Parse() {
 
 func parseAll() {
 	for i, line := range gfx.Rend.Focused.Body {
-		parseLine(i, line, false)
+		ParseLine(i, line, false)
 	}
 }
 
-func parseLine(i int, line string, coloring bool) {
+func ParseLine(i int, line string, coloring bool) {
 	switch {
 	case declaredVar.MatchString(line):
 		result := declaredVar.FindStringSubmatch(line)

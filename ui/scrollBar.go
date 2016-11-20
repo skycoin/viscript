@@ -1,7 +1,7 @@
 package ui
 
 import (
-	//"fmt"
+	"fmt"
 	"github.com/corpusc/viscript/common"
 )
 
@@ -67,7 +67,7 @@ func (bar *ScrollBar) SetSize(panel *common.Rectangle, body []string, charWid, c
 		/* if content smaller than panel width */
 		if float32(numCharsInLongest)*charWid <= panel.Width()-ScrollBarThickness {
 			// NO BAR
-			bar.LenOfBar = 0
+			bar.LenOfBar = .2 //0
 			bar.LenOfVoid = panWid
 			bar.LenOfOffscreen = 0
 		} else {
@@ -84,30 +84,29 @@ func (bar *ScrollBar) SetSize(panel *common.Rectangle, body []string, charWid, c
 		/* if content smaller than panel height */
 		if float32(len(body))*charHei <= panel.Height()-ScrollBarThickness {
 			// NO BAR
-			bar.LenOfBar = 0
+			bar.LenOfBar = .2 //0
 			bar.LenOfVoid = panHei
 			bar.LenOfOffscreen = 0
 		} else {
 			totalTextHei := float32(len(body)) * charHei
+			fmt.Printf("totalTextHei: %.2f\n", totalTextHei)
 			bar.LenOfOffscreen = totalTextHei - panHei
+			fmt.Printf("LenOfOffscreen: %.2f\n", bar.LenOfOffscreen)
 			bar.LenOfBar = panHei / totalTextHei * panHei
+			fmt.Printf("LenOfBar: %.2f\n", bar.LenOfBar)
 			bar.LenOfVoid = panHei - bar.LenOfBar
+			fmt.Printf("LenOfVoid: %.2f\n", bar.LenOfVoid)
 			bar.Rect.Top = panel.Top + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
 			bar.ClampY() // OPTIMIZEME: only do when app resized
 		}
 	}
 
-	// setup the final rectangle for drawing
-	l := bar.Rect.Left
-	t := bar.Rect.Top
-	b := panel.Bottom
-	r := panel.Right
-
+	// setup bottom right corner of final rectangle for drawing
 	if bar.IsHorizontal {
-		r = l + bar.LenOfBar
+		bar.Rect.Right = bar.Rect.Left + bar.LenOfBar
+		bar.Rect.Bottom = panel.Bottom
 	} else {
-		b = t - bar.LenOfBar
+		bar.Rect.Bottom = bar.Rect.Top - bar.LenOfBar
+		bar.Rect.Right = panel.Right
 	}
-
-	bar.Rect = &common.Rectangle{t, r, b, l}
 }
