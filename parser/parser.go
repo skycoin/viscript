@@ -67,21 +67,17 @@ type CodeBlock struct {
 }
 
 func Parse() {
-	/*
-		for _, f := range funcs {
-			gfx.Con.Add(fmt.Sprintf(f))
-		}
-	*/
-
-	// clear entry point
+	// clear script
 	mainBlock = &CodeBlock{Name: "main"}
+
 	// clear the OS and graphical consoles
 	gfx.Con.Lines = []string{}
 	gfx.Rend.Panels[1].Body = []string{}
 
-	fmt.Println("makeHighlyVisibleRuntimeLogHeader(`PARSING`, 5)")
+	// feedback
+	gfx.MakeHighlyVisibleLogHeader(`PARSING`, 5)
 	parseAll()
-	fmt.Println("makeHighlyVisibleRuntimeLogHeader(`RUNNING`, 5)")
+	gfx.MakeHighlyVisibleLogHeader(`RUNNING`, 5)
 	run(mainBlock)
 }
 

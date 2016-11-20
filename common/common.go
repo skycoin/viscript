@@ -1,5 +1,7 @@
 package common
 
+var AppName = "V I S C R I P T"
+
 // params: float value, negativemost, & positivemost bounds
 func Clamp(f, negBoundary, posBoundary float32) float32 {
 	if f < negBoundary {
