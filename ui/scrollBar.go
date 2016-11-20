@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"fmt"
+	//"fmt"
 	"github.com/corpusc/viscript/common"
 )
 
@@ -31,12 +31,12 @@ func (bar *ScrollBar) Scroll(delta float32) {
 
 	if bar.IsHorizontal {
 		//bar.PosX += delta
-		//bar.PosX = Clamp(bar.PosX, tp.Rect.Left, tp.Rect.Right-bar.LenOfBar-ScrollBarThickness)
+		//bar.PosX = Clamp(bar.PosX, panel.Left, panel.Right-bar.LenOfBar-ScrollBarThickness)
 		bar.ScrollDelta += amount
 		bar.ClampX()
 	} else { // vertical
 		//bar.PosY -= delta
-		//bar.PosY = Clamp(bar.PosY, tp.Rect.Bottom+bar.LenOfBar+ScrollBarThickness, tp.Rect.Top)
+		//bar.PosY = Clamp(bar.PosY, panel.Bottom+bar.LenOfBar+ScrollBarThickness, panel.Top)
 		bar.ScrollDelta -= amount
 		bar.ClampY()
 	}
@@ -50,7 +50,7 @@ func (bar *ScrollBar) ClampY() {
 	bar.ScrollDelta = common.Clamp(bar.ScrollDelta, -bar.LenOfOffscreen, 0)
 }
 
-func (bar *ScrollBar) SetSize(rect *common.Rectangle, body []string, charWid, charHei float32) {
+func (bar *ScrollBar) SetSize(panel *common.Rectangle, body []string, charWid, charHei float32) {
 	if bar.IsHorizontal {
 		// OPTIMIZEME in the future?  idealistically, the below should only be calculated
 		// whenever user changes the size of a line, such as by:
@@ -68,10 +68,10 @@ func (bar *ScrollBar) SetSize(rect *common.Rectangle, body []string, charWid, ch
 		numCharsInLongest++ // adding extra space so we have room to show cursor at end of longest
 
 		// the rest of this block is an altered copy of the else block
-		panWid := rect.Width() - ScrollBarThickness // width of panel (MINUS scrollbar space)
+		panWid := panel.Width() - ScrollBarThickness // width of panel (MINUS scrollbar space)
 
 		/* if content smaller than panel width */
-		if float32(numCharsInLongest)*charWid <= rect.Width()-ScrollBarThickness {
+		if float32(numCharsInLongest)*charWid <= panel.Width()-ScrollBarThickness {
 			// NO BAR
 			bar.LenOfBar = 0
 			bar.LenOfVoid = panWid
@@ -81,16 +81,16 @@ func (bar *ScrollBar) SetSize(rect *common.Rectangle, body []string, charWid, ch
 			bar.LenOfOffscreen = totalTextWid - panWid
 			bar.LenOfBar = panWid / totalTextWid * panWid
 			bar.LenOfVoid = panWid - bar.LenOfBar
-			bar.PosX = rect.Left + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
+			bar.PosX = panel.Left + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
 			bar.ClampX() // OPTIMIZEME: only do when app resized
 		}
 
-		bar.PosY = rect.Bottom + ScrollBarThickness
+		bar.PosY = panel.Bottom + ScrollBarThickness
 	} else { // vertical bar
-		panHei := rect.Height() - ScrollBarThickness // height of panel (MINUS scrollbar space)
+		panHei := panel.Height() - ScrollBarThickness // height of panel (MINUS scrollbar space)
 
 		/* if content smaller than panel height */
-		if float32(len(body))*charHei <= rect.Height()-ScrollBarThickness {
+		if float32(len(body))*charHei <= panel.Height()-ScrollBarThickness {
 			// NO BAR
 			bar.LenOfBar = 0
 			bar.LenOfVoid = panHei
@@ -100,18 +100,18 @@ func (bar *ScrollBar) SetSize(rect *common.Rectangle, body []string, charWid, ch
 			bar.LenOfOffscreen = totalTextHei - panHei
 			bar.LenOfBar = panHei / totalTextHei * panHei
 			bar.LenOfVoid = panHei - bar.LenOfBar
-			bar.PosY = rect.Top + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
+			bar.PosY = panel.Top + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
 			bar.ClampY() // OPTIMIZEME: only do when app resized
 		}
 
-		bar.PosX = rect.Right - ScrollBarThickness
+		bar.PosX = panel.Right - ScrollBarThickness
 	}
 
 	// setup the final rectangle for drawing
 	l := bar.PosX
 	t := bar.PosY
-	b := rect.Bottom
-	r := rect.Right
+	b := panel.Bottom
+	r := panel.Right
 
 	if bar.IsHorizontal {
 		r = l + bar.LenOfBar
