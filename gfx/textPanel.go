@@ -26,16 +26,7 @@ func (tp *TextPanel) Init() {
 
 	tp.Selection = &ui.SelectionRange{}
 	tp.Selection.Init()
-
-	// scrollbar
-	tp.BarHori = &ui.ScrollBar{IsHorizontal: true}
-	tp.BarVert = &ui.ScrollBar{}
-
 	tp.SetSize()
-
-	// home positions
-	tp.BarHori.PosX = tp.Rect.Left
-	tp.BarVert.PosY = tp.Rect.Top
 }
 
 func (tp *TextPanel) SetSize() {
@@ -53,9 +44,14 @@ func (tp *TextPanel) SetSize() {
 		tp.Rect.Bottom = tp.Rect.Bottom + tp.Rect.Height()*Rend.RunPanelHeiPerc
 	}
 
-	// scrollbar
-	tp.BarHori.PosY = tp.Rect.Bottom + ui.ScrollBarThickness
-	tp.BarVert.PosX = tp.Rect.Right - ui.ScrollBarThickness
+	// scrollbars
+	tp.BarHori = &ui.ScrollBar{IsHorizontal: true}
+	tp.BarHori.Rect = &common.Rectangle{Left: tp.Rect.Left}
+	tp.BarHori.Rect.Top = tp.Rect.Bottom + ui.ScrollBarThickness
+
+	tp.BarVert = &ui.ScrollBar{}
+	tp.BarVert.Rect = &common.Rectangle{Top: tp.Rect.Top}
+	tp.BarVert.Rect.Left = tp.Rect.Right - ui.ScrollBarThickness
 }
 
 func (tp *TextPanel) RespondToMouseClick() {
@@ -96,7 +92,7 @@ func (tp *TextPanel) Draw() {
 	cY := Rend.CurrY
 	cW := Rend.CharWid
 	cH := Rend.CharHei
-	b := tp.BarHori.PosY // bottom of text area
+	b := tp.BarHori.Rect.Top // bottom of text area
 
 	// body of text
 	for y, line := range tp.Body {
@@ -117,8 +113,8 @@ func (tp *TextPanel) Draw() {
 			// process line of text
 			for x, c := range line {
 				// if char visible
-				if cX >= tp.Rect.Left-cW && cX < tp.BarVert.PosX {
-					common.ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.PosX)
+				if cX >= tp.Rect.Left-cW && cX < tp.BarVert.Rect.Left {
+					common.ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.Rect.Left)
 					Rend.DrawCharAtRect(c, r)
 
 					if tp.IsEditable && Curs.Visible == true {
@@ -136,10 +132,10 @@ func (tp *TextPanel) Draw() {
 			}
 
 			// draw cursor at the end of line if needed
-			if cX < tp.BarVert.PosX && y == tp.CursY && tp.CursX == len(line) {
+			if cX < tp.BarVert.Rect.Left && y == tp.CursY && tp.CursX == len(line) {
 				if tp.IsEditable && Curs.Visible == true {
 					Rend.Color(White)
-					common.ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.PosX)
+					common.ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.Rect.Left)
 					Rend.DrawCharAtRect('_', r)
 				}
 			}
