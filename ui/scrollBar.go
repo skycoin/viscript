@@ -78,8 +78,6 @@ func (bar *ScrollBar) SetSize(panel *common.Rectangle, body []string, charWid, c
 			bar.Rect.Left = panel.Left + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
 			bar.ClampX() // OPTIMIZEME: only do when app resized
 		}
-
-		bar.Rect.Top = panel.Bottom + ScrollBarThickness
 	} else { // vertical bar
 		panHei := panel.Height() - ScrollBarThickness // height of panel (MINUS scrollbar space)
 
@@ -97,8 +95,6 @@ func (bar *ScrollBar) SetSize(panel *common.Rectangle, body []string, charWid, c
 			bar.Rect.Top = panel.Top + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
 			bar.ClampY() // OPTIMIZEME: only do when app resized
 		}
-
-		bar.Rect.Left = panel.Right - ScrollBarThickness
 	}
 
 	// setup the final rectangle for drawing

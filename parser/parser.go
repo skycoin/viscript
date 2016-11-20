@@ -1,4 +1,4 @@
-package main
+package parser
 
 import (
 	"fmt"
@@ -66,15 +66,15 @@ type CodeBlock struct {
 	Parameters  []string // unused atm
 }
 
-func initParser() {
+func Parse() {
 	/*
 		for _, f := range funcs {
 			gfx.Con.Add(fmt.Sprintf(f))
 		}
 	*/
-	makeHighlyVisibleRuntimeLogHeader(`PARSING`, 5)
+	fmt.Println("makeHighlyVisibleRuntimeLogHeader(`PARSING`, 5)")
 	parseAll()
-	makeHighlyVisibleRuntimeLogHeader("RUNNING", 5)
+	fmt.Println("makeHighlyVisibleRuntimeLogHeader(`RUNNING`, 5)")
 	run(mainBlock)
 }
 

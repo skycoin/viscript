@@ -72,7 +72,6 @@ func main() {
 
 	initRenderer()
 	initInputEvents(window)
-	initParser()
 
 	for !window.ShouldClose() {
 		monitorEvents(events)

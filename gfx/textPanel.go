@@ -26,6 +26,13 @@ func (tp *TextPanel) Init() {
 
 	tp.Selection = &ui.SelectionRange{}
 	tp.Selection.Init()
+
+	// scrollbars
+	tp.BarHori = &ui.ScrollBar{IsHorizontal: true}
+	tp.BarVert = &ui.ScrollBar{}
+	tp.BarHori.Rect = &common.Rectangle{}
+	tp.BarVert.Rect = &common.Rectangle{}
+
 	tp.SetSize()
 }
 
@@ -44,14 +51,11 @@ func (tp *TextPanel) SetSize() {
 		tp.Rect.Bottom = tp.Rect.Bottom + tp.Rect.Height()*Rend.RunPanelHeiPerc
 	}
 
-	// scrollbars
-	tp.BarHori = &ui.ScrollBar{IsHorizontal: true}
-	tp.BarHori.Rect = &common.Rectangle{Left: tp.Rect.Left}
+	// set scrollbars' upper left corners
+	tp.BarHori.Rect.Left = tp.Rect.Left
 	tp.BarHori.Rect.Top = tp.Rect.Bottom + ui.ScrollBarThickness
-
-	tp.BarVert = &ui.ScrollBar{}
-	tp.BarVert.Rect = &common.Rectangle{Top: tp.Rect.Top}
 	tp.BarVert.Rect.Left = tp.Rect.Right - ui.ScrollBarThickness
+	tp.BarVert.Rect.Top = tp.Rect.Top
 }
 
 func (tp *TextPanel) RespondToMouseClick() {
@@ -109,6 +113,7 @@ func (tp *TextPanel) Draw() {
 			}
 
 			//parseLine(y, line, true)
+			Rend.Color(Gray)
 
 			// process line of text
 			for x, c := range line {

@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/parser"
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"math"
@@ -80,6 +81,10 @@ func onMouseButton(
 					if gfx.MouseCursorIsInside(bu.Rect) {
 						bu.Activated = !bu.Activated
 						gfx.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
+
+						if bu.Activated && bu.Name == "Run" {
+							parser.Parse()
+						}
 					}
 				}
 			}
