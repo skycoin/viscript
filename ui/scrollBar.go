@@ -1,11 +1,11 @@
 package ui
 
 import (
-	//"fmt"
+	"fmt"
 	"github.com/corpusc/viscript/common"
 )
 
-var ScrollBarThickness float32 = 3 / 25 // FUTURE FIXME: base this on screen size, so UHD+ users get thick enough bars
+var ScrollBarThickness float32 = 6 / 25 // FUTURE FIXME: base this on screen size, so UHD+ users get thick enough bars
 
 type ScrollBar struct {
 	IsHorizontal   bool
@@ -51,47 +51,6 @@ func (bar *ScrollBar) ClampY() {
 }
 
 func (bar *ScrollBar) SetSize(rect *common.Rectangle, body []string, charWid, charHei float32) {
-	// this draws all bars whether you can see them or not (when content fits entirely inside panel)
-	// not worth optimizing, but i'm mentioning it in case of some weird future bug
-
-	bar.UpdateSize(rect, body, charWid, charHei)
-
-	l := bar.PosX
-	t := bar.PosY
-	b := rect.Bottom
-	r := rect.Right
-
-	// potential future FIXME:
-	// with the current "double line" graphic used this doesn't matter,
-	// but the .IsVertical case should copy the horizontal case,
-	// in order to prevent unwanted texture stretching
-	if bar.IsHorizontal {
-		th := ScrollBarThickness
-		if th < 1 { // at some point it is, which would cause infinite loop
-			th = ScrollBarThickness
-		}
-
-		r = l + th
-		max := bar.PosX + bar.LenOfBar
-
-		for l < max {
-			if r > max {
-				r = max
-			}
-
-			bar.Rect = &common.Rectangle{t, r, b, l}
-
-			l += th
-			r += th
-		}
-	} else {
-		b = bar.PosY - bar.LenOfBar
-
-		bar.Rect = &common.Rectangle{t, r, b, l}
-	}
-}
-
-func (bar *ScrollBar) UpdateSize(rect *common.Rectangle, body []string, charWid, charHei float32) {
 	if bar.IsHorizontal {
 		// OPTIMIZEME in the future?  idealistically, the below should only be calculated
 		// whenever user changes the size of a line, such as by:
@@ -147,4 +106,18 @@ func (bar *ScrollBar) UpdateSize(rect *common.Rectangle, body []string, charWid,
 
 		bar.PosX = rect.Right - ScrollBarThickness
 	}
+
+	// setup the final rectangle for drawing
+	l := bar.PosX
+	t := bar.PosY
+	b := rect.Bottom
+	r := rect.Right
+
+	if bar.IsHorizontal {
+		r = l + bar.LenOfBar
+	} else {
+		b = t - bar.LenOfBar
+	}
+
+	bar.Rect = &common.Rectangle{t, r, b, l}
 }

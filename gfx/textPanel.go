@@ -155,9 +155,9 @@ func (tp *TextPanel) Draw() {
 	tp.DrawScrollbarChrome(13, 12, tp.Rect.Left, tp.Rect.Bottom+ui.ScrollBarThickness)                        // horizontal bar background
 	tp.DrawScrollbarChrome(12, 11, tp.Rect.Right-ui.ScrollBarThickness, tp.Rect.Bottom+ui.ScrollBarThickness) // corner elbow piece
 	Rend.Color(Gray)
-	tp.BarHori.SetSize(tp.Rect, tp.Body, Rend.CharWid, Rend.CharHei)
-	tp.BarVert.SetSize(tp.Rect, tp.Body, Rend.CharWid, Rend.CharHei)
-	Rend.DrawQuad(11, 13, tp.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
+	//tp.BarHori.SetSize(tp.Rect, tp.Body, cW, cH)
+	tp.BarVert.SetSize(tp.Rect, tp.Body, cW, cH)
+	//	Rend.DrawQuad(11, 13, tp.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
 	Rend.DrawQuad(11, 13, tp.BarVert.Rect) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
 	Rend.Color(White)
 }
@@ -227,10 +227,8 @@ func (tp *TextPanel) ContainsMouseCursor() bool {
 }
 
 func (tp *TextPanel) ContainsMouseCursorInsideOfScrollBars() bool {
-	r := *tp.Rect
-	r.Right -= ui.ScrollBarThickness
-	r.Bottom += ui.ScrollBarThickness
-	return MouseCursorIsInside(&r)
+	return MouseCursorIsInside(&common.Rectangle{
+		tp.Rect.Top, tp.Rect.Right - ui.ScrollBarThickness, tp.Rect.Bottom + ui.ScrollBarThickness, tp.Rect.Left})
 }
 
 func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {
