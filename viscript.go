@@ -30,17 +30,17 @@ import (
 	_ "os"
 	"runtime"
 
+	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/gfx"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
-var appName = "V I S C R I P T"
-
 func init() {
-	makeHighlyVisibleRuntimeLogHeader(appName, 15)
+	fmt.Println("main.init()")
+	gfx.MakeHighlyVisibleLogHeader(common.AppName, 15)
 	// GLFW event handling must run on the main OS thread
 	// See documentation for functions that are only allowed to be called from the main thread.
-	fmt.Println("init()")
 	runtime.LockOSThread()
 }
 
@@ -54,7 +54,7 @@ func main() {
 	glfw.WindowHint(glfw.Resizable, glfw.True)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-	window, err := glfw.CreateWindow(int(currAppWidth), int(currAppHeight), appName, nil, nil)
+	window, err := glfw.CreateWindow(int(gfx.CurrAppWidth), int(gfx.CurrAppHeight), common.AppName, nil, nil)
 
 	if err != nil {
 		panic(err)
@@ -71,7 +71,6 @@ func main() {
 
 	initRenderer()
 	initInputEvents(window)
-	initParser()
 
 	for !window.ShouldClose() {
 		monitorEvents(events)
@@ -110,47 +109,4 @@ func importPathToDir(importPath string) (string, error) {
 	}
 
 	return p.Dir, nil
-}
-
-// numLines: use odd number for an exact middle point
-func makeHighlyVisibleRuntimeLogHeader(s string, numLines int) {
-	s = " " + s + " "
-	fillChar := "#"
-	osOnly := s == appName
-
-	var bar string
-	for i := 0; i < 79; i++ {
-		bar += fillChar
-	}
-
-	var spaces string
-	for i := 0; i < len(s); i++ {
-		spaces += " "
-	}
-
-	var bookend string
-	for i := 0; i < (79-len(s))/2; i++ {
-		bookend += fillChar
-	}
-
-	middle := numLines / 2
-	for i := 0; i < numLines; i++ {
-		switch {
-		case i == middle:
-			predPrint(osOnly, bookend+s+bookend)
-		case i == middle-1 || i == middle+1:
-			predPrint(osOnly, bookend+spaces+bookend)
-		default:
-			predPrint(osOnly, bar)
-		}
-	}
-}
-
-// prints only to OS console window if it's for the appName
-func predPrint(osOnly bool, s string) {
-	if osOnly {
-		fmt.Println(s)
-	} else {
-		con.Add(fmt.Sprintf("%s\n", s))
-	}
 }

@@ -1,12 +1,11 @@
-package main
+package parser
 
 import (
 	"fmt"
-	//"github.com/go-gl/gl/v2.1/gl"
+	"github.com/corpusc/viscript/gfx"
 	"math"
 	"regexp"
 	"strconv"
-	//"regexp/syntax"
 )
 
 // ISSUES?
@@ -62,36 +61,39 @@ type CodeBlock struct {
 	VarBools    []VarBool
 	VarInt32s   []VarInt32
 	VarStrings  []VarString
-	CodeBlocks  []*CodeBlock
+	SubBlocks   []*CodeBlock
 	Expressions []string
 	Parameters  []string // unused atm
 }
 
-func initParser() {
-	/*
-		for _, f := range funcs {
-			con.Add(fmt.Sprintf(f))
-		}
-	*/
-	makeHighlyVisibleRuntimeLogHeader(`PARSING`, 5)
+func Parse() {
+	// clear script
+	mainBlock = &CodeBlock{Name: "main"}
+
+	// clear the OS and graphical consoles
+	gfx.Con.Lines = []string{}
+	gfx.Rend.Panels[1].Body = []string{}
+
+	// feedback
+	gfx.MakeHighlyVisibleLogHeader(`PARSING`, 5)
 	parseAll()
-	makeHighlyVisibleRuntimeLogHeader("RUNNING", 5)
+	gfx.MakeHighlyVisibleLogHeader(`RUNNING`, 5)
 	run(mainBlock)
 }
 
 func parseAll() {
-	for i, line := range rend.Focused.Body {
-		parseLine(i, line, false)
+	for i, line := range gfx.Rend.Focused.Body {
+		ParseLine(i, line, false)
 	}
 }
 
-func parseLine(i int, line string, coloring bool) {
+func ParseLine(i int, line string, coloring bool) {
 	switch {
 	case declaredVar.MatchString(line):
 		result := declaredVar.FindStringSubmatch(line)
 
 		if coloring {
-			rend.Color(violet)
+			gfx.Rend.Color(gfx.Violet)
 		} else {
 			var s = fmt.Sprintf("%d: var (%s) declared", i, result[3])
 			//printIntsFrom(currBlock)
@@ -108,33 +110,33 @@ func parseLine(i int, line string, coloring bool) {
 				}
 			}
 
-			con.Add(fmt.Sprintf("%s\n", s))
+			gfx.Con.Add(fmt.Sprintf("%s\n", s))
 		}
 	case declFuncStart.MatchString(line):
 		result := declFuncStart.FindStringSubmatch(line)
 
 		if coloring {
-			rend.Color(fuschia)
+			gfx.Rend.Color(gfx.Fuschia)
 		} else {
-			con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
+			gfx.Con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
 
 			if currBlock.Name == "main" {
 				currBlock = &CodeBlock{Name: result[1]}
-				mainBlock.CodeBlocks = append(mainBlock.CodeBlocks, currBlock) // FUTURE FIXME: methods in structs shouldn't be on main/root func
+				mainBlock.SubBlocks = append(mainBlock.SubBlocks, currBlock) // FUTURE FIXME: methods in structs shouldn't be on main/root func
 			} else {
-				con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
+				gfx.Con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
 			}
 		}
 	case declFuncEnd.MatchString(line):
 		if coloring {
-			rend.Color(fuschia)
+			gfx.Rend.Color(gfx.Fuschia)
 		} else {
-			con.Add(fmt.Sprintf("func close...\n"))
+			gfx.Con.Add(fmt.Sprintf("func close...\n"))
 			//printIntsFrom(mainBlock)
 			//printIntsFrom(currBlock)
 
 			if currBlock.Name == "main" {
-				con.Add(fmt.Sprintf("ERROR! Main\\Root level function doesn't need enclosure!\n"))
+				gfx.Con.Add(fmt.Sprintf("ERROR! Main\\Root level function doesn't need enclosure!\n"))
 			} else {
 				currBlock = mainBlock
 			}
@@ -143,10 +145,10 @@ func parseLine(i int, line string, coloring bool) {
 		result := calledFunc.FindStringSubmatch(line)
 
 		if coloring {
-			rend.Color(fuschia)
+			gfx.Rend.Color(gfx.Fuschia)
 		} else {
-			con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
-			con.Add(fmt.Sprintf("currBlock: %s\n", currBlock))
+			gfx.Con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
+			gfx.Con.Add(fmt.Sprintf("currBlock: %s\n", currBlock))
 			currBlock.Expressions = append(currBlock.Expressions, line)
 			/*
 				currBlock.Expressions = append(currBlock.Expressions, result[2])
@@ -158,35 +160,35 @@ func parseLine(i int, line string, coloring bool) {
 			/*
 				// prints out all captures
 				for i, v := range result {
-					con.Add(fmt.Sprintf("%d. %s\n", i, v))
+					gfx.Con.Add(fmt.Sprintf("%d. %s\n", i, v))
 				}
 			*/
 		}
 	case comment.MatchString(line): // allow "//" comments    FIXME to allow this at any later point in the line
 		if coloring {
-			rend.Color(grayDark)
+			gfx.Rend.Color(gfx.GrayDark)
 		}
 	case line == "":
 		// just ignore
 	default:
 		if coloring {
-			rend.Color(white)
+			gfx.Rend.Color(gfx.White)
 		} else {
-			con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
+			gfx.Con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
 		}
 	}
 }
 
 func run(pb *CodeBlock) { // passed block of code
-	con.Add(fmt.Sprintf("running function: '%s'\n", pb.Name))
+	gfx.Con.Add(fmt.Sprintf("running function: '%s'\n", pb.Name))
 
 	for i, line := range pb.Expressions {
-		con.Add(fmt.Sprintf("running expression: '%s' in function: '%s'\n", line, pb.Name))
+		gfx.Con.Add(fmt.Sprintf("------evaluating expression: '%s\n", line))
 
 		switch {
 		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
 			result := calledFunc.FindStringSubmatch(line)
-			con.Add(fmt.Sprintf("%d: calling func (%s) with params: %s, %s\n", i, result[2], result[3], result[5]))
+			gfx.Con.Add(fmt.Sprintf("%d: calling func (%s) with params: %s, %s\n", i, result[2], result[3], result[5]))
 
 			a := getInt32(result[3])
 			if /* not legit num */ a == math.MaxInt32 {
@@ -199,20 +201,20 @@ func run(pb *CodeBlock) { // passed block of code
 
 			switch result[2] {
 			case "add32":
-				con.Add(fmt.Sprintf("%d + %d = %d\n", a, b, a+b))
+				gfx.Con.Add(fmt.Sprintf("%d + %d = %d\n", a, b, a+b))
 			case "sub32":
-				con.Add(fmt.Sprintf("%d - %d = %d\n", a, b, a-b))
+				gfx.Con.Add(fmt.Sprintf("%d - %d = %d\n", a, b, a-b))
 			case "mult32":
-				con.Add(fmt.Sprintf("%d * %d = %d\n", a, b, a*b))
+				gfx.Con.Add(fmt.Sprintf("%d * %d = %d\n", a, b, a*b))
 			case "div32":
-				con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
+				gfx.Con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
 			default:
-				for _, fun := range pb.CodeBlocks {
-					con.Add((fmt.Sprintf("CodeBlock.Name considered: %s   switching on: %s\n", fun.Name, result[2])))
+				for _, cb := range pb.SubBlocks {
+					gfx.Con.Add((fmt.Sprintf("CodeBlock.Name considered: %s   switching on: %s\n", cb.Name, result[2])))
 
-					if fun.Name == result[2] {
-						con.Add((fmt.Sprintf("'%s' matched '%s'\n", fun.Name, result[2])))
-						run(fun)
+					if cb.Name == result[2] {
+						gfx.Con.Add((fmt.Sprintf("'%s' matched '%s'\n", cb.Name, result[2])))
+						run(cb)
 					}
 				}
 			}
@@ -238,7 +240,7 @@ func getInt32(s string) int32 {
 			}
 		}
 
-		con.Add(fmt.Sprintf("ERROR!  '%s' IS NOT A VALID VARIABLE/FUNCTION!\n", s))
+		gfx.Con.Add(fmt.Sprintf("ERROR!  '%s' IS NOT A VALID VARIABLE/FUNCTION!\n", s))
 		return math.MaxInt32
 	}
 
@@ -247,10 +249,10 @@ func getInt32(s string) int32 {
 
 func printIntsFrom(f *CodeBlock) {
 	if len(f.VarInt32s) == 0 {
-		con.Add(fmt.Sprintf("%s has no elements!\n", f.Name))
+		gfx.Con.Add(fmt.Sprintf("%s has no elements!\n", f.Name))
 	} else {
 		for i, v := range f.VarInt32s {
-			con.Add(fmt.Sprintf("%s.VarInt32s[%d]: %s = %d\n", f.Name, i, v.name, v.value))
+			gfx.Con.Add(fmt.Sprintf("%s.VarInt32s[%d]: %s = %d\n", f.Name, i, v.name, v.value))
 		}
 	}
 }

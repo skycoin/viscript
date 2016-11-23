@@ -1,4 +1,4 @@
-package main
+package gfx
 
 import (
 	//"fmt"
@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-var curs Cursors = Cursors{NextBlinkChange: time.Now(), Visible: true}
+var Curs Cursors = Cursors{NextBlinkChange: time.Now(), Visible: true}
 
 type Cursors struct {
 	NextBlinkChange time.Time
@@ -24,19 +24,19 @@ func (c *Cursors) Update() {
 }
 
 func (c *Cursors) UpdatePosition(x, y float32) {
-	c.MouseGlX = -rend.ClientExtentX + x*rend.PixelWid
-	c.MouseGlY = rend.ClientExtentY - y*rend.PixelHei
+	c.MouseGlX = -Rend.ClientExtentX + x*Rend.PixelWid
+	c.MouseGlY = Rend.ClientExtentY - y*Rend.PixelHei
 }
 
 // this function was designed for a single panel, and before scrolling was added
 func (c *Cursors) DEPRECATED_DrawCharAt(char rune, posX, posY int) {
-	sp := rend.UvSpan
+	sp := Rend.UvSpan
 	u := sp * float32(int(char)%16)
 	v := sp * float32(int(char)/16)
-	w := rend.CharWid // char width
-	h := rend.CharHei // char height
-	x := -rend.ClientExtentX + float32(posX)*w
-	y := rend.ClientExtentY - float32(posY)*h
+	w := Rend.CharWid // char width
+	h := Rend.CharHei // char height
+	x := -Rend.ClientExtentX + float32(posX)*w
+	y := Rend.ClientExtentY - float32(posY)*h
 
 	gl.Normal3f(0, 0, 1)
 
@@ -61,23 +61,19 @@ func (c *Cursors) ConvertMouseClickToTextCursorPosition(button, action uint8) {
 	if glfw.MouseButton(button) == glfw.MouseButtonLeft &&
 		glfw.Action(action) == glfw.Press {
 
-		foc := rend.Focused
+		foc := Rend.Focused
 
-		if foc.IsEditable && foc.ContainsMouseCursor() {
-			if !foc.BarHori.ContainsMouseCursor(foc) {
-				if !foc.BarVert.ContainsMouseCursor(foc) {
-					if foc.MouseY < len(foc.Body) {
-						foc.CursY = foc.MouseY
+		if foc.IsEditable && foc.ContainsMouseCursorInsideOfScrollBars() {
+			if foc.MouseY < len(foc.Body) {
+				foc.CursY = foc.MouseY
 
-						if foc.MouseX <= len(foc.Body[foc.CursY]) {
-							foc.CursX = foc.MouseX
-						} else {
-							foc.CursX = len(foc.Body[foc.CursY])
-						}
-					} else {
-						foc.CursY = len(foc.Body) - 1
-					}
+				if foc.MouseX <= len(foc.Body[foc.CursY]) {
+					foc.CursX = foc.MouseX
+				} else {
+					foc.CursX = len(foc.Body[foc.CursY])
 				}
+			} else {
+				foc.CursY = len(foc.Body) - 1
 			}
 		}
 	}

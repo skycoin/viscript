@@ -1,7 +1,7 @@
-package main
+package gfx
 
 import (
-	"fmt"
+//"fmt"
 )
 
 type PanelBand struct {
