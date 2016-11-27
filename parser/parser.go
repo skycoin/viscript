@@ -91,7 +91,7 @@ func parseAll() {
 
 func Draw() {
 	// setup main rect
-	span := float32(0.8)
+	span := float32(1.8)
 	x := -span / 2
 	y := ui.MainMenu.Rect.Bottom - 0.1
 	r := &common.Rectangle{y, x + span, y - span, x}
@@ -100,25 +100,37 @@ func Draw() {
 }
 
 func drawCodeBlock(cb *CodeBlock, r *common.Rectangle) {
+	nameLabel := &common.Rectangle{r.Top, r.Right, r.Top - 0.2*r.Height(), r.Left}
 	gfx.Rend.DrawStretchableRect(11, 13, r)
-	gfx.Rend.DrawTextInRect(cb.Name, r)
+	gfx.Rend.Color(gfx.Blue)
+	gfx.Rend.DrawStretchableRect(11, 13, nameLabel)
+	gfx.Rend.DrawTextInRect(cb.Name, nameLabel)
+	gfx.Rend.Color(gfx.White)
 
 	cX := r.CenterX()
-	x := r.Left - r.Width()*0.5
+	rW := r.Width() // rect width
+	num := float32(len(cb.SubBlocks))
+	rowW := num * rW
+	latExt := rW * 0.15 // lateral extent of arrow's triangle top
+
+	if num > 1 {
+		rowW += (num - 1) * rW / 2
+	}
+
+	x := cX - rowW/2
 
 	// subblock row
-	w := r.Width()
 	t := r.Bottom - r.Height()/2
 	b := r.Bottom - r.Height()*1.5
 
 	for _, curr := range cb.SubBlocks {
 		gfx.Rend.DrawTriangle(9, 1,
-			common.Vec2{cX - 0.14, r.Bottom},
-			common.Vec2{cX + 0.14, r.Bottom},
-			common.Vec2{x + w/2, t})
-		drawCodeBlock(curr, &common.Rectangle{t, x + w, b, x})
+			common.Vec2{cX - latExt, r.Bottom},
+			common.Vec2{cX + latExt, r.Bottom},
+			common.Vec2{x + rW/2, t})
+		drawCodeBlock(curr, &common.Rectangle{t, x + rW, b, x})
 
-		x += r.Width()
+		x += r.Width() * 1.5
 	}
 }
 
