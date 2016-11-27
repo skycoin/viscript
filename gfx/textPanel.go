@@ -261,7 +261,7 @@ func (tp *TextPanel) SetupDemoProgram() {
 	tp.Body = append(tp.Body, "        var locA int32 = 71")
 	tp.Body = append(tp.Body, "        var locB int32 = 29")
 	tp.Body = append(tp.Body, "        sub32(locA, locB)")
-	tp.Body = append(tp.Body, "    }    ")
+	tp.Body = append(tp.Body, "}")
 
 	/*
 		for i := 0; i < 22; i++ {

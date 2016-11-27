@@ -58,9 +58,9 @@ type VarString struct {
 
 type CodeBlock struct {
 	Name        string
-	VarBools    []VarBool
-	VarInt32s   []VarInt32
-	VarStrings  []VarString
+	VarBools    []*VarBool
+	VarInt32s   []*VarInt32
+	VarStrings  []*VarString
 	SubBlocks   []*CodeBlock
 	Expressions []string
 	Parameters  []string // unused atm
@@ -99,13 +99,13 @@ func ParseLine(i int, line string, coloring bool) {
 			//printIntsFrom(currBlock)
 
 			if result[8] == "" {
-				currBlock.VarInt32s = append(currBlock.VarInt32s, VarInt32{result[3], 0})
+				currBlock.VarInt32s = append(currBlock.VarInt32s, &VarInt32{result[3], 0})
 			} else {
 				value, err := strconv.Atoi(result[8])
 				if err != nil {
 					s = fmt.Sprintf("%s... BUT COULDN'T CONVERT ASSIGNMENT (%s) TO A NUMBER!", s, result[8])
 				} else {
-					currBlock.VarInt32s = append(currBlock.VarInt32s, VarInt32{result[3], int32(value)})
+					currBlock.VarInt32s = append(currBlock.VarInt32s, &VarInt32{result[3], int32(value)})
 					s = fmt.Sprintf("%s & assigned: %d", s, value)
 				}
 			}

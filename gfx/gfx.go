@@ -29,7 +29,7 @@ import (
 var Rend = CcRenderer{}
 
 var goldenRatio = 1.61803398875
-var goldenPercentage = float32(goldenRatio / (goldenRatio + 1))
+var goldenFraction = float32(goldenRatio / (goldenRatio + 1))
 
 var Black = []float32{0, 0, 0, 1}
 var Blue = []float32{0, 0, 1, 1}
@@ -143,6 +143,12 @@ func (cr *CcRenderer) SetSize() {
 	}
 }
 
+func (cr *CcRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {
+	for _, pan := range cr.Panels {
+		pan.ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY)
+	}
+}
+
 func (cr *CcRenderer) GetMenuSizedRect() *common.Rectangle {
 	return &common.Rectangle{
 		Rend.ClientExtentY,
@@ -165,7 +171,17 @@ func (cr *CcRenderer) DrawAll() {
 		pan.Draw()
 	}
 
-	// 'crosshair' center indicator
+	// syntax tree
+	if ui.MainMenu.ButtonActivated("Syntax Tree") {
+		span := float32(0.8)
+		x := -span / 2
+		y := ui.MainMenu.Rect.Bottom - 0.2
+		r := &common.Rectangle{y, x + span, y - span, x}
+		Rend.DrawStretchableRect(11, 13, r)
+		Rend.DrawTextInRect("mainBlock", r)
+	}
+
+	// // 'crosshair' center indicator
 	//var f float32 = Rend.CharHei
 	//Rend.DrawCharAtRect('+', &common.Rectangle{f, f, -f, -f})
 }
@@ -178,23 +194,20 @@ func (cr *CcRenderer) DrawMenu() {
 			Rend.Color(White)
 		}
 
-		span := bu.Rect.Height() * goldenPercentage // ...of both dimensions of each character
-		glTextWidth := float32(len(bu.Name)) * span // in terms of OpenGL/float32 space
-		x := bu.Rect.Left + (bu.Rect.Width()-glTextWidth)/2
-		verticalLipSpan := (bu.Rect.Height() - span) / 2 // lip or frame edge
-
 		Rend.DrawStretchableRect(11, 13, bu.Rect)
-
-		for _, c := range bu.Name {
-			Rend.DrawCharAtRect(c, &common.Rectangle{bu.Rect.Top - verticalLipSpan, x + span, bu.Rect.Bottom + verticalLipSpan, x})
-			x += span
-		}
+		Rend.DrawTextInRect(bu.Name, bu.Rect)
 	}
 }
 
-func (cr *CcRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {
-	for _, pan := range cr.Panels {
-		pan.ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY)
+func (cr *CcRenderer) DrawTextInRect(s string, r *common.Rectangle) {
+	span := r.Height() * goldenFraction   // span of both dimensions of char
+	glTextWidth := float32(len(s)) * span // in terms of OpenGL/float32 space
+	x := r.Left + (r.Width()-glTextWidth)/2
+	verticalLipSpan := (r.Height() - span) / 2 // lip or frame edge
+
+	for _, c := range s {
+		Rend.DrawCharAtRect(c, &common.Rectangle{r.Top - verticalLipSpan, x + span, r.Bottom + verticalLipSpan, x})
+		x += span
 	}
 }
 
