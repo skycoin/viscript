@@ -159,8 +159,8 @@ func (tp *TextPanel) Draw() {
 	Rend.Color(Gray)
 	tp.BarHori.SetSize(tp.Rect, tp.Body, cW, cH)
 	tp.BarVert.SetSize(tp.Rect, tp.Body, cW, cH)
-	Rend.DrawQuad(11, 13, tp.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
-	Rend.DrawQuad(11, 13, tp.BarVert.Rect) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
+	Rend.DrawStretchableRect(11, 13, tp.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
+	Rend.DrawStretchableRect(11, 13, tp.BarVert.Rect) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
 	Rend.Color(White)
 }
 

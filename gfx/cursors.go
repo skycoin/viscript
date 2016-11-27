@@ -9,6 +9,16 @@ import (
 
 var Curs Cursors = Cursors{NextBlinkChange: time.Now(), Visible: true}
 
+func MouseCursorIsInside(r *common.Rectangle) bool {
+	if Curs.MouseGlY < r.Top && Curs.MouseGlY > r.Bottom {
+		if Curs.MouseGlX < r.Right && Curs.MouseGlX > r.Left {
+			return true
+		}
+	}
+
+	return false
+}
+
 type Cursors struct {
 	NextBlinkChange time.Time
 	Visible         bool
