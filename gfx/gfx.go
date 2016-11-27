@@ -183,7 +183,7 @@ func (cr *CcRenderer) DrawMenu() {
 		x := bu.Rect.Left + (bu.Rect.Width()-glTextWidth)/2
 		verticalLipSpan := (bu.Rect.Height() - span) / 2 // lip or frame edge
 
-		Rend.DrawQuad(11, 13, bu.Rect)
+		Rend.DrawStretchableRect(11, 13, bu.Rect)
 
 		for _, c := range bu.Name {
 			Rend.DrawCharAtRect(c, &common.Rectangle{bu.Rect.Top - verticalLipSpan, x + span, bu.Rect.Bottom + verticalLipSpan, x})
@@ -239,11 +239,12 @@ func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *common.Rectangle) {
 }
 
 func (cr *CcRenderer) DrawStretchableRect(atlasX, atlasY float32, r *common.Rectangle) {
-	var edgePercentage float32 = 0.125
 	// (sometimes called 9 Slicing)
 	// draw 9 quads which keep a predictable frame/margin/edge undistorted,
 	// while stretching the middle to fit the desired space
 
+	//var uvEdgeFraction float32 = 0.125 // 1/8
+	var uvEdgeFraction float32 = 0.125 / 2 // 1/16
 	// we're gonna draw from top to bottom (positivemost to negativemost)
 
 	sp /* span */ := Rend.UvSpan
@@ -255,14 +256,14 @@ func (cr *CcRenderer) DrawStretchableRect(atlasX, atlasY float32, r *common.Rect
 	// setup the 4 lines needed (for 3 spanning sections)
 	uSpots := []float32{}
 	uSpots = append(uSpots, (u))
-	uSpots = append(uSpots, (u)+sp*edgePercentage)
-	uSpots = append(uSpots, (u+sp)-sp*edgePercentage)
+	uSpots = append(uSpots, (u)+sp*uvEdgeFraction)
+	uSpots = append(uSpots, (u+sp)-sp*uvEdgeFraction)
 	uSpots = append(uSpots, (u + sp))
 
 	vSpots := []float32{}
 	vSpots = append(vSpots, (v))
-	vSpots = append(vSpots, (v)+sp*edgePercentage)
-	vSpots = append(vSpots, (v+sp)-sp*edgePercentage)
+	vSpots = append(vSpots, (v)+sp*uvEdgeFraction)
+	vSpots = append(vSpots, (v+sp)-sp*uvEdgeFraction)
 	vSpots = append(vSpots, (v + sp))
 
 	xSpots := []float32{}
@@ -277,23 +278,24 @@ func (cr *CcRenderer) DrawStretchableRect(atlasX, atlasY float32, r *common.Rect
 	ySpots = append(ySpots, r.Bottom+Rend.PixelHei*4)
 	ySpots = append(ySpots, r.Bottom)
 
-	//for iX := 0; iX < 3; iX++ {
-	for iY := 0; iY < 3; iY++ {
-		// draw 1 of 9 rects
+	for iX := 0; iX < 3; iX++ {
+		for iY := 0; iY < 3; iY++ {
+			// draw 1 of 9 rects
 
-		if iY != 1 {
-			gl.TexCoord2f(u, vSpots[iY+1]) // left bottom
-			gl.Vertex3f(r.Left, ySpots[iY+1], 0)
+			if false { //iX == 1 && iY == 1 {
+			} else {
+				gl.TexCoord2f(uSpots[iX], vSpots[iY+1]) // left bottom
+				gl.Vertex3f(xSpots[iX], ySpots[iY+1], 0)
 
-			gl.TexCoord2f(u+sp, vSpots[iY+1]) // right bottom
-			gl.Vertex3f(r.Right, ySpots[iY+1], 0)
+				gl.TexCoord2f(uSpots[iX+1], vSpots[iY+1]) // right bottom
+				gl.Vertex3f(xSpots[iX+1], ySpots[iY+1], 0)
 
-			gl.TexCoord2f(u+sp, vSpots[iY]) // right top
-			gl.Vertex3f(r.Right, ySpots[iY], 0)
+				gl.TexCoord2f(uSpots[iX+1], vSpots[iY]) // right top
+				gl.Vertex3f(xSpots[iX+1], ySpots[iY], 0)
 
-			gl.TexCoord2f(u, vSpots[iY]) // left top
-			gl.Vertex3f(r.Left, ySpots[iY], 0)
+				gl.TexCoord2f(uSpots[iX], vSpots[iY]) // left top
+				gl.Vertex3f(xSpots[iX], ySpots[iY], 0)
+			}
 		}
 	}
-	//}
 }

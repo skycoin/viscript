@@ -190,28 +190,13 @@ func (tp *TextPanel) DrawScrollbarChrome(atlasCellX, atlasCellY, l, t float32) {
 }
 
 func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
-	sp := Rend.UvSpan
-	u := float32(atlasCellX) * sp
-	v := float32(atlasCellY) * sp
-
 	Rend.Color(GrayDark)
-	gl.Normal3f(0, 0, 1)
-
-	// bottom left   0, 1
-	gl.TexCoord2f(u, v+sp)
-	gl.Vertex3f(tp.Rect.Left, tp.Rect.Bottom+ui.ScrollBarThickness, 0)
-
-	// bottom right   1, 1
-	gl.TexCoord2f(u+sp, v+sp)
-	gl.Vertex3f(tp.Rect.Right-ui.ScrollBarThickness, tp.Rect.Bottom+ui.ScrollBarThickness, 0)
-
-	// top right   1, 0
-	gl.TexCoord2f(u+sp, v)
-	gl.Vertex3f(tp.Rect.Right-ui.ScrollBarThickness, tp.Rect.Top, 0)
-
-	// top left   0, 0
-	gl.TexCoord2f(u, v)
-	gl.Vertex3f(tp.Rect.Left, tp.Rect.Top, 0)
+	Rend.DrawStretchableRect(atlasCellX, atlasCellY,
+		&common.Rectangle{
+			tp.Rect.Top,
+			tp.Rect.Right - ui.ScrollBarThickness,
+			tp.Rect.Bottom + ui.ScrollBarThickness,
+			tp.Rect.Left})
 }
 
 func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float64) {
