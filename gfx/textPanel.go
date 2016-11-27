@@ -123,10 +123,11 @@ func (tp *TextPanel) Draw() {
 					common.ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.Rect.Left)
 					Rend.DrawCharAtRect(c, r)
 
-					if tp.IsEditable && Curs.Visible == true {
+					if tp.IsEditable { //&& Curs.Visible == true {
 						if x == tp.CursX && y == tp.CursY {
 							Rend.Color(White)
-							Rend.DrawCharAtRect('_', r)
+							//Rend.DrawCharAtRect('_', r)
+							Rend.DrawStretchableRect(11, 13, Curs.GetAnimationModifiedRect(*r))
 							Rend.Color(Rend.PrevColor)
 						}
 					}
@@ -139,10 +140,11 @@ func (tp *TextPanel) Draw() {
 
 			// draw cursor at the end of line if needed
 			if cX < tp.BarVert.Rect.Left && y == tp.CursY && tp.CursX == len(line) {
-				if tp.IsEditable && Curs.Visible == true {
+				if tp.IsEditable { //&& Curs.Visible == true {
 					Rend.Color(White)
 					common.ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.Rect.Left)
-					Rend.DrawCharAtRect('_', r)
+					//Rend.DrawCharAtRect('_', r)
+					Rend.DrawStretchableRect(11, 13, Curs.GetAnimationModifiedRect(*r))
 				}
 			}
 
