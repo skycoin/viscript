@@ -171,16 +171,6 @@ func (cr *CcRenderer) DrawAll() {
 		pan.Draw()
 	}
 
-	// syntax tree
-	if ui.MainMenu.ButtonActivated("Syntax Tree") {
-		span := float32(0.8)
-		x := -span / 2
-		y := ui.MainMenu.Rect.Bottom - 0.2
-		r := &common.Rectangle{y, x + span, y - span, x}
-		Rend.DrawStretchableRect(11, 13, r)
-		Rend.DrawTextInRect("mainBlock", r)
-	}
-
 	// // 'crosshair' center indicator
 	//var f float32 = Rend.CharHei
 	//Rend.DrawCharAtRect('+', &common.Rectangle{f, f, -f, -f})
@@ -237,6 +227,29 @@ func (cr *CcRenderer) DrawCharAtRect(char rune, r *common.Rectangle) {
 
 	gl.TexCoord2f(u*sp, v*sp)
 	gl.Vertex3f(r.Left, r.Top, 0)
+}
+
+func (cr *CcRenderer) DrawTriangle(atlasX, atlasY float32, a, b, c common.Vec2) {
+	// for convenience, and because drawing some extra triangles
+	// (only for flow arrows between tree node blocks ATM) won't matter,
+	// we are actually drawing a quad, with the 3rd & 4th verts @ the same spot
+
+	sp /* span */ := Rend.UvSpan
+	u := float32(atlasX) * sp
+	v := float32(atlasY) * sp
+
+	gl.Normal3f(0, 0, 1)
+
+	gl.TexCoord2f(u, v)
+	gl.Vertex3f(a.X, a.Y, 0)
+
+	gl.TexCoord2f(u+sp, v)
+	gl.Vertex3f(b.X, b.Y, 0)
+
+	gl.TexCoord2f(u+sp/2, v+sp)
+	gl.Vertex3f(c.X, c.Y, 0)
+	gl.TexCoord2f(u+sp/2, v+sp)
+	gl.Vertex3f(c.X, c.Y, 0)
 }
 
 func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *common.Rectangle) {

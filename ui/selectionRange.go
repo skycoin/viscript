@@ -32,5 +32,4 @@ func (sr *SelectionRange) Init() {
 	sr.StartY = math.MaxUint32
 	sr.EndX = math.MaxUint32
 	sr.EndY = math.MaxUint32
-	sr.CurrentlySelecting = false
 }
