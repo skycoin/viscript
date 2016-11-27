@@ -166,8 +166,8 @@ func (cr *CcRenderer) DrawAll() {
 	}
 
 	// 'crosshair' center indicator
-	var f float32 = Rend.CharHei
-	Rend.DrawCharAtRect('+', &common.Rectangle{f, f, -f, -f})
+	//var f float32 = Rend.CharHei
+	//Rend.DrawCharAtRect('+', &common.Rectangle{f, f, -f, -f})
 }
 
 func (cr *CcRenderer) DrawMenu() {

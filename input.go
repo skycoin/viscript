@@ -81,7 +81,7 @@ func onMouseButton(
 					if gfx.MouseCursorIsInside(bu.Rect) {
 						bu.Activated = !bu.Activated
 
-						if bu.Activated && bu.Name == "Run" {
+						if bu.Activated && (bu.Name == "Run" || bu.Name == "Syntax Tree") {
 							parser.Parse()
 						}
 
