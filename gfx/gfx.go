@@ -200,14 +200,22 @@ func (cr *CcRenderer) DrawMenu() {
 }
 
 func (cr *CcRenderer) DrawTextInRect(s string, r *common.Rectangle) {
-	span := r.Height() * goldenFraction   // span of both dimensions of char
-	glTextWidth := float32(len(s)) * span // in terms of OpenGL/float32 space
+	h := r.Height() * goldenFraction   // height of chars
+	w := h                             // width of chars (same as height, or else squished to fit rect)
+	glTextWidth := float32(len(s)) * w // in terms of OpenGL/float32 space
+	lipSpan := (r.Height() - h) / 2    // lip/frame/edge span
+	maxW := r.Width() - lipSpan*2      // maximum width for text, which leaves a edge/lip/frame margin
+
+	if glTextWidth > maxW {
+		glTextWidth = maxW
+		w = maxW / float32(len(s))
+	}
+
 	x := r.Left + (r.Width()-glTextWidth)/2
-	verticalLipSpan := (r.Height() - span) / 2 // lip or frame edge
 
 	for _, c := range s {
-		Rend.DrawCharAtRect(c, &common.Rectangle{r.Top - verticalLipSpan, x + span, r.Bottom + verticalLipSpan, x})
-		x += span
+		Rend.DrawCharAtRect(c, &common.Rectangle{r.Top - lipSpan, x + w, r.Bottom + lipSpan, x})
+		x += w
 	}
 }
 
