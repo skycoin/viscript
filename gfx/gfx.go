@@ -243,6 +243,14 @@ func (cr *CcRenderer) DrawStretchableRect(atlasX, atlasY float32, r *common.Rect
 	// draw 9 quads which keep a predictable frame/margin/edge undistorted,
 	// while stretching the middle to fit the desired space
 
+	w := r.Width()
+	h := r.Height()
+
+	// skip invisible or inverted rects
+	if w <= 0 || h <= 0 {
+		return
+	}
+
 	//var uvEdgeFraction float32 = 0.125 // 1/8
 	var uvEdgeFraction float32 = 0.125 / 2 // 1/16
 	// we're gonna draw from top to bottom (positivemost to negativemost)
@@ -266,17 +274,31 @@ func (cr *CcRenderer) DrawStretchableRect(atlasX, atlasY float32, r *common.Rect
 	vSpots = append(vSpots, (v+sp)-sp*uvEdgeFraction)
 	vSpots = append(vSpots, (v + sp))
 
+	edgeSpan := Rend.PixelWid * 4
+	if edgeSpan > w/2 {
+		edgeSpan = w / 2
+	}
+
 	xSpots := []float32{}
 	xSpots = append(xSpots, r.Left)
-	xSpots = append(xSpots, r.Left+Rend.PixelHei*4)
-	xSpots = append(xSpots, r.Right-Rend.PixelHei*4)
+	xSpots = append(xSpots, r.Left+edgeSpan)
+	xSpots = append(xSpots, r.Right-edgeSpan)
 	xSpots = append(xSpots, r.Right)
+
+	edgeSpan = Rend.PixelHei * 4
+	if edgeSpan > h/2 {
+		edgeSpan = h / 2
+	}
 
 	ySpots := []float32{}
 	ySpots = append(ySpots, r.Top)
-	ySpots = append(ySpots, r.Top-Rend.PixelHei*4)
-	ySpots = append(ySpots, r.Bottom+Rend.PixelHei*4)
+	ySpots = append(ySpots, r.Top-edgeSpan)
+	ySpots = append(ySpots, r.Bottom+edgeSpan)
 	ySpots = append(ySpots, r.Bottom)
+
+	if ySpots[1] > ySpots[0] {
+		ySpots[1] = ySpots[0]
+	}
 
 	for iX := 0; iX < 3; iX++ {
 		for iY := 0; iY < 3; iY++ {
