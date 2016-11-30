@@ -47,3 +47,13 @@ func (m *Menu) SetSize(rect *common.Rectangle) {
 		y -= hei
 	}
 }
+
+func (m *Menu) ButtonActivated(s string) bool {
+	for _, b := range m.Buttons {
+		if b.Name == s && b.Activated {
+			return true
+		}
+	}
+
+	return false
+}

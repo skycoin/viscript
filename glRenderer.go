@@ -13,6 +13,8 @@ import (
 	*/
 	"github.com/corpusc/viscript/common"
 	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/parser"
+	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
@@ -82,6 +84,10 @@ func drawScene() {
 
 	gl.Begin(gl.QUADS)
 	gfx.Rend.DrawAll()
+	// syntax tree
+	if ui.MainMenu.ButtonActivated("Syntax Tree") {
+		parser.Draw()
+	}
 	gl.End()
 }
 

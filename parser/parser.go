@@ -2,7 +2,9 @@ package parser
 
 import (
 	"fmt"
+	"github.com/corpusc/viscript/common"
 	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/ui"
 	"math"
 	"regexp"
 	"strconv"
@@ -58,9 +60,9 @@ type VarString struct {
 
 type CodeBlock struct {
 	Name        string
-	VarBools    []VarBool
-	VarInt32s   []VarInt32
-	VarStrings  []VarString
+	VarBools    []*VarBool
+	VarInt32s   []*VarInt32
+	VarStrings  []*VarString
 	SubBlocks   []*CodeBlock
 	Expressions []string
 	Parameters  []string // unused atm
@@ -87,6 +89,51 @@ func parseAll() {
 	}
 }
 
+func Draw() {
+	// setup main rect
+	span := float32(1.8)
+	x := -span / 2
+	y := ui.MainMenu.Rect.Bottom - 0.1
+	r := &common.Rectangle{y, x + span, y - span, x}
+
+	drawCodeBlock(mainBlock, r)
+}
+
+func drawCodeBlock(cb *CodeBlock, r *common.Rectangle) {
+	nameLabel := &common.Rectangle{r.Top, r.Right, r.Top - 0.2*r.Height(), r.Left}
+	gfx.Rend.DrawStretchableRect(11, 13, r)
+	gfx.Rend.Color(gfx.Blue)
+	gfx.Rend.DrawStretchableRect(11, 13, nameLabel)
+	gfx.Rend.DrawTextInRect(cb.Name, nameLabel)
+	gfx.Rend.Color(gfx.White)
+
+	cX := r.CenterX()
+	rW := r.Width() // rect width
+	num := float32(len(cb.SubBlocks))
+	rowW := num * rW
+	latExt := rW * 0.15 // lateral extent of arrow's triangle top
+
+	if num > 1 {
+		rowW += (num - 1) * rW / 2
+	}
+
+	x := cX - rowW/2
+
+	// subblock row
+	t := r.Bottom - r.Height()/2
+	b := r.Bottom - r.Height()*1.5
+
+	for _, curr := range cb.SubBlocks {
+		gfx.Rend.DrawTriangle(9, 1,
+			common.Vec2{cX - latExt, r.Bottom},
+			common.Vec2{cX + latExt, r.Bottom},
+			common.Vec2{x + rW/2, t})
+		drawCodeBlock(curr, &common.Rectangle{t, x + rW, b, x})
+
+		x += r.Width() * 1.5
+	}
+}
+
 func ParseLine(i int, line string, coloring bool) {
 	switch {
 	case declaredVar.MatchString(line):
@@ -99,13 +146,13 @@ func ParseLine(i int, line string, coloring bool) {
 			//printIntsFrom(currBlock)
 
 			if result[8] == "" {
-				currBlock.VarInt32s = append(currBlock.VarInt32s, VarInt32{result[3], 0})
+				currBlock.VarInt32s = append(currBlock.VarInt32s, &VarInt32{result[3], 0})
 			} else {
 				value, err := strconv.Atoi(result[8])
 				if err != nil {
 					s = fmt.Sprintf("%s... BUT COULDN'T CONVERT ASSIGNMENT (%s) TO A NUMBER!", s, result[8])
 				} else {
-					currBlock.VarInt32s = append(currBlock.VarInt32s, VarInt32{result[3], int32(value)})
+					currBlock.VarInt32s = append(currBlock.VarInt32s, &VarInt32{result[3], int32(value)})
 					s = fmt.Sprintf("%s & assigned: %d", s, value)
 				}
 			}

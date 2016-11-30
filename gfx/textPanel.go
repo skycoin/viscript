@@ -123,10 +123,11 @@ func (tp *TextPanel) Draw() {
 					common.ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.Rect.Left)
 					Rend.DrawCharAtRect(c, r)
 
-					if tp.IsEditable && Curs.Visible == true {
+					if tp.IsEditable { //&& Curs.Visible == true {
 						if x == tp.CursX && y == tp.CursY {
 							Rend.Color(White)
-							Rend.DrawCharAtRect('_', r)
+							//Rend.DrawCharAtRect('_', r)
+							Rend.DrawStretchableRect(11, 13, Curs.GetAnimationModifiedRect(*r))
 							Rend.Color(Rend.PrevColor)
 						}
 					}
@@ -139,10 +140,11 @@ func (tp *TextPanel) Draw() {
 
 			// draw cursor at the end of line if needed
 			if cX < tp.BarVert.Rect.Left && y == tp.CursY && tp.CursX == len(line) {
-				if tp.IsEditable && Curs.Visible == true {
+				if tp.IsEditable { //&& Curs.Visible == true {
 					Rend.Color(White)
 					common.ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.Rect.Left)
-					Rend.DrawCharAtRect('_', r)
+					//Rend.DrawCharAtRect('_', r)
+					Rend.DrawStretchableRect(11, 13, Curs.GetAnimationModifiedRect(*r))
 				}
 			}
 
@@ -159,8 +161,8 @@ func (tp *TextPanel) Draw() {
 	Rend.Color(Gray)
 	tp.BarHori.SetSize(tp.Rect, tp.Body, cW, cH)
 	tp.BarVert.SetSize(tp.Rect, tp.Body, cW, cH)
-	Rend.DrawQuad(11, 13, tp.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
-	Rend.DrawQuad(11, 13, tp.BarVert.Rect) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
+	Rend.DrawStretchableRect(11, 13, tp.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
+	Rend.DrawStretchableRect(11, 13, tp.BarVert.Rect) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
 	Rend.Color(White)
 }
 
@@ -190,28 +192,13 @@ func (tp *TextPanel) DrawScrollbarChrome(atlasCellX, atlasCellY, l, t float32) {
 }
 
 func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
-	sp := Rend.UvSpan
-	u := float32(atlasCellX) * sp
-	v := float32(atlasCellY) * sp
-
 	Rend.Color(GrayDark)
-	gl.Normal3f(0, 0, 1)
-
-	// bottom left   0, 1
-	gl.TexCoord2f(u, v+sp)
-	gl.Vertex3f(tp.Rect.Left, tp.Rect.Bottom+ui.ScrollBarThickness, 0)
-
-	// bottom right   1, 1
-	gl.TexCoord2f(u+sp, v+sp)
-	gl.Vertex3f(tp.Rect.Right-ui.ScrollBarThickness, tp.Rect.Bottom+ui.ScrollBarThickness, 0)
-
-	// top right   1, 0
-	gl.TexCoord2f(u+sp, v)
-	gl.Vertex3f(tp.Rect.Right-ui.ScrollBarThickness, tp.Rect.Top, 0)
-
-	// top left   0, 0
-	gl.TexCoord2f(u, v)
-	gl.Vertex3f(tp.Rect.Left, tp.Rect.Top, 0)
+	Rend.DrawStretchableRect(atlasCellX, atlasCellY,
+		&common.Rectangle{
+			tp.Rect.Top,
+			tp.Rect.Right - ui.ScrollBarThickness,
+			tp.Rect.Bottom + ui.ScrollBarThickness,
+			tp.Rect.Left})
 }
 
 func (tp *TextPanel) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float64) {
@@ -276,7 +263,7 @@ func (tp *TextPanel) SetupDemoProgram() {
 	tp.Body = append(tp.Body, "        var locA int32 = 71")
 	tp.Body = append(tp.Body, "        var locB int32 = 29")
 	tp.Body = append(tp.Body, "        sub32(locA, locB)")
-	tp.Body = append(tp.Body, "    }    ")
+	tp.Body = append(tp.Body, "}")
 
 	/*
 		for i := 0; i < 22; i++ {

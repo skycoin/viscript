@@ -3,7 +3,8 @@
 
 * KEY-BASED NAVIGATION (CTRL-HOME/END - PGUP/DN)
 * BACKSPACE/DELETE at the ends of lines
-	pulls us up to prev line, or pulls up next line
+	pulls us up to prev line, or
+	pulls up next line
 
 
 --- OPTIONAL NICETIES: ---
@@ -26,6 +27,9 @@ import (
 )
 
 var Rend = CcRenderer{}
+
+var goldenRatio = 1.61803398875
+var goldenFraction = float32(goldenRatio / (goldenRatio + 1))
 
 var Black = []float32{0, 0, 0, 1}
 var Blue = []float32{0, 0, 1, 1}
@@ -139,6 +143,12 @@ func (cr *CcRenderer) SetSize() {
 	}
 }
 
+func (cr *CcRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {
+	for _, pan := range cr.Panels {
+		pan.ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY)
+	}
+}
+
 func (cr *CcRenderer) GetMenuSizedRect() *common.Rectangle {
 	return &common.Rectangle{
 		Rend.ClientExtentY,
@@ -161,9 +171,9 @@ func (cr *CcRenderer) DrawAll() {
 		pan.Draw()
 	}
 
-	// 'crosshair' center indicator
-	var f float32 = Rend.CharHei
-	Rend.DrawCharAtRect('+', &common.Rectangle{f, f, -f, -f})
+	// // 'crosshair' center indicator
+	//var f float32 = Rend.CharHei
+	//Rend.DrawCharAtRect('+', &common.Rectangle{f, f, -f, -f})
 }
 
 func (cr *CcRenderer) DrawMenu() {
@@ -174,23 +184,28 @@ func (cr *CcRenderer) DrawMenu() {
 			Rend.Color(White)
 		}
 
-		span := bu.Rect.Height() * goldenPercentage // ...of both dimensions of each character
-		glTextWidth := float32(len(bu.Name)) * span // in terms of OpenGL/float32 space
-		x := bu.Rect.Left + (bu.Rect.Width()-glTextWidth)/2
-		verticalLipSpan := (bu.Rect.Height() - span) / 2 // lip or frame edge
-
-		Rend.DrawQuad(11, 13, bu.Rect)
-
-		for _, c := range bu.Name {
-			Rend.DrawCharAtRect(c, &common.Rectangle{bu.Rect.Top - verticalLipSpan, x + span, bu.Rect.Bottom + verticalLipSpan, x})
-			x += span
-		}
+		Rend.DrawStretchableRect(11, 13, bu.Rect)
+		Rend.DrawTextInRect(bu.Name, bu.Rect)
 	}
 }
 
-func (cr *CcRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {
-	for _, pan := range cr.Panels {
-		pan.ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY)
+func (cr *CcRenderer) DrawTextInRect(s string, r *common.Rectangle) {
+	h := r.Height() * goldenFraction   // height of chars
+	w := h                             // width of chars (same as height, or else squished to fit rect)
+	glTextWidth := float32(len(s)) * w // in terms of OpenGL/float32 space
+	lipSpan := (r.Height() - h) / 2    // lip/frame/edge span
+	maxW := r.Width() - lipSpan*2      // maximum width for text, which leaves a edge/lip/frame margin
+
+	if glTextWidth > maxW {
+		glTextWidth = maxW
+		w = maxW / float32(len(s))
+	}
+
+	x := r.Left + (r.Width()-glTextWidth)/2
+
+	for _, c := range s {
+		Rend.DrawCharAtRect(c, &common.Rectangle{r.Top - lipSpan, x + w, r.Bottom + lipSpan, x})
+		x += w
 	}
 }
 
@@ -214,6 +229,29 @@ func (cr *CcRenderer) DrawCharAtRect(char rune, r *common.Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
+func (cr *CcRenderer) DrawTriangle(atlasX, atlasY float32, a, b, c common.Vec2) {
+	// for convenience, and because drawing some extra triangles
+	// (only for flow arrows between tree node blocks ATM) won't matter,
+	// we are actually drawing a quad, with the 3rd & 4th verts @ the same spot
+
+	sp /* span */ := Rend.UvSpan
+	u := float32(atlasX) * sp
+	v := float32(atlasY) * sp
+
+	gl.Normal3f(0, 0, 1)
+
+	gl.TexCoord2f(u, v)
+	gl.Vertex3f(a.X, a.Y, 0)
+
+	gl.TexCoord2f(u+sp, v)
+	gl.Vertex3f(b.X, b.Y, 0)
+
+	gl.TexCoord2f(u+sp/2, v+sp)
+	gl.Vertex3f(c.X, c.Y, 0)
+	gl.TexCoord2f(u+sp/2, v+sp)
+	gl.Vertex3f(c.X, c.Y, 0)
+}
+
 func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *common.Rectangle) {
 	sp /* span */ := Rend.UvSpan
 	u := float32(atlasX) * sp
@@ -232,4 +270,88 @@ func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *common.Rectangle) {
 
 	gl.TexCoord2f(u, v)
 	gl.Vertex3f(r.Left, r.Top, 0)
+}
+
+func (cr *CcRenderer) DrawStretchableRect(atlasX, atlasY float32, r *common.Rectangle) {
+	// (sometimes called 9 Slicing)
+	// draw 9 quads which keep a predictable frame/margin/edge undistorted,
+	// while stretching the middle to fit the desired space
+
+	w := r.Width()
+	h := r.Height()
+
+	// skip invisible or inverted rects
+	if w <= 0 || h <= 0 {
+		return
+	}
+
+	//var uvEdgeFraction float32 = 0.125 // 1/8
+	var uvEdgeFraction float32 = 0.125 / 2 // 1/16
+	// we're gonna draw from top to bottom (positivemost to negativemost)
+
+	sp /* span */ := Rend.UvSpan
+	u := float32(atlasX) * sp
+	v := float32(atlasY) * sp
+
+	gl.Normal3f(0, 0, 1)
+
+	// setup the 4 lines needed (for 3 spanning sections)
+	uSpots := []float32{}
+	uSpots = append(uSpots, (u))
+	uSpots = append(uSpots, (u)+sp*uvEdgeFraction)
+	uSpots = append(uSpots, (u+sp)-sp*uvEdgeFraction)
+	uSpots = append(uSpots, (u + sp))
+
+	vSpots := []float32{}
+	vSpots = append(vSpots, (v))
+	vSpots = append(vSpots, (v)+sp*uvEdgeFraction)
+	vSpots = append(vSpots, (v+sp)-sp*uvEdgeFraction)
+	vSpots = append(vSpots, (v + sp))
+
+	edgeSpan := Rend.PixelWid * 4
+	if edgeSpan > w/2 {
+		edgeSpan = w / 2
+	}
+
+	xSpots := []float32{}
+	xSpots = append(xSpots, r.Left)
+	xSpots = append(xSpots, r.Left+edgeSpan)
+	xSpots = append(xSpots, r.Right-edgeSpan)
+	xSpots = append(xSpots, r.Right)
+
+	edgeSpan = Rend.PixelHei * 4
+	if edgeSpan > h/2 {
+		edgeSpan = h / 2
+	}
+
+	ySpots := []float32{}
+	ySpots = append(ySpots, r.Top)
+	ySpots = append(ySpots, r.Top-edgeSpan)
+	ySpots = append(ySpots, r.Bottom+edgeSpan)
+	ySpots = append(ySpots, r.Bottom)
+
+	if ySpots[1] > ySpots[0] {
+		ySpots[1] = ySpots[0]
+	}
+
+	for iX := 0; iX < 3; iX++ {
+		for iY := 0; iY < 3; iY++ {
+			// draw 1 of 9 rects
+
+			if false { //iX == 1 && iY == 1 {
+			} else {
+				gl.TexCoord2f(uSpots[iX], vSpots[iY+1]) // left bottom
+				gl.Vertex3f(xSpots[iX], ySpots[iY+1], 0)
+
+				gl.TexCoord2f(uSpots[iX+1], vSpots[iY+1]) // right bottom
+				gl.Vertex3f(xSpots[iX+1], ySpots[iY+1], 0)
+
+				gl.TexCoord2f(uSpots[iX+1], vSpots[iY]) // right top
+				gl.Vertex3f(xSpots[iX+1], ySpots[iY], 0)
+
+				gl.TexCoord2f(uSpots[iX], vSpots[iY]) // left top
+				gl.Vertex3f(xSpots[iX], ySpots[iY], 0)
+			}
+		}
+	}
 }

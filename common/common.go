@@ -25,3 +25,8 @@ func ClampLeftAndRightOf(r *Rectangle, negBoundary, posBoundary float32) *Rectan
 
 	return r
 }
+
+type Vec2 struct {
+	X float32
+	Y float32
+}
