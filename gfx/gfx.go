@@ -74,8 +74,9 @@ func init() {
 	Rend.DistanceFromOrigin = 3
 	Rend.UvSpan = float32(1.0) / 16 // how much uv a pixel spans
 	Rend.RunPanelHeiPerc = 0.4
+	initPanels()
 
-	// things to resize later
+	// things that are resized later
 	Rend.ClientExtentX = Rend.DistanceFromOrigin * longerDimension
 	Rend.ClientExtentY = Rend.DistanceFromOrigin
 	Rend.CharWid = float32(Rend.ClientExtentX*2) / float32(Rend.MaxCharsX)
@@ -85,15 +86,6 @@ func init() {
 	Rend.PixelWid = Rend.ClientExtentX * 2 / float32(CurrAppWidth)
 	Rend.PixelHei = Rend.ClientExtentY * 2 / float32(CurrAppHeight)
 
-	// one-time setup of panels
-	Rend.Panels = append(Rend.Panels, &TextPanel{BandPercent: 1 - Rend.RunPanelHeiPerc, IsEditable: true})
-	Rend.Panels = append(Rend.Panels, &TextPanel{BandPercent: Rend.RunPanelHeiPerc, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
-	Rend.Focused = Rend.Panels[0]
-
-	Rend.Panels[0].Init()
-	Rend.Panels[0].SetupDemoProgram()
-	Rend.Panels[1].Init()
-
 	ui.MainMenu.SetSize(Rend.GetMenuSizedRect())
 }
 
@@ -101,6 +93,16 @@ func SetColor(newColor []float32) {
 	PrevColor = CurrColor
 	CurrColor = newColor
 	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &newColor[0])
+}
+
+func initPanels() {
+	Rend.Panels = append(Rend.Panels, &TextPanel{BandPercent: 1 - Rend.RunPanelHeiPerc, IsEditable: true})
+	Rend.Panels = append(Rend.Panels, &TextPanel{BandPercent: Rend.RunPanelHeiPerc, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
+	Rend.Focused = Rend.Panels[0]
+
+	Rend.Panels[0].Init()
+	Rend.Panels[0].SetupDemoProgram()
+	Rend.Panels[1].Init()
 }
 
 type CcRenderer struct {

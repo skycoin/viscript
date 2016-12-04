@@ -9,7 +9,7 @@ import (
 )
 
 type TextPanel struct {
-	BandPercent float32 // what percentage (in the relevant dimension) of the entire parent PanelBand do we occupy?
+	BandPercent float32 // what percentage (in the relevant dimension) of the entire parent PanelStrip do we occupy?
 	CursX       int     // current cursor/insert position (in character grid cells/units)
 	CursY       int
 	MouseX      int // current mouse position in character grid space (units/cells)
