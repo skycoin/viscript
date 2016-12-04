@@ -96,8 +96,8 @@ func SetColor(newColor []float32) {
 }
 
 func initPanels() {
-	Rend.Panels = append(Rend.Panels, &TextPanel{FractionOfStrip: 1 - Rend.RunPanelHeiPerc, IsEditable: true})
-	Rend.Panels = append(Rend.Panels, &TextPanel{FractionOfStrip: Rend.RunPanelHeiPerc, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
+	Rend.Panels = append(Rend.Panels, &ScrollablePanel{FractionOfStrip: 1 - Rend.RunPanelHeiPerc, IsEditable: true})
+	Rend.Panels = append(Rend.Panels, &ScrollablePanel{FractionOfStrip: Rend.RunPanelHeiPerc, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
 	Rend.Focused = Rend.Panels[0]
 
 	Rend.Panels[0].Init()
@@ -125,8 +125,8 @@ type CcRenderer struct {
 	// current position renderer draws to
 	CurrX   float32
 	CurrY   float32
-	Focused *TextPanel
-	Panels  []*TextPanel
+	Focused *ScrollablePanel
+	Panels  []*ScrollablePanel
 }
 
 func (cr *CcRenderer) SetSize() {
