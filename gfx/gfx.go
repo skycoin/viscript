@@ -32,6 +32,7 @@ var PrevColor []float32 // previous
 var CurrColor []float32
 
 // private
+var runPanelHeiFrac = float32(0.4) // fraction of vertical strip height which is dedicated to running code
 var goldenRatio = 1.61803398875
 var goldenFraction = float32(goldenRatio / (goldenRatio + 1))
 
@@ -73,7 +74,6 @@ func init() {
 	Rend.MaxCharsY = 25
 	Rend.DistanceFromOrigin = 3
 	Rend.UvSpan = float32(1.0) / 16 // how much uv a pixel spans
-	Rend.RunPanelHeiPerc = 0.4
 
 	// things that are resized later
 	Rend.ClientExtentX = Rend.DistanceFromOrigin * longerDimension
@@ -85,6 +85,7 @@ func init() {
 	Rend.PixelWid = Rend.ClientExtentX * 2 / float32(CurrAppWidth)
 	Rend.PixelHei = Rend.ClientExtentY * 2 / float32(CurrAppHeight)
 
+	// MORE one-time setup
 	initPanels()
 	ui.MainMenu.SetSize(Rend.GetMenuSizedRect())
 }
@@ -96,8 +97,8 @@ func SetColor(newColor []float32) {
 }
 
 func initPanels() {
-	Rend.Panels = append(Rend.Panels, &ScrollablePanel{FractionOfStrip: 1 - Rend.RunPanelHeiPerc, IsEditable: true})
-	Rend.Panels = append(Rend.Panels, &ScrollablePanel{FractionOfStrip: Rend.RunPanelHeiPerc, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
+	Rend.Panels = append(Rend.Panels, &ScrollablePanel{FractionOfStrip: 1 - runPanelHeiFrac, IsEditable: true})
+	Rend.Panels = append(Rend.Panels, &ScrollablePanel{FractionOfStrip: runPanelHeiFrac, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
 	Rend.Focused = Rend.Panels[0]
 
 	Rend.Panels[0].Init()
@@ -107,7 +108,6 @@ func initPanels() {
 
 type CcRenderer struct {
 	DistanceFromOrigin float32
-	RunPanelHeiPerc    float32 // FIXME: hardwired value for a specific use case
 	ClientExtentX      float32 // distance from the center to an edge of the app's root/client area
 	ClientExtentY      float32
 	// ....in the cardinal directions from the center, corners would be farther away)

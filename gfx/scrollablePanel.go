@@ -51,10 +51,10 @@ func (sp *ScrollablePanel) SetSize() {
 		-Rend.ClientExtentY,
 		-Rend.ClientExtentX}
 
-	if sp.FractionOfStrip == Rend.RunPanelHeiPerc { // FIXME: this is hardwired for one use case for now
+	if sp.FractionOfStrip == runPanelHeiFrac { // FIXME: this is hardwired for one use case for now
 		sp.Rect.Top = sp.Rect.Bottom + sp.Rect.Height()*sp.FractionOfStrip
 	} else {
-		sp.Rect.Bottom = sp.Rect.Bottom + sp.Rect.Height()*Rend.RunPanelHeiPerc
+		sp.Rect.Bottom = sp.Rect.Bottom + sp.Rect.Height()*runPanelHeiFrac
 	}
 
 	// set scrollbars' upper left corners
