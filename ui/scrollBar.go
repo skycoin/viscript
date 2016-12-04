@@ -70,7 +70,7 @@ func (bar *ScrollBar) SetSize(panel *app.Rectangle, body []string, charWid, char
 			bar.LenOfBar = 0
 			bar.LenOfVoid = panWid
 			bar.LenOfOffscreen = 0
-		} else {
+		} else { // need bar
 			totalTextWid := float32(numCharsInLongest) * charWid
 			bar.LenOfOffscreen = totalTextWid - panWid
 			bar.LenOfBar = panWid / totalTextWid * panWid
@@ -87,7 +87,7 @@ func (bar *ScrollBar) SetSize(panel *app.Rectangle, body []string, charWid, char
 			bar.LenOfBar = 0
 			bar.LenOfVoid = panHei
 			bar.LenOfOffscreen = 0
-		} else {
+		} else { // need bar
 			totalTextHei := float32(len(body)) * charHei
 			//fmt.Printf("totalTextHei: %.2f\n", totalTextHei)
 			bar.LenOfOffscreen = totalTextHei - panHei

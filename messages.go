@@ -98,7 +98,8 @@ func insertRuneIntoDocument(s string, message []byte) {
 		fmt.Printf("   [%s: %s]", s, string(value))
 
 		f := gfx.Rend.Focused
-		f.Body[f.CursY] = f.Body[f.CursY][:f.CursX] + string(value) + f.Body[f.CursY][f.CursX:len(f.Body[f.CursY])]
+		b := f.TextBodies[0]
+		b[f.CursY] = b[f.CursY][:f.CursX] + string(value) + b[f.CursY][f.CursX:len(b[f.CursY])]
 		f.CursX++
 	}
 }

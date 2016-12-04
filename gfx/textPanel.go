@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/corpusc/viscript/app"
 	//"github.com/corpusc/viscript/parser"
+	"github.com/corpusc/viscript/tree"
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/gl/v2.1/gl"
 )
@@ -19,11 +20,14 @@ type TextPanel struct {
 	Selection       *ui.SelectionRange
 	BarHori         *ui.ScrollBar // horizontal
 	BarVert         *ui.ScrollBar // vertical
-	Body            []string
+	TextBodies      [][]string
+	Trees           []*tree.Tree
 }
 
 func (tp *TextPanel) Init() {
 	fmt.Printf("TextPanel.Init()\n")
+
+	tp.TextBodies = append(tp.TextBodies, []string{})
 
 	tp.Selection = &ui.SelectionRange{}
 	tp.Selection.Init()
@@ -72,8 +76,8 @@ func (tp *TextPanel) RespondToMouseClick() {
 		tp.MouseY = 0
 	}
 
-	if tp.MouseY >= len(tp.Body) {
-		tp.MouseY = len(tp.Body) - 1
+	if tp.MouseY >= len(tp.TextBodies[0]) {
+		tp.MouseY = len(tp.TextBodies[0]) - 1
 	}
 }
 
@@ -100,7 +104,7 @@ func (tp *TextPanel) Draw() {
 	b := tp.BarHori.Rect.Top // bottom of text area
 
 	// body of text
-	for y, line := range tp.Body {
+	for y, line := range tp.TextBodies[0] {
 		// if line visible
 		if cY <= tp.Rect.Top+cH && cY >= b {
 			r := &app.Rectangle{cY, cX + cW, cY - cH, cX} // t, r, b, l
@@ -159,8 +163,8 @@ func (tp *TextPanel) Draw() {
 	tp.DrawScrollbarChrome(13, 12, tp.Rect.Left, tp.Rect.Bottom+ui.ScrollBarThickness)                        // horizontal bar background
 	tp.DrawScrollbarChrome(12, 11, tp.Rect.Right-ui.ScrollBarThickness, tp.Rect.Bottom+ui.ScrollBarThickness) // corner elbow piece
 	SetColor(Gray)
-	tp.BarHori.SetSize(tp.Rect, tp.Body, cW, cH)
-	tp.BarVert.SetSize(tp.Rect, tp.Body, cW, cH)
+	tp.BarHori.SetSize(tp.Rect, tp.TextBodies[0], cW, cH) // FIXME to consider multiple bodies & multiple trees
+	tp.BarVert.SetSize(tp.Rect, tp.TextBodies[0], cW, cH)
 	Rend.DrawStretchableRect(11, 13, tp.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
 	Rend.DrawStretchableRect(11, 13, tp.BarVert.Rect) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
 	SetColor(White)
@@ -221,53 +225,59 @@ func (tp *TextPanel) ContainsMouseCursorInsideOfScrollBars() bool {
 }
 
 func (tp *TextPanel) RemoveCharacter(fromUnderCursor bool) {
+	txt := tp.TextBodies[0]
+
 	if fromUnderCursor {
-		if len(tp.Body[tp.CursY]) > tp.CursX {
-			tp.Body[tp.CursY] = tp.Body[tp.CursY][:tp.CursX] + tp.Body[tp.CursY][tp.CursX+1:len(tp.Body[tp.CursY])]
+		if len(txt[tp.CursY]) > tp.CursX {
+			txt[tp.CursY] = txt[tp.CursY][:tp.CursX] + txt[tp.CursY][tp.CursX+1:len(txt[tp.CursY])]
 		}
 	} else {
 		if tp.CursX > 0 {
-			tp.Body[tp.CursY] = tp.Body[tp.CursY][:tp.CursX-1] + tp.Body[tp.CursY][tp.CursX:len(tp.Body[tp.CursY])]
+			txt[tp.CursY] = txt[tp.CursY][:tp.CursX-1] + txt[tp.CursY][tp.CursX:len(txt[tp.CursY])]
 			tp.CursX--
 		}
 	}
 }
 
 func (tp *TextPanel) SetupDemoProgram() {
-	tp.Body = append(tp.Body, "// ------- variable declarations ------- -------")
-	//tp.Body = append(tp.Body, "var myVar int32")
-	tp.Body = append(tp.Body, "var a int32 = 42")
-	tp.Body = append(tp.Body, "var b int32 = 58")
-	tp.Body = append(tp.Body, "")
-	tp.Body = append(tp.Body, "// ------- builtin function calls ------- ------- ------- ------- ------- ------- ------- end")
-	tp.Body = append(tp.Body, "//    sub32(7, 9)")
-	//tp.Body = append(tp.Body, "sub32(4,8)")
-	//tp.Body = append(tp.Body, "mult32(7, 7)")
-	//tp.Body = append(tp.Body, "mult32(3,5)")
-	//tp.Body = append(tp.Body, "div32(8,2)")
-	//tp.Body = append(tp.Body, "div32(15,  3)")
-	//tp.Body = append(tp.Body, "add32(2,3)")
-	//tp.Body = append(tp.Body, "add32(a, b)")
-	tp.Body = append(tp.Body, "")
-	tp.Body = append(tp.Body, "// ------- user function calls -------")
-	tp.Body = append(tp.Body, "myFunc(a, b)")
-	tp.Body = append(tp.Body, "")
-	tp.Body = append(tp.Body, "// ------- function declarations -------")
-	tp.Body = append(tp.Body, "func myFunc(a int32, b int32){")
-	tp.Body = append(tp.Body, "")
-	tp.Body = append(tp.Body, "        div32(6, 2)")
-	tp.Body = append(tp.Body, "        innerFunc(a,b)")
-	tp.Body = append(tp.Body, "}")
-	tp.Body = append(tp.Body, "")
-	tp.Body = append(tp.Body, "func innerFunc (a, b int32) {")
-	tp.Body = append(tp.Body, "        var locA int32 = 71")
-	tp.Body = append(tp.Body, "        var locB int32 = 29")
-	tp.Body = append(tp.Body, "        sub32(locA, locB)")
-	tp.Body = append(tp.Body, "}")
+	txt := []string{}
+
+	txt = append(txt, "// ------- variable declarations ------- -------")
+	//txt = append(txt, "var myVar int32")
+	txt = append(txt, "var a int32 = 42")
+	txt = append(txt, "var b int32 = 58")
+	txt = append(txt, "")
+	txt = append(txt, "// ------- builtin function calls ------- ------- ------- ------- ------- ------- ------- end")
+	txt = append(txt, "//    sub32(7, 9)")
+	//txt = append(txt, "sub32(4,8)")
+	//txt = append(txt, "mult32(7, 7)")
+	//txt = append(txt, "mult32(3,5)")
+	//txt = append(txt, "div32(8,2)")
+	//txt = append(txt, "div32(15,  3)")
+	//txt = append(txt, "add32(2,3)")
+	//txt = append(txt, "add32(a, b)")
+	txt = append(txt, "")
+	txt = append(txt, "// ------- user function calls -------")
+	txt = append(txt, "myFunc(a, b)")
+	txt = append(txt, "")
+	txt = append(txt, "// ------- function declarations -------")
+	txt = append(txt, "func myFunc(a int32, b int32){")
+	txt = append(txt, "")
+	txt = append(txt, "        div32(6, 2)")
+	txt = append(txt, "        innerFunc(a,b)")
+	txt = append(txt, "}")
+	txt = append(txt, "")
+	txt = append(txt, "func innerFunc (a, b int32) {")
+	txt = append(txt, "        var locA int32 = 71")
+	txt = append(txt, "        var locB int32 = 29")
+	txt = append(txt, "        sub32(locA, locB)")
+	txt = append(txt, "}")
 
 	/*
 		for i := 0; i < 22; i++ {
-			tp.Body = append(tp.Body, fmt.Sprintf("%d: put lots of text on screen", i))
+			txt = append(txt, fmt.Sprintf("%d: put lots of text on screen", i))
 		}
 	*/
+
+	tp.TextBodies[0] = txt
 }

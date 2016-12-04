@@ -153,6 +153,8 @@ func onKey(
 			fmt.Println("'Super' modifier key RELEASED")
 		}
 	} else { // glfw.Repeat   or   glfw.Press
+		b := foc.TextBodies[0]
+
 		switch mod {
 		case glfw.ModShift:
 			fmt.Println("start selecting")
@@ -164,14 +166,13 @@ func onKey(
 		switch key {
 
 		case glfw.KeyEnter:
-			b := foc.Body
 			startOfLine := b[foc.CursY][:foc.CursX]
 			restOfLine := b[foc.CursY][foc.CursX:len(b[foc.CursY])]
 			//fmt.Printf("startOfLine: \"%s\"\n", startOfLine)
 			//fmt.Printf(" restOfLine: \"%s\"\n", restOfLine)
 			b[foc.CursY] = startOfLine
 			//fmt.Printf("foc.CursX: \"%d\"  -  foc.CursY: \"%d\"\n", foc.CursX, foc.CursY)
-			foc.Body = insert(b, foc.CursY+1, restOfLine)
+			b = insert(b, foc.CursY+1, restOfLine)
 
 			foc.CursX = 0
 			foc.CursY++
@@ -185,25 +186,25 @@ func onKey(
 			foc.CursX = 0
 		case glfw.KeyEnd:
 			commonMovementKeyHandling()
-			foc.CursX = len(foc.Body[foc.CursY])
+			foc.CursX = len(b[foc.CursY])
 		case glfw.KeyUp:
 			commonMovementKeyHandling()
 
 			if foc.CursY > 0 {
 				foc.CursY--
 
-				if foc.CursX > len(foc.Body[foc.CursY]) {
-					foc.CursX = len(foc.Body[foc.CursY])
+				if foc.CursX > len(b[foc.CursY]) {
+					foc.CursX = len(b[foc.CursY])
 				}
 			}
 		case glfw.KeyDown:
 			commonMovementKeyHandling()
 
-			if foc.CursY < len(foc.Body)-1 {
+			if foc.CursY < len(b)-1 {
 				foc.CursY++
 
-				if foc.CursX > len(foc.Body[foc.CursY]) {
-					foc.CursX = len(foc.Body[foc.CursY])
+				if foc.CursX > len(b[foc.CursY]) {
+					foc.CursX = len(b[foc.CursY])
 				}
 			}
 		case glfw.KeyLeft:
@@ -212,7 +213,7 @@ func onKey(
 			if foc.CursX == 0 {
 				if foc.CursY > 0 {
 					foc.CursY--
-					foc.CursX = len(foc.Body[foc.CursY])
+					foc.CursX = len(b[foc.CursY])
 				}
 			} else {
 				if mod == glfw.ModControl {
@@ -224,7 +225,7 @@ func onKey(
 		case glfw.KeyRight:
 			commonMovementKeyHandling()
 
-			if foc.CursX < len(foc.Body[foc.CursY]) {
+			if foc.CursX < len(b[foc.CursY]) {
 				if mod == glfw.ModControl {
 					foc.CursX = getWordSkipPos(foc.CursX, 1)
 				} else {
@@ -267,6 +268,7 @@ func dispatchWithPrefix(content []byte, msgType uint8) {
 func getWordSkipPos(xIn int, change int) int {
 	peekPos := xIn
 	foc := gfx.Rend.Focused
+	b := foc.TextBodies[0]
 
 	for {
 		peekPos += change
@@ -275,11 +277,11 @@ func getWordSkipPos(xIn int, change int) int {
 			return 0
 		}
 
-		if peekPos >= len(foc.Body[foc.CursY]) {
-			return len(foc.Body[foc.CursY])
+		if peekPos >= len(b[foc.CursY]) {
+			return len(b[foc.CursY])
 		}
 
-		if string(foc.Body[foc.CursY][peekPos]) == " " {
+		if string(b[foc.CursY][peekPos]) == " " {
 			return peekPos
 		}
 	}

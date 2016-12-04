@@ -19,7 +19,7 @@ func (log CcLog) Add(s string) {
 	log.Lines = append(log.Lines, s)
 
 	if len(Rend.Panels) > 1 {
-		Rend.Panels[1].Body = append(Rend.Panels[1].Body, s)
+		Rend.Panels[1].TextBodies[0] = append(Rend.Panels[1].TextBodies[0], s)
 	}
 }
 

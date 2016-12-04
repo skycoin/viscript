@@ -74,7 +74,7 @@ func Parse() {
 
 	// clear the OS and graphical consoles
 	gfx.Con.Lines = []string{}
-	gfx.Rend.Panels[1].Body = []string{}
+	gfx.Rend.Panels[1].TextBodies[0] = []string{}
 
 	// feedback
 	gfx.MakeHighlyVisibleLogHeader(`PARSING`, 5)
@@ -84,7 +84,7 @@ func Parse() {
 }
 
 func parseAll() {
-	for i, line := range gfx.Rend.Focused.Body {
+	for i, line := range gfx.Rend.Focused.TextBodies[0] {
 		ParseLine(i, line, false)
 	}
 }
