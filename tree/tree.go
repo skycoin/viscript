@@ -5,6 +5,7 @@ import (
 )
 
 type Tree struct {
+	PanelId int
 }
 
 func (t *Tree) Init() {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/tree"
 	"github.com/corpusc/viscript/ui"
 	"math"
 	"regexp"
@@ -76,9 +77,14 @@ func Parse() {
 	gfx.Con.Lines = []string{}
 	gfx.Rend.Panels[1].TextBodies[0] = []string{}
 
-	// feedback
 	gfx.MakeHighlyVisibleLogHeader(`PARSING`, 5)
 	parseAll()
+
+	// setup trees & expressions in new panel
+	i := len(gfx.Rend.Panels)
+	gfx.Rend.Panels = append(gfx.Rend.Panels, &gfx.ScrollablePanel{})
+	gfx.Rend.Panels[i].Trees = append(gfx.Rend.Panels[i].Trees, &tree.Tree{PanelId: i})
+
 	gfx.MakeHighlyVisibleLogHeader(`RUNNING`, 5)
 	run(mainBlock)
 }
