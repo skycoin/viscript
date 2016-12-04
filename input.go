@@ -81,9 +81,16 @@ func onMouseButton(
 					if gfx.MouseCursorIsInside(bu.Rect) {
 						bu.Activated = !bu.Activated
 
-						if bu.Name == "Run" || bu.Name == "Syntax Tree" {
+						switch bu.Name {
+						case "Run":
 							if bu.Activated {
 								parser.Parse()
+							}
+							break
+						case "Syntax Tree":
+							if bu.Activated {
+								parser.Parse()
+								parser.MakeGraphicPanel()
 							} else { // deactivated
 								// remove all panels with trees
 								b := gfx.Rend.Panels[:0]
@@ -96,6 +103,7 @@ func onMouseButton(
 								//fmt.Printf("len of b (from gfx.Rend.Panels) after removing ones with trees: %d\n", len(b))
 								//fmt.Printf("len of gfx.Rend.Panels: %d\n", len(gfx.Rend.Panels))
 							}
+							break
 						}
 
 						gfx.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
