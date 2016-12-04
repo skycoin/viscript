@@ -82,7 +82,8 @@ func Parse() {
 
 	// setup trees & expressions in new panel
 	i := len(gfx.Rend.Panels)
-	gfx.Rend.Panels = append(gfx.Rend.Panels, &gfx.ScrollablePanel{})
+	gfx.Rend.Panels = append(gfx.Rend.Panels, &gfx.ScrollablePanel{FractionOfStrip: 1})
+	gfx.Rend.Panels[i].Init()
 	gfx.Rend.Panels[i].Trees = append(gfx.Rend.Panels[i].Trees, &tree.Tree{PanelId: i})
 
 	gfx.MakeHighlyVisibleLogHeader(`RUNNING`, 5)
@@ -90,7 +91,7 @@ func Parse() {
 }
 
 func parseAll() {
-	for i, line := range gfx.Rend.Focused.TextBodies[0] {
+	for i, line := range gfx.Rend.Panels[0].TextBodies[0] {
 		ParseLine(i, line, false)
 	}
 }
