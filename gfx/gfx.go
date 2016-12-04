@@ -74,7 +74,6 @@ func init() {
 	Rend.DistanceFromOrigin = 3
 	Rend.UvSpan = float32(1.0) / 16 // how much uv a pixel spans
 	Rend.RunPanelHeiPerc = 0.4
-	initPanels()
 
 	// things that are resized later
 	Rend.ClientExtentX = Rend.DistanceFromOrigin * longerDimension
@@ -86,6 +85,7 @@ func init() {
 	Rend.PixelWid = Rend.ClientExtentX * 2 / float32(CurrAppWidth)
 	Rend.PixelHei = Rend.ClientExtentY * 2 / float32(CurrAppHeight)
 
+	initPanels()
 	ui.MainMenu.SetSize(Rend.GetMenuSizedRect())
 }
 
