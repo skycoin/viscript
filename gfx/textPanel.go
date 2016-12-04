@@ -114,7 +114,7 @@ func (tp *TextPanel) Draw() {
 			}
 
 			//parser.ParseLine(y, line, true)
-			Rend.Color(Gray)
+			SetColor(Gray)
 
 			// process line of text
 			for x, c := range line {
@@ -125,10 +125,10 @@ func (tp *TextPanel) Draw() {
 
 					if tp.IsEditable { //&& Curs.Visible == true {
 						if x == tp.CursX && y == tp.CursY {
-							Rend.Color(White)
+							SetColor(White)
 							//Rend.DrawCharAtRect('_', r)
 							Rend.DrawStretchableRect(11, 13, Curs.GetAnimationModifiedRect(*r))
-							Rend.Color(Rend.PrevColor)
+							SetColor(PrevColor)
 						}
 					}
 				}
@@ -141,7 +141,7 @@ func (tp *TextPanel) Draw() {
 			// draw cursor at the end of line if needed
 			if cX < tp.BarVert.Rect.Left && y == tp.CursY && tp.CursX == len(line) {
 				if tp.IsEditable { //&& Curs.Visible == true {
-					Rend.Color(White)
+					SetColor(White)
 					common.ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.Rect.Left)
 					//Rend.DrawCharAtRect('_', r)
 					Rend.DrawStretchableRect(11, 13, Curs.GetAnimationModifiedRect(*r))
@@ -154,16 +154,16 @@ func (tp *TextPanel) Draw() {
 		cY -= cH // go down a line height
 	}
 
-	Rend.Color(GrayDark)
+	SetColor(GrayDark)
 	tp.DrawScrollbarChrome(10, 11, tp.Rect.Right-ui.ScrollBarThickness, tp.Rect.Top)                          // vertical bar background
 	tp.DrawScrollbarChrome(13, 12, tp.Rect.Left, tp.Rect.Bottom+ui.ScrollBarThickness)                        // horizontal bar background
 	tp.DrawScrollbarChrome(12, 11, tp.Rect.Right-ui.ScrollBarThickness, tp.Rect.Bottom+ui.ScrollBarThickness) // corner elbow piece
-	Rend.Color(Gray)
+	SetColor(Gray)
 	tp.BarHori.SetSize(tp.Rect, tp.Body, cW, cH)
 	tp.BarVert.SetSize(tp.Rect, tp.Body, cW, cH)
 	Rend.DrawStretchableRect(11, 13, tp.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
 	Rend.DrawStretchableRect(11, 13, tp.BarVert.Rect) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
-	Rend.Color(White)
+	SetColor(White)
 }
 
 // ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)
@@ -192,7 +192,7 @@ func (tp *TextPanel) DrawScrollbarChrome(atlasCellX, atlasCellY, l, t float32) {
 }
 
 func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
-	Rend.Color(GrayDark)
+	SetColor(GrayDark)
 	Rend.DrawStretchableRect(atlasCellX, atlasCellY,
 		&common.Rectangle{
 			tp.Rect.Top,

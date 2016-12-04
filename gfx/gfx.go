@@ -28,6 +28,10 @@ import (
 
 var Rend = CcRenderer{}
 
+var PrevColor []float32 // previous
+var CurrColor []float32
+
+// private
 var goldenRatio = 1.61803398875
 var goldenFraction = float32(goldenRatio / (goldenRatio + 1))
 
@@ -62,13 +66,14 @@ func init() {
 	fmt.Println("gfx.init()")
 
 	// one-time setup
+	PrevColor = GrayDark
+	CurrColor = GrayDark
+
 	Rend.MaxCharsX = 80
 	Rend.MaxCharsY = 25
 	Rend.DistanceFromOrigin = 3
 	Rend.UvSpan = float32(1.0) / 16 // how much uv a pixel spans
 	Rend.RunPanelHeiPerc = 0.4
-	Rend.PrevColor = GrayDark
-	Rend.CurrColor = GrayDark
 
 	// things to resize later
 	Rend.ClientExtentX = Rend.DistanceFromOrigin * longerDimension
@@ -92,6 +97,12 @@ func init() {
 	ui.MainMenu.SetSize(Rend.GetMenuSizedRect())
 }
 
+func SetColor(newColor []float32) {
+	PrevColor = CurrColor
+	CurrColor = newColor
+	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &newColor[0])
+}
+
 type CcRenderer struct {
 	DistanceFromOrigin float32
 	RunPanelHeiPerc    float32 // FIXME: hardwired value for a specific use case
@@ -110,12 +121,10 @@ type CcRenderer struct {
 	MaxCharsX int // this is used to give us proportions like an 80x25 text console screen, ....
 	MaxCharsY int // ....from a cr.DistanceFromOrigin*2-by-cr.DistanceFromOrigin*2 gl space
 	// current position renderer draws to
-	CurrX     float32
-	CurrY     float32
-	PrevColor []float32 // previous
-	CurrColor []float32
-	Focused   *TextPanel
-	Panels    []*TextPanel
+	CurrX   float32
+	CurrY   float32
+	Focused *TextPanel
+	Panels  []*TextPanel
 }
 
 func (cr *CcRenderer) SetSize() {
@@ -157,12 +166,6 @@ func (cr *CcRenderer) GetMenuSizedRect() *common.Rectangle {
 		-Rend.ClientExtentX}
 }
 
-func (cr *CcRenderer) Color(newColor []float32) {
-	cr.PrevColor = cr.CurrColor
-	cr.CurrColor = newColor
-	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &newColor[0])
-}
-
 func (cr *CcRenderer) DrawAll() {
 	Curs.Update()
 	cr.DrawMenu()
@@ -179,9 +182,9 @@ func (cr *CcRenderer) DrawAll() {
 func (cr *CcRenderer) DrawMenu() {
 	for _, bu := range ui.MainMenu.Buttons {
 		if bu.Activated {
-			Rend.Color(Green)
+			SetColor(Green)
 		} else {
-			Rend.Color(White)
+			SetColor(White)
 		}
 
 		Rend.DrawStretchableRect(11, 13, bu.Rect)

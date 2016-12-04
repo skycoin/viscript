@@ -102,10 +102,10 @@ func Draw() {
 func drawCodeBlock(cb *CodeBlock, r *common.Rectangle) {
 	nameLabel := &common.Rectangle{r.Top, r.Right, r.Top - 0.2*r.Height(), r.Left}
 	gfx.Rend.DrawStretchableRect(11, 13, r)
-	gfx.Rend.Color(gfx.Blue)
+	gfx.SetColor(gfx.Blue)
 	gfx.Rend.DrawStretchableRect(11, 13, nameLabel)
 	gfx.Rend.DrawTextInRect(cb.Name, nameLabel)
-	gfx.Rend.Color(gfx.White)
+	gfx.SetColor(gfx.White)
 
 	cX := r.CenterX()
 	rW := r.Width() // rect width
@@ -140,7 +140,7 @@ func ParseLine(i int, line string, coloring bool) {
 		result := declaredVar.FindStringSubmatch(line)
 
 		if coloring {
-			gfx.Rend.Color(gfx.Violet)
+			gfx.SetColor(gfx.Violet)
 		} else {
 			var s = fmt.Sprintf("%d: var (%s) declared", i, result[3])
 			//printIntsFrom(currBlock)
@@ -163,7 +163,7 @@ func ParseLine(i int, line string, coloring bool) {
 		result := declFuncStart.FindStringSubmatch(line)
 
 		if coloring {
-			gfx.Rend.Color(gfx.Fuschia)
+			gfx.SetColor(gfx.Fuschia)
 		} else {
 			gfx.Con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
 
@@ -176,7 +176,7 @@ func ParseLine(i int, line string, coloring bool) {
 		}
 	case declFuncEnd.MatchString(line):
 		if coloring {
-			gfx.Rend.Color(gfx.Fuschia)
+			gfx.SetColor(gfx.Fuschia)
 		} else {
 			gfx.Con.Add(fmt.Sprintf("func close...\n"))
 			//printIntsFrom(mainBlock)
@@ -192,7 +192,7 @@ func ParseLine(i int, line string, coloring bool) {
 		result := calledFunc.FindStringSubmatch(line)
 
 		if coloring {
-			gfx.Rend.Color(gfx.Fuschia)
+			gfx.SetColor(gfx.Fuschia)
 		} else {
 			gfx.Con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
 			gfx.Con.Add(fmt.Sprintf("currBlock: %s\n", currBlock))
@@ -213,13 +213,13 @@ func ParseLine(i int, line string, coloring bool) {
 		}
 	case comment.MatchString(line): // allow "//" comments    FIXME to allow this at any later point in the line
 		if coloring {
-			gfx.Rend.Color(gfx.GrayDark)
+			gfx.SetColor(gfx.GrayDark)
 		}
 	case line == "":
 		// just ignore
 	default:
 		if coloring {
-			gfx.Rend.Color(gfx.White)
+			gfx.SetColor(gfx.White)
 		} else {
 			gfx.Con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
 		}
