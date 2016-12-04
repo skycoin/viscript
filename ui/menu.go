@@ -2,7 +2,7 @@ package ui
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/app"
 )
 
 var MainMenu = Menu{}
@@ -17,11 +17,11 @@ func init() {
 
 type Menu struct {
 	IsVertical bool // controls which dimension gets divided up for button sizes
-	Rect       *common.Rectangle
+	Rect       *app.Rectangle
 	Buttons    []*Button
 }
 
-func (m *Menu) SetSize(rect *common.Rectangle) {
+func (m *Menu) SetSize(rect *app.Rectangle) {
 	m.Rect = rect
 
 	// depending on vertical or horizontal layout, only 1 dimension (of the below 4 variables) is used
@@ -31,7 +31,7 @@ func (m *Menu) SetSize(rect *common.Rectangle) {
 	hei := m.Rect.Height() / float32(len(m.Buttons)) // height of buttons
 
 	for _, b := range m.Buttons {
-		nr := &common.Rectangle{rect.Top, rect.Right, rect.Bottom, rect.Left}
+		nr := &app.Rectangle{rect.Top, rect.Right, rect.Bottom, rect.Left}
 
 		if m.IsVertical {
 			nr.Top = y

@@ -2,7 +2,7 @@ package parser
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/ui"
 	"math"
@@ -94,13 +94,13 @@ func Draw() {
 	span := float32(1.8)
 	x := -span / 2
 	y := ui.MainMenu.Rect.Bottom - 0.1
-	r := &common.Rectangle{y, x + span, y - span, x}
+	r := &app.Rectangle{y, x + span, y - span, x}
 
 	drawCodeBlock(mainBlock, r)
 }
 
-func drawCodeBlock(cb *CodeBlock, r *common.Rectangle) {
-	nameLabel := &common.Rectangle{r.Top, r.Right, r.Top - 0.2*r.Height(), r.Left}
+func drawCodeBlock(cb *CodeBlock, r *app.Rectangle) {
+	nameLabel := &app.Rectangle{r.Top, r.Right, r.Top - 0.2*r.Height(), r.Left}
 	gfx.Rend.DrawStretchableRect(11, 13, r)
 	gfx.SetColor(gfx.Blue)
 	gfx.Rend.DrawStretchableRect(11, 13, nameLabel)
@@ -125,10 +125,10 @@ func drawCodeBlock(cb *CodeBlock, r *common.Rectangle) {
 
 	for _, curr := range cb.SubBlocks {
 		gfx.Rend.DrawTriangle(9, 1,
-			common.Vec2{cX - latExt, r.Bottom},
-			common.Vec2{cX + latExt, r.Bottom},
-			common.Vec2{x + rW/2, t})
-		drawCodeBlock(curr, &common.Rectangle{t, x + rW, b, x})
+			app.Vec2{cX - latExt, r.Bottom},
+			app.Vec2{cX + latExt, r.Bottom},
+			app.Vec2{x + rW/2, t})
+		drawCodeBlock(curr, &app.Rectangle{t, x + rW, b, x})
 
 		x += r.Width() * 1.5
 	}

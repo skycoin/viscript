@@ -21,7 +21,7 @@ package gfx
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/gl/v2.1/gl"
 )
@@ -58,9 +58,9 @@ var InitAppHeight int32 = 600
 var CurrAppWidth int32 = InitAppWidth
 var CurrAppHeight int32 = InitAppHeight
 var longerDimension = float32(InitAppWidth) / float32(InitAppHeight)
-var InitFrustum = &common.Rectangle{1, longerDimension, -1, -longerDimension}
-var PrevFrustum = &common.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
-var CurrFrustum = &common.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
+var InitFrustum = &app.Rectangle{1, longerDimension, -1, -longerDimension}
+var PrevFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
+var CurrFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
 
 func init() {
 	fmt.Println("gfx.init()")
@@ -158,8 +158,8 @@ func (cr *CcRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelD
 	}
 }
 
-func (cr *CcRenderer) GetMenuSizedRect() *common.Rectangle {
-	return &common.Rectangle{
+func (cr *CcRenderer) GetMenuSizedRect() *app.Rectangle {
+	return &app.Rectangle{
 		Rend.ClientExtentY,
 		Rend.ClientExtentX,
 		Rend.ClientExtentY - Rend.CharHei,
@@ -176,7 +176,7 @@ func (cr *CcRenderer) DrawAll() {
 
 	// // 'crosshair' center indicator
 	//var f float32 = Rend.CharHei
-	//Rend.DrawCharAtRect('+', &common.Rectangle{f, f, -f, -f})
+	//Rend.DrawCharAtRect('+', &app.Rectangle{f, f, -f, -f})
 }
 
 func (cr *CcRenderer) DrawMenu() {
@@ -192,7 +192,7 @@ func (cr *CcRenderer) DrawMenu() {
 	}
 }
 
-func (cr *CcRenderer) DrawTextInRect(s string, r *common.Rectangle) {
+func (cr *CcRenderer) DrawTextInRect(s string, r *app.Rectangle) {
 	h := r.Height() * goldenFraction   // height of chars
 	w := h                             // width of chars (same as height, or else squished to fit rect)
 	glTextWidth := float32(len(s)) * w // in terms of OpenGL/float32 space
@@ -207,12 +207,12 @@ func (cr *CcRenderer) DrawTextInRect(s string, r *common.Rectangle) {
 	x := r.Left + (r.Width()-glTextWidth)/2
 
 	for _, c := range s {
-		Rend.DrawCharAtRect(c, &common.Rectangle{r.Top - lipSpan, x + w, r.Bottom + lipSpan, x})
+		Rend.DrawCharAtRect(c, &app.Rectangle{r.Top - lipSpan, x + w, r.Bottom + lipSpan, x})
 		x += w
 	}
 }
 
-func (cr *CcRenderer) DrawCharAtRect(char rune, r *common.Rectangle) {
+func (cr *CcRenderer) DrawCharAtRect(char rune, r *app.Rectangle) {
 	u := float32(int(char) % 16)
 	v := float32(int(char) / 16)
 	sp := Rend.UvSpan
@@ -232,7 +232,7 @@ func (cr *CcRenderer) DrawCharAtRect(char rune, r *common.Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
-func (cr *CcRenderer) DrawTriangle(atlasX, atlasY float32, a, b, c common.Vec2) {
+func (cr *CcRenderer) DrawTriangle(atlasX, atlasY float32, a, b, c app.Vec2) {
 	// for convenience, and because drawing some extra triangles
 	// (only for flow arrows between tree node blocks ATM) won't matter,
 	// we are actually drawing a quad, with the 3rd & 4th verts @ the same spot
@@ -255,7 +255,7 @@ func (cr *CcRenderer) DrawTriangle(atlasX, atlasY float32, a, b, c common.Vec2) 
 	gl.Vertex3f(c.X, c.Y, 0)
 }
 
-func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *common.Rectangle) {
+func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *app.Rectangle) {
 	sp /* span */ := Rend.UvSpan
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp
@@ -275,7 +275,7 @@ func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *common.Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
-func (cr *CcRenderer) DrawStretchableRect(atlasX, atlasY float32, r *common.Rectangle) {
+func (cr *CcRenderer) DrawStretchableRect(atlasX, atlasY float32, r *app.Rectangle) {
 	// (sometimes called 9 Slicing)
 	// draw 9 quads which keep a predictable frame/margin/edge undistorted,
 	// while stretching the middle to fit the desired space

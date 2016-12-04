@@ -11,7 +11,7 @@ import (
 		"go/build"
 		"runtime"
 	*/
-	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/parser"
 	"github.com/corpusc/viscript/ui"
@@ -52,7 +52,7 @@ func initRenderer() {
 	gl.LoadIdentity()
 }
 
-func setFrustum(r *common.Rectangle) {
+func setFrustum(r *app.Rectangle) {
 	gl.Frustum(
 		float64(r.Left),
 		float64(r.Right),

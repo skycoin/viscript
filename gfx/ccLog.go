@@ -2,7 +2,7 @@ package gfx
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/app"
 	"strings"
 )
 
@@ -27,7 +27,7 @@ func (log CcLog) Add(s string) {
 func MakeHighlyVisibleLogHeader(s string, numLines int) {
 	s = " " + s + " "
 	fillChar := "#"
-	osOnly := s == common.AppName
+	osOnly := s == app.Name
 
 	var bar string
 	for i := 0; i < 79; i++ {

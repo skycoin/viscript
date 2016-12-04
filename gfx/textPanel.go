@@ -2,7 +2,7 @@ package gfx
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/app"
 	//"github.com/corpusc/viscript/parser"
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/gl/v2.1/gl"
@@ -15,7 +15,7 @@ type TextPanel struct {
 	MouseX      int // current mouse position in character grid space (units/cells)
 	MouseY      int
 	IsEditable  bool
-	Rect        *common.Rectangle
+	Rect        *app.Rectangle
 	Selection   *ui.SelectionRange
 	BarHori     *ui.ScrollBar // horizontal
 	BarVert     *ui.ScrollBar // vertical
@@ -31,8 +31,8 @@ func (tp *TextPanel) Init() {
 	// scrollbars
 	tp.BarHori = &ui.ScrollBar{IsHorizontal: true}
 	tp.BarVert = &ui.ScrollBar{}
-	tp.BarHori.Rect = &common.Rectangle{}
-	tp.BarVert.Rect = &common.Rectangle{}
+	tp.BarHori.Rect = &app.Rectangle{}
+	tp.BarVert.Rect = &app.Rectangle{}
 
 	tp.SetSize()
 }
@@ -40,7 +40,7 @@ func (tp *TextPanel) Init() {
 func (tp *TextPanel) SetSize() {
 	fmt.Printf("TextPanel.SetSize()\n")
 
-	tp.Rect = &common.Rectangle{
+	tp.Rect = &app.Rectangle{
 		Rend.ClientExtentY - Rend.CharHei,
 		Rend.ClientExtentX,
 		-Rend.ClientExtentY,
@@ -103,7 +103,7 @@ func (tp *TextPanel) Draw() {
 	for y, line := range tp.Body {
 		// if line visible
 		if cY <= tp.Rect.Top+cH && cY >= b {
-			r := &common.Rectangle{cY, cX + cW, cY - cH, cX} // t, r, b, l
+			r := &app.Rectangle{cY, cX + cW, cY - cH, cX} // t, r, b, l
 
 			// if line needs vertical adjustment
 			if cY > tp.Rect.Top {
@@ -120,7 +120,7 @@ func (tp *TextPanel) Draw() {
 			for x, c := range line {
 				// if char visible
 				if cX >= tp.Rect.Left-cW && cX < tp.BarVert.Rect.Left {
-					common.ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.Rect.Left)
+					app.ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.Rect.Left)
 					Rend.DrawCharAtRect(c, r)
 
 					if tp.IsEditable { //&& Curs.Visible == true {
@@ -142,7 +142,7 @@ func (tp *TextPanel) Draw() {
 			if cX < tp.BarVert.Rect.Left && y == tp.CursY && tp.CursX == len(line) {
 				if tp.IsEditable { //&& Curs.Visible == true {
 					SetColor(White)
-					common.ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.Rect.Left)
+					app.ClampLeftAndRightOf(r, tp.Rect.Left, tp.BarVert.Rect.Left)
 					//Rend.DrawCharAtRect('_', r)
 					Rend.DrawStretchableRect(11, 13, Curs.GetAnimationModifiedRect(*r))
 				}
@@ -194,7 +194,7 @@ func (tp *TextPanel) DrawScrollbarChrome(atlasCellX, atlasCellY, l, t float32) {
 func (tp *TextPanel) DrawBackground(atlasCellX, atlasCellY float32) {
 	SetColor(GrayDark)
 	Rend.DrawStretchableRect(atlasCellX, atlasCellY,
-		&common.Rectangle{
+		&app.Rectangle{
 			tp.Rect.Top,
 			tp.Rect.Right - ui.ScrollBarThickness,
 			tp.Rect.Bottom + ui.ScrollBarThickness,
@@ -216,7 +216,7 @@ func (tp *TextPanel) ContainsMouseCursor() bool {
 }
 
 func (tp *TextPanel) ContainsMouseCursorInsideOfScrollBars() bool {
-	return MouseCursorIsInside(&common.Rectangle{
+	return MouseCursorIsInside(&app.Rectangle{
 		tp.Rect.Top, tp.Rect.Right - ui.ScrollBarThickness, tp.Rect.Bottom + ui.ScrollBarThickness, tp.Rect.Left})
 }
 
