@@ -15,13 +15,14 @@ type TextPanel struct {
 	CursY           int
 	MouseX          int // current mouse position in character grid space (units/cells)
 	MouseY          int
-	IsEditable      bool
-	Rect            *app.Rectangle
-	Selection       *ui.SelectionRange
-	BarHori         *ui.ScrollBar // horizontal
-	BarVert         *ui.ScrollBar // vertical
-	TextBodies      [][]string
-	Trees           []*tree.Tree
+	IsEditable      bool // editing is hardwired to TextBodies[0], but we probably never want
+	// to edit text unless the whole panel is dedicated to just one TextBody (& no graphical trees)
+	Rect       *app.Rectangle
+	Selection  *ui.SelectionRange
+	BarHori    *ui.ScrollBar // horizontal
+	BarVert    *ui.ScrollBar // vertical
+	TextBodies [][]string
+	Trees      []*tree.Tree
 }
 
 func (tp *TextPanel) Init() {
