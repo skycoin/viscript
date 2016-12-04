@@ -9,17 +9,17 @@ import (
 )
 
 type TextPanel struct {
-	BandPercent float32 // what percentage (in the relevant dimension) of the entire parent PanelStrip do we occupy?
-	CursX       int     // current cursor/insert position (in character grid cells/units)
-	CursY       int
-	MouseX      int // current mouse position in character grid space (units/cells)
-	MouseY      int
-	IsEditable  bool
-	Rect        *app.Rectangle
-	Selection   *ui.SelectionRange
-	BarHori     *ui.ScrollBar // horizontal
-	BarVert     *ui.ScrollBar // vertical
-	Body        []string
+	FractionOfStrip float32 // fraction of the parent PanelStrip (in 1 dimension)
+	CursX           int     // current cursor/insert position (in character grid cells/units)
+	CursY           int
+	MouseX          int // current mouse position in character grid space (units/cells)
+	MouseY          int
+	IsEditable      bool
+	Rect            *app.Rectangle
+	Selection       *ui.SelectionRange
+	BarHori         *ui.ScrollBar // horizontal
+	BarVert         *ui.ScrollBar // vertical
+	Body            []string
 }
 
 func (tp *TextPanel) Init() {
@@ -46,8 +46,8 @@ func (tp *TextPanel) SetSize() {
 		-Rend.ClientExtentY,
 		-Rend.ClientExtentX}
 
-	if tp.BandPercent == Rend.RunPanelHeiPerc { // FIXME: this is hardwired for one use case for now
-		tp.Rect.Top = tp.Rect.Bottom + tp.Rect.Height()*tp.BandPercent
+	if tp.FractionOfStrip == Rend.RunPanelHeiPerc { // FIXME: this is hardwired for one use case for now
+		tp.Rect.Top = tp.Rect.Bottom + tp.Rect.Height()*tp.FractionOfStrip
 	} else {
 		tp.Rect.Bottom = tp.Rect.Bottom + tp.Rect.Height()*Rend.RunPanelHeiPerc
 	}
