@@ -2,31 +2,30 @@ package parser
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/app"
+	//"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/tree"
-	"github.com/corpusc/viscript/ui"
+	//"github.com/corpusc/viscript/ui"
 	"math"
 	"regexp"
 	"strconv"
 )
 
-// ISSUES?
-
 /*
-only looks for 1 expression per line
 
-no attempt is made to get anything inside a function
-which may come after the opening curly brace, on the same line
+KNOWN ISSUES:
 
-closing curly brace of function only recognized as a "}" amidst spaces
-*/
+* only looks for 1 expression per line
 
-// NOTES
+* no attempt is made to get anything inside any block
+	which may come after the opening curly brace, on the same line
 
-/*
+* closing curly brace of a block only recognized as a "}" amidst spaces
+
+
 
 TODO:
+
 * make sure names are unique within a partic scope
 * allow // comments at any position
 
@@ -44,37 +43,45 @@ var declFuncEnd = regexp.MustCompile(`^( +)?\}( +)?$`)
 var calledFunc = regexp.MustCompile(`^( +)?([a-zA-Z]\w*)\(([0-9]+|[a-zA-Z]\w*),( +)?([0-9]+|[a-zA-Z]\w*)\)$`)
 var comment = regexp.MustCompile(`^//.*`)
 
-type VarBool struct {
-	name  string
-	value bool
-}
-
-type VarInt32 struct {
-	name  string
-	value int32
-}
-
-type VarString struct {
-	name  string
-	value string
-}
-
-type CodeBlock struct {
-	Name        string
-	VarBools    []*VarBool
-	VarInt32s   []*VarInt32
-	VarStrings  []*VarString
-	SubBlocks   []*CodeBlock
-	Expressions []string
-	Parameters  []string // unused atm
-}
-
-func MakeGraphicPanel() {
+func MakeTree() {
 	// setup trees & expressions in new panel
-	i := len(gfx.Rend.Panels)
+	pI := len(gfx.Rend.Panels) // panel id
+
+	// new panel
 	gfx.Rend.Panels = append(gfx.Rend.Panels, &gfx.ScrollablePanel{FractionOfStrip: 1})
-	gfx.Rend.Panels[i].Init()
-	gfx.Rend.Panels[i].Trees = append(gfx.Rend.Panels[i].Trees, &tree.Tree{PanelId: i})
+	gfx.Rend.Panels[pI].Init()
+
+	// new tree
+	gfx.Rend.Panels[pI].Trees = append(
+		gfx.Rend.Panels[pI].Trees, &tree.Tree{pI, []*tree.Node{}})
+	nI := 0 // node id
+	makeNode(pI, math.MaxInt32, math.MaxInt32, math.MaxInt32, "top")
+	makeNode(pI, math.MaxInt32, math.MaxInt32, nI, "1st left")
+	makeNode(pI, math.MaxInt32, math.MaxInt32, nI, "1st right")
+	nI++
+	makeNode(pI, math.MaxInt32, math.MaxInt32, nI, "level 3")
+	nI++
+	makeNode(pI, math.MaxInt32, math.MaxInt32, nI, "level 4")
+	nI++
+	makeNode(pI, math.MaxInt32, math.MaxInt32, nI, "level 5")
+}
+func makeTree(tree tree.Tree) {
+	addNode(mainBlock)
+}
+
+func makeNode(panelId, childIdL, childIdR, parentId int, s string) {
+	gfx.Rend.Panels[panelId].Trees[0].Nodes = append(
+		gfx.Rend.Panels[panelId].Trees[0].Nodes, &tree.Node{s, childIdL, childIdR, parentId})
+
+	if parentId != math.MaxInt32 {
+		// set pointer to child
+		gfx.Rend.Panels[panelId].Trees[0].Nodes[parentId].ChildIdR = len(gfx.Rend.Panels[panelId].Trees[0].Nodes)
+	}
+}
+func addNode(cb *CodeBlock) {
+	for _, curr := range cb.SubBlocks {
+		addNode(curr)
+	}
 }
 
 func Parse() {

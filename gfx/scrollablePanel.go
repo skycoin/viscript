@@ -3,7 +3,6 @@ package gfx
 import (
 	"fmt"
 	"github.com/corpusc/viscript/app"
-	//"github.com/corpusc/viscript/parser"
 	"github.com/corpusc/viscript/tree"
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/gl/v2.1/gl"

@@ -90,7 +90,7 @@ func onMouseButton(
 						case "Syntax Tree":
 							if bu.Activated {
 								parser.Parse()
-								parser.MakeGraphicPanel()
+								parser.MakeTree()
 							} else { // deactivated
 								// remove all panels with trees
 								b := gfx.Rend.Panels[:0]
