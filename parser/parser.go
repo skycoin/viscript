@@ -33,6 +33,7 @@ TODO:
 */
 
 var types = []string{"bool", "int32", "string"} // FIXME: should allow [] and [42] prefixes
+var keywords = []string{"var", "if", "do", "while", "switch", "for"}
 var builtinFuncs = []string{"add32", "sub32", "mult32", "div32"}
 var mainBlock = &CodeBlock{Name: "main"} // the root/entry/top/alpha level of the program
 var currBlock = mainBlock
@@ -106,12 +107,11 @@ func parseAll() {
 	bods = append(bods, []string{})
 
 	for i, line := range bods[0] {
-		processLine(i, line, false)
-		bods[1] = append(bods[1], lexAndColorMarkupLine(line))
+		bods[1] = append(bods[1], lexAndColorMarkupLine(i, line))
 	}
 }
 
-func lexAndColorMarkupLine(line string) string {
+func lexAndColorMarkupLine(lineId int, line string) string {
 	s := line // the dynamic/processed offshoot
 
 	// strip any comments
@@ -135,10 +135,11 @@ func lexAndColorMarkupLine(line string) string {
 		}
 	}
 
+	regexLine(lineId, s, false)
 	return line
 }
 
-func processLine(i int, line string, coloring bool) {
+func regexLine(i int, line string, coloring bool) {
 	if coloring {
 		switch {
 		case declaredVar.MatchString(line):
