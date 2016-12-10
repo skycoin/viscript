@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"strings"
 	//"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/tree"
@@ -100,12 +101,44 @@ func Parse() {
 }
 
 func parseAll() {
-	for i, line := range gfx.Rend.Panels[0].TextBodies[0] {
-		ParseLine(i, line, false)
+	bods := gfx.Rend.Panels[0].TextBodies
+	// make a 2nd copy of code, but with inserted color markup
+	bods = append(bods, []string{})
+
+	for i, line := range bods[0] {
+		processLine(i, line, false)
+		bods[1] = append(bods[1], lexAndColorMarkupLine(line))
 	}
 }
 
-func ParseLine(i int, line string, coloring bool) {
+func lexAndColorMarkupLine(line string) string {
+	s := line // the dynamic/processed offshoot
+
+	// strip any comments
+	i := strings.Index(line, "//")
+	if /* there is a comment */ i != -1 {
+		s = line[:i]
+		line = line[:i] + "<color=GrayDark>" + line[i: /*len(line)*/]
+		fmt.Println("line:", line)
+	}
+
+	s = strings.TrimSpace(s)
+
+	if len(s) > 0 {
+		fmt.Println("s:", s)
+
+		// tokenize
+		lex := strings.Split(s, " ")
+
+		for i := range lex {
+			fmt.Printf("lex: %d '%s'\n", i, lex[i])
+		}
+	}
+
+	return line
+}
+
+func processLine(i int, line string, coloring bool) {
 	if coloring {
 		switch {
 		case declaredVar.MatchString(line):
@@ -124,6 +157,7 @@ func ParseLine(i int, line string, coloring bool) {
 			gfx.SetColor(gfx.White)
 		}
 	} else {
+		// scan for high level pieces
 		switch {
 		case declaredVar.MatchString(line):
 			result := declaredVar.FindStringSubmatch(line)
@@ -186,6 +220,7 @@ func ParseLine(i int, line string, coloring bool) {
 			*/
 		case line == "":
 			// just ignore
+		case comment.MatchString(line): // allow "//" comments    FIXME to allow this at any later point in the line
 		default:
 			gfx.Con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
 		}

@@ -117,7 +117,7 @@ func (sp *ScrollablePanel) Draw() {
 				r.Bottom = b
 			}
 
-			//parser.ParseLine(y, line, true)
+			//parser.ProcessLine(y, line, true)
 			SetColor(Gray)
 
 			// process line of text
@@ -244,7 +244,7 @@ func (sp *ScrollablePanel) SetupDemoProgram() {
 
 	txt = append(txt, "// ------- variable declarations ------- -------")
 	//txt = append(txt, "var myVar int32")
-	txt = append(txt, "var a int32 = 42")
+	txt = append(txt, "var a int32 = 42 // end-of-line comment")
 	txt = append(txt, "var b int32 = 58")
 	txt = append(txt, "")
 	txt = append(txt, "// ------- builtin function calls ------- ------- ------- ------- ------- ------- ------- end")
