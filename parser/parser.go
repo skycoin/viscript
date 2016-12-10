@@ -106,13 +106,28 @@ func parseAll() {
 }
 
 func ParseLine(i int, line string, coloring bool) {
-	switch {
-	case declaredVar.MatchString(line):
-		result := declaredVar.FindStringSubmatch(line)
-
-		if coloring {
+	if coloring {
+		switch {
+		case declaredVar.MatchString(line):
 			gfx.SetColor(gfx.Violet)
-		} else {
+		case declFuncStart.MatchString(line):
+			gfx.SetColor(gfx.Fuschia)
+		case declFuncEnd.MatchString(line):
+			gfx.SetColor(gfx.Fuschia)
+		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
+			gfx.SetColor(gfx.Fuschia)
+		case comment.MatchString(line): // allow "//" comments    FIXME to allow this at any later point in the line
+			gfx.SetColor(gfx.GrayDark)
+		case line == "":
+			// just ignore
+		default:
+			gfx.SetColor(gfx.White)
+		}
+	} else {
+		switch {
+		case declaredVar.MatchString(line):
+			result := declaredVar.FindStringSubmatch(line)
+
 			var s = fmt.Sprintf("%d: var (%s) declared", i, result[3])
 			//printIntsFrom(currBlock)
 
@@ -129,13 +144,9 @@ func ParseLine(i int, line string, coloring bool) {
 			}
 
 			gfx.Con.Add(fmt.Sprintf("%s\n", s))
-		}
-	case declFuncStart.MatchString(line):
-		result := declFuncStart.FindStringSubmatch(line)
+		case declFuncStart.MatchString(line):
+			result := declFuncStart.FindStringSubmatch(line)
 
-		if coloring {
-			gfx.SetColor(gfx.Fuschia)
-		} else {
 			gfx.Con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
 
 			if currBlock.Name == "main" {
@@ -144,11 +155,7 @@ func ParseLine(i int, line string, coloring bool) {
 			} else {
 				gfx.Con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
 			}
-		}
-	case declFuncEnd.MatchString(line):
-		if coloring {
-			gfx.SetColor(gfx.Fuschia)
-		} else {
+		case declFuncEnd.MatchString(line):
 			gfx.Con.Add(fmt.Sprintf("func close...\n"))
 			//printIntsFrom(mainBlock)
 			//printIntsFrom(currBlock)
@@ -158,13 +165,9 @@ func ParseLine(i int, line string, coloring bool) {
 			} else {
 				currBlock = mainBlock
 			}
-		}
-	case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
-		result := calledFunc.FindStringSubmatch(line)
+		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
+			result := calledFunc.FindStringSubmatch(line)
 
-		if coloring {
-			gfx.SetColor(gfx.Fuschia)
-		} else {
 			gfx.Con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
 			gfx.Con.Add(fmt.Sprintf("currBlock: %s\n", currBlock))
 			currBlock.Expressions = append(currBlock.Expressions, line)
@@ -181,17 +184,9 @@ func ParseLine(i int, line string, coloring bool) {
 					gfx.Con.Add(fmt.Sprintf("%d. %s\n", i, v))
 				}
 			*/
-		}
-	case comment.MatchString(line): // allow "//" comments    FIXME to allow this at any later point in the line
-		if coloring {
-			gfx.SetColor(gfx.GrayDark)
-		}
-	case line == "":
-		// just ignore
-	default:
-		if coloring {
-			gfx.SetColor(gfx.White)
-		} else {
+		case line == "":
+			// just ignore
+		default:
 			gfx.Con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
 		}
 	}
