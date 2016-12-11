@@ -45,6 +45,7 @@ var GrayDark = []float32{0.15, 0.15, 0.15, 1}
 var GrayLight = []float32{0.4, 0.4, 0.4, 1}
 var Green = []float32{0, 1, 0, 1}
 var Magenta = []float32{1, 0, 1, 1}
+var Maroon = []float32{0.7, 0.1, 0.2, 1}
 var Orange = []float32{0.8, 0.35, 0, 1}
 var Purple = []float32{0.6, 0, 0.8, 1}
 var Red = []float32{1, 0, 0, 1}

@@ -55,8 +55,8 @@ const (
 	LexType_Operator
 	LexType_IntegralType
 	LexType_IntegralFunc
-	LexType_ParamStart
-	LexType_ParamEnd
+	LexType_ParenStart
+	LexType_ParenEnd
 	LexType_BlockStart
 	LexType_BlockEnd
 	LexType_RuneLiteralStart
@@ -82,10 +82,10 @@ func lexTypeString(i int) string {
 		return "IntegralType"
 	case LexType_IntegralFunc:
 		return "IntegralFunc"
-	case LexType_ParamStart:
-		return "ParamStart"
-	case LexType_ParamEnd:
-		return "ParamEnd"
+	case LexType_ParenStart:
+		return "ParenStart"
+	case LexType_ParenEnd:
+		return "ParenEnd"
 	case LexType_BlockStart:
 		return "BlockStart"
 	case LexType_BlockEnd:
@@ -105,7 +105,7 @@ func lexTypeString(i int) string {
 		return "Identifier"
 
 	default:
-		return "ERROR! LexType case not synchronized with above const block!"
+		return "ERROR! LexType case unknown!"
 	}
 }
 
@@ -122,13 +122,12 @@ func MakeTree() {
 		gfx.Rend.Panels[pI].Trees, &tree.Tree{pI, []*tree.Node{}})
 	//makeNode(pI, 1, math.MaxInt32, math.MaxInt32, "top") // 0
 	makeNode(pI, 1, 2, math.MaxInt32, "top")                  // 0
-	makeNode(pI, math.MaxInt32, math.MaxInt32, 0, "1st left") // 1
+	makeNode(pI, 6, math.MaxInt32, 0, "1st left")             // 1
 	makeNode(pI, math.MaxInt32, 3, 0, "1st right")            // 2
 	makeNode(pI, 4, math.MaxInt32, 2, "level 3")              // 3
 	makeNode(pI, math.MaxInt32, 5, 3, "level 4")              // 4
 	makeNode(pI, math.MaxInt32, math.MaxInt32, 4, "level 5")  // 5
-	/*
-	 */
+	makeNode(pI, math.MaxInt32, math.MaxInt32, 1, "freddled") // 6
 }
 func makeNode(panelId, childIdL, childIdR, parentId int, s string) {
 	gfx.Rend.Panels[panelId].Trees[0].Nodes = append(
@@ -239,8 +238,8 @@ func tokenizedAny(slice []string, i int, elem string) bool {
 							fmt.Println("ENCOUNTERED open paren")
 							tokens = append(tokens, &Token{i, elem[:k]})
 							fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(i), `"`+elem[:k]+`"`)
-							tokens = append(tokens, &Token{LexType_ParamStart, "("})
-							fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(LexType_ParamStart), `"("`)
+							tokens = append(tokens, &Token{LexType_ParenStart, "("})
+							fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(LexType_ParenStart), `"("`)
 
 							parenCaptureTier++
 
