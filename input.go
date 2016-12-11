@@ -87,7 +87,7 @@ func onMouseButton(
 								script.Process()
 							}
 							break
-						case "Syntax Tree":
+						case "Testing Tree":
 							if bu.Activated {
 								script.Process()
 								script.MakeTree()

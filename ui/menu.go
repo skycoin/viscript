@@ -10,7 +10,7 @@ var MainMenu = Menu{}
 func init() {
 	fmt.Println("ui.init() in menu.go")
 	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Run"})
-	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Syntax Tree"})
+	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Testing Tree"})
 	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Item 3"})
 	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Item 4"})
 }

@@ -106,54 +106,6 @@ func initPanels() {
 	Rend.Panels[1].Init()
 }
 
-func DrawTree() {
-	// setup main rect
-	span := float32(1.8)
-	x := -span / 2
-	y := ui.MainMenu.Rect.Bottom - 0.1
-	r := &app.Rectangle{y, x + span, y - span, x}
-
-	drawNode(r)
-}
-
-func drawNode(r *app.Rectangle) {
-	nameLabel := &app.Rectangle{r.Top, r.Right, r.Top - 0.2*r.Height(), r.Left}
-	Rend.DrawStretchableRect(11, 13, r)
-	SetColor(Blue)
-	Rend.DrawStretchableRect(11, 13, nameLabel)
-	Rend.DrawTextInRect("node str", nameLabel)
-	SetColor(White)
-
-	/*
-		cX := r.CenterX()
-		rW := r.Width()   // rect width
-		num := float32(2) //float32(len(cb.SubBlocks))
-		rowW := num * rW
-		latExt := rW * 0.15 // lateral extent of arrow's triangle top
-
-		if num > 1 {
-			rowW += (num - 1) * rW / 2
-		}
-
-		x := cX - rowW/2
-
-		// subblock row
-		t := r.Bottom - r.Height()/2
-		b := r.Bottom - r.Height()*1.5
-
-
-		for _, curr := range cb.SubBlocks {
-			Rend.DrawTriangle(9, 1,
-				app.Vec2{cX - latExt, r.Bottom},
-				app.Vec2{cX + latExt, r.Bottom},
-				app.Vec2{x + rW/2, t})
-			drawNode(curr, &app.Rectangle{t, x + rW, b, x})
-
-			x += r.Width() * 1.5
-		}
-	*/
-}
-
 type CcRenderer struct {
 	DistanceFromOrigin float32
 	ClientExtentX      float32 // distance from the center to an edge of the app's root/client area
@@ -285,7 +237,7 @@ func (cr *CcRenderer) DrawCharAtRect(char rune, r *app.Rectangle) {
 func (cr *CcRenderer) DrawTriangle(atlasX, atlasY float32, a, b, c app.Vec2) {
 	// for convenience, and because drawing some extra triangles
 	// (only for flow arrows between tree node blocks ATM) won't matter,
-	// we are actually drawing a quad, with the 3rd & 4th verts @ the same spot
+	// we are actually drawing a quad, with the last 2 verts @ the same spot
 
 	sp /* span */ := Rend.UvSpan
 	u := float32(atlasX) * sp

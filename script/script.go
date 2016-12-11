@@ -120,35 +120,31 @@ func MakeTree() {
 	// new tree
 	gfx.Rend.Panels[pI].Trees = append(
 		gfx.Rend.Panels[pI].Trees, &tree.Tree{pI, []*tree.Node{}})
-	nI := 0 // node id
-	makeNode(pI, math.MaxInt32, math.MaxInt32, math.MaxInt32, "top")
-	makeNode(pI, math.MaxInt32, math.MaxInt32, nI, "1st left")
-	makeNode(pI, math.MaxInt32, math.MaxInt32, nI, "1st right")
-	nI++
-	makeNode(pI, math.MaxInt32, math.MaxInt32, nI, "level 3")
-	nI++
-	makeNode(pI, math.MaxInt32, math.MaxInt32, nI, "level 4")
-	nI++
-	makeNode(pI, math.MaxInt32, math.MaxInt32, nI, "level 5")
+	//makeNode(pI, 1, math.MaxInt32, math.MaxInt32, "top") // 0
+	makeNode(pI, 1, 2, math.MaxInt32, "top")                  // 0
+	makeNode(pI, math.MaxInt32, math.MaxInt32, 0, "1st left") // 1
+	makeNode(pI, math.MaxInt32, 3, 0, "1st right")            // 2
+	makeNode(pI, 4, math.MaxInt32, 2, "level 3")              // 3
+	makeNode(pI, math.MaxInt32, 5, 3, "level 4")              // 4
+	makeNode(pI, math.MaxInt32, math.MaxInt32, 4, "level 5")  // 5
+	/*
+	 */
 }
-func makeTree(tree tree.Tree) {
-	addNode(mainBlock)
-}
-
 func makeNode(panelId, childIdL, childIdR, parentId int, s string) {
 	gfx.Rend.Panels[panelId].Trees[0].Nodes = append(
 		gfx.Rend.Panels[panelId].Trees[0].Nodes, &tree.Node{s, childIdL, childIdR, parentId})
+}
 
-	if parentId != math.MaxInt32 {
-		// set pointer to child
-		gfx.Rend.Panels[panelId].Trees[0].Nodes[parentId].ChildIdR = len(gfx.Rend.Panels[panelId].Trees[0].Nodes)
-	}
+/*       SKELETON OF 1ST PRELIM GRAPHIC TREE, recursively built from CodeBlocks
+func makeTree(tree tree.Tree) {
+	addNode(mainBlock)
 }
 func addNode(cb *CodeBlock) {
 	for _, curr := range cb.SubBlocks {
 		addNode(curr)
 	}
 }
+*/
 
 func Process() {
 	// clear script

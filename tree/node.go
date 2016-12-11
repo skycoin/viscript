@@ -10,6 +10,3 @@ type Node struct {
 	ChildIdR int // branching to right
 	ParentId int
 }
-
-func (n *Node) Init() {
-}

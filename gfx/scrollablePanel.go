@@ -6,6 +6,7 @@ import (
 	"github.com/corpusc/viscript/tree"
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/gl/v2.1/gl"
+	"math"
 )
 
 type ScrollablePanel struct {
@@ -168,6 +169,7 @@ func (sp *ScrollablePanel) Draw() {
 	Rend.DrawStretchableRect(11, 13, sp.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
 	Rend.DrawStretchableRect(11, 13, sp.BarVert.Rect) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
 	SetColor(White)
+	sp.DrawTrees()
 }
 
 // ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)
@@ -237,6 +239,58 @@ func (sp *ScrollablePanel) RemoveCharacter(fromUnderCursor bool) {
 			sp.CursX--
 		}
 	}
+}
+
+func (sp *ScrollablePanel) DrawTrees() {
+	//for _, tree := range sp.Trees {
+	if len(sp.Trees) > 0 {
+		// setup main rect
+		span := float32(1.3)
+		x := -span / 2
+		y := sp.Rect.Top - 0.1
+		r := &app.Rectangle{y, x + span, y - span, x}
+
+		sp.drawNodeAndDescendants(r, 0)
+	}
+}
+
+func (sp *ScrollablePanel) drawNodeAndDescendants(r *app.Rectangle, nodeId int) {
+	//fmt.Println("drawNode(r *app.Rectangle)")
+	nameBar := &app.Rectangle{r.Top, r.Right, r.Top - 0.2*r.Height(), r.Left}
+	Rend.DrawStretchableRect(11, 13, r)
+	SetColor(Blue)
+	Rend.DrawStretchableRect(11, 13, nameBar)
+	Rend.DrawTextInRect(sp.Trees[0].Nodes[nodeId].Text, nameBar)
+	SetColor(White)
+
+	cX := r.CenterX()
+	rSp := r.Width() // rect span (height & width are the same)
+	t := r.Bottom - rSp*0.5
+	b := r.Bottom - rSp*1.5
+
+	node := sp.Trees[0].Nodes[nodeId] // FIXME? .....
+	// find sp.Trees[0].Nodes[i].....
+	// ......(if we ever use multiple trees per panel)
+	// ......(also update DrawTrees to use range)
+
+	if /* left child exists */ node.ChildIdL != math.MaxInt32 {
+		x := cX - rSp*1.5
+		sp.drawArrowAndChild(r, &app.Rectangle{t, x + rSp, b, x}, node.ChildIdL)
+	}
+
+	if /* right child exists */ node.ChildIdR != math.MaxInt32 {
+		x := cX + rSp*0.5
+		sp.drawArrowAndChild(r, &app.Rectangle{t, x + rSp, b, x}, node.ChildIdR)
+	}
+}
+
+func (sp *ScrollablePanel) drawArrowAndChild(parent, child *app.Rectangle, childId int) {
+	latExt := child.Width() * 0.15 // lateral extent of arrow's triangle top
+	Rend.DrawTriangle(9, 1,
+		app.Vec2{parent.CenterX() - latExt, parent.Bottom},
+		app.Vec2{parent.CenterX() + latExt, parent.Bottom},
+		app.Vec2{child.CenterX(), child.Top})
+	sp.drawNodeAndDescendants(child, childId)
 }
 
 func (sp *ScrollablePanel) SetupDemoProgram() {
