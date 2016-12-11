@@ -27,12 +27,12 @@ KNOWN ISSUES:
 
 TODO:
 
-* make sure names are unique within a partic scope
-* allow // comments at any position
+* make sure identifiers are unique within a partic scope
 
 */
 
-var types = []string{"bool", "int32", "string"} // FIXME: should allow [] and [42] prefixes
+// lexing
+var integralTypes = []string{"bool", "int32", "string"} // FIXME: should allow [] and [42] prefixes
 var operators = []string{"=", ":=", "==", "!=", "+=", "-=", "*=", "/=", "%=", "+", "-", "*", "/", "%"}
 var keywords = []string{"break", "continue", "fallthrough", "var", "if", "do", "while", "switch", "for"}
 var builtinFuncs = []string{"add32", "sub32", "mult32", "div32"}
@@ -40,7 +40,7 @@ var tokens = []*Token{}
 var mainBlock = &CodeBlock{Name: "main"} // the root/entry/top/alpha level of the program
 var currBlock = mainBlock
 
-// REGEX (raw strings to avoid having to quote backslashes)
+// REGEX scanning (raw strings to avoid having to quote backslashes)
 var declaredVar = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32(( +)?=( +)?([0-9]+))?$`)
 var declFuncStart = regexp.MustCompile(`^func ([a-zA-Z]\w*)( +)?\((.*)\)( +)?\{$`)
 var declFuncEnd = regexp.MustCompile(`^( +)?\}( +)?$`)
@@ -49,11 +49,19 @@ var comment = regexp.MustCompile(`^//.*`)
 
 const (
 	LexTypeKeyword = iota
-	LexTypeFunc
-	LexTypeOperator
-	LexTypeIdentifier // user variable
-	LexTypeBlockStart
-	LexTypeBlockEnd
+	LexType_IntegralType
+	LexType_Operator
+	LexType_Func
+	LexType_Operator
+	LexType_Identifier // user variable
+	LexType_ParamStart
+	LexType_ParamEnd
+	LexType_BlockStart
+	LexType_BlockEnd
+	LexType_RuneLiteralStart
+	LexType_RuneLiteralEnd
+	LexType_StringLiteralStart
+	LexType_StringLiteralEnd
 )
 
 func MakeTree() {
@@ -144,9 +152,24 @@ func lexAndColorMarkupLine(lineId int, line string) string {
 		for i := range lex {
 			fmt.Printf("lex: %d '%s'\n", i, lex[i])
 
-			for ii := range keywords {
-				if lex[i] == keywords[ii] {
+			for j := range keywords {
+				if lex[i] == keywords[j] {
 					tokens = append(tokens, &Token{LexTypeKeyword, lex[i]})
+					break
+				}
+			}
+
+			for j := range integralTypes {
+				if lex[i] == integralTypes[j] {
+					tokens = append(tokens, &Token{LexTypeIntegralType, lex[i]})
+					break
+				}
+			}
+
+			for j := range operators {
+				if lex[i] == operators[j] {
+					tokens = append(tokens, &Token{LexTypeOperator, lex[i]})
+					break
 				}
 			}
 		}

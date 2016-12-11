@@ -1,36 +1,23 @@
 package parser
 
-import (
-/*
-	"fmt"
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/gfx"
-	"github.com/corpusc/viscript/tree"
-	"github.com/corpusc/viscript/ui"
-	"math"
-	"regexp"
-	"strconv"
-*/
-)
-
 type Token struct {
 	LexType int
-	value   string
+	Value   string
 }
 
 type VarBool struct {
-	name  string
-	value bool
+	Name  string
+	Value bool
 }
 
 type VarInt32 struct {
-	name  string
-	value int32
+	Name  string
+	Value int32
 }
 
 type VarString struct {
-	name  string
-	value string
+	Name  string
+	Value string
 }
 
 type CodeBlock struct {
