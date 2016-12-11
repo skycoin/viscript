@@ -36,6 +36,17 @@ var runPanelHeiFrac = float32(0.4) // fraction of vertical strip height which is
 var goldenRatio = 1.61803398875
 var goldenFraction = float32(goldenRatio / (goldenRatio + 1))
 
+// dimensions (in pixel units)
+var InitAppWidth int32 = 800
+var InitAppHeight int32 = 600
+var CurrAppWidth int32 = InitAppWidth
+var CurrAppHeight int32 = InitAppHeight
+var longerDimension = float32(InitAppWidth) / float32(InitAppHeight)
+var InitFrustum = &app.Rectangle{1, longerDimension, -1, -longerDimension}
+var PrevFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
+var CurrFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
+
+// colors
 var Black = []float32{0, 0, 0, 1}
 var Blue = []float32{0, 0, 1, 1}
 var Cyan = []float32{0, 0.5, 1, 1}
@@ -54,15 +65,48 @@ var Violet = []float32{0.4, 0.2, 1, 1}
 var White = []float32{1, 1, 1, 1}
 var Yellow = []float32{1, 1, 0, 1}
 
-// dimensions (in pixel units)
-var InitAppWidth int32 = 800
-var InitAppHeight int32 = 600
-var CurrAppWidth int32 = InitAppWidth
-var CurrAppHeight int32 = InitAppHeight
-var longerDimension = float32(InitAppWidth) / float32(InitAppHeight)
-var InitFrustum = &app.Rectangle{1, longerDimension, -1, -longerDimension}
-var PrevFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
-var CurrFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
+// ^^^
+// as above, so below   (keep these synchronized)
+// VVV
+
+func SetColorFromText(s string) {
+	switch s {
+	case "<color=Black":
+		SetColor(Black)
+	case "<color=Blue":
+		SetColor(Blue)
+	case "<color=Cyan":
+		SetColor(Cyan)
+	case "<color=Fuschia":
+		SetColor(Fuschia)
+	case "<color=Gray":
+		SetColor(Gray)
+	case "<color=GrayDark":
+		SetColor(GrayDark)
+	case "<color=GrayLight":
+		SetColor(GrayLight)
+	case "<color=Green":
+		SetColor(Green)
+	case "<color=Magenta":
+		SetColor(Magenta)
+	case "<color=Maroon":
+		SetColor(Maroon)
+	case "<color=Orange":
+		SetColor(Orange)
+	case "<color=Purple":
+		SetColor(Purple)
+	case "<color=Red":
+		SetColor(Red)
+	case "<color=Tan":
+		SetColor(Tan)
+	case "<color=Violet":
+		SetColor(Violet)
+	case "<color=White":
+		SetColor(White)
+	case "<color=Yellow":
+		SetColor(Yellow)
+	}
+}
 
 func init() {
 	fmt.Println("gfx.init()")

@@ -48,7 +48,6 @@ var declaredVar = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32(( +)
 var declFuncStart = regexp.MustCompile(`^func ([a-zA-Z]\w*)( +)?\((.*)\)( +)?\{$`)
 var declFuncEnd = regexp.MustCompile(`^( +)?\}( +)?$`)
 var calledFunc = regexp.MustCompile(`^( +)?([a-zA-Z]\w*)\(([0-9]+|[a-zA-Z]\w*),( +)?([0-9]+|[a-zA-Z]\w*)\)$`)
-var comment = regexp.MustCompile(`^//.*`)
 
 const (
 	LexType_Keyword = iota
@@ -149,7 +148,7 @@ func Process() {
 	// clear script
 	mainBlock = &CodeBlock{Name: "main"}
 
-	// clear the OS and graphical consoles
+	// clear OS and graphical consoles
 	gfx.Con.Lines = []string{}
 	gfx.Rend.Panels[1].TextBodies[0] = []string{}
 
@@ -165,12 +164,19 @@ func Process() {
 
 func lexAll() {
 	bods := gfx.Rend.Panels[0].TextBodies
-	// make a 2nd copy of code, but with inserted color markup
-	bods = append(bods, []string{})
+
+	if /* needed.... */ len(bods) < 2 {
+		// ....make a 2nd copy of code (for inserting color markup)
+		bods = append(bods, []string{})
+	} else { // clear existing
+		bods[1] = []string{}
+	}
 
 	for i, line := range bods[0] {
 		bods[1] = append(bods[1], lexAndColorMarkup(i, line))
 	}
+
+	gfx.Rend.Panels[0].TextBodies = append(gfx.Rend.Panels[0].TextBodies, bods[1])
 }
 
 func lexAndColorMarkup(lineId int, line string) string {
@@ -181,7 +187,7 @@ func lexAndColorMarkup(lineId int, line string) string {
 	if /* there is one */ i != -1 {
 		s = line[:i]
 		line = line[:i] + "<color=GrayDark>" + line[i:]
-		fmt.Println("line:", line)
+		fmt.Println("marked up line:", line)
 	}
 
 	s = strings.TrimSpace(s)
@@ -270,8 +276,6 @@ func regexLine(i int, line string, coloring bool) {
 			gfx.SetColor(gfx.Fuschia)
 		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
 			gfx.SetColor(gfx.Fuschia)
-		case comment.MatchString(line): // allow "//" comments    FIXME to allow this at any later point in the line
-			gfx.SetColor(gfx.GrayDark)
 		case line == "":
 			// just ignore
 		default:
@@ -341,7 +345,6 @@ func regexLine(i int, line string, coloring bool) {
 			*/
 		case line == "":
 			// just ignore
-		case comment.MatchString(line): // allow "//" comments    FIXME to allow this at any later point in the line
 		default:
 			gfx.Con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
 		}
