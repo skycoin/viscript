@@ -13,6 +13,11 @@ import (
 */
 )
 
+type Token struct {
+	LexType int
+	value   string
+}
+
 type VarBool struct {
 	name  string
 	value bool

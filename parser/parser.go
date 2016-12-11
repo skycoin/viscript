@@ -33,8 +33,10 @@ TODO:
 */
 
 var types = []string{"bool", "int32", "string"} // FIXME: should allow [] and [42] prefixes
-var keywords = []string{"var", "if", "do", "while", "switch", "for"}
+var operators = []string{"=", ":=", "==", "!=", "+=", "-=", "*=", "/=", "%=", "+", "-", "*", "/", "%"}
+var keywords = []string{"break", "continue", "fallthrough", "var", "if", "do", "while", "switch", "for"}
 var builtinFuncs = []string{"add32", "sub32", "mult32", "div32"}
+var tokens = []*Token{}
 var mainBlock = &CodeBlock{Name: "main"} // the root/entry/top/alpha level of the program
 var currBlock = mainBlock
 
@@ -44,6 +46,15 @@ var declFuncStart = regexp.MustCompile(`^func ([a-zA-Z]\w*)( +)?\((.*)\)( +)?\{$
 var declFuncEnd = regexp.MustCompile(`^( +)?\}( +)?$`)
 var calledFunc = regexp.MustCompile(`^( +)?([a-zA-Z]\w*)\(([0-9]+|[a-zA-Z]\w*),( +)?([0-9]+|[a-zA-Z]\w*)\)$`)
 var comment = regexp.MustCompile(`^//.*`)
+
+const (
+	LexTypeKeyword = iota
+	LexTypeFunc
+	LexTypeOperator
+	LexTypeIdentifier // user variable
+	LexTypeBlockStart
+	LexTypeBlockEnd
+)
 
 func MakeTree() {
 	// setup trees & expressions in new panel
@@ -132,6 +143,12 @@ func lexAndColorMarkupLine(lineId int, line string) string {
 
 		for i := range lex {
 			fmt.Printf("lex: %d '%s'\n", i, lex[i])
+
+			for ii := range keywords {
+				if lex[i] == keywords[ii] {
+					tokens = append(tokens, &Token{LexTypeKeyword, lex[i]})
+				}
+			}
 		}
 	}
 
