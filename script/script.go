@@ -33,13 +33,15 @@ TODO:
 
 // lexing
 var integralTypes = []string{"bool", "int32", "string"} // FIXME: should allow [] and [42] prefixes
+var integralFuncs = []string{"add32", "sub32", "mult32", "div32"}
 var operators = []string{"=", ":=", "==", "!=", "+=", "-=", "*=", "/=", "%=", "+", "-", "*", "/", "%"}
 var keywords = []string{"break", "continue", "fallthrough", "var", "if", "do", "while", "switch", "for"}
-var builtinFuncs = []string{"add32", "sub32", "mult32", "div32"}
-var identifiers = []string{}
+var varIdentifiers = []string{}
+var funcIdentifiers = []string{}
 var tokens = []*Token{}
 var mainBlock = &CodeBlock{Name: "main"} // the root/entry/top/alpha level of the program
 var currBlock = mainBlock
+var parenCaptureTier = 0 // number of levels of parenception
 
 // REGEX scanning (raw strings to avoid having to quote backslashes)
 var declaredVar = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32(( +)?=( +)?([0-9]+))?$`)
@@ -52,7 +54,7 @@ const (
 	LexType_Keyword = iota
 	LexType_Operator
 	LexType_IntegralType
-	LexType_Func
+	LexType_IntegralFunc
 	LexType_ParamStart
 	LexType_ParamEnd
 	LexType_BlockStart
@@ -62,7 +64,8 @@ const (
 	LexType_StringLiteralStart
 	LexType_StringLiteralEnd
 
-	LexType_Identifier // user variable
+	LexType_VarIdentifier  // user variable
+	LexType_FuncIdentifier // user func
 )
 
 // ^^^
@@ -77,8 +80,8 @@ func lexTypeString(i int) string {
 		return "Operator"
 	case LexType_IntegralType:
 		return "IntegralType"
-	case LexType_Func:
-		return "Func"
+	case LexType_IntegralFunc:
+		return "IntegralFunc"
 	case LexType_ParamStart:
 		return "ParamStart"
 	case LexType_ParamEnd:
@@ -96,7 +99,9 @@ func lexTypeString(i int) string {
 	case LexType_StringLiteralEnd:
 		return "StringLiteralEnd"
 
-	case LexType_Identifier:
+	case LexType_VarIdentifier:
+		return "Identifier"
+	case LexType_FuncIdentifier:
 		return "Identifier"
 
 	default:
@@ -169,18 +174,18 @@ func lexAll() {
 	bods = append(bods, []string{})
 
 	for i, line := range bods[0] {
-		bods[1] = append(bods[1], lexAndColorMarkupLine(i, line))
+		bods[1] = append(bods[1], lexAndColorMarkup(i, line))
 	}
 }
 
-func lexAndColorMarkupLine(lineId int, line string) string {
+func lexAndColorMarkup(lineId int, line string) string {
 	s := line // the dynamic/processed offshoot
 
 	// strip any comments
 	i := strings.Index(line, "//")
-	if /* there is a comment */ i != -1 {
+	if /* there is one */ i != -1 {
 		s = line[:i]
-		line = line[:i] + "<color=GrayDark>" + line[i: /*len(line)*/]
+		line = line[:i] + "<color=GrayDark>" + line[i:]
 		fmt.Println("line:", line)
 	}
 
@@ -195,6 +200,24 @@ func lexAndColorMarkupLine(lineId int, line string) string {
 		for i := range lex {
 			fmt.Printf("lexer element %d: \"%s\"\n", i, lex[i])
 
+			// look for opening of enclosing pairs
+			for j, c := range lex[i] {
+				if c == '(' {
+					// TODO: handle "()" cases
+					// TODO: handle "()" cases
+					// TODO: handle "()" cases
+					fmt.Println("ENCOUNTERED open paren")
+					parenCaptureTier++
+
+					if len(lex[i]) > j+1 {
+						oneOrMoreParams := lex[i][j+1:]
+						fmt.Println("oneOrMoreParams:", oneOrMoreParams)
+					}
+
+					lex[i] = lex[i][:j] // strip open paren & later runes
+				}
+			}
+
 			if tokenizedAny(keywords, LexType_Keyword, lex[i]) {
 				break
 			}
@@ -204,7 +227,13 @@ func lexAndColorMarkupLine(lineId int, line string) string {
 			if tokenizedAny(integralTypes, LexType_IntegralType, lex[i]) {
 				break
 			}
-			if tokenizedAny(identifiers, LexType_Identifier, lex[i]) {
+			if tokenizedAny(integralFuncs, LexType_IntegralFunc, lex[i]) {
+				break
+			}
+			if tokenizedAny(varIdentifiers, LexType_VarIdentifier, lex[i]) {
+				break
+			}
+			if tokenizedAny(funcIdentifiers, LexType_FuncIdentifier, lex[i]) {
 				break
 			}
 		}
@@ -218,7 +247,7 @@ func tokenizedAny(slice []string, i int, elem string) bool {
 	for j := range slice {
 		if elem == slice[j] {
 			tokens = append(tokens, &Token{i, elem})
-			fmt.Printf("<<<<<<< TOKENIZED %s >>>>>>>: %s\n", lexTypeString(i), `"`+elem+`"`)
+			fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(i), `"`+elem+`"`)
 			return true
 		}
 	}
