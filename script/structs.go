@@ -1,4 +1,4 @@
-package parser
+package script
 
 type Token struct {
 	LexType int

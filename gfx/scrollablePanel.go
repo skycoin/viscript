@@ -117,7 +117,7 @@ func (sp *ScrollablePanel) Draw() {
 				r.Bottom = b
 			}
 
-			//parser.ProcessLine(y, line, true)
+			//script.ProcessLine(y, line, true)
 			SetColor(Gray)
 
 			// process line of text

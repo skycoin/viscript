@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/corpusc/viscript/gfx"
-	"github.com/corpusc/viscript/parser"
+	"github.com/corpusc/viscript/script"
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"math"
@@ -84,13 +84,13 @@ func onMouseButton(
 						switch bu.Name {
 						case "Run":
 							if bu.Activated {
-								parser.Process()
+								script.Process()
 							}
 							break
 						case "Syntax Tree":
 							if bu.Activated {
-								parser.Process()
-								parser.MakeTree()
+								script.Process()
+								script.MakeTree()
 							} else { // deactivated
 								// remove all panels with trees
 								b := gfx.Rend.Panels[:0]
