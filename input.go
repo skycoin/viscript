@@ -84,12 +84,12 @@ func onMouseButton(
 						switch bu.Name {
 						case "Run":
 							if bu.Activated {
-								parser.Parse()
+								parser.Process()
 							}
 							break
 						case "Syntax Tree":
 							if bu.Activated {
-								parser.Parse()
+								parser.Process()
 								parser.MakeTree()
 							} else { // deactivated
 								// remove all panels with trees

@@ -36,6 +36,7 @@ var integralTypes = []string{"bool", "int32", "string"} // FIXME: should allow [
 var operators = []string{"=", ":=", "==", "!=", "+=", "-=", "*=", "/=", "%=", "+", "-", "*", "/", "%"}
 var keywords = []string{"break", "continue", "fallthrough", "var", "if", "do", "while", "switch", "for"}
 var builtinFuncs = []string{"add32", "sub32", "mult32", "div32"}
+var identifiers = []string{}
 var tokens = []*Token{}
 var mainBlock = &CodeBlock{Name: "main"} // the root/entry/top/alpha level of the program
 var currBlock = mainBlock
@@ -48,12 +49,10 @@ var calledFunc = regexp.MustCompile(`^( +)?([a-zA-Z]\w*)\(([0-9]+|[a-zA-Z]\w*),(
 var comment = regexp.MustCompile(`^//.*`)
 
 const (
-	LexTypeKeyword = iota
+	LexType_Keyword = iota
+	LexType_Operator
 	LexType_IntegralType
-	LexType_Operator
 	LexType_Func
-	LexType_Operator
-	LexType_Identifier // user variable
 	LexType_ParamStart
 	LexType_ParamEnd
 	LexType_BlockStart
@@ -62,7 +61,48 @@ const (
 	LexType_RuneLiteralEnd
 	LexType_StringLiteralStart
 	LexType_StringLiteralEnd
+
+	LexType_Identifier // user variable
 )
+
+// ^^^
+// as above, so below   (keep these synchronized)
+// VVV
+
+func lexTypeString(i int) string {
+	switch i {
+	case LexType_Keyword:
+		return "Keyword"
+	case LexType_Operator:
+		return "Operator"
+	case LexType_IntegralType:
+		return "IntegralType"
+	case LexType_Func:
+		return "Func"
+	case LexType_ParamStart:
+		return "ParamStart"
+	case LexType_ParamEnd:
+		return "ParamEnd"
+	case LexType_BlockStart:
+		return "BlockStart"
+	case LexType_BlockEnd:
+		return "BlockEnd"
+	case LexType_RuneLiteralStart:
+		return "RuneLiteralStart"
+	case LexType_RuneLiteralEnd:
+		return "RuneLiteralEnd"
+	case LexType_StringLiteralStart:
+		return "StringLiteralStart"
+	case LexType_StringLiteralEnd:
+		return "StringLiteralEnd"
+
+	case LexType_Identifier:
+		return "Identifier"
+
+	default:
+		return "ERROR! LexType case not synchronized with above const block!"
+	}
+}
 
 func MakeTree() {
 	// setup trees & expressions in new panel
@@ -105,7 +145,7 @@ func addNode(cb *CodeBlock) {
 	}
 }
 
-func Parse() {
+func Process() {
 	// clear script
 	mainBlock = &CodeBlock{Name: "main"}
 
@@ -113,14 +153,17 @@ func Parse() {
 	gfx.Con.Lines = []string{}
 	gfx.Rend.Panels[1].TextBodies[0] = []string{}
 
-	gfx.MakeHighlyVisibleLogHeader(`PARSING`, 5)
-	parseAll()
+	gfx.MakeHighlyVisibleLogHeader(`LEXING`, 5)
+	lexAll()
+
+	//gfx.MakeHighlyVisibleLogHeader(`PARSING`, 5)
+	//parseAll()
 
 	gfx.MakeHighlyVisibleLogHeader(`RUNNING`, 5)
 	run(mainBlock)
 }
 
-func parseAll() {
+func lexAll() {
 	bods := gfx.Rend.Panels[0].TextBodies
 	// make a 2nd copy of code, but with inserted color markup
 	bods = append(bods, []string{})
@@ -150,33 +193,37 @@ func lexAndColorMarkupLine(lineId int, line string) string {
 		lex := strings.Split(s, " ")
 
 		for i := range lex {
-			fmt.Printf("lex: %d '%s'\n", i, lex[i])
+			fmt.Printf("lexer element %d: \"%s\"\n", i, lex[i])
 
-			for j := range keywords {
-				if lex[i] == keywords[j] {
-					tokens = append(tokens, &Token{LexTypeKeyword, lex[i]})
-					break
-				}
+			if tokenizedAny(keywords, LexType_Keyword, lex[i]) {
+				break
 			}
-
-			for j := range integralTypes {
-				if lex[i] == integralTypes[j] {
-					tokens = append(tokens, &Token{LexTypeIntegralType, lex[i]})
-					break
-				}
+			if tokenizedAny(operators, LexType_Operator, lex[i]) {
+				break
 			}
-
-			for j := range operators {
-				if lex[i] == operators[j] {
-					tokens = append(tokens, &Token{LexTypeOperator, lex[i]})
-					break
-				}
+			if tokenizedAny(integralTypes, LexType_IntegralType, lex[i]) {
+				break
+			}
+			if tokenizedAny(identifiers, LexType_Identifier, lex[i]) {
+				break
 			}
 		}
 	}
 
 	regexLine(lineId, s, false)
 	return line
+}
+
+func tokenizedAny(slice []string, i int, elem string) bool {
+	for j := range slice {
+		if elem == slice[j] {
+			tokens = append(tokens, &Token{i, elem})
+			fmt.Printf("<<<<<<< TOKENIZED %s >>>>>>>: %s\n", lexTypeString(i), `"`+elem+`"`)
+			return true
+		}
+	}
+
+	return false
 }
 
 func regexLine(i int, line string, coloring bool) {
@@ -316,15 +363,15 @@ func getInt32(s string) int32 {
 
 	if err != nil {
 		for _, v := range currBlock.VarInt32s {
-			if s == v.name {
-				return v.value
+			if s == v.Name {
+				return v.Value
 			}
 		}
 
 		if currBlock.Name != "main" {
 			for _, v := range mainBlock.VarInt32s {
-				if s == v.name {
-					return v.value
+				if s == v.Name {
+					return v.Value
 				}
 			}
 		}
@@ -341,7 +388,7 @@ func printIntsFrom(f *CodeBlock) {
 		gfx.Con.Add(fmt.Sprintf("%s has no elements!\n", f.Name))
 	} else {
 		for i, v := range f.VarInt32s {
-			gfx.Con.Add(fmt.Sprintf("%s.VarInt32s[%d]: %s = %d\n", f.Name, i, v.name, v.value))
+			gfx.Con.Add(fmt.Sprintf("%s.VarInt32s[%d]: %s = %d\n", f.Name, i, v.Name, v.Value))
 		}
 	}
 }
