@@ -200,24 +200,6 @@ func lexAndColorMarkup(lineId int, line string) string {
 		for i := range lex {
 			fmt.Printf("lexer element %d: \"%s\"\n", i, lex[i])
 
-			// look for opening of enclosing pairs
-			for j, c := range lex[i] {
-				if c == '(' {
-					// TODO: handle "()" cases
-					// TODO: handle "()" cases
-					// TODO: handle "()" cases
-					fmt.Println("ENCOUNTERED open paren")
-					parenCaptureTier++
-
-					if len(lex[i]) > j+1 {
-						oneOrMoreParams := lex[i][j+1:]
-						fmt.Println("oneOrMoreParams:", oneOrMoreParams)
-					}
-
-					lex[i] = lex[i][:j] // strip open paren & later runes
-				}
-			}
-
 			if tokenizedAny(keywords, LexType_Keyword, lex[i]) {
 				break
 			}
@@ -249,6 +231,33 @@ func tokenizedAny(slice []string, i int, elem string) bool {
 			tokens = append(tokens, &Token{i, elem})
 			fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(i), `"`+elem+`"`)
 			return true
+		} else { // to allow tokenizing bundled func name and opening paren, in that order & separately
+			if /* looking for func */ i == LexType_IntegralFunc || i == LexType_FuncIdentifier {
+				if /* this contains func name */ strings.Index(elem, slice[j]) != -1 {
+					// look for opening of enclosing pairs
+					for k, c := range elem {
+						if c == '(' {
+							// TODO: handle "()" cases
+							// TODO: handle "()" cases
+							// TODO: handle "()" cases
+							fmt.Println("ENCOUNTERED open paren")
+							tokens = append(tokens, &Token{i, elem[:k]})
+							fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(i), `"`+elem[:k]+`"`)
+							tokens = append(tokens, &Token{LexType_ParamStart, "("})
+							fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(LexType_ParamStart), `"("`)
+
+							parenCaptureTier++
+
+							if len(elem) > k+1 {
+								oneOrMoreParams := elem[k+1:]
+								fmt.Println("oneOrMoreParams:", oneOrMoreParams)
+							}
+
+							return true
+						}
+					}
+				}
+			}
 		}
 	}
 
