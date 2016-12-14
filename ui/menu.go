@@ -2,7 +2,7 @@ package ui
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/app"
 )
 
 var MainMenu = Menu{}
@@ -10,19 +10,19 @@ var MainMenu = Menu{}
 func init() {
 	fmt.Println("ui.init() in menu.go")
 	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Run"})
-	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Syntax Tree"})
+	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Testing Tree"})
 	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Item 3"})
 	MainMenu.Buttons = append(MainMenu.Buttons, &Button{Name: "Item 4"})
 }
 
 type Menu struct {
 	IsVertical bool // controls which dimension gets divided up for button sizes
-	Rect       *common.Rectangle
+	Rect       *app.Rectangle
 	Buttons    []*Button
 }
 
-func (m *Menu) SetSize(rect *common.Rectangle) {
-	m.Rect = rect
+func (m *Menu) SetSize(r *app.Rectangle) {
+	m.Rect = r
 
 	// depending on vertical or horizontal layout, only 1 dimension (of the below 4 variables) is used
 	x := m.Rect.Left
@@ -31,7 +31,7 @@ func (m *Menu) SetSize(rect *common.Rectangle) {
 	hei := m.Rect.Height() / float32(len(m.Buttons)) // height of buttons
 
 	for _, b := range m.Buttons {
-		nr := &common.Rectangle{rect.Top, rect.Right, rect.Bottom, rect.Left}
+		nr := &app.Rectangle{r.Top, r.Right, r.Bottom, r.Left}
 
 		if m.IsVertical {
 			nr.Top = y

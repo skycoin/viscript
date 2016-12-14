@@ -1,6 +1,6 @@
-package common
+package app
 
-var AppName = "V I S C R I P T"
+var Name = "V I S C R I P T"
 
 // params: float value, negativemost, & positivemost bounds
 func Clamp(f, negBoundary, posBoundary float32) float32 {

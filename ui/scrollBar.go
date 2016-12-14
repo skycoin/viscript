@@ -2,7 +2,7 @@ package ui
 
 import (
 	//"fmt"
-	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/app"
 )
 
 var ScrollBarThickness float32 = 0.14 // FUTURE FIXME: base this on screen size, so UHD+ users get thick enough bars
@@ -10,10 +10,10 @@ var ScrollBarThickness float32 = 0.14 // FUTURE FIXME: base this on screen size,
 type ScrollBar struct {
 	IsHorizontal   bool
 	LenOfBar       float32
-	LenOfVoid      float32           // length of the negative space representing the length of entire document
-	LenOfOffscreen float32           // total hidden offscreen space (bookending the visible portal)
-	ScrollDelta    float32           // distance/offset from home/start of document (negative in Y cuz Y increases upwards)
-	Rect           *common.Rectangle // ... of the grabbable handle
+	LenOfVoid      float32        // length of the negative space representing the length of entire document
+	LenOfOffscreen float32        // total hidden offscreen space (bookending the visible portal)
+	ScrollDelta    float32        // distance/offset from home/start of document (negative in Y cuz Y increases upwards)
+	Rect           *app.Rectangle // ... of the grabbable handle
 }
 
 func (bar *ScrollBar) Scroll(delta float32) {
@@ -37,14 +37,14 @@ func (bar *ScrollBar) Scroll(delta float32) {
 }
 
 func (bar *ScrollBar) ClampX() {
-	bar.ScrollDelta = common.Clamp(bar.ScrollDelta, 0, bar.LenOfOffscreen)
+	bar.ScrollDelta = app.Clamp(bar.ScrollDelta, 0, bar.LenOfOffscreen)
 }
 
 func (bar *ScrollBar) ClampY() {
-	bar.ScrollDelta = common.Clamp(bar.ScrollDelta, -bar.LenOfOffscreen, 0)
+	bar.ScrollDelta = app.Clamp(bar.ScrollDelta, -bar.LenOfOffscreen, 0)
 }
 
-func (bar *ScrollBar) SetSize(panel *common.Rectangle, body []string, charWid, charHei float32) {
+func (bar *ScrollBar) SetSize(panel *app.Rectangle, body []string, charWid, charHei float32) {
 	if bar.IsHorizontal {
 		// OPTIMIZEME in the future?  idealistically, the below should only be calculated
 		// whenever user changes the size of a line, such as by:
@@ -70,7 +70,7 @@ func (bar *ScrollBar) SetSize(panel *common.Rectangle, body []string, charWid, c
 			bar.LenOfBar = 0
 			bar.LenOfVoid = panWid
 			bar.LenOfOffscreen = 0
-		} else {
+		} else { // need bar
 			totalTextWid := float32(numCharsInLongest) * charWid
 			bar.LenOfOffscreen = totalTextWid - panWid
 			bar.LenOfBar = panWid / totalTextWid * panWid
@@ -87,7 +87,7 @@ func (bar *ScrollBar) SetSize(panel *common.Rectangle, body []string, charWid, c
 			bar.LenOfBar = 0
 			bar.LenOfVoid = panHei
 			bar.LenOfOffscreen = 0
-		} else {
+		} else { // need bar
 			totalTextHei := float32(len(body)) * charHei
 			//fmt.Printf("totalTextHei: %.2f\n", totalTextHei)
 			bar.LenOfOffscreen = totalTextHei - panHei

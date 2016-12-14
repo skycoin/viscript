@@ -1,11 +1,11 @@
 package ui
 
 import (
-	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/app"
 )
 
 type Button struct {
 	Name      string
 	Activated bool
-	Rect      *common.Rectangle
+	Rect      *app.Rectangle
 }

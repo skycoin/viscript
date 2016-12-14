@@ -2,7 +2,7 @@ package gfx
 
 import (
 	//"fmt"
-	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/app"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"time"
@@ -10,7 +10,7 @@ import (
 
 var Curs Cursors = Cursors{NextBlinkChange: time.Now(), Visible: true}
 
-func MouseCursorIsInside(r *common.Rectangle) bool {
+func MouseCursorIsInside(r *app.Rectangle) bool {
 	if Curs.MouseGlY < r.Top && Curs.MouseGlY > r.Bottom {
 		if Curs.MouseGlX < r.Right && Curs.MouseGlX > r.Left {
 			return true
@@ -57,7 +57,7 @@ func (c *Cursors) UpdatePosition(x, y float32) {
 	c.MouseGlY = Rend.ClientExtentY - y*Rend.PixelHei
 }
 
-func (c *Cursors) GetAnimationModifiedRect(r common.Rectangle) *common.Rectangle {
+func (c *Cursors) GetAnimationModifiedRect(r app.Rectangle) *app.Rectangle {
 	if c.shrinking {
 		r.Bottom = r.Top - c.shrinkFraction*r.Height()
 		r.Left = r.Right - c.shrinkFraction*r.Width()
@@ -105,16 +105,16 @@ func (c *Cursors) ConvertMouseClickToTextCursorPosition(button, action uint8) {
 		foc := Rend.Focused
 
 		if foc.IsEditable && foc.ContainsMouseCursorInsideOfScrollBars() {
-			if foc.MouseY < len(foc.Body) {
+			if foc.MouseY < len(foc.TextBodies[0]) {
 				foc.CursY = foc.MouseY
 
-				if foc.MouseX <= len(foc.Body[foc.CursY]) {
+				if foc.MouseX <= len(foc.TextBodies[0][foc.CursY]) {
 					foc.CursX = foc.MouseX
 				} else {
-					foc.CursX = len(foc.Body[foc.CursY])
+					foc.CursX = len(foc.TextBodies[0][foc.CursY])
 				}
 			} else {
-				foc.CursY = len(foc.Body) - 1
+				foc.CursY = len(foc.TextBodies[0]) - 1
 			}
 		}
 	}

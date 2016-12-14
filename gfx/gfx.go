@@ -21,16 +21,32 @@ package gfx
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
 var Rend = CcRenderer{}
 
+var PrevColor []float32 // previous
+var CurrColor []float32
+
+// private
+var runPanelHeiFrac = float32(0.4) // fraction of vertical strip height which is dedicated to running code
 var goldenRatio = 1.61803398875
 var goldenFraction = float32(goldenRatio / (goldenRatio + 1))
 
+// dimensions (in pixel units)
+var InitAppWidth int32 = 800
+var InitAppHeight int32 = 600
+var CurrAppWidth int32 = InitAppWidth
+var CurrAppHeight int32 = InitAppHeight
+var longerDimension = float32(InitAppWidth) / float32(InitAppHeight)
+var InitFrustum = &app.Rectangle{1, longerDimension, -1, -longerDimension}
+var PrevFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
+var CurrFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
+
+// colors
 var Black = []float32{0, 0, 0, 1}
 var Blue = []float32{0, 0, 1, 1}
 var Cyan = []float32{0, 0.5, 1, 1}
@@ -40,6 +56,7 @@ var GrayDark = []float32{0.15, 0.15, 0.15, 1}
 var GrayLight = []float32{0.4, 0.4, 0.4, 1}
 var Green = []float32{0, 1, 0, 1}
 var Magenta = []float32{1, 0, 1, 1}
+var Maroon = []float32{0.7, 0.1, 0.2, 1}
 var Orange = []float32{0.8, 0.35, 0, 1}
 var Purple = []float32{0.6, 0, 0.8, 1}
 var Red = []float32{1, 0, 0, 1}
@@ -48,29 +65,62 @@ var Violet = []float32{0.4, 0.2, 1, 1}
 var White = []float32{1, 1, 1, 1}
 var Yellow = []float32{1, 1, 0, 1}
 
-// dimensions (in pixel units)
-var InitAppWidth int32 = 800
-var InitAppHeight int32 = 600
-var CurrAppWidth int32 = InitAppWidth
-var CurrAppHeight int32 = InitAppHeight
-var longerDimension = float32(InitAppWidth) / float32(InitAppHeight)
-var InitFrustum = &common.Rectangle{1, longerDimension, -1, -longerDimension}
-var PrevFrustum = &common.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
-var CurrFrustum = &common.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
+// ^^^
+// as above, so below   (keep these synchronized)
+// VVV
+
+func SetColorFromText(s string) {
+	switch s {
+	case "<color=Black":
+		SetColor(Black)
+	case "<color=Blue":
+		SetColor(Blue)
+	case "<color=Cyan":
+		SetColor(Cyan)
+	case "<color=Fuschia":
+		SetColor(Fuschia)
+	case "<color=Gray":
+		SetColor(Gray)
+	case "<color=GrayDark":
+		SetColor(GrayDark)
+	case "<color=GrayLight":
+		SetColor(GrayLight)
+	case "<color=Green":
+		SetColor(Green)
+	case "<color=Magenta":
+		SetColor(Magenta)
+	case "<color=Maroon":
+		SetColor(Maroon)
+	case "<color=Orange":
+		SetColor(Orange)
+	case "<color=Purple":
+		SetColor(Purple)
+	case "<color=Red":
+		SetColor(Red)
+	case "<color=Tan":
+		SetColor(Tan)
+	case "<color=Violet":
+		SetColor(Violet)
+	case "<color=White":
+		SetColor(White)
+	case "<color=Yellow":
+		SetColor(Yellow)
+	}
+}
 
 func init() {
 	fmt.Println("gfx.init()")
 
 	// one-time setup
+	PrevColor = GrayDark
+	CurrColor = GrayDark
+
 	Rend.MaxCharsX = 80
 	Rend.MaxCharsY = 25
 	Rend.DistanceFromOrigin = 3
 	Rend.UvSpan = float32(1.0) / 16 // how much uv a pixel spans
-	Rend.RunPanelHeiPerc = 0.4
-	Rend.PrevColor = GrayDark
-	Rend.CurrColor = GrayDark
 
-	// things to resize later
+	// things that are resized later
 	Rend.ClientExtentX = Rend.DistanceFromOrigin * longerDimension
 	Rend.ClientExtentY = Rend.DistanceFromOrigin
 	Rend.CharWid = float32(Rend.ClientExtentX*2) / float32(Rend.MaxCharsX)
@@ -80,21 +130,29 @@ func init() {
 	Rend.PixelWid = Rend.ClientExtentX * 2 / float32(CurrAppWidth)
 	Rend.PixelHei = Rend.ClientExtentY * 2 / float32(CurrAppHeight)
 
-	// one-time setup of panels
-	Rend.Panels = append(Rend.Panels, &TextPanel{BandPercent: 1 - Rend.RunPanelHeiPerc, IsEditable: true})
-	Rend.Panels = append(Rend.Panels, &TextPanel{BandPercent: Rend.RunPanelHeiPerc, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
+	// MORE one-time setup
+	initPanels()
+	ui.MainMenu.SetSize(Rend.GetMenuSizedRect())
+}
+
+func SetColor(newColor []float32) {
+	PrevColor = CurrColor
+	CurrColor = newColor
+	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &newColor[0])
+}
+
+func initPanels() {
+	Rend.Panels = append(Rend.Panels, &ScrollablePanel{FractionOfStrip: 1 - runPanelHeiFrac, IsEditable: true})
+	Rend.Panels = append(Rend.Panels, &ScrollablePanel{FractionOfStrip: runPanelHeiFrac, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
 	Rend.Focused = Rend.Panels[0]
 
 	Rend.Panels[0].Init()
 	Rend.Panels[0].SetupDemoProgram()
 	Rend.Panels[1].Init()
-
-	ui.MainMenu.SetSize(Rend.GetMenuSizedRect())
 }
 
 type CcRenderer struct {
 	DistanceFromOrigin float32
-	RunPanelHeiPerc    float32 // FIXME: hardwired value for a specific use case
 	ClientExtentX      float32 // distance from the center to an edge of the app's root/client area
 	ClientExtentY      float32
 	// ....in the cardinal directions from the center, corners would be farther away)
@@ -110,12 +168,10 @@ type CcRenderer struct {
 	MaxCharsX int // this is used to give us proportions like an 80x25 text console screen, ....
 	MaxCharsY int // ....from a cr.DistanceFromOrigin*2-by-cr.DistanceFromOrigin*2 gl space
 	// current position renderer draws to
-	CurrX     float32
-	CurrY     float32
-	PrevColor []float32 // previous
-	CurrColor []float32
-	Focused   *TextPanel
-	Panels    []*TextPanel
+	CurrX   float32
+	CurrY   float32
+	Focused *ScrollablePanel
+	Panels  []*ScrollablePanel
 }
 
 func (cr *CcRenderer) SetSize() {
@@ -149,18 +205,12 @@ func (cr *CcRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelD
 	}
 }
 
-func (cr *CcRenderer) GetMenuSizedRect() *common.Rectangle {
-	return &common.Rectangle{
+func (cr *CcRenderer) GetMenuSizedRect() *app.Rectangle {
+	return &app.Rectangle{
 		Rend.ClientExtentY,
 		Rend.ClientExtentX,
 		Rend.ClientExtentY - Rend.CharHei,
 		-Rend.ClientExtentX}
-}
-
-func (cr *CcRenderer) Color(newColor []float32) {
-	cr.PrevColor = cr.CurrColor
-	cr.CurrColor = newColor
-	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &newColor[0])
 }
 
 func (cr *CcRenderer) DrawAll() {
@@ -173,15 +223,15 @@ func (cr *CcRenderer) DrawAll() {
 
 	// // 'crosshair' center indicator
 	//var f float32 = Rend.CharHei
-	//Rend.DrawCharAtRect('+', &common.Rectangle{f, f, -f, -f})
+	//Rend.DrawCharAtRect('+', &app.Rectangle{f, f, -f, -f})
 }
 
 func (cr *CcRenderer) DrawMenu() {
 	for _, bu := range ui.MainMenu.Buttons {
 		if bu.Activated {
-			Rend.Color(Green)
+			SetColor(Green)
 		} else {
-			Rend.Color(White)
+			SetColor(White)
 		}
 
 		Rend.DrawStretchableRect(11, 13, bu.Rect)
@@ -189,7 +239,7 @@ func (cr *CcRenderer) DrawMenu() {
 	}
 }
 
-func (cr *CcRenderer) DrawTextInRect(s string, r *common.Rectangle) {
+func (cr *CcRenderer) DrawTextInRect(s string, r *app.Rectangle) {
 	h := r.Height() * goldenFraction   // height of chars
 	w := h                             // width of chars (same as height, or else squished to fit rect)
 	glTextWidth := float32(len(s)) * w // in terms of OpenGL/float32 space
@@ -204,12 +254,12 @@ func (cr *CcRenderer) DrawTextInRect(s string, r *common.Rectangle) {
 	x := r.Left + (r.Width()-glTextWidth)/2
 
 	for _, c := range s {
-		Rend.DrawCharAtRect(c, &common.Rectangle{r.Top - lipSpan, x + w, r.Bottom + lipSpan, x})
+		Rend.DrawCharAtRect(c, &app.Rectangle{r.Top - lipSpan, x + w, r.Bottom + lipSpan, x})
 		x += w
 	}
 }
 
-func (cr *CcRenderer) DrawCharAtRect(char rune, r *common.Rectangle) {
+func (cr *CcRenderer) DrawCharAtRect(char rune, r *app.Rectangle) {
 	u := float32(int(char) % 16)
 	v := float32(int(char) / 16)
 	sp := Rend.UvSpan
@@ -229,10 +279,10 @@ func (cr *CcRenderer) DrawCharAtRect(char rune, r *common.Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
-func (cr *CcRenderer) DrawTriangle(atlasX, atlasY float32, a, b, c common.Vec2) {
+func (cr *CcRenderer) DrawTriangle(atlasX, atlasY float32, a, b, c app.Vec2) {
 	// for convenience, and because drawing some extra triangles
 	// (only for flow arrows between tree node blocks ATM) won't matter,
-	// we are actually drawing a quad, with the 3rd & 4th verts @ the same spot
+	// we are actually drawing a quad, with the last 2 verts @ the same spot
 
 	sp /* span */ := Rend.UvSpan
 	u := float32(atlasX) * sp
@@ -252,7 +302,7 @@ func (cr *CcRenderer) DrawTriangle(atlasX, atlasY float32, a, b, c common.Vec2) 
 	gl.Vertex3f(c.X, c.Y, 0)
 }
 
-func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *common.Rectangle) {
+func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *app.Rectangle) {
 	sp /* span */ := Rend.UvSpan
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp
@@ -272,7 +322,7 @@ func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *common.Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
-func (cr *CcRenderer) DrawStretchableRect(atlasX, atlasY float32, r *common.Rectangle) {
+func (cr *CcRenderer) DrawStretchableRect(atlasX, atlasY float32, r *app.Rectangle) {
 	// (sometimes called 9 Slicing)
 	// draw 9 quads which keep a predictable frame/margin/edge undistorted,
 	// while stretching the middle to fit the desired space

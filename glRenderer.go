@@ -11,10 +11,8 @@ import (
 		"go/build"
 		"runtime"
 	*/
-	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
-	"github.com/corpusc/viscript/parser"
-	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
@@ -52,7 +50,7 @@ func initRenderer() {
 	gl.LoadIdentity()
 }
 
-func setFrustum(r *common.Rectangle) {
+func setFrustum(r *app.Rectangle) {
 	gl.Frustum(
 		float64(r.Left),
 		float64(r.Right),
@@ -84,10 +82,6 @@ func drawScene() {
 
 	gl.Begin(gl.QUADS)
 	gfx.Rend.DrawAll()
-	// syntax tree
-	if ui.MainMenu.ButtonActivated("Syntax Tree") {
-		parser.Draw()
-	}
 	gl.End()
 }
 

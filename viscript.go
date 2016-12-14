@@ -30,7 +30,7 @@ import (
 	_ "os"
 	"runtime"
 
-	"github.com/corpusc/viscript/common"
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
@@ -38,7 +38,7 @@ import (
 
 func init() {
 	fmt.Println("main.init()")
-	gfx.MakeHighlyVisibleLogHeader(common.AppName, 15)
+	gfx.MakeHighlyVisibleLogHeader(app.Name, 15)
 	// GLFW event handling must run on the main OS thread
 	// See documentation for functions that are only allowed to be called from the main thread.
 	runtime.LockOSThread()
@@ -54,7 +54,7 @@ func main() {
 	glfw.WindowHint(glfw.Resizable, glfw.True)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-	window, err := glfw.CreateWindow(int(gfx.CurrAppWidth), int(gfx.CurrAppHeight), common.AppName, nil, nil)
+	window, err := glfw.CreateWindow(int(gfx.CurrAppWidth), int(gfx.CurrAppHeight), app.Name, nil, nil)
 
 	if err != nil {
 		panic(err)
