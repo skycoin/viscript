@@ -35,7 +35,7 @@ TODO:
 var integralTypes = []string{"bool", "int32", "float32", "rune", "string"} // FIXME: should allow [] and [42] prefixes
 var integralFuncs = []string{"add32", "sub32", "mult32", "div32"}
 var operators = []string{"=", ":=", "==", "!=", "+=", "-=", "*=", "/=", "%=", "+", "-", "*", "/", "%"}
-var keywords = []string{"break", "continue", "fallthrough", "var", "if", "do", "while", "switch", "for"}
+var keywords = []string{"break", "continue", "fallthrough", "var", "if", "do", "while", "switch", "for", "func"}
 var varIdentifiers = []string{}
 var funcIdentifiers = []string{}
 var tokens = []*Token{}

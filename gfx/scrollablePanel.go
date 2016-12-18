@@ -144,10 +144,10 @@ func (sp *ScrollablePanel) DrawText() {
 			// iterate over runes
 			SetColor(Gray)
 			for x, c := range line {
-				ncId = sp.changeColorIfCodeAt(x, y, ncId, nc)
+				ncId, nc = sp.changeColorIfCodeAt(x, y, ncId, nc)
 
 				// drawing
-				if lineVisible && /* char visible */ cX >= sp.Rect.Left-cW && cX < sp.BarVert.Rect.Left {
+				if /* char visible */ cX >= sp.Rect.Left-cW && cX < sp.BarVert.Rect.Left {
 					app.ClampLeftAndRightOf(r, sp.Rect.Left, sp.BarVert.Rect.Left)
 					Rend.DrawCharAtRect(c, r)
 
@@ -179,7 +179,7 @@ func (sp *ScrollablePanel) DrawText() {
 			cX = sp.GoToLeftEdge()
 		} else { // line not visible
 			for x := range line {
-				ncId = sp.changeColorIfCodeAt(x, y, ncId, nc)
+				ncId, nc = sp.changeColorIfCodeAt(x, y, ncId, nc)
 			}
 		}
 
@@ -187,18 +187,21 @@ func (sp *ScrollablePanel) DrawText() {
 	}
 }
 
-func (sp *ScrollablePanel) changeColorIfCodeAt(x, y, ncId int, nc *ColorSpot) int {
+func (sp *ScrollablePanel) changeColorIfCodeAt(x, y, ncId int, nc *ColorSpot) (int, *ColorSpot) {
 	if /* colors exist */ len(sp.TextColors) > 0 {
 		if x == nc.Pos.X &&
 			y == nc.Pos.Y {
 			SetColor(nc.Color)
-			//fmt.Println("--------drew nc-------nc, then 3rd():", nc, sp.TextColors[2])
+			//fmt.Println("-------- nc-------, then 3rd():", nc, sp.TextColors[2])
 			ncId++
-			nc = sp.TextColors[ncId]
+
+			if ncId < len(sp.TextColors) {
+				nc = sp.TextColors[ncId]
+			}
 		}
 	}
 
-	return ncId
+	return ncId, nc
 }
 
 // ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)
