@@ -236,12 +236,13 @@ func lexAndColorMarkup(lineId int, line string) string {
 		}
 
 		line = strings.Join(lex, " ")
-
-		if comment != "" {
-			line += " " + comment
-		}
-
 		regexLine(lineId, s)
+	} else {
+		line = ""
+	}
+
+	if comment != "" {
+		line += " " + comment
 	}
 
 	return line
