@@ -120,9 +120,8 @@ func (sp *ScrollablePanel) DrawText() {
 	b := sp.BarHori.Rect.Top // bottom of text area
 
 	// setup for colored text
-	// 		next color
-	ncId := 0
-	var nc *ColorSpot
+	ncId := 0         // next color
+	var nc *ColorSpot // ^
 	if /* colors exist */ len(sp.TextColors) > 0 {
 		nc = sp.TextColors[ncId]
 	}
@@ -148,6 +147,7 @@ func (sp *ScrollablePanel) DrawText() {
 					if x == nc.Pos.X &&
 						y == nc.Pos.Y {
 						SetColor(nc.Color)
+						//fmt.Println("--------drew nc-------nc, then 3rd():", nc, sp.TextColors[2])
 						ncId++
 						nc = sp.TextColors[ncId]
 					}

@@ -206,12 +206,11 @@ func lexAndColorMarkup(y int, line string) string {
 	x := strings.Index(line, "//")
 	if /* comment exists */ x != -1 {
 		s = line[:x]
-		comment = "<color=GrayDark>" + line[x:]
-		fmt.Println("marked up line:", line)
-		color(x, y, gfx.GrayDark)
+		comment = line[x:]
 	}
 
 	s = strings.TrimSpace(s)
+	x = 0
 
 	if /* we're not left with an empty string */ len(s) > 0 {
 		fmt.Println("s:", s)
@@ -219,37 +218,29 @@ func lexAndColorMarkup(y int, line string) string {
 		// tokenize
 		lex := strings.Split(s, " ")
 
-		x = 0
 		for i := range lex {
 			fmt.Printf("lexer element %d: \"%s\"\n", i, lex[i])
 
 			switch {
 			case tokenizedAny(keywords, LexType_Keyword, lex[i]):
-				lex[i] = "<color=MaroonDark>" + lex[i]
 				color(x, y, gfx.MaroonDark)
 			case tokenizedAny(operators, LexType_Operator, lex[i]):
-				lex[i] = "<color=Maroon>" + lex[i]
 				color(x, y, gfx.Maroon)
 			case tokenizedAny(integralTypes, LexType_IntegralType, lex[i]):
-				lex[i] = "<color=Cyan>" + lex[i]
 				color(x, y, gfx.Cyan)
 			case tokenizedAny(integralFuncs, LexType_IntegralFunc, lex[i]):
-				lex[i] = "<color=Maroon>" + lex[i]
 				color(x, y, gfx.Maroon)
 			case tokenizedAny(varIdentifiers, LexType_VarIdentifier, lex[i]):
-				lex[i] = "<color=White>" + lex[i]
 				color(x, y, gfx.White)
 			case tokenizedAny(funcIdentifiers, LexType_FuncIdentifier, lex[i]):
-				lex[i] = "<color=Green>" + lex[i]
 				color(x, y, gfx.Green)
 			default:
-				lex[i] = "<color=White>" + lex[i]
 				color(x, y, gfx.White)
 			}
 
 			x += len(lex[i])
 
-			if /* not the first token */ i != 0 {
+			if /* not the last token */ i != len(lex)-1 {
 				x++ // for a space
 			}
 		}
@@ -262,6 +253,7 @@ func lexAndColorMarkup(y int, line string) string {
 
 	if comment != "" {
 		line += " " + comment
+		color(x, y, gfx.GrayDark)
 	}
 
 	return line
@@ -269,6 +261,7 @@ func lexAndColorMarkup(y int, line string) string {
 
 func color(x, y int, color []float32) {
 	textColors = append(textColors, &gfx.ColorSpot{app.Vec2Int{x, y}, color})
+	fmt.Println("------------textColors[len(textColors)-1]:", textColors[len(textColors)-1])
 }
 
 func tokenizedAny(slice []string, i int, elem string) bool {
