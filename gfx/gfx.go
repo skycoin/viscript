@@ -56,7 +56,8 @@ var GrayDark = []float32{0.15, 0.15, 0.15, 1}
 var GrayLight = []float32{0.4, 0.4, 0.4, 1}
 var Green = []float32{0, 1, 0, 1}
 var Magenta = []float32{1, 0, 1, 1}
-var Maroon = []float32{0.5, 0.1, 0.35, 1}
+var Maroon = []float32{0.5, 0.03, 0.207, 1}
+var MaroonDark = []float32{0.24, 0.014, 0.1035, 1}
 var Orange = []float32{0.8, 0.35, 0, 1}
 var Purple = []float32{0.6, 0, 0.8, 1}
 var Red = []float32{1, 0, 0, 1}
@@ -91,6 +92,8 @@ func SetColorFromText(s string) {
 		SetColor(Magenta)
 	case "<color=Maroon":
 		SetColor(Maroon)
+	case "<color=MaroonDark":
+		SetColor(MaroonDark)
 	case "<color=Orange":
 		SetColor(Orange)
 	case "<color=Purple":

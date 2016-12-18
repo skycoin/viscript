@@ -72,6 +72,7 @@ func (sp *ScrollablePanel) RespondToMouseClick() {
 	glDeltaYFromHome := Curs.MouseGlY - sp.Rect.Top
 	sp.MouseX = int((glDeltaXFromHome + sp.BarHori.ScrollDelta) / Rend.CharWid)
 	sp.MouseY = int(-(glDeltaYFromHome + sp.BarVert.ScrollDelta) / Rend.CharHei)
+	sp.adjustXConsideringMarkup()
 
 	if sp.MouseY < 0 {
 		sp.MouseY = 0
@@ -80,6 +81,38 @@ func (sp *ScrollablePanel) RespondToMouseClick() {
 	if sp.MouseY >= len(sp.TextBodies[0]) {
 		sp.MouseY = len(sp.TextBodies[0]) - 1
 	}
+}
+
+func (sp *ScrollablePanel) adjustXConsideringMarkup() {
+	if len(sp.TextBodies) < 2 {
+		return
+	}
+
+	xOff := 0 // offset for skipping invisible markup text
+	line := sp.TextBodies[1][sp.MouseY]
+	inMarkup := false
+
+	for x, c := range line {
+		if x > sp.MouseX+xOff {
+			break
+		}
+
+		switch c {
+		case '>':
+			xOff++ // still need to count this rune
+			inMarkup = false
+		case '<':
+			inMarkup = true
+		}
+
+		if inMarkup {
+			xOff++
+		}
+	}
+
+	sp.MouseX += xOff
+	fmt.Println("xOff:", xOff)
+	fmt.Println("sp.MouseX:", sp.MouseX)
 }
 
 func (sp *ScrollablePanel) GoToTopEdge() {
@@ -145,7 +178,6 @@ func (sp *ScrollablePanel) DrawText() {
 			SetColor(Gray)
 			for x, c := range line {
 				if /* ending color building */ c == '>' {
-					//fmt.Println("============ GOT OUR COLOR:", colorText)
 					SetColorFromText(colorText)
 					colorText = ""
 				} else if /* building color */ c == '<' || len(colorText) > 0 {

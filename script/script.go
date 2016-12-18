@@ -32,7 +32,7 @@ TODO:
 */
 
 // lexing
-var integralTypes = []string{"bool", "int32", "string"} // FIXME: should allow [] and [42] prefixes
+var integralTypes = []string{"bool", "int32", "float32", "rune", "string"} // FIXME: should allow [] and [42] prefixes
 var integralFuncs = []string{"add32", "sub32", "mult32", "div32"}
 var operators = []string{"=", ":=", "==", "!=", "+=", "-=", "*=", "/=", "%=", "+", "-", "*", "/", "%"}
 var keywords = []string{"break", "continue", "fallthrough", "var", "if", "do", "while", "switch", "for"}
@@ -219,11 +219,11 @@ func lexAndColorMarkup(lineId int, line string) string {
 
 			switch {
 			case tokenizedAny(keywords, LexType_Keyword, lex[i]):
-				lex[i] = "<color=Maroon>" + lex[i]
+				lex[i] = "<color=MaroonDark>" + lex[i]
 			case tokenizedAny(operators, LexType_Operator, lex[i]):
 				lex[i] = "<color=Maroon>" + lex[i]
 			case tokenizedAny(integralTypes, LexType_IntegralType, lex[i]):
-				lex[i] = "<color=Blue>" + lex[i]
+				lex[i] = "<color=Cyan>" + lex[i]
 			case tokenizedAny(integralFuncs, LexType_IntegralFunc, lex[i]):
 				lex[i] = "<color=Maroon>" + lex[i]
 			case tokenizedAny(varIdentifiers, LexType_VarIdentifier, lex[i]):
