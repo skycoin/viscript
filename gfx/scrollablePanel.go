@@ -113,7 +113,7 @@ func (sp *ScrollablePanel) Draw() {
 }
 
 func (sp *ScrollablePanel) DrawText() {
-	cX := Rend.CurrX // current (internal/logic cursor) drawing position
+	cX := Rend.CurrX // current drawing position
 	cY := Rend.CurrY
 	cW := Rend.CharWid
 	cH := Rend.CharHei
@@ -126,10 +126,11 @@ func (sp *ScrollablePanel) DrawText() {
 		nc = sp.TextColors[ncId]
 	}
 
-	// iterate over all runes
+	// iterate over lines
 	for y, line := range sp.TextBodies[0] {
-		// if line visible
-		if cY <= sp.Rect.Top+cH && cY >= b {
+		lineVisible := cY <= sp.Rect.Top+cH && cY >= b
+
+		if lineVisible {
 			r := &app.Rectangle{cY, cX + cW, cY - cH, cX} // t, r, b, l
 
 			// if line needs vertical adjustment
@@ -140,21 +141,13 @@ func (sp *ScrollablePanel) DrawText() {
 				r.Bottom = b
 			}
 
-			// process line of text
+			// iterate over runes
 			SetColor(Gray)
 			for x, c := range line {
-				if /* colors exist */ len(sp.TextColors) > 0 {
-					if x == nc.Pos.X &&
-						y == nc.Pos.Y {
-						SetColor(nc.Color)
-						//fmt.Println("--------drew nc-------nc, then 3rd():", nc, sp.TextColors[2])
-						ncId++
-						nc = sp.TextColors[ncId]
-					}
-				}
+				ncId = sp.changeColorIfCodeAt(x, y, ncId, nc)
 
 				// drawing
-				if /* visible */ cX >= sp.Rect.Left-cW && cX < sp.BarVert.Rect.Left {
+				if lineVisible && /* char visible */ cX >= sp.Rect.Left-cW && cX < sp.BarVert.Rect.Left {
 					app.ClampLeftAndRightOf(r, sp.Rect.Left, sp.BarVert.Rect.Left)
 					Rend.DrawCharAtRect(c, r)
 
@@ -184,10 +177,28 @@ func (sp *ScrollablePanel) DrawText() {
 			}
 
 			cX = sp.GoToLeftEdge()
+		} else { // line not visible
+			for x := range line {
+				ncId = sp.changeColorIfCodeAt(x, y, ncId, nc)
+			}
 		}
 
 		cY -= cH // go down a line height
 	}
+}
+
+func (sp *ScrollablePanel) changeColorIfCodeAt(x, y, ncId int, nc *ColorSpot) int {
+	if /* colors exist */ len(sp.TextColors) > 0 {
+		if x == nc.Pos.X &&
+			y == nc.Pos.Y {
+			SetColor(nc.Color)
+			//fmt.Println("--------drew nc-------nc, then 3rd():", nc, sp.TextColors[2])
+			ncId++
+			nc = sp.TextColors[ncId]
+		}
+	}
+
+	return ncId
 }
 
 // ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)
