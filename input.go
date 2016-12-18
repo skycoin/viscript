@@ -259,8 +259,6 @@ func onKey(
 			foc.RemoveCharacter(true)
 
 		}
-
-		script.Process(false)
 	}
 
 	// build message

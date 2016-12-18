@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/script"
 )
 
 const (
@@ -49,6 +50,7 @@ func processMessage(message []byte) {
 	case MessageCharacter:
 		s("MessageCharacter", message)
 		insertRuneIntoDocument("Rune", message)
+		script.Process(false)
 
 	case MessageKey:
 		s("MessageKey", message)
