@@ -108,7 +108,7 @@ func (sp *ScrollablePanel) Draw() {
 	Rend.DrawStretchableRect(11, 13, sp.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
 	Rend.DrawStretchableRect(11, 13, sp.BarVert.Rect) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
 	SetColor(White)
-	sp.DrawTrees()
+	sp.DrawTree()
 }
 
 func (sp *ScrollablePanel) DrawText() {
@@ -120,9 +120,11 @@ func (sp *ScrollablePanel) DrawText() {
 	b := sp.BarHori.Rect.Top // bottom of text area
 
 	text := sp.TextBodies[0]
-	// setup for colored text if it's been generated
-	if len(sp.TextBodies) > 1 {
+	// setup for colored text
+	if /* it's been generated */ len(sp.TextBodies) > 1 {
 		text = sp.TextBodies[1]
+	} else { // otherwise generate, so demo program starts out colorized
+		//script.Process(false)    FIXME: can't import "script", cuz dupes "gfx"
 	}
 
 	// iterate all runes
@@ -255,8 +257,7 @@ func (sp *ScrollablePanel) RemoveCharacter(fromUnderCursor bool) {
 	}
 }
 
-func (sp *ScrollablePanel) DrawTrees() {
-	//for _, tree := range sp.Trees {
+func (sp *ScrollablePanel) DrawTree() {
 	if len(sp.Trees) > 0 {
 		// setup main rect
 		span := float32(1.3)
@@ -285,7 +286,7 @@ func (sp *ScrollablePanel) drawNodeAndDescendants(r *app.Rectangle, nodeId int) 
 	node := sp.Trees[0].Nodes[nodeId] // FIXME? .....
 	// find sp.Trees[0].Nodes[i].....
 	// ......(if we ever use multiple trees per panel)
-	// ......(also update DrawTrees to use range)
+	// ......(also update DrawTree to use range)
 
 	if /* left child exists */ node.ChildIdL != math.MaxInt32 {
 		x := cX - rSp*1.5

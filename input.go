@@ -84,12 +84,12 @@ func onMouseButton(
 						switch bu.Name {
 						case "Run":
 							if bu.Activated {
-								script.Process()
+								script.Process(true)
 							}
 							break
 						case "Testing Tree":
 							if bu.Activated {
-								script.Process()
+								script.Process(true)
 								script.MakeTree()
 							} else { // deactivated
 								// remove all panels with trees
@@ -161,24 +161,24 @@ func onKey(
 		case glfw.KeyLeftControl:
 			fallthrough
 		case glfw.KeyRightControl:
-			fmt.Println("Control RELEASED")
+			//fmt.Println("Control RELEASED")
 
 		case glfw.KeyLeftAlt:
 			fallthrough
 		case glfw.KeyRightAlt:
-			fmt.Println("Alt RELEASED")
+			//fmt.Println("Alt RELEASED")
 
 		case glfw.KeyLeftSuper:
 			fallthrough
 		case glfw.KeyRightSuper:
-			fmt.Println("'Super' modifier key RELEASED")
+			//fmt.Println("'Super' modifier key RELEASED")
 		}
 	} else { // glfw.Repeat   or   glfw.Press
 		b := foc.TextBodies[0]
 
 		switch mod {
 		case glfw.ModShift:
-			fmt.Println("start selecting")
+			fmt.Println("started selecting")
 			foc.Selection.CurrentlySelecting = true
 			foc.Selection.StartX = foc.CursX
 			foc.Selection.StartY = foc.CursY
@@ -259,6 +259,8 @@ func onKey(
 			foc.RemoveCharacter(true)
 
 		}
+
+		script.Process(false)
 	}
 
 	// build message
