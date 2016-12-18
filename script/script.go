@@ -181,20 +181,13 @@ func Process(feedbackWanted bool) {
 func lexAll() {
 	bods := gfx.Rend.Panels[0].TextBodies
 
-	if /* needed.... */ len(bods) < 2 {
-		// ....make a 2nd copy of code (for inserting color markup)
-		bods = append(bods, []string{})
-	} else { // clear existing
-		bods[1] = []string{}
-	}
 	textColors = []*gfx.ColorSpot{}
 
 	for i, line := range bods[0] {
-		bods[1] = append(bods[1], lexAndColorMarkup(i, line))
+		lexAndColorMarkup(i, line)
 	}
 
 	// FIXME if wanting colors in non-script panels
-	gfx.Rend.Panels[0].TextBodies = append(gfx.Rend.Panels[0].TextBodies, bods[1])
 	gfx.Rend.Panels[0].TextColors = textColors
 }
 
