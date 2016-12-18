@@ -35,7 +35,7 @@ TODO:
 var integralTypes = []string{"bool", "int32", "float32", "rune", "string"} // FIXME: should allow [] and [42] prefixes
 var integralFuncs = []string{"add32", "sub32", "mult32", "div32"}
 var operators = []string{"=", ":=", "==", "!=", "+=", "-=", "*=", "/=", "%=", "+", "-", "*", "/", "%"}
-var keywords = []string{"break", "continue", "fallthrough", "var", "if", "do", "while", "switch", "for", "func"}
+var keywords = []string{"break", "continue", "fallthrough", "var", "if", "do", "while", "switch", "case", "for", "func", "return", "range"}
 var varIdentifiers = []string{}
 var funcIdentifiers = []string{}
 var tokens = []*Token{}
@@ -209,8 +209,17 @@ func lexAndColorMarkup(y int, line string) string {
 		comment = line[x:]
 	}
 
+	start := 0 // start of non-space runes
+	for _, c := range s {
+		if c == ' ' {
+			start++
+		} else {
+			break
+		}
+	}
+
+	x = start
 	s = strings.TrimSpace(s)
-	x = 0
 
 	if /* we're not left with an empty string */ len(s) > 0 {
 		fmt.Println("s:", s)
@@ -275,10 +284,8 @@ func tokenizedAny(slice []string, i int, elem string) bool {
 				if /* this contains func name */ strings.Index(elem, slice[j]) != -1 {
 					// look for opening of enclosing pairs
 					for k, c := range elem {
-						if c == '(' {
-							// TODO: handle "()" cases
-							// TODO: handle "()" cases
-							// TODO: handle "()" cases
+						switch c {
+						case '(':
 							fmt.Println("ENCOUNTERED open paren")
 							tokens = append(tokens, &Token{i, elem[:k]})
 							fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(i), `"`+elem[:k]+`"`)

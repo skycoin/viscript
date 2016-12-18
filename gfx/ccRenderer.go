@@ -74,10 +74,6 @@ func (cr *CcRenderer) DrawAll() {
 	for _, pan := range cr.Panels {
 		pan.Draw()
 	}
-
-	// // 'crosshair' center indicator
-	//var f float32 = Rend.CharHei
-	//Rend.DrawCharAtRect('+', &app.Rectangle{f, f, -f, -f})
 }
 
 func (cr *CcRenderer) DrawMenu() {
