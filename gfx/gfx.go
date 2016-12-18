@@ -179,8 +179,6 @@ type CcRenderer struct {
 
 func (cr *CcRenderer) SetSize() {
 	fmt.Printf("CcRenderer.SetSize() - ClientExtentX: %.2f\n", cr.ClientExtentX)
-	//cr.ClientExtentX = cr.DistanceFromOrigin * (CurrFrustum.Right / InitFrustum.Right)
-	//cr.ClientExtentY = cr.DistanceFromOrigin * (CurrFrustum.Top / InitFrustum.Top)
 	*PrevFrustum = *CurrFrustum
 
 	CurrFrustum.Right = float32(CurrAppWidth) / float32(InitAppWidth) * InitFrustum.Right

@@ -30,3 +30,8 @@ type Vec2 struct {
 	X float32
 	Y float32
 }
+
+type Vec2Int struct {
+	X int
+	Y int
+}

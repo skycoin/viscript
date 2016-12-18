@@ -2,10 +2,10 @@ package script
 
 import (
 	"fmt"
-	"strings"
-	//"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/tree"
+	"strings"
 	//"github.com/corpusc/viscript/ui"
 	"math"
 	"regexp"
@@ -42,6 +42,7 @@ var tokens = []*Token{}
 var mainBlock = &CodeBlock{Name: "main"} // the root/entry/top/alpha level of the program
 var currBlock = mainBlock
 var parenCaptureTier = 0 // number of levels of parenception
+var textColors = []*gfx.ColorSpot{}
 
 // REGEX scanning (raw strings to avoid having to quote backslashes)
 var declaredVar = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32(( +)?=( +)?([0-9]+))?$`)
@@ -186,57 +187,75 @@ func lexAll() {
 	} else { // clear existing
 		bods[1] = []string{}
 	}
+	textColors = []*gfx.ColorSpot{}
 
 	for i, line := range bods[0] {
 		bods[1] = append(bods[1], lexAndColorMarkup(i, line))
 	}
 
+	// FIXME if wanting colors in non-script panels
 	gfx.Rend.Panels[0].TextBodies = append(gfx.Rend.Panels[0].TextBodies, bods[1])
+	gfx.Rend.Panels[0].TextColors = textColors
 }
 
-func lexAndColorMarkup(lineId int, line string) string {
+func lexAndColorMarkup(y int, line string) string {
 	s := line // the dynamic/processed offshoot string
 	comment := ""
 
 	// strip any comments
-	i := strings.Index(line, "//")
-	if /* there is one */ i != -1 {
-		s = line[:i]
-		comment = "<color=GrayDark>" + line[i:]
+	x := strings.Index(line, "//")
+	if /* comment exists */ x != -1 {
+		s = line[:x]
+		comment = "<color=GrayDark>" + line[x:]
 		fmt.Println("marked up line:", line)
+		color(x, y, gfx.GrayDark)
 	}
 
 	s = strings.TrimSpace(s)
 
-	if len(s) > 0 {
+	if /* we're not left with an empty string */ len(s) > 0 {
 		fmt.Println("s:", s)
 
 		// tokenize
 		lex := strings.Split(s, " ")
 
+		x = 0
 		for i := range lex {
 			fmt.Printf("lexer element %d: \"%s\"\n", i, lex[i])
 
 			switch {
 			case tokenizedAny(keywords, LexType_Keyword, lex[i]):
 				lex[i] = "<color=MaroonDark>" + lex[i]
+				color(x, y, gfx.MaroonDark)
 			case tokenizedAny(operators, LexType_Operator, lex[i]):
 				lex[i] = "<color=Maroon>" + lex[i]
+				color(x, y, gfx.Maroon)
 			case tokenizedAny(integralTypes, LexType_IntegralType, lex[i]):
 				lex[i] = "<color=Cyan>" + lex[i]
+				color(x, y, gfx.Cyan)
 			case tokenizedAny(integralFuncs, LexType_IntegralFunc, lex[i]):
 				lex[i] = "<color=Maroon>" + lex[i]
+				color(x, y, gfx.Maroon)
 			case tokenizedAny(varIdentifiers, LexType_VarIdentifier, lex[i]):
 				lex[i] = "<color=White>" + lex[i]
+				color(x, y, gfx.White)
 			case tokenizedAny(funcIdentifiers, LexType_FuncIdentifier, lex[i]):
 				lex[i] = "<color=Green>" + lex[i]
+				color(x, y, gfx.Green)
 			default:
 				lex[i] = "<color=White>" + lex[i]
+				color(x, y, gfx.White)
+			}
+
+			x += len(lex[i])
+
+			if /* not the first token */ i != 0 {
+				x++ // for a space
 			}
 		}
 
 		line = strings.Join(lex, " ")
-		regexLine(lineId, s)
+		regexLine(y, s)
 	} else {
 		line = ""
 	}
@@ -246,6 +265,10 @@ func lexAndColorMarkup(lineId int, line string) string {
 	}
 
 	return line
+}
+
+func color(x, y int, color []float32) {
+	textColors = append(textColors, &gfx.ColorSpot{app.Vec2Int{x, y}, color})
 }
 
 func tokenizedAny(slice []string, i int, elem string) bool {

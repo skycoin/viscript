@@ -22,6 +22,7 @@ type ScrollablePanel struct {
 	BarHori    *ui.ScrollBar // horizontal
 	BarVert    *ui.ScrollBar // vertical
 	TextBodies [][]string
+	TextColors []*ColorSpot
 	Trees      []*tree.Tree
 }
 
