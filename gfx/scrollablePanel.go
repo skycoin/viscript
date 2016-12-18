@@ -113,23 +113,22 @@ func (sp *ScrollablePanel) Draw() {
 }
 
 func (sp *ScrollablePanel) DrawText() {
-	var colorText = "" // when non-zero length, we're building this in place of drawing
-	cX := Rend.CurrX   // current (internal/logic cursor) drawing position
+	cX := Rend.CurrX // current (internal/logic cursor) drawing position
 	cY := Rend.CurrY
 	cW := Rend.CharWid
 	cH := Rend.CharHei
 	b := sp.BarHori.Rect.Top // bottom of text area
 
-	text := sp.TextBodies[0]
 	// setup for colored text
-	if /* it's been generated */ len(sp.TextBodies) > 1 {
-		text = sp.TextBodies[1]
-	} else { // otherwise generate, so demo program starts out colorized
-		//script.Process(false)    FIXME: can't import "script", cuz dupes "gfx"
+	// 		next color
+	ncId := 0
+	var nc *ColorSpot
+	if /* colors exist */ len(sp.TextColors) > 0 {
+		nc = sp.TextColors[ncId]
 	}
 
-	// iterate all runes
-	for y, line := range text {
+	// iterate over all runes
+	for y, line := range sp.TextBodies[0] {
 		// if line visible
 		if cY <= sp.Rect.Top+cH && cY >= b {
 			r := &app.Rectangle{cY, cX + cW, cY - cH, cX} // t, r, b, l
@@ -145,30 +144,33 @@ func (sp *ScrollablePanel) DrawText() {
 			// process line of text
 			SetColor(Gray)
 			for x, c := range line {
-				if /* ending color building */ c == '>' {
-					SetColorFromText(colorText)
-					colorText = ""
-				} else if /* building color */ c == '<' || len(colorText) > 0 {
-					colorText += string(c)
-				} else { // drawing
-					if /* visible */ cX >= sp.Rect.Left-cW && cX < sp.BarVert.Rect.Left {
-						app.ClampLeftAndRightOf(r, sp.Rect.Left, sp.BarVert.Rect.Left)
-						Rend.DrawCharAtRect(c, r)
+				if /* colors exist */ len(sp.TextColors) > 0 {
+					if x == nc.Pos.X &&
+						y == nc.Pos.Y {
+						SetColor(nc.Color)
+						ncId++
+						nc = sp.TextColors[ncId]
+					}
+				}
 
-						if sp.IsEditable { //&& Curs.Visible == true {
-							if x == sp.CursX && y == sp.CursY {
-								SetColor(White)
-								//Rend.DrawCharAtRect('_', r)
-								Rend.DrawStretchableRect(11, 13, Curs.GetAnimationModifiedRect(*r))
-								SetColor(PrevColor)
-							}
+				// drawing
+				if /* visible */ cX >= sp.Rect.Left-cW && cX < sp.BarVert.Rect.Left {
+					app.ClampLeftAndRightOf(r, sp.Rect.Left, sp.BarVert.Rect.Left)
+					Rend.DrawCharAtRect(c, r)
+
+					if sp.IsEditable { //&& Curs.Visible == true {
+						if x == sp.CursX && y == sp.CursY {
+							SetColor(White)
+							//Rend.DrawCharAtRect('_', r)
+							Rend.DrawStretchableRect(11, 13, Curs.GetAnimationModifiedRect(*r))
+							SetColor(PrevColor)
 						}
 					}
-
-					cX += cW
-					r.Left = cX
-					r.Right = cX + cW
 				}
+
+				cX += cW
+				r.Left = cX
+				r.Right = cX + cW
 			}
 
 			// draw cursor at the end of line if needed
