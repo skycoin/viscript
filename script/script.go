@@ -69,9 +69,9 @@ const (
 	LexType_RuneLiteralEnd
 	LexType_StringLiteralStart
 	LexType_StringLiteralEnd
-	// user idents
-	LexType_VarIdentifier  // user variable
-	LexType_FuncIdentifier // user func
+	// user identifiers
+	LexType_IdentifierVar  // user variable
+	LexType_IdentifierFunc // user func
 )
 
 // ^^^
@@ -118,10 +118,10 @@ func lexTypeString(i int) string {
 		return "StringLiteralEnd"
 
 	// user idents
-	case LexType_VarIdentifier:
-		return "Identifier"
-	case LexType_FuncIdentifier:
-		return "Identifier"
+	case LexType_IdentifierVar:
+		return "IdentifierVar"
+	case LexType_IdentifierFunc:
+		return "IdentifierFunc"
 
 	default:
 		return "ERROR! LexType case unknown!"
@@ -203,8 +203,8 @@ func lexAndColorMarkup(y int, line string) string {
 	}
 
 	start := 0 // start of non-space runes
-	for _, c := range s {
-		if c == ' ' {
+	for _, ru := range s {
+		if ru == ' ' {
 			start++
 		} else {
 			break
@@ -232,9 +232,9 @@ func lexAndColorMarkup(y int, line string) string {
 				color(x, y, gfx.Cyan)
 			case tokenizedAny(integralFuncs, LexType_IntegralFunc, lex[i]):
 				color(x, y, gfx.Maroon)
-			case tokenizedAny(varIdentifiers, LexType_VarIdentifier, lex[i]):
+			case tokenizedAny(varIdentifiers, LexType_IdentifierVar, lex[i]):
 				color(x, y, gfx.White)
-			case tokenizedAny(funcIdentifiers, LexType_FuncIdentifier, lex[i]):
+			case tokenizedAny(funcIdentifiers, LexType_IdentifierFunc, lex[i]):
 				color(x, y, gfx.Green)
 			default:
 				color(x, y, gfx.White)
@@ -273,7 +273,7 @@ func tokenizedAny(slice []string, i int, elem string) bool {
 			fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(i), `"`+elem+`"`)
 			return true
 		} else { // to allow tokenizing bundled func name and opening paren, in that order & separately
-			if /* looking for func */ i == LexType_IntegralFunc || i == LexType_FuncIdentifier {
+			if /* looking for func */ i == LexType_IntegralFunc || i == LexType_IdentifierFunc {
 				if /* this contains func name */ strings.Index(elem, slice[j]) != -1 {
 					// look for opening of enclosing pairs
 					for k, c := range elem {
