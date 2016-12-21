@@ -2,10 +2,10 @@ package script
 
 import (
 	"fmt"
-	"strings"
-	//"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/tree"
+	"strings"
 	//"github.com/corpusc/viscript/ui"
 	"math"
 	"regexp"
@@ -32,16 +32,17 @@ TODO:
 */
 
 // lexing
-var integralTypes = []string{"bool", "int32", "string"} // FIXME: should allow [] and [42] prefixes
+var integralTypes = []string{"bool", "int32", "float32", "rune", "string"} // FIXME: should allow [] and [42] prefixes
 var integralFuncs = []string{"add32", "sub32", "mult32", "div32"}
 var operators = []string{"=", ":=", "==", "!=", "+=", "-=", "*=", "/=", "%=", "+", "-", "*", "/", "%"}
-var keywords = []string{"break", "continue", "fallthrough", "var", "if", "do", "while", "switch", "for"}
+var keywords = []string{"break", "continue", "fallthrough", "var", "if", "do", "while", "switch", "case", "for", "func", "return", "range"}
 var varIdentifiers = []string{}
 var funcIdentifiers = []string{}
 var tokens = []*Token{}
 var mainBlock = &CodeBlock{Name: "main"} // the root/entry/top/alpha level of the program
 var currBlock = mainBlock
 var parenCaptureTier = 0 // number of levels of parenception
+var textColors = []*gfx.ColorSpot{}
 
 // REGEX scanning (raw strings to avoid having to quote backslashes)
 var declaredVar = regexp.MustCompile(`^( +)?var( +)?([a-zA-Z]\w*)( +)?int32(( +)?=( +)?([0-9]+))?$`)
@@ -54,6 +55,12 @@ const (
 	LexType_Operator
 	LexType_IntegralType
 	LexType_IntegralFunc
+	// literals
+	LexType_LiteralInt32
+	LexType_LiteralFloat32
+	LexType_LiteralRune
+	LexType_LiteralString
+	// delimiters
 	LexType_ParenStart
 	LexType_ParenEnd
 	LexType_BlockStart
@@ -62,9 +69,9 @@ const (
 	LexType_RuneLiteralEnd
 	LexType_StringLiteralStart
 	LexType_StringLiteralEnd
-
-	LexType_VarIdentifier  // user variable
-	LexType_FuncIdentifier // user func
+	// user identifiers
+	LexType_IdentifierVar  // user variable
+	LexType_IdentifierFunc // user func
 )
 
 // ^^^
@@ -81,6 +88,18 @@ func lexTypeString(i int) string {
 		return "IntegralType"
 	case LexType_IntegralFunc:
 		return "IntegralFunc"
+
+	// literals
+	case LexType_LiteralInt32:
+		return "LiteralInt32"
+	case LexType_LiteralFloat32:
+		return "LiteralFloat32"
+	case LexType_LiteralRune:
+		return "LiteralRune"
+	case LexType_LiteralString:
+		return "LiteralString"
+
+	// delimiters
 	case LexType_ParenStart:
 		return "ParenStart"
 	case LexType_ParenEnd:
@@ -98,10 +117,11 @@ func lexTypeString(i int) string {
 	case LexType_StringLiteralEnd:
 		return "StringLiteralEnd"
 
-	case LexType_VarIdentifier:
-		return "Identifier"
-	case LexType_FuncIdentifier:
-		return "Identifier"
+	// user idents
+	case LexType_IdentifierVar:
+		return "IdentifierVar"
+	case LexType_IdentifierFunc:
+		return "IdentifierFunc"
 
 	default:
 		return "ERROR! LexType case unknown!"
@@ -109,7 +129,7 @@ func lexTypeString(i int) string {
 }
 
 func MakeTree() {
-	// setup trees & expressions in new panel
+	// setup hardwired test tree
 	pI := len(gfx.Rend.Panels) // panel id
 
 	// new panel
@@ -128,23 +148,13 @@ func MakeTree() {
 	makeNode(pI, math.MaxInt32, math.MaxInt32, 4, "level 5")  // 5
 	makeNode(pI, math.MaxInt32, math.MaxInt32, 1, "freddled") // 6
 }
+
 func makeNode(panelId, childIdL, childIdR, parentId int, s string) {
 	gfx.Rend.Panels[panelId].Trees[0].Nodes = append(
 		gfx.Rend.Panels[panelId].Trees[0].Nodes, &tree.Node{s, childIdL, childIdR, parentId})
 }
 
-/*       SKELETON OF 1ST PRELIM GRAPHIC TREE, recursively built from CodeBlocks
-func makeTree(tree tree.Tree) {
-	addNode(mainBlock)
-}
-func addNode(cb *CodeBlock) {
-	for _, curr := range cb.SubBlocks {
-		addNode(curr)
-	}
-}
-*/
-
-func Process() {
+func Process(feedbackWanted bool) {
 	// clear script
 	mainBlock = &CodeBlock{Name: "main"}
 
@@ -152,47 +162,59 @@ func Process() {
 	gfx.Con.Lines = []string{}
 	gfx.Rend.Panels[1].TextBodies[0] = []string{}
 
-	gfx.MakeHighlyVisibleLogHeader(`LEXING`, 5)
+	if feedbackWanted {
+		gfx.MakeHighlyVisibleLogHeader(`LEXING`, 5)
+	}
 	lexAll()
 
-	//gfx.MakeHighlyVisibleLogHeader(`PARSING`, 5)
+	//if feedbackWanted {
+	//	gfx.MakeHighlyVisibleLogHeader(`PARSING`, 5)
+	//}
 	//parseAll()
 
-	gfx.MakeHighlyVisibleLogHeader(`RUNNING`, 5)
+	if feedbackWanted {
+		gfx.MakeHighlyVisibleLogHeader(`RUNNING`, 5)
+	}
 	run(mainBlock)
 }
 
 func lexAll() {
 	bods := gfx.Rend.Panels[0].TextBodies
 
-	if /* needed.... */ len(bods) < 2 {
-		// ....make a 2nd copy of code (for inserting color markup)
-		bods = append(bods, []string{})
-	} else { // clear existing
-		bods[1] = []string{}
-	}
+	textColors = []*gfx.ColorSpot{}
 
 	for i, line := range bods[0] {
-		bods[1] = append(bods[1], lexAndColorMarkup(i, line))
+		lexAndColorMarkup(i, line)
 	}
 
-	gfx.Rend.Panels[0].TextBodies = append(gfx.Rend.Panels[0].TextBodies, bods[1])
+	// FIXME if wanting colors in non-script panels
+	gfx.Rend.Panels[0].TextColors = textColors
 }
 
-func lexAndColorMarkup(lineId int, line string) string {
-	s := line // the dynamic/processed offshoot
+func lexAndColorMarkup(y int, line string) string {
+	s := line // the dynamic/processed offshoot string
+	comment := ""
 
 	// strip any comments
-	i := strings.Index(line, "//")
-	if /* there is one */ i != -1 {
-		s = line[:i]
-		line = line[:i] + "<color=GrayDark>" + line[i:]
-		fmt.Println("marked up line:", line)
+	x := strings.Index(line, "//")
+	if /* comment exists */ x != -1 {
+		s = line[:x]
+		comment = line[x:]
 	}
 
+	start := 0 // start of non-space runes
+	for _, ru := range s {
+		if ru == ' ' {
+			start++
+		} else {
+			break
+		}
+	}
+
+	x = start
 	s = strings.TrimSpace(s)
 
-	if len(s) > 0 {
+	if /* we're not left with an empty string */ len(s) > 0 {
 		fmt.Println("s:", s)
 
 		// tokenize
@@ -201,29 +223,47 @@ func lexAndColorMarkup(lineId int, line string) string {
 		for i := range lex {
 			fmt.Printf("lexer element %d: \"%s\"\n", i, lex[i])
 
-			if tokenizedAny(keywords, LexType_Keyword, lex[i]) {
-				break
+			switch {
+			case tokenizedAny(keywords, LexType_Keyword, lex[i]):
+				color(x, y, gfx.MaroonDark)
+			case tokenizedAny(operators, LexType_Operator, lex[i]):
+				color(x, y, gfx.Maroon)
+			case tokenizedAny(integralTypes, LexType_IntegralType, lex[i]):
+				color(x, y, gfx.Cyan)
+			case tokenizedAny(integralFuncs, LexType_IntegralFunc, lex[i]):
+				color(x, y, gfx.Maroon)
+			case tokenizedAny(varIdentifiers, LexType_IdentifierVar, lex[i]):
+				color(x, y, gfx.White)
+			case tokenizedAny(funcIdentifiers, LexType_IdentifierFunc, lex[i]):
+				color(x, y, gfx.Green)
+			default:
+				color(x, y, gfx.White)
 			}
-			if tokenizedAny(operators, LexType_Operator, lex[i]) {
-				break
-			}
-			if tokenizedAny(integralTypes, LexType_IntegralType, lex[i]) {
-				break
-			}
-			if tokenizedAny(integralFuncs, LexType_IntegralFunc, lex[i]) {
-				break
-			}
-			if tokenizedAny(varIdentifiers, LexType_VarIdentifier, lex[i]) {
-				break
-			}
-			if tokenizedAny(funcIdentifiers, LexType_FuncIdentifier, lex[i]) {
-				break
+
+			x += len(lex[i])
+
+			if /* not the last token */ i != len(lex)-1 {
+				x++ // for a space
 			}
 		}
+
+		line = strings.Join(lex, " ")
+		regexLine(y, s)
+	} else {
+		line = ""
 	}
 
-	regexLine(lineId, s, false)
+	if comment != "" {
+		line += " " + comment
+		color(x, y, gfx.GrayDark)
+	}
+
 	return line
+}
+
+func color(x, y int, color []float32) {
+	textColors = append(textColors, &gfx.ColorSpot{app.Vec2Int{x, y}, color})
+	fmt.Println("------------textColors[len(textColors)-1]:", textColors[len(textColors)-1])
 }
 
 func tokenizedAny(slice []string, i int, elem string) bool {
@@ -233,14 +273,12 @@ func tokenizedAny(slice []string, i int, elem string) bool {
 			fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(i), `"`+elem+`"`)
 			return true
 		} else { // to allow tokenizing bundled func name and opening paren, in that order & separately
-			if /* looking for func */ i == LexType_IntegralFunc || i == LexType_FuncIdentifier {
+			if /* looking for func */ i == LexType_IntegralFunc || i == LexType_IdentifierFunc {
 				if /* this contains func name */ strings.Index(elem, slice[j]) != -1 {
 					// look for opening of enclosing pairs
 					for k, c := range elem {
-						if c == '(' {
-							// TODO: handle "()" cases
-							// TODO: handle "()" cases
-							// TODO: handle "()" cases
+						switch c {
+						case '(':
 							fmt.Println("ENCOUNTERED open paren")
 							tokens = append(tokens, &Token{i, elem[:k]})
 							fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(i), `"`+elem[:k]+`"`)
@@ -265,89 +303,72 @@ func tokenizedAny(slice []string, i int, elem string) bool {
 	return false
 }
 
-func regexLine(i int, line string, coloring bool) {
-	if coloring {
-		switch {
-		case declaredVar.MatchString(line):
-			gfx.SetColor(gfx.Violet)
-		case declFuncStart.MatchString(line):
-			gfx.SetColor(gfx.Fuschia)
-		case declFuncEnd.MatchString(line):
-			gfx.SetColor(gfx.Fuschia)
-		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
-			gfx.SetColor(gfx.Fuschia)
-		case line == "":
-			// just ignore
-		default:
-			gfx.SetColor(gfx.White)
+func regexLine(i int, line string) {
+	// scan for high level pieces
+	switch {
+	case declaredVar.MatchString(line):
+		result := declaredVar.FindStringSubmatch(line)
+
+		var s = fmt.Sprintf("%d: var (%s) declared", i, result[3])
+		//printIntsFrom(currBlock)
+
+		if result[8] == "" {
+			currBlock.VarInt32s = append(currBlock.VarInt32s, &VarInt32{result[3], 0})
+		} else {
+			value, err := strconv.Atoi(result[8])
+			if err != nil {
+				s = fmt.Sprintf("%s... BUT COULDN'T CONVERT ASSIGNMENT (%s) TO A NUMBER!", s, result[8])
+			} else {
+				currBlock.VarInt32s = append(currBlock.VarInt32s, &VarInt32{result[3], int32(value)})
+				s = fmt.Sprintf("%s & assigned: %d", s, value)
+			}
 		}
-	} else {
-		// scan for high level pieces
-		switch {
-		case declaredVar.MatchString(line):
-			result := declaredVar.FindStringSubmatch(line)
 
-			var s = fmt.Sprintf("%d: var (%s) declared", i, result[3])
-			//printIntsFrom(currBlock)
+		gfx.Con.Add(fmt.Sprintf("%s\n", s))
+	case declFuncStart.MatchString(line):
+		result := declFuncStart.FindStringSubmatch(line)
 
-			if result[8] == "" {
-				currBlock.VarInt32s = append(currBlock.VarInt32s, &VarInt32{result[3], 0})
-			} else {
-				value, err := strconv.Atoi(result[8])
-				if err != nil {
-					s = fmt.Sprintf("%s... BUT COULDN'T CONVERT ASSIGNMENT (%s) TO A NUMBER!", s, result[8])
-				} else {
-					currBlock.VarInt32s = append(currBlock.VarInt32s, &VarInt32{result[3], int32(value)})
-					s = fmt.Sprintf("%s & assigned: %d", s, value)
-				}
-			}
+		gfx.Con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
 
-			gfx.Con.Add(fmt.Sprintf("%s\n", s))
-		case declFuncStart.MatchString(line):
-			result := declFuncStart.FindStringSubmatch(line)
-
-			gfx.Con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
-
-			if currBlock.Name == "main" {
-				currBlock = &CodeBlock{Name: result[1]}
-				mainBlock.SubBlocks = append(mainBlock.SubBlocks, currBlock) // FUTURE FIXME: methods in structs shouldn't be on main/root func
-			} else {
-				gfx.Con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
-			}
-		case declFuncEnd.MatchString(line):
-			gfx.Con.Add(fmt.Sprintf("func close...\n"))
-			//printIntsFrom(mainBlock)
-			//printIntsFrom(currBlock)
-
-			if currBlock.Name == "main" {
-				gfx.Con.Add(fmt.Sprintf("ERROR! Main\\Root level function doesn't need enclosure!\n"))
-			} else {
-				currBlock = mainBlock
-			}
-		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
-			result := calledFunc.FindStringSubmatch(line)
-
-			gfx.Con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
-			gfx.Con.Add(fmt.Sprintf("currBlock: %s\n", currBlock))
-			currBlock.Expressions = append(currBlock.Expressions, line)
-			/*
-				currBlock.Expressions = append(currBlock.Expressions, result[2])
-				currBlock.Parameters = append(currBlock.Parameters, result[3])
-				currBlock.Parameters = append(currBlock.Parameters, result[5])
-			*/
-			//printIntsFrom(currBlock)
-
-			/*
-				// prints out all captures
-				for i, v := range result {
-					gfx.Con.Add(fmt.Sprintf("%d. %s\n", i, v))
-				}
-			*/
-		case line == "":
-			// just ignore
-		default:
-			gfx.Con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
+		if currBlock.Name == "main" {
+			currBlock = &CodeBlock{Name: result[1]}
+			mainBlock.SubBlocks = append(mainBlock.SubBlocks, currBlock) // FUTURE FIXME: methods in structs shouldn't be on main/root func
+		} else {
+			gfx.Con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
 		}
+	case declFuncEnd.MatchString(line):
+		gfx.Con.Add(fmt.Sprintf("func close...\n"))
+		//printIntsFrom(mainBlock)
+		//printIntsFrom(currBlock)
+
+		if currBlock.Name == "main" {
+			gfx.Con.Add(fmt.Sprintf("ERROR! Main\\Root level function doesn't need enclosure!\n"))
+		} else {
+			currBlock = mainBlock
+		}
+	case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
+		result := calledFunc.FindStringSubmatch(line)
+
+		gfx.Con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
+		gfx.Con.Add(fmt.Sprintf("currBlock: %s\n", currBlock))
+		currBlock.Expressions = append(currBlock.Expressions, line)
+		/*
+			currBlock.Expressions = append(currBlock.Expressions, result[2])
+			currBlock.Parameters = append(currBlock.Parameters, result[3])
+			currBlock.Parameters = append(currBlock.Parameters, result[5])
+		*/
+		//printIntsFrom(currBlock)
+
+		/*
+			// prints out all captures
+			for i, v := range result {
+				gfx.Con.Add(fmt.Sprintf("%d. %s\n", i, v))
+			}
+		*/
+	case line == "":
+		// just ignore
+	default:
+		gfx.Con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
 	}
 }
 

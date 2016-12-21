@@ -22,6 +22,7 @@ type ScrollablePanel struct {
 	BarHori    *ui.ScrollBar // horizontal
 	BarVert    *ui.ScrollBar // vertical
 	TextBodies [][]string
+	TextColors []*ColorSpot
 	Trees      []*tree.Tree
 }
 
@@ -108,27 +109,28 @@ func (sp *ScrollablePanel) Draw() {
 	Rend.DrawStretchableRect(11, 13, sp.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
 	Rend.DrawStretchableRect(11, 13, sp.BarVert.Rect) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
 	SetColor(White)
-	sp.DrawTrees()
+	sp.DrawTree()
 }
 
 func (sp *ScrollablePanel) DrawText() {
-	var colorText = "" // when non-zero length, we're building this in place of drawing
-	cX := Rend.CurrX   // current (internal/logic cursor) drawing position
+	cX := Rend.CurrX // current drawing position
 	cY := Rend.CurrY
 	cW := Rend.CharWid
 	cH := Rend.CharHei
 	b := sp.BarHori.Rect.Top // bottom of text area
 
-	text := sp.TextBodies[0]
-	// setup for colored text if it's been generated
-	if len(sp.TextBodies) > 1 {
-		text = sp.TextBodies[1]
+	// setup for colored text
+	ncId := 0         // next color
+	var nc *ColorSpot // ^
+	if /* colors exist */ len(sp.TextColors) > 0 {
+		nc = sp.TextColors[ncId]
 	}
 
-	// iterate all runes
-	for y, line := range text {
-		// if line visible
-		if cY <= sp.Rect.Top+cH && cY >= b {
+	// iterate over lines
+	for y, line := range sp.TextBodies[0] {
+		lineVisible := cY <= sp.Rect.Top+cH && cY >= b
+
+		if lineVisible {
 			r := &app.Rectangle{cY, cX + cW, cY - cH, cX} // t, r, b, l
 
 			// if line needs vertical adjustment
@@ -139,34 +141,29 @@ func (sp *ScrollablePanel) DrawText() {
 				r.Bottom = b
 			}
 
-			// process line of text
+			// iterate over runes
 			SetColor(Gray)
 			for x, c := range line {
-				if /* ending color building */ c == '>' {
-					//fmt.Println("============ GOT OUR COLOR:", colorText)
-					SetColorFromText(colorText)
-					colorText = ""
-				} else if /* building color */ c == '<' || len(colorText) > 0 {
-					colorText += string(c)
-				} else { // drawing
-					if /* visible */ cX >= sp.Rect.Left-cW && cX < sp.BarVert.Rect.Left {
-						app.ClampLeftAndRightOf(r, sp.Rect.Left, sp.BarVert.Rect.Left)
-						Rend.DrawCharAtRect(c, r)
+				ncId, nc = sp.changeColorIfCodeAt(x, y, ncId, nc)
 
-						if sp.IsEditable { //&& Curs.Visible == true {
-							if x == sp.CursX && y == sp.CursY {
-								SetColor(White)
-								//Rend.DrawCharAtRect('_', r)
-								Rend.DrawStretchableRect(11, 13, Curs.GetAnimationModifiedRect(*r))
-								SetColor(PrevColor)
-							}
+				// drawing
+				if /* char visible */ cX >= sp.Rect.Left-cW && cX < sp.BarVert.Rect.Left {
+					app.ClampLeftAndRightOf(r, sp.Rect.Left, sp.BarVert.Rect.Left)
+					Rend.DrawCharAtRect(c, r)
+
+					if sp.IsEditable { //&& Curs.Visible == true {
+						if x == sp.CursX && y == sp.CursY {
+							SetColor(White)
+							//Rend.DrawCharAtRect('_', r)
+							Rend.DrawStretchableRect(11, 13, Curs.GetAnimationModifiedRect(*r))
+							SetColor(PrevColor)
 						}
 					}
-
-					cX += cW
-					r.Left = cX
-					r.Right = cX + cW
 				}
+
+				cX += cW
+				r.Left = cX
+				r.Right = cX + cW
 			}
 
 			// draw cursor at the end of line if needed
@@ -180,10 +177,31 @@ func (sp *ScrollablePanel) DrawText() {
 			}
 
 			cX = sp.GoToLeftEdge()
+		} else { // line not visible
+			for x := range line {
+				ncId, nc = sp.changeColorIfCodeAt(x, y, ncId, nc)
+			}
 		}
 
 		cY -= cH // go down a line height
 	}
+}
+
+func (sp *ScrollablePanel) changeColorIfCodeAt(x, y, ncId int, nc *ColorSpot) (int, *ColorSpot) {
+	if /* colors exist */ len(sp.TextColors) > 0 {
+		if x == nc.Pos.X &&
+			y == nc.Pos.Y {
+			SetColor(nc.Color)
+			//fmt.Println("-------- nc-------, then 3rd():", nc, sp.TextColors[2])
+			ncId++
+
+			if ncId < len(sp.TextColors) {
+				nc = sp.TextColors[ncId]
+			}
+		}
+	}
+
+	return ncId, nc
 }
 
 // ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)
@@ -255,8 +273,7 @@ func (sp *ScrollablePanel) RemoveCharacter(fromUnderCursor bool) {
 	}
 }
 
-func (sp *ScrollablePanel) DrawTrees() {
-	//for _, tree := range sp.Trees {
+func (sp *ScrollablePanel) DrawTree() {
 	if len(sp.Trees) > 0 {
 		// setup main rect
 		span := float32(1.3)
@@ -285,7 +302,7 @@ func (sp *ScrollablePanel) drawNodeAndDescendants(r *app.Rectangle, nodeId int) 
 	node := sp.Trees[0].Nodes[nodeId] // FIXME? .....
 	// find sp.Trees[0].Nodes[i].....
 	// ......(if we ever use multiple trees per panel)
-	// ......(also update DrawTrees to use range)
+	// ......(also update DrawTree to use range)
 
 	if /* left child exists */ node.ChildIdL != math.MaxInt32 {
 		x := cX - rSp*1.5

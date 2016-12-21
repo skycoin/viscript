@@ -13,6 +13,7 @@ import (
 	*/
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/script"
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
@@ -48,6 +49,9 @@ func initRenderer() {
 	//gl.Frustum(left, right, bottom, top, zNear, zFar)
 	gl.MatrixMode(gl.MODELVIEW)
 	gl.LoadIdentity()
+
+	// future FIXME: finished app would not have a demo program loaded on startup?
+	script.Process(false)
 }
 
 func setFrustum(r *app.Rectangle) {
