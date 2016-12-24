@@ -255,13 +255,9 @@ func onKey(
 			}
 		case glfw.KeyBackspace:
 			if(foc.CursX == 0) {
-				if len(b[foc.CursY]) == 0 {
-					b = remove(b, foc.CursY)
-					foc.CursY--
-					foc.CursX = len(b[foc.CursY])
-				} else {
-
-				}
+				b = remove(b, foc.CursY, b[foc.CursY])
+				foc.CursY--
+				foc.CursX = len(b[foc.CursY])
 			} else {
 				foc.RemoveCharacter(false)
 			}
@@ -291,8 +287,10 @@ func insert(slice []string, index int, value string) []string {
 	return slice
 }
 
-func remove(slice []string, index int) []string{
-	return append(slice[:index], slice[index+1:]...)
+func remove(slice []string, index int, value string) []string{
+	slice = append(slice[:index], slice[index+1:]...)
+	slice[index-1] = slice[index-1] + value
+	return slice
 }
 
 func dispatchWithPrefix(content []byte, msgType uint8) {
