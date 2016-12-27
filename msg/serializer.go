@@ -1,5 +1,6 @@
 package msg
 
+/*
 import (
 	"github.com/skycoin/skycoin/src/cipher/encoder"
 	"log"
@@ -28,3 +29,4 @@ func Serialize(prefix uint16, obj interface{}) []byte {
 func init() {
 
 }
+*/
