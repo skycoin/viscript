@@ -1,4 +1,4 @@
-package messages
+package msg
 
 import (
 	"math/rand"

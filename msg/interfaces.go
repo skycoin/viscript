@@ -1,3 +1,3 @@
-package messages
+package msg
 
 import ()

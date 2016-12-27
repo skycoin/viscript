@@ -1,4 +1,4 @@
-package messages
+package msg
 
 import (
 	"github.com/skycoin/skycoin/src/cipher/encoder"
