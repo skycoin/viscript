@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	//"github.com/corpusc/viscript/msg" //message structs are here
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/script"
 )
@@ -26,6 +27,43 @@ func monitorEvents(ch chan []byte) {
 		//fmt.Println("monitorEvents() default")
 	}
 }
+
+/* message processing example */
+
+/*
+func ProcessIncomingMessages() {
+	//have a channel for incoming messages
+	for msg := range self.IncomingChannel {
+		switch msg.GetMessageType(msg) {
+		//InRouteMessage is the only message coming in to node from transports
+		case msg.MsgMessageMousePos:
+			var m1 msg.MessageMousePos
+			msg.Deserialize(msg, m1)
+			//self.HandleInRouteMessage(m1)
+			fmt.Printf("MessageMousePos: X= %f, Y= %f \n", m1.X, m2.X)
+		case msg.MsgMessageMouseScroll:
+			var m2 msg.MessageMouseScroll
+			msg.Deserialize(msg, m1)
+
+		case msg.MsgMessageMouseButton:
+			var m3 msg.MessageMouseButton
+			mesg.Deserialize(msg, m1)
+
+		case msg.MsgMessageCharacter:
+			var m4 msg.MessageCharacter
+			msg.Deserialize(msg, m1)
+
+		case msg.MsgMessageKey:
+			var m5 msg.MessageKey
+			msg.Deserialize(msg, m1)
+
+		default:
+			fmt.Println("UNKNOWN MESSAGE TYPE!")
+
+		}
+	}
+}
+*/
 
 func processMessage(message []byte) {
 	switch getMessageType(".", message) {
