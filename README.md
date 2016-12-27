@@ -654,6 +654,59 @@ https://media.8ch.net/file_store/182f81c50b3263c84c2269056bde7221026adc7971d119b
 [12:31:22 PM] HaltingState: also, label line numbers in the editor; each line needs to have line numbers on left hand side, like sublime
 
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+(def_func Name (in...) (out...) (expression_array...) )
+
+
+System Level Enumeration
+========================
+
+System Level Enumerations
+- give me a list of nodes I controll
+- give me list of programs running on a node
+- give me a list of channels (communication channels) between nodes
+
+- deploy a process on a node
+- shutdown process on node
+
+- get CPU/ ram usage, etc
+
+Language Level Enumeration
+==========================
+
+In a given line of source code
+- enumerate the variables (types, name) in the current scope
+- enumerate the variables (types, name) passed into the current function
+- enumerate the variables, modules, functions that can be called from the current line/scope
+- enumerate the variables in the local scope
+- enumerate the variables passed into a function
+- enumerate the variables at global, current module level
+- enumerate the current modules that are imported in the current module
+
+- enumerate the defined functions in the current module
+- enumerate the defined global variables in the current module
+
+(var x uint32) adds a new variable to the local scope
+
+A function that enumerates the list of atomic/base types
+A function that enumerates the list of defined types
+
+Types
+- A function that enumerates the list of atomic/base types
+- A function that enumerates the list of defined types
+- enumerate the fields of a type (struct)
+- enumerate the functions OF a type (functions that do not modify its state, function of an instance)
+- enumerate the functtions ON a type (functoins that change its state, functions ON a type instance)
+- enumerate state (name, type) pairs for struct type and the functions on the tpe
+
+- enumerate the dependencies on an object
+-- example: What external functions, objects, modules are used by a particular function
+-- what external functions, objects, modules are used by a line in a particular function
+
+
+=======
+=======
 
 [9/27/2016 7:05:12 AM] HaltingState: 
 1> All code must be in a function
@@ -704,6 +757,9 @@ being able to create structs etc and just start simple
 But doesnt matter for now
 [7:19:28 AM] HaltingState: A virtual DOM, then an object that renders it into the square buffer
 
+<<<<<<< HEAD
+>>>>>>> c28e4e893e8b22f4008399ed63e86c220a13cf47
+=======
 
 
 
@@ -730,4 +786,6 @@ So we do
 2> Add operator (int32.add X Y)
 3> substitute or set X, or select X and see options for thigns that could go in there (a function that returns int32, an int32 literal, a function that casts something else to int, an int32 at local scope etc)
 
+>>>>>>> ce8c65fd8c83d0b6abdfff37e9cc488150747645
 "
+>>>>>>> b748df8054b46bffc99b519a069c36644b698769

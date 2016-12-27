@@ -1,24 +1,17 @@
-package main
+package msg
 
 import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	//"github.com/corpusc/viscript/msg" //message structs are here
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/script"
 )
 
-const (
-	MessageMousePos    = iota // 0
-	MessageMouseScroll        // 1
-	MessageMouseButton        // 2
-	MessageCharacter
-	MessageKey
-)
-
 var curRecByte = 0 // current receive message index
 
-func monitorEvents(ch chan []byte) {
+func MonitorEvents(ch chan []byte) {
 	select {
 	case v := <-ch:
 		processMessage(v)
@@ -27,33 +20,70 @@ func monitorEvents(ch chan []byte) {
 	}
 }
 
+/* message processing example */
+
+/*
+func ProcessIncomingMessages() {
+	//have a channel for incoming messages
+	for msg := range self.IncomingChannel {
+		switch msg.GetMessageType(msg) {
+		//InRouteMessage is the only message coming in to node from transports
+		case msg.MsgTypeMousePos:
+			var m1 msg.TypeMousePos
+			msg.Deserialize(msg, m1)
+			//self.HandleInRouteMessage(m1)
+			fmt.Printf("TypeMousePos: X= %f, Y= %f \n", m1.X, m2.X)
+		case msg.MsgTypeMouseScroll:
+			var m2 msg.TypeMouseScroll
+			msg.Deserialize(msg, m1)
+
+		case msg.MsgTypeMouseButton:
+			var m3 msg.TypeMouseButton
+			mesg.Deserialize(msg, m1)
+
+		case msg.MsgTypeCharacter:
+			var m4 msg.TypeCharacter
+			msg.Deserialize(msg, m1)
+
+		case msg.MsgTypeKey:
+			var m5 msg.TypeKey
+			msg.Deserialize(msg, m1)
+
+		default:
+			fmt.Println("UNKNOWN MESSAGE TYPE!")
+
+		}
+	}
+}
+*/
+
 func processMessage(message []byte) {
 	switch getMessageType(".", message) {
 
-	case MessageMousePos:
-		s("MessageMousePos", message)
+	case TypeMousePos:
+		s("TypeMousePos", message)
 		showFloat64("X", message)
 		showFloat64("Y", message)
 
-	case MessageMouseScroll:
-		s("MessageMouseScroll", message)
+	case TypeMouseScroll:
+		s("TypeMouseScroll", message)
 		showFloat64("X Offset", message)
 		showFloat64("Y Offset", message)
 
-	case MessageMouseButton:
-		s("MessageMouseButton", message)
+	case TypeMouseButton:
+		s("TypeMouseButton", message)
 		gfx.Curs.ConvertMouseClickToTextCursorPosition(
 			getAndShowUInt8("Button", message),
 			getAndShowUInt8("Action", message))
 		getAndShowUInt8("Mod", message)
 
-	case MessageCharacter:
-		s("MessageCharacter", message)
+	case TypeCharacter:
+		s("TypeCharacter", message)
 		insertRuneIntoDocument("Rune", message)
 		script.Process(false)
 
-	case MessageKey:
-		s("MessageKey", message)
+	case TypeKey:
+		s("TypeKey", message)
 		getAndShowUInt8("Key", message)
 		showSInt32("Scan", message)
 		getAndShowUInt8("Action", message)

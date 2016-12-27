@@ -38,6 +38,7 @@ import (
 
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/msg"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
@@ -79,7 +80,7 @@ func main() {
 	initInputEvents(window)
 
 	for !window.ShouldClose() {
-		monitorEvents(events)
+		msg.MonitorEvents(events)
 		glfw.PollEvents()
 		drawScene()
 		window.SwapBuffers()

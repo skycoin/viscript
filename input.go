@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/glfw/v3.2/glfw"
@@ -47,7 +48,7 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 
 	// build message
 	content := append(getBytesOfFloat64(x), getBytesOfFloat64(y)...)
-	dispatchWithPrefix(content, MessageMousePos)
+	dispatchWithPrefix(content, msg.TypeMousePos)
 }
 
 func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
@@ -62,7 +63,7 @@ func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 
 	// build message
 	content := append(getBytesOfFloat64(xOff), getBytesOfFloat64(yOff)...)
-	dispatchWithPrefix(content, MessageMouseScroll)
+	dispatchWithPrefix(content, msg.TypeMouseScroll)
 }
 
 // apparently every time this is fired, a mouse position event is ALSO fired
@@ -124,11 +125,11 @@ func onMouseButton(
 	// build message
 	content := append(getByteOfUInt8(uint8(b)), getByteOfUInt8(uint8(action))...)
 	content = append(content, getByteOfUInt8(uint8(mod))...)
-	dispatchWithPrefix(content, MessageMouseButton)
+	dispatchWithPrefix(content, msg.TypeMouseButton)
 }
 
 func onChar(w *glfw.Window, char rune) {
-	dispatchWithPrefix(getBytesOfRune(char), MessageCharacter)
+	dispatchWithPrefix(getBytesOfRune(char), msg.TypeCharacter)
 }
 
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can detect a
@@ -276,7 +277,7 @@ func onKey(
 	content = append(content, getBytesOfSInt32(int32(scancode))...)
 	content = append(content, getByteOfUInt8(uint8(action))...)
 	content = append(content, getByteOfUInt8(uint8(mod))...)
-	dispatchWithPrefix(content, MessageKey)
+	dispatchWithPrefix(content, msg.TypeKey)
 }
 
 // must be in range
