@@ -198,9 +198,11 @@ func onKey(
 
 			foc.CursX = 0
 			foc.CursY++
+			foc.TextBodies[0] = b
 
 			if foc.CursY >= len(b) {
 				foc.CursY = len(b) - 1
+				gfx.Rend.ScrollPanelThatIsHoveredOver(0, float64(foc.CursY))
 			}
 
 		case glfw.KeyHome:
@@ -257,8 +259,10 @@ func onKey(
 		case glfw.KeyBackspace:
 			if(foc.CursX == 0) {
 				b = remove(b, foc.CursY, b[foc.CursY])
+				foc.TextBodies[0] = b
 				foc.CursY--
 				foc.CursX = len(b[foc.CursY])
+
 			} else {
 				foc.RemoveCharacter(false)
 			}
@@ -288,8 +292,9 @@ func insert(slice []string, index int, value string) []string {
 	return slice
 }
 
+// similar to insert method, instead moves current slice element and appends to one above
 func remove(slice []string, index int, value string) []string{
-	slice = append(slice[:index], slice[index+1:]...)
+	slice = append(slice[:index], slice[index+1:]...)     
 	slice[index-1] = slice[index-1] + value
 	return slice
 }
