@@ -1,9 +1,9 @@
 package msg
 
 import (
-	"bytes"
-	"encoding/binary"
-	"fmt"
+	_"bytes"
+	_"encoding/binary"
+	_"fmt"
 	//"math/rand"
 )
 
@@ -14,51 +14,6 @@ const (
 	TypeCharacter
 	TypeKey
 )
-const (
-	MsgTypeMousePos    = iota // HyperVisor -> Process, input event
-	MsgTypeMouseScroll        //hypervisor -> Process, input event
-	MsgTypeMouseButton        //hypervisor -> Process, input event
-	MsgTypeCharacter          //hypervisor -> Process, input event
-	MsgTypeKey                // hyperisor -> Process, input event
-)
-
-func GetMessageType(message []byte) uint16 {
-	var value uint16
-	rBuf := bytes.NewReader(message[4:6])
-	err := binary.Read(rBuf, binary.LittleEndian, &value)
-	if err != nil {
-		fmt.Println("binary.Read failed: ", err)
-	} else {
-		//fmt.Printf("from byte buffer, %s: %d\n", s, value)
-	}
-	return value
-}
-
-/*
-	case TypeMouseScroll:
-		s("TypeMouseScroll", message)
-		showFloat64("X Offset", message)
-		showFloat64("Y Offset", message)
-
-	case TypeMouseButton:
-		s("TypeMouseButton", message)
-		gfx.Curs.ConvertMouseClickToTextCursorPosition(
-			getAndShowUInt8("Button", message),
-			getAndShowUInt8("Action", message))
-		getAndShowUInt8("Mod", message)
-
-	case TypeCharacter:
-		s("TypeCharacter", message)
-		insertRuneIntoDocument("Rune", message)
-		script.Process(false)
-
-	case TypeKey:
-		s("TypeKey", message)
-		getAndShowUInt8("Key", message)
-		showSInt32("Scan", message)
-		getAndShowUInt8("Action", message)
-		getAndShowUInt8("Mod", message)
-*/
 
 //Input Messages
 
@@ -66,6 +21,11 @@ func GetMessageType(message []byte) uint16 {
 
 //message received by process, by hypervisor
 type MessageMousePos struct {
+	X float64
+	Y float64
+}
+
+type MessageMouseScroll struct {
 	X float64
 	Y float64
 }
@@ -86,5 +46,25 @@ type MessageKey struct {
 	Action uint8
 	Mod    uint8
 }
+
+
+
+func (m * MessageMousePos)setMessageMousePosValue(x float64,y float64)  {
+	m.X = x
+	m.Y = y
+
+}
+func (m * MessageMouseScroll)setMessageMouseScrollValue(x float64,y float64)  {
+	m.X = x
+	m.Y = y
+
+}
+func (m * MessageMouseButton)setMessageMouseButtonValue(button uint8,action uint8,mod uint8)  {
+	m.Button = button
+	m.Action = action
+	m.Mod = mod
+
+}
+
 
 //Terminal Driving Messages
