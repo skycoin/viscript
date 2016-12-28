@@ -163,7 +163,6 @@ func onKey(
 			fallthrough
 		case glfw.KeyRightControl:
 			fmt.Println("Control RELEASED")
-
 		case glfw.KeyLeftAlt:
 			fallthrough
 		case glfw.KeyRightAlt:
@@ -202,12 +201,15 @@ func onKey(
 
 			if foc.CursY >= len(b) {
 				foc.CursY = len(b) - 1
-				gfx.Rend.ScrollPanelThatIsHoveredOver(0, float64(foc.CursY))
 			}
 
 		case glfw.KeyHome:
-			commonMovementKeyHandling()
-			foc.CursX = 0
+			if w.GetKey(glfw.KeyLeftControl) == glfw.Press || w.GetKey(glfw.KeyRightControl) == glfw.Press {
+					
+			}else {
+				commonMovementKeyHandling()
+				foc.CursX = 0	
+			}	
 		case glfw.KeyEnd:
 			commonMovementKeyHandling()
 			foc.CursX = len(b[foc.CursY])
