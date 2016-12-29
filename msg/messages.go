@@ -73,6 +73,15 @@ func processMessage(message []byte) {
 		msg.setMessageMouseScrollValue(getFloat64("X Offset", message), getFloat64("Y Offset", message))
 
 	case TypeMouseButton:
+		//do it this way
+		var m1 MessageMouseButton
+		Deserialize(message, m1)
+		//m1.Button
+		//m1.Action
+		//m1.Mod
+		gfx.Curs.ConvertMouseClickToTextCursorPosition(m1.Button, m1.Action)
+
+		//not this way
 		s("TypeMouseButton", message)
 		msg := MessageMouseButton{}
 		msg.setMessageMouseButtonValue(
