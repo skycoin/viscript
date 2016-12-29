@@ -284,10 +284,10 @@ func insert(slice []string, index int, value string) []string {
 	return slice
 }
 
-func dispatchWithPrefix(content []byte, msgType uint8) {
+func dispatchWithPrefix(content []byte, msgType uint16) {
 	prefix := append(
 		getBytesOfUInt32(uint32(len(content))+msg.PREFIX_SIZE),
-		getByteOfUInt8(msgType)...)
+		getBytesOfUInt16(msgType)...)
 
 	Events <- append(prefix, content...)
 }
@@ -344,6 +344,13 @@ func getByteOfUInt8(value uint8) (data []byte) {
 }
 
 func getBytesOfSInt32(value int32) (data []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+	data = getSlice(wBuf, err)
+	return
+}
+
+func getBytesOfUInt16(value uint16) (data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
 	data = getSlice(wBuf, err)

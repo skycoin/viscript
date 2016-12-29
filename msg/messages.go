@@ -114,7 +114,7 @@ func processMessage(message []byte) {
 func s(s string, message []byte) {
 	fmt.Print(s)
 	showUInt32("Len", message)
-	curRecByte++ // skipping message type's space
+	curRecByte += 2 // skipping message type's space
 }
 
 /*
@@ -176,7 +176,7 @@ func getAndShowUInt8(s string, message []byte) (value uint8) {
 	if err != nil {
 		fmt.Println("binary.Read failed: ", err)
 	} else {
-		fmt.Printf("coa   [%s: %d]", s, value)
+		fmt.Printf("   [%s: %d]", s, value)
 	}
 
 	return value
