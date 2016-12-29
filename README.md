@@ -1,5 +1,21 @@
 # viscript
 
+Dependencies
+------------
+
+Dependencies are managed with [gvt](https://github.com/FiloSottile/gvt).
+
+To install gvt:
+```
+$ go get -u github.com/FiloSottile/gvt
+```
+
+gvt vendors all dependencies into the repo.
+
+If you change the dependencies, you should update them as needed with `gvt fetch`, `gvt update`, `gvt delete`, etc.
+
+Refer to the [gvt documentation](https://github.com/FiloSottile/gvt) or `gvt help` for further instructions.
+
 === Spec ===
 
 Macros + Reflection

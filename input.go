@@ -32,11 +32,11 @@ func onFramebufferSize(w *glfw.Window, width, height int) {
 	fmt.Printf("onFramebufferSize() - width, height: %d, %d\n", width, height)
 	gfx.CurrAppWidth = int32(width)
 	gfx.CurrAppHeight = int32(height)
-	gfx.Rend.SetSize()
 }
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	gfx.Curs.UpdatePosition(float32(x), float32(y))
+
 	mousePixelDeltaX = x - prevMousePixelX
 	mousePixelDeltaY = y - prevMousePixelY
 	prevMousePixelX = x
@@ -205,11 +205,11 @@ func onKey(
 
 		case glfw.KeyHome:
 			if w.GetKey(glfw.KeyLeftControl) == glfw.Press || w.GetKey(glfw.KeyRightControl) == glfw.Press {
-					
-			}else {
+
+			} else {
 				commonMovementKeyHandling()
-				foc.CursX = 0	
-			}	
+				foc.CursX = 0
+			}
 		case glfw.KeyEnd:
 			commonMovementKeyHandling()
 			foc.CursX = len(b[foc.CursY])
@@ -228,6 +228,9 @@ func onKey(
 
 			if foc.CursY < len(b)-1 {
 				foc.CursY++
+				if foc.BarVert.LenOfBar < float32(foc.CursY) {
+					gfx.Rend.ScrollPanelThatIsHoveredOver(0 ,36)
+				}
 
 				if foc.CursX > len(b[foc.CursY]) {
 					foc.CursX = len(b[foc.CursY])
@@ -259,7 +262,7 @@ func onKey(
 				}
 			}
 		case glfw.KeyBackspace:
-			if(foc.CursX == 0) {
+			if foc.CursX == 0 {
 				b = remove(b, foc.CursY, b[foc.CursY])
 				foc.TextBodies[0] = b
 				foc.CursY--
@@ -295,8 +298,8 @@ func insert(slice []string, index int, value string) []string {
 }
 
 // similar to insert method, instead moves current slice element and appends to one above
-func remove(slice []string, index int, value string) []string{
-	slice = append(slice[:index], slice[index+1:]...)     
+func remove(slice []string, index int, value string) []string {
+	slice = append(slice[:index], slice[index+1:]...)
 	slice[index-1] = slice[index-1] + value
 	return slice
 }
