@@ -21,12 +21,7 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"math"
-
-
-
-
 	//"github.com/corpusc/viscript/msg" //message structs are here
-
 )
 
 const PREFIX_SIZE = 5 // guaranteed minimum size of every message (4 for length & 1 for type)
@@ -37,8 +32,6 @@ const (
 	MessageCharacter
 	MessageKey
 )
-
-
 
 var Events = make(chan []byte, 256)
 var prevMousePixelX float64
@@ -161,67 +154,7 @@ func NewTexture(file string) uint32 {
 func destroyScene() {
 }
 
-func makeCube() {
-	gl.Normal3f(0, 0, 1)
-	gl.TexCoord2f(0, 0)
-	gl.Vertex3f(-1, -1, 1)
-	gl.TexCoord2f(1, 0)
-	gl.Vertex3f(1, -1, 1)
-	gl.TexCoord2f(1, 1)
-	gl.Vertex3f(1, 1, 1)
-	gl.TexCoord2f(0, 1)
-	gl.Vertex3f(-1, 1, 1)
 
-	gl.Normal3f(0, 0, -1)
-	gl.TexCoord2f(1, 0)
-	gl.Vertex3f(-1, -1, -1)
-	gl.TexCoord2f(1, 1)
-	gl.Vertex3f(-1, 1, -1)
-	gl.TexCoord2f(0, 1)
-	gl.Vertex3f(1, 1, -1)
-	gl.TexCoord2f(0, 0)
-	gl.Vertex3f(1, -1, -1)
-
-	gl.Normal3f(0, 1, 0)
-	gl.TexCoord2f(0, 1)
-	gl.Vertex3f(-1, 1, -1)
-	gl.TexCoord2f(0, 0)
-	gl.Vertex3f(-1, 1, 1)
-	gl.TexCoord2f(1, 0)
-	gl.Vertex3f(1, 1, 1)
-	gl.TexCoord2f(1, 1)
-	gl.Vertex3f(1, 1, -1)
-
-	gl.Normal3f(0, -1, 0)
-	gl.TexCoord2f(1, 1)
-	gl.Vertex3f(-1, -1, -1)
-	gl.TexCoord2f(0, 1)
-	gl.Vertex3f(1, -1, -1)
-	gl.TexCoord2f(0, 0)
-	gl.Vertex3f(1, -1, 1)
-	gl.TexCoord2f(1, 0)
-	gl.Vertex3f(-1, -1, 1)
-
-	gl.Normal3f(1, 0, 0)
-	gl.TexCoord2f(1, 0)
-	gl.Vertex3f(1, -1, -1)
-	gl.TexCoord2f(1, 1)
-	gl.Vertex3f(1, 1, -1)
-	gl.TexCoord2f(0, 1)
-	gl.Vertex3f(1, 1, 1)
-	gl.TexCoord2f(0, 0)
-	gl.Vertex3f(1, -1, 1)
-
-	gl.Normal3f(-1, 0, 0)
-	gl.TexCoord2f(0, 0)
-	gl.Vertex3f(-1, -1, -1)
-	gl.TexCoord2f(1, 0)
-	gl.Vertex3f(-1, -1, 1)
-	gl.TexCoord2f(1, 1)
-	gl.Vertex3f(-1, 1, 1)
-	gl.TexCoord2f(0, 1)
-	gl.Vertex3f(-1, 1, -1)
-}
 
 func InitInputEvents(w *glfw.Window) {
 	w.SetCharCallback(onChar)
@@ -581,8 +514,6 @@ func getSlice(wBuf *bytes.Buffer, err error) (data []byte) {
 	return
 }
 
-
-
 var curRecByte = 0 // current receive message index
 
 func monitorEvents(ch chan []byte) {
@@ -590,7 +521,7 @@ func monitorEvents(ch chan []byte) {
 	case v := <-ch:
 		processMessage(v)
 	default:
-	//fmt.Println("monitorEvents() default")
+		//fmt.Println("monitorEvents() default")
 	}
 }
 
