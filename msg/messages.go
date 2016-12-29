@@ -107,6 +107,7 @@ func s(s string, message []byte) {
 	curRecByte++ // skipping message type's space
 }
 
+/*
 func getMessageTypeUInt8(s string, message []byte) (value uint8) {
 	rBuf := bytes.NewReader(message[4:5])
 	err := binary.Read(rBuf, binary.LittleEndian, &value)
@@ -119,6 +120,7 @@ func getMessageTypeUInt8(s string, message []byte) (value uint8) {
 
 	return
 }
+*/
 
 func GetMessageTypeUInt16(message []byte) uint16 {
 	var value uint16
