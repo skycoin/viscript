@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/script"
+	"log"
 )
 
 var curRecByte = 0 // current receive message index
@@ -64,44 +65,51 @@ func processMessage(message []byte) {
 
 	case TypeMousePos:
 		s("TypeMousePos", message)
-		msg := MessageMousePos{}
-		msg.setMessageMousePosValue(getFloat64("X", message), getFloat64("Y", message))
+		var msgMousePos MessageMousePos
+		if err := Deserialize(message, msgMousePos); err != nil {
+			log.Fatal("Error with deserialize", err)
+		}
+
+		msgMousePos.X = getFloat64("X", message)
+		msgMousePos.Y = getFloat64("Y", message)
 
 	case TypeMouseScroll:
 		s("TypeMouseScroll", message)
-		msg := MessageMouseScroll{}
-		msg.setMessageMouseScrollValue(getFloat64("X Offset", message), getFloat64("Y Offset", message))
+		var msgScroll MessageMouseScroll
+		if err := Deserialize(message, msgScroll); err != nil {
+			log.Fatal("Error with deserialize", err)
+		}
+		msgScroll.X = getFloat64("X Offset", message)
+		msgScroll.Y = getFloat64("Y Offset", message)
 
 	case TypeMouseButton:
-		//do it this way
-		/*
-			var m1 MessageMouseButton
-			Deserialize(message, m1)
-			//m1.Button
-			//m1.Action
-			//m1.Mod
-			gfx.Curs.ConvertMouseClickToTextCursorPosition(m1.Button, m1.Action)
-		*/
-		//not this way
 		s("TypeMouseButton", message)
-		msg := MessageMouseButton{}
-		msg.setMessageMouseButtonValue(
-			getAndShowUInt8("Button", message),
-			getAndShowUInt8("Action", message),
-			getAndShowUInt8("Mod", message))
-		gfx.Curs.ConvertMouseClickToTextCursorPosition(msg.Button, msg.Action)
+		var msgBtn MessageMouseButton
+		if err := Deserialize(message, msgBtn); err != nil {
+			log.Fatal("Error with deserialize", err)
+		}
+		msgBtn.Button = getAndShowUInt8("Button", message)
+		msgBtn.Action = getAndShowUInt8("Action", message)
+		msgBtn.Mod = getAndShowUInt8("Mod", message)
+		gfx.Curs.ConvertMouseClickToTextCursorPosition(msgBtn.Button, msgBtn.Action)
 
 	case TypeCharacter:
 		s("TypeCharacter", message)
+		//var typeChar MessageCharacter
+		//TODO aleksbgs i dont know what is this
 		insertRuneIntoDocument("Rune", message)
 		script.Process(false)
 
 	case TypeKey:
 		s("TypeKey", message)
-		getAndShowUInt8("Key", message)
-		showSInt32("Scan", message)
-		getAndShowUInt8("Action", message)
-		getAndShowUInt8("Mod", message)
+		var keyMsg MessageKey
+		if err := Deserialize(message, keyMsg); err != nil {
+			log.Fatal("Error with deserialize", err)
+		}
+		keyMsg.Key = getAndShowUInt8("Key", message)
+		keyMsg.Scan = getUInt32Scan("Scan", message)
+		keyMsg.Action = getAndShowUInt8("Action", message)
+		keyMsg.Mod = getAndShowUInt8("Mod", message)
 
 	default:
 		fmt.Println("UNKNOWN MESSAGE TYPE!")
@@ -157,7 +165,7 @@ func insertRuneIntoDocument(s string, message []byte) {
 	if err != nil {
 		fmt.Println("binary.Read failed: ", err)
 	} else {
-		fmt.Printf("   [%s: %s]", s, string(value))
+		fmt.Printf("Rune   [%s: %s]", s, string(value))
 
 		f := gfx.Rend.Focused
 		b := f.TextBodies[0]
@@ -196,6 +204,7 @@ func showSInt32(s string, message []byte) {
 	} else {
 		fmt.Printf("   [%s: %d]", s, value)
 	}
+
 }
 
 func showUInt32(s string, message []byte) {
@@ -211,6 +220,22 @@ func showUInt32(s string, message []byte) {
 	} else {
 		fmt.Printf("   [%s: %d]", s, value)
 	}
+}
+func getUInt32Scan(s string, message []byte) (val uint32) {
+	var value uint32
+	var size = 4
+
+	rBuf := bytes.NewReader(message[curRecByte : curRecByte+size])
+	err := binary.Read(rBuf, binary.LittleEndian, &value)
+	curRecByte += size
+
+	if err != nil {
+		fmt.Println("binary.Read failed: ", err)
+	} else {
+		fmt.Printf("   [%s: %d]", s, value)
+	}
+	val = value
+	return val
 }
 
 func getFloat64(s string, message []byte) (val float64) {

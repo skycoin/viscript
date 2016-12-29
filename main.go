@@ -42,7 +42,6 @@ import (
 	"github.com/corpusc/viscript/msg"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
-
 )
 
 func init() {
@@ -90,7 +89,6 @@ func main() {
 		window.SwapBuffers()
 	}
 }
-
 
 // importPathToDir resolves the absolute path from importPath.
 // There doesn't need to be a valid Go package inside that import path,
