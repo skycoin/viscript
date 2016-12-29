@@ -15,7 +15,7 @@ func MonitorEvents(ch chan []byte) {
 	case v := <-ch:
 		processMessage(v)
 	default:
-		//fmt.Println("monitorEvents() default")
+		//fmt.Println("MonitorEvents() default")
 	}
 }
 
