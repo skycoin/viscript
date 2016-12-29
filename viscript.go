@@ -38,18 +38,10 @@ import (
 
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
-	"github.com/corpusc/viscript/hypervisor"
-
-	//	"log"
-	//	"os"
-	//	/*
-	//		"go/build"
-	//		"runtime"
-	//	*/
-
 
 )
 
@@ -90,7 +82,6 @@ func main() {
 
 	hypervisor.InitInputEvents(window)
 
-
 	for !window.ShouldClose() {
 		msg.MonitorEvents(hypervisor.Events)
 		glfw.PollEvents()
@@ -100,23 +91,6 @@ func main() {
 	}
 }
 
-// Set the working directory to the root of Go package, so that its assets can be accessed.
-func init() {
-	/*
-		//dir, err := importPathToDir("github.com/go-gl/examples/glfw31-gl21-cube")
-		dir, err := importPathToDir("viscript")
-
-		if err != nil {
-			log.Fatalln("Unable to find Go package in your GOPATH, it's needed to load assets:", err)
-		}
-
-		err = os.Chdir(dir)
-
-		if err != nil {
-			log.Panicln("os.Chdir:", err)
-		}
-	*/
-}
 
 // importPathToDir resolves the absolute path from importPath.
 // There doesn't need to be a valid Go package inside that import path,
