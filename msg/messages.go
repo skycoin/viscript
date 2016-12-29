@@ -4,11 +4,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	//"github.com/corpusc/viscript/msg" //message structs are here
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/script"
-
-
 )
 
 var curRecByte = 0 // current receive message index
@@ -24,13 +21,11 @@ func MonitorEvents(ch chan []byte) {
 
 /* message processing example */
 
-
 func ProcessIncomingMessages() {
 	//have a channel for incoming messages
 	//for msg := range self.IncomingChannel{
-         //       print(msg)
+	//       print(msg)
 	//}
-
 
 	//for msg := range IncomingChannel {
 	//	switch msg.GetMessageType(msg) {
@@ -63,36 +58,28 @@ func ProcessIncomingMessages() {
 	//}
 }
 
-
 func processMessage(message []byte) {
 
-
-	switch getMessageType(".", message) {
+	switch getMessageTypeUInt8(".", message) {
 
 	case TypeMousePos:
-		//fmt.Println(message{"X"})
 		s("TypeMousePos", message)
 		msg := MessageMousePos{}
-		msg.setMessageMousePosValue(getMousePositionValue("X", message), getMousePositionValue("Y", message))
-
-
+		msg.setMessageMousePosValue(getFloat64("X", message), getFloat64("Y", message))
 
 	case TypeMouseScroll:
 		s("TypeMouseScroll", message)
 		msg := MessageMouseScroll{}
-		msg.setMessageMouseScrollValue(getMousePositionValue("X Offset", message), getMousePositionValue("Y Offset", message))
-
+		msg.setMessageMouseScrollValue(getFloat64("X Offset", message), getFloat64("Y Offset", message))
 
 	case TypeMouseButton:
 		s("TypeMouseButton", message)
-		btnProperties := MessageMouseButton{}
-		btnProperties.setMessageMouseButtonValue(getAndShowUInt8("Button", message),getAndShowUInt8("Action", message),getAndShowUInt8("Mod", message))
-		//TODO FIX this runtime error: slice bounds out of range
-	       //gfx.Curs.ConvertMouseClickToTextCursorPosition(
-		//	getAndShowUInt8("Button", message),
-		//	getAndShowUInt8("Action", message))
-		////fmt.Println(btnProperties)
-		//getAndShowUInt8("Mod", message)
+		msg := MessageMouseButton{}
+		msg.setMessageMouseButtonValue(
+			getAndShowUInt8("Button", message),
+			getAndShowUInt8("Action", message),
+			getAndShowUInt8("Mod", message))
+		gfx.Curs.ConvertMouseClickToTextCursorPosition(msg.Button, msg.Action)
 
 	case TypeCharacter:
 		s("TypeCharacter", message)
@@ -120,8 +107,7 @@ func s(s string, message []byte) {
 	curRecByte++ // skipping message type's space
 }
 
-
-func getMessageType(s string, message []byte) (value uint8) {
+func getMessageTypeUInt8(s string, message []byte) (value uint8) {
 	rBuf := bytes.NewReader(message[4:5])
 	err := binary.Read(rBuf, binary.LittleEndian, &value)
 
@@ -132,6 +118,20 @@ func getMessageType(s string, message []byte) (value uint8) {
 	}
 
 	return
+}
+
+func GetMessageTypeUInt16(message []byte) uint16 {
+	var value uint16
+	rBuf := bytes.NewReader(message[4:6])
+	err := binary.Read(rBuf, binary.LittleEndian, &value)
+
+	if err != nil {
+		fmt.Println("binary.Read failed: ", err)
+	} else {
+		//fmt.Printf("from byte buffer, %s: %d\n", s, value)
+	}
+
+	return value
 }
 
 func insertRuneIntoDocument(s string, message []byte) {
@@ -201,7 +201,7 @@ func showUInt32(s string, message []byte) {
 	}
 }
 
-func showFloat64(s string, message []byte){
+func getFloat64(s string, message []byte) (val float64) {
 	var value float64
 	var size = 8
 
@@ -215,22 +215,6 @@ func showFloat64(s string, message []byte){
 		fmt.Printf("   [%s: %.1f]", s, value)
 	}
 
-
-}
-func getMousePositionValue(s string, message []byte)(val float64) {
-	var value float64
-	var size = 8
-
-	rBuf := bytes.NewReader(message[curRecByte : curRecByte+size])
-	err := binary.Read(rBuf, binary.LittleEndian, &value)
-	curRecByte += size
-
-	if err != nil {
-		fmt.Println("binary.Read failed: ", err)
-	} else {
-		fmt.Printf("   [%s: %.1f]", s, value)
-	}
 	val = value
 	return val
-
 }

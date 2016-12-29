@@ -1,17 +1,18 @@
 package msg
 
 import (
-	_"bytes"
-	_"encoding/binary"
-	_"fmt"
+	_ "bytes"
+	_ "encoding/binary"
+	_ "fmt"
 	//"math/rand"
 )
 
+// HyperVisor -> Process, input event
 const (
 	TypeMousePos    = iota // 0
 	TypeMouseScroll        // 1
 	TypeMouseButton        // 2
-	TypeCharacter
+	TypeCharacter          // etc.
 	TypeKey
 )
 
@@ -47,24 +48,18 @@ type MessageKey struct {
 	Mod    uint8
 }
 
-
-
-func (m * MessageMousePos)setMessageMousePosValue(x float64,y float64)  {
+func (m *MessageMousePos) setMessageMousePosValue(x, y float64) {
 	m.X = x
 	m.Y = y
-
 }
-func (m * MessageMouseScroll)setMessageMouseScrollValue(x float64,y float64)  {
+func (m *MessageMouseScroll) setMessageMouseScrollValue(x, y float64) {
 	m.X = x
 	m.Y = y
-
 }
-func (m * MessageMouseButton)setMessageMouseButtonValue(button uint8,action uint8,mod uint8)  {
+func (m *MessageMouseButton) setMessageMouseButtonValue(button, action, mod uint8) {
 	m.Button = button
 	m.Action = action
 	m.Mod = mod
-
 }
-
 
 //Terminal Driving Messages
