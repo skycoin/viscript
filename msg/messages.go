@@ -60,7 +60,7 @@ func ProcessIncomingMessages() {
 
 func processMessage(message []byte) {
 
-	switch getMessageTypeUInt8(".", message) {
+	switch GetMessageTypeUInt16(message) {
 
 	case TypeMousePos:
 		s("TypeMousePos", message)
