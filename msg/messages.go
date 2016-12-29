@@ -74,13 +74,14 @@ func processMessage(message []byte) {
 
 	case TypeMouseButton:
 		//do it this way
-		var m1 MessageMouseButton
-		Deserialize(message, m1)
-		//m1.Button
-		//m1.Action
-		//m1.Mod
-		gfx.Curs.ConvertMouseClickToTextCursorPosition(m1.Button, m1.Action)
-
+		/*
+			var m1 MessageMouseButton
+			Deserialize(message, m1)
+			//m1.Button
+			//m1.Action
+			//m1.Mod
+			gfx.Curs.ConvertMouseClickToTextCursorPosition(m1.Button, m1.Action)
+		*/
 		//not this way
 		s("TypeMouseButton", message)
 		msg := MessageMouseButton{}
