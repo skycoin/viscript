@@ -24,7 +24,6 @@ Refer to the [gvt documentation](https://github.com/FiloSottile/gvt) or `gvt hel
 
 
 Debian
-===
 =======
 
 sudo apt-get install libgl1-mesa-dev
