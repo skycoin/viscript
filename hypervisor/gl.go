@@ -1,30 +1,26 @@
-package main
+package hypervisor
 
 import (
 	"fmt"
+	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/script"
+	"github.com/go-gl/gl/v2.1/gl"
 	"image"
 	"image/draw"
 	_ "image/png"
 	"log"
 	"os"
-	/*
-		"go/build"
-		"runtime"
-	*/
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/gfx"
-	"github.com/corpusc/viscript/script"
-	"github.com/go-gl/gl/v2.1/gl"
 )
 
 var (
-	texture   uint32
+	Texture   uint32
 	rotationX float32
 	rotationY float32
 )
 
-func initRenderer() {
-	fmt.Println("initRenderer()")
+func InitRenderer() {
+	fmt.Println("InitRenderer()")
 
 	gl.Enable(gl.DEPTH_TEST)
 	gl.Enable(gl.LIGHTING)
@@ -62,7 +58,7 @@ func setFrustum(r *app.Rectangle) {
 		float64(r.Top), 1.0, 10.0)
 }
 
-func drawScene() {
+func DrawScene() {
 	//rotationX += 0.5
 	//rotationY += 0.5
 	gl.Viewport(0, 0, gfx.CurrAppWidth, gfx.CurrAppHeight) // OPTIMIZEME?  could set flag upon frame buffer size change event
@@ -82,14 +78,14 @@ func drawScene() {
 	//gl.Rotatef(rotationX, 1, 0, 0)
 	//gl.Rotatef(rotationY, 0, 1, 0)
 
-	gl.BindTexture(gl.TEXTURE_2D, texture)
+	gl.BindTexture(gl.TEXTURE_2D, Texture)
 
 	gl.Begin(gl.QUADS)
 	gfx.Rend.DrawAll()
 	gl.End()
 }
 
-func newTexture(file string) uint32 {
+func NewTexture(file string) uint32 {
 	imgFile, err := os.Open(file)
 	if err != nil {
 		log.Fatalf("texture %q not found on disk: %v\n", file, err)
@@ -130,66 +126,4 @@ func newTexture(file string) uint32 {
 }
 
 func destroyScene() {
-}
-
-func makeCube() {
-	gl.Normal3f(0, 0, 1)
-	gl.TexCoord2f(0, 0)
-	gl.Vertex3f(-1, -1, 1)
-	gl.TexCoord2f(1, 0)
-	gl.Vertex3f(1, -1, 1)
-	gl.TexCoord2f(1, 1)
-	gl.Vertex3f(1, 1, 1)
-	gl.TexCoord2f(0, 1)
-	gl.Vertex3f(-1, 1, 1)
-
-	gl.Normal3f(0, 0, -1)
-	gl.TexCoord2f(1, 0)
-	gl.Vertex3f(-1, -1, -1)
-	gl.TexCoord2f(1, 1)
-	gl.Vertex3f(-1, 1, -1)
-	gl.TexCoord2f(0, 1)
-	gl.Vertex3f(1, 1, -1)
-	gl.TexCoord2f(0, 0)
-	gl.Vertex3f(1, -1, -1)
-
-	gl.Normal3f(0, 1, 0)
-	gl.TexCoord2f(0, 1)
-	gl.Vertex3f(-1, 1, -1)
-	gl.TexCoord2f(0, 0)
-	gl.Vertex3f(-1, 1, 1)
-	gl.TexCoord2f(1, 0)
-	gl.Vertex3f(1, 1, 1)
-	gl.TexCoord2f(1, 1)
-	gl.Vertex3f(1, 1, -1)
-
-	gl.Normal3f(0, -1, 0)
-	gl.TexCoord2f(1, 1)
-	gl.Vertex3f(-1, -1, -1)
-	gl.TexCoord2f(0, 1)
-	gl.Vertex3f(1, -1, -1)
-	gl.TexCoord2f(0, 0)
-	gl.Vertex3f(1, -1, 1)
-	gl.TexCoord2f(1, 0)
-	gl.Vertex3f(-1, -1, 1)
-
-	gl.Normal3f(1, 0, 0)
-	gl.TexCoord2f(1, 0)
-	gl.Vertex3f(1, -1, -1)
-	gl.TexCoord2f(1, 1)
-	gl.Vertex3f(1, 1, -1)
-	gl.TexCoord2f(0, 1)
-	gl.Vertex3f(1, 1, 1)
-	gl.TexCoord2f(0, 0)
-	gl.Vertex3f(1, -1, 1)
-
-	gl.Normal3f(-1, 0, 0)
-	gl.TexCoord2f(0, 0)
-	gl.Vertex3f(-1, -1, -1)
-	gl.TexCoord2f(1, 0)
-	gl.Vertex3f(-1, -1, 1)
-	gl.TexCoord2f(1, 1)
-	gl.Vertex3f(-1, 1, 1)
-	gl.TexCoord2f(0, 1)
-	gl.Vertex3f(-1, 1, -1)
 }

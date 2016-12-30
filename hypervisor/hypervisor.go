@@ -1,9 +1,14 @@
-package main
+package hypervisor
 
 import (
+	"fmt"
+	_ "image/png"
+	/*
+		"go/build"
+		"runtime"
+	*/
 	"bytes"
 	"encoding/binary"
-	"fmt"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
@@ -13,14 +18,13 @@ import (
 	"strconv"
 )
 
-const PREFIX_SIZE = 5 // guaranteed minimum size of every message (4 for length & 1 for type)
-var events = make(chan []byte, 256)
+var Events = make(chan []byte, 256)
 var prevMousePixelX float64
 var prevMousePixelY float64
 var mousePixelDeltaX float64
 var mousePixelDeltaY float64
 
-func initInputEvents(w *glfw.Window) {
+func InitInputEvents(w *glfw.Window) {
 	w.SetCharCallback(onChar)
 	w.SetKeyCallback(onKey)
 	w.SetMouseButtonCallback(onMouseButton)
@@ -163,11 +167,20 @@ func onKey(
 		case glfw.KeyLeftControl:
 			fallthrough
 		case glfw.KeyRightControl:
+<<<<<<< HEAD:input.go
 			fmt.Println("Control RELEASED")
 		case glfw.KeyLeftAlt:
 			fallthrough
 		case glfw.KeyRightAlt:
 			fmt.Println("Alt RELEASED")
+=======
+		//fmt.Println("Control RELEASED")
+
+		case glfw.KeyLeftAlt:
+			fallthrough
+		case glfw.KeyRightAlt:
+		//fmt.Println("Alt RELEASED")
+>>>>>>> corpusc/master:hypervisor/hypervisor.go
 
 		case glfw.KeyLeftSuper:
 			fallthrough
@@ -316,6 +329,7 @@ func insert(slice []string, index int, value string) []string {
 	return slice
 }
 
+<<<<<<< HEAD:input.go
 // similar to insert method, instead moves current slice element and appends to one above
 func remove(slice []string, index int, value string) []string {
 	slice = append(slice[:index], slice[index+1:]...)
@@ -325,11 +339,14 @@ func remove(slice []string, index int, value string) []string {
 
 func dispatchWithPrefix(content []byte, msgType uint8) {
 	//prefix := make([]byte, PREFIX_SIZE)
+=======
+func dispatchWithPrefix(content []byte, msgType uint16) {
+>>>>>>> corpusc/master:hypervisor/hypervisor.go
 	prefix := append(
-		getBytesOfUInt32(uint32(len(content))+PREFIX_SIZE),
-		getByteOfUInt8(msgType)...)
+		getBytesOfUInt32(uint32(len(content))+msg.PREFIX_SIZE),
+		getBytesOfUInt16(msgType)...)
 
-	events <- append(prefix, content...)
+	Events <- append(prefix, content...)
 }
 
 func getWordSkipPos(xIn int, change int) int {
@@ -386,6 +403,13 @@ func getByteOfUInt8(value uint8) (data []byte) {
 }
 
 func getBytesOfSInt32(value int32) (data []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+	data = getSlice(wBuf, err)
+	return
+}
+
+func getBytesOfUInt16(value uint16) (data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
 	data = getSlice(wBuf, err)
