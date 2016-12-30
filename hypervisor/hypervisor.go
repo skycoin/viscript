@@ -167,21 +167,12 @@ func onKey(
 		case glfw.KeyLeftControl:
 			fallthrough
 		case glfw.KeyRightControl:
-<<<<<<< HEAD:input.go
 			fmt.Println("Control RELEASED")
 		case glfw.KeyLeftAlt:
 			fallthrough
 		case glfw.KeyRightAlt:
 			fmt.Println("Alt RELEASED")
-=======
 		//fmt.Println("Control RELEASED")
-
-		case glfw.KeyLeftAlt:
-			fallthrough
-		case glfw.KeyRightAlt:
-		//fmt.Println("Alt RELEASED")
->>>>>>> corpusc/master:hypervisor/hypervisor.go
-
 		case glfw.KeyLeftSuper:
 			fallthrough
 		case glfw.KeyRightSuper:
@@ -329,7 +320,6 @@ func insert(slice []string, index int, value string) []string {
 	return slice
 }
 
-<<<<<<< HEAD:input.go
 // similar to insert method, instead moves current slice element and appends to one above
 func remove(slice []string, index int, value string) []string {
 	slice = append(slice[:index], slice[index+1:]...)
@@ -337,11 +327,7 @@ func remove(slice []string, index int, value string) []string {
 	return slice
 }
 
-func dispatchWithPrefix(content []byte, msgType uint8) {
-	//prefix := make([]byte, PREFIX_SIZE)
-=======
 func dispatchWithPrefix(content []byte, msgType uint16) {
->>>>>>> corpusc/master:hypervisor/hypervisor.go
 	prefix := append(
 		getBytesOfUInt32(uint32(len(content))+msg.PREFIX_SIZE),
 		getBytesOfUInt16(msgType)...)

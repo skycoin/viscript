@@ -20,14 +20,6 @@ func MouseCursorIsInside(r *app.Rectangle) bool {
 	return false
 }
 
-func AppCursorIsInside(r *app.Rectangle) bool{
-	if(foc.CursY > r.Bottom && foc.CursY < r.Top &&
-		foc.CursX < r.Right && foc.CursX < r.Left) {
-		return true;			
-	}
-	return false;	
-}
-
 type Cursors struct {
 	NextBlinkChange time.Time
 	Visible         bool
