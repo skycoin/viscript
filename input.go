@@ -10,6 +10,7 @@ import (
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"math"
+	"strconv"
 )
 
 const PREFIX_SIZE = 5 // guaranteed minimum size of every message (4 for length & 1 for type)
@@ -176,6 +177,16 @@ func onKey(
 	} else { // glfw.Repeat   or   glfw.Press
 		b := foc.TextBodies[0]
 
+		CharWid := int32(gfx.Rend.CharWidInPixels)
+		CharHei := int32(gfx.Rend.CharHeiInPixels)
+		numOfCharsV := gfx.CurrAppHeight / CharHei
+		numOfCharsH := gfx.CurrAppWidth / CharWid
+
+		s := strconv.Itoa(int(numOfCharsV))
+
+		fmt.Printf("Rectangle Right %s\n\n\n", s)
+		
+		
 		switch mod {
 		case glfw.ModShift:
 			fmt.Println("started selecting")
@@ -227,10 +238,10 @@ func onKey(
 			commonMovementKeyHandling()
 
 			if foc.CursY < len(b)-1 {
-				foc.CursY++
-				if foc.BarVert.LenOfBar < float32(foc.CursY) {
-					gfx.Rend.ScrollPanelThatIsHoveredOver(0 ,36)
+				if numOfCharsV < (int32(foc.CursY) + 1) {
+					gfx.Rend.ScrollPanelThatIsHoveredOver(0, float64(CharHei))
 				}
+				foc.CursY++
 
 				if foc.CursX > len(b[foc.CursY]) {
 					foc.CursX = len(b[foc.CursY])
@@ -248,16 +259,24 @@ func onKey(
 				if mod == glfw.ModControl {
 					foc.CursX = getWordSkipPos(foc.CursX, -1)
 				} else {
+					if (numOfCharsH - int32(foc.CursX)) > (int32(foc.CursX) + 4) {
+						gfx.Rend.ScrollPanelThatIsHoveredOver(float64(-CharWid), 0)
+					}
 					foc.CursX--
 				}
 			}
 		case glfw.KeyRight:
+
 			commonMovementKeyHandling()
 
 			if foc.CursX < len(b[foc.CursY]) {
 				if mod == glfw.ModControl {
 					foc.CursX = getWordSkipPos(foc.CursX, 1)
 				} else {
+					fmt.Println(numOfCharsH)
+					if numOfCharsH < (int32(foc.CursX) + 4){
+						gfx.Rend.ScrollPanelThatIsHoveredOver(float64(CharWid), 0)
+					}
 					foc.CursX++
 				}
 			}
@@ -337,6 +356,8 @@ func getWordSkipPos(xIn int, change int) int {
 
 func commonMovementKeyHandling() {
 	foc := gfx.Rend.Focused
+
+	
 
 	if foc.Selection.CurrentlySelecting {
 		foc.Selection.EndX = foc.CursX
