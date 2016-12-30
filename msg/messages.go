@@ -116,27 +116,11 @@ func processMessage(message []byte) {
 
 func s(s string) {
 	fmt.Print(s)
-	//showUInt32("Len")
 }
-
-/*
-func getMessageTypeUInt8(s string, message []byte) (value uint8) {
-	rBuf := bytes.NewReader(message[4:5])
-	err := binary.Read(rBuf, binary.LittleEndian, &value)
-
-	if err != nil {
-		fmt.Println("binary.Read failed: ", err)
-	} else {
-		//fmt.Printf("from byte buffer, %s: %d\n", s, value)
-	}
-
-	return
-}
-*/
 
 func GetMessageTypeUInt16(message []byte) uint16 {
 	var value uint16
-	rBuf := bytes.NewReader(message[4:6])
+	rBuf := bytes.NewReader(message[0:2])
 	err := binary.Read(rBuf, binary.LittleEndian, &value)
 
 	if err != nil {
@@ -191,95 +175,3 @@ func getFloat64(s string, f float64) float64 {
 	fmt.Printf("   [%s: %.1f]", s, f)
 	return f
 }
-
-/*
-func getAndShowUInt8(s string, message []byte) (value uint8) {
-	var size = 1
-
-	rBuf := bytes.NewReader(message[curRecByte : curRecByte+size])
-	err := binary.Read(rBuf, binary.LittleEndian, &value)
-	curRecByte += size
-
-	if err != nil {
-		fmt.Println("binary.Read failed: ", err)
-	} else {
-		fmt.Printf("   [%s: %d]", s, value)
-	}
-
-	return value
-}
-*/
-
-/*
-func showSInt32(s string, message []byte) {
-	var value int32
-	var size = 4
-
-	rBuf := bytes.NewReader(message[curRecByte : curRecByte+size])
-	err := binary.Read(rBuf, binary.LittleEndian, &value)
-	curRecByte += size
-
-	if err != nil {
-		fmt.Println("binary.Read failed: ", err)
-	} else {
-		fmt.Printf("   [%s: %d]", s, value)
-	}
-
-}
-*/
-
-/*
-func showUInt32(s string, message []byte) {
-	var value uint32
-	var size = 4
-
-	rBuf := bytes.NewReader(message[curRecByte : curRecByte+size])
-	err := binary.Read(rBuf, binary.LittleEndian, &value)
-	curRecByte += size
-
-	if err != nil {
-		fmt.Println("binary.Read failed: ", err)
-	} else {
-		fmt.Printf("   [%s: %d]", s, value)
-	}
-}
-*/
-
-/*
-func getUInt32Scan(s string, message []byte) (val uint32) {
-	var value uint32
-	var size = 4
-
-	rBuf := bytes.NewReader(message[curRecByte : curRecByte+size])
-	err := binary.Read(rBuf, binary.LittleEndian, &value)
-	curRecByte += size
-
-	if err != nil {
-		fmt.Println("binary.Read failed: ", err)
-	} else {
-		fmt.Printf("   [%s: %d]", s, value)
-	}
-	val = value
-	return val
-}
-*/
-
-/*
-func getFloat64(s string, message []byte) (val float64) {
-	var value float64
-	var size = 8
-
-	rBuf := bytes.NewReader(message[curRecByte : curRecByte+size])
-	err := binary.Read(rBuf, binary.LittleEndian, &value)
-	curRecByte += size
-
-	if err != nil {
-		fmt.Println("binary.Read failed: ", err)
-	} else {
-		fmt.Printf("   [%s: %.1f]", s, value)
-	}
-
-	val = value
-	return val
-}
-*/
