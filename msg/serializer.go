@@ -2,13 +2,21 @@ package msg
 
 import (
 	"github.com/skycoin/skycoin/src/cipher/encoder"
-	//	"log"
+	"log"
 )
 
 func Deserialize(msg []byte, obj interface{}) error {
 	msg = msg[2:] //pop off prefix byte
 	err := encoder.DeserializeRaw(msg, obj)
 	return err
+}
+
+func MustDeserialize(msg []byte, obj interface{}) {
+	msg = msg[2:] //pop off prefix byte
+	err := encoder.DeserializeRaw(msg, obj)
+	if err != nil {
+		log.Fatal("Error with deserialize", err)
+	}
 }
 
 func Serialize(prefix uint16, obj interface{}) []byte {

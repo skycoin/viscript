@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/script"
-	"log"
+	//"log"
 )
 
 var curRecByte = 0 // current receive message index
@@ -33,24 +33,24 @@ func ProcessIncomingMessages() {
 	//	//InRouteMessage is the only message coming in to node from transports
 	//	case msg.MsgTypeMousePos:
 	//		var m1 msg.TypeMousePos
-	//		msg.Deserialize(msg, m1)
+	//		msg.MustDeserialize(msg, m1)
 	//		//self.HandleInRouteMessage(m1)
 	//		fmt.Printf("TypeMousePos: X= %f, Y= %f \n", m1.X, m2.X)
 	//	case msg.MsgTypeMouseScroll:
 	//		var m2 msg.TypeMouseScroll
-	//		msg.Deserialize(msg, m1)
+	//		msg.MustDeserialize(msg, m1)
 	//
 	//	case msg.MsgTypeMouseButton:
 	//		var m3 msg.TypeMouseButton
-	//		mesg.Deserialize(msg, m1)
+	//		mesg.MustDeserialize(msg, m1)
 	//
 	//	case msg.MsgTypeCharacter:
 	//		var m4 msg.TypeCharacter
-	//		msg.Deserialize(msg, m1)
+	//		msg.MustDeserialize(msg, m1)
 	//
 	//	case msg.MsgTypeKey:
 	//		var m5 msg.TypeKey
-	//		msg.Deserialize(msg, m1)
+	//		msg.MustDeserialize(msg, m1)
 	//
 	//	default:
 	//		fmt.Println("UNKNOWN MESSAGE TYPE!")
@@ -64,52 +64,47 @@ func processMessage(message []byte) {
 	switch GetMessageTypeUInt16(message) {
 
 	case TypeMousePos:
-		s("TypeMousePos", message)
 		var msgMousePos MessageMousePos
-		if err := Deserialize(message, msgMousePos); err != nil {
-			log.Fatal("Error with deserialize", err)
-		}
+		MustDeserialize(message, msgMousePos)
 
-		msgMousePos.X = getFloat64("X", message)
-		msgMousePos.Y = getFloat64("Y", message)
+		s("TypeMousePos")
+		getFloat64("X", msgMousePos.X)
+		getFloat64("Y", msgMousePos.Y)
 
 	case TypeMouseScroll:
-		s("TypeMouseScroll", message)
 		var msgScroll MessageMouseScroll
-		if err := Deserialize(message, msgScroll); err != nil {
-			log.Fatal("Error with deserialize", err)
-		}
-		msgScroll.X = getFloat64("X Offset", message)
-		msgScroll.Y = getFloat64("Y Offset", message)
+		MustDeserialize(message, msgScroll)
+
+		s("TypeMouseScroll")
+		getFloat64("X Offset", msgScroll.X)
+		getFloat64("Y Offset", msgScroll.Y)
 
 	case TypeMouseButton:
-		s("TypeMouseButton", message)
 		var msgBtn MessageMouseButton
-		if err := Deserialize(message, msgBtn); err != nil {
-			log.Fatal("Error with deserialize", err)
-		}
-		msgBtn.Button = getAndShowUInt8("Button", message)
-		msgBtn.Action = getAndShowUInt8("Action", message)
-		msgBtn.Mod = getAndShowUInt8("Mod", message)
+		MustDeserialize(message, msgBtn)
+
+		s("TypeMouseButton")
+		getAndShowUInt8("Button", msgBtn.Button)
+		getAndShowUInt8("Action", msgBtn.Action)
+		getAndShowUInt8("Mod", msgBtn.Mod)
 		gfx.Curs.ConvertMouseClickToTextCursorPosition(msgBtn.Button, msgBtn.Action)
 
 	case TypeCharacter:
-		s("TypeCharacter", message)
+
+		s("TypeCharacter")
 		//var typeChar MessageCharacter
 		//TODO aleksbgs i dont know what is this
 		insertRuneIntoDocument("Rune", message)
 		script.Process(false)
 
 	case TypeKey:
-		s("TypeKey", message)
 		var keyMsg MessageKey
-		if err := Deserialize(message, keyMsg); err != nil {
-			log.Fatal("Error with deserialize", err)
-		}
-		keyMsg.Key = getAndShowUInt8("Key", message)
-		keyMsg.Scan = getUInt32Scan("Scan", message)
-		keyMsg.Action = getAndShowUInt8("Action", message)
-		keyMsg.Mod = getAndShowUInt8("Mod", message)
+		s("TypeKey")
+		MustDeserialize(message, keyMsg)
+		getAndShowUInt8("Key", keyMsg.Key)
+		getUInt32Scan("Scan", keyMsg.Scan)
+		getAndShowUInt8("Action", keyMsg.Action)
+		getAndShowUInt8("Mod", keyMsg.Mod)
 
 	default:
 		fmt.Println("UNKNOWN MESSAGE TYPE!")
@@ -119,10 +114,9 @@ func processMessage(message []byte) {
 	curRecByte = 0
 }
 
-func s(s string, message []byte) {
+func s(s string) {
 	fmt.Print(s)
-	showUInt32("Len", message)
-	curRecByte += 2 // skipping message type's space
+	//showUInt32("Len")
 }
 
 /*
@@ -174,6 +168,31 @@ func insertRuneIntoDocument(s string, message []byte) {
 	}
 }
 
+func getAndShowUInt8(s string, x uint8) uint8 {
+	fmt.Printf("   [%s: %d]", s, x)
+	return x
+}
+
+// the rest of these funcs are almost identical, just top 2 vars customized (and string format)
+func showSInt32(s string, x int32) {
+	fmt.Printf("   [%s: %d]", s, x)
+}
+
+func showUInt32(s string, x uint32) {
+	fmt.Printf("   [%s: %d]", s, x)
+}
+
+func getUInt32Scan(s string, x uint32) uint32 {
+	fmt.Printf("   [%s: %d]", s, x)
+	return x
+}
+
+func getFloat64(s string, f float64) float64 {
+	fmt.Printf("   [%s: %.1f]", s, f)
+	return f
+}
+
+/*
 func getAndShowUInt8(s string, message []byte) (value uint8) {
 	var size = 1
 
@@ -189,8 +208,9 @@ func getAndShowUInt8(s string, message []byte) (value uint8) {
 
 	return value
 }
+*/
 
-// the rest of these funcs are almost identical, just top 2 vars customized (and string format)
+/*
 func showSInt32(s string, message []byte) {
 	var value int32
 	var size = 4
@@ -206,7 +226,9 @@ func showSInt32(s string, message []byte) {
 	}
 
 }
+*/
 
+/*
 func showUInt32(s string, message []byte) {
 	var value uint32
 	var size = 4
@@ -221,6 +243,9 @@ func showUInt32(s string, message []byte) {
 		fmt.Printf("   [%s: %d]", s, value)
 	}
 }
+*/
+
+/*
 func getUInt32Scan(s string, message []byte) (val uint32) {
 	var value uint32
 	var size = 4
@@ -237,7 +262,9 @@ func getUInt32Scan(s string, message []byte) (val uint32) {
 	val = value
 	return val
 }
+*/
 
+/*
 func getFloat64(s string, message []byte) (val float64) {
 	var value float64
 	var size = 8
@@ -255,3 +282,4 @@ func getFloat64(s string, message []byte) (val float64) {
 	val = value
 	return val
 }
+*/
