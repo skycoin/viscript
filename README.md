@@ -34,7 +34,6 @@ sudo apt-get install libxinerama-dev
 
 go get github.com/go-gl/gl/v{3.2,3.3,4.1,4.4,4.5}-{core,compatibility}/gl
 go get github.com/go-gl/gl/v3.3-core/gl
-=======
 
 
 
@@ -43,7 +42,8 @@ go get github.com/go-gl/gl/v3.3-core/gl
 
 
 
-=== Spec ===
+Spec 
+====
 
 Macros + Reflection
 Statically typed scheme
