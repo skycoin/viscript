@@ -670,8 +670,6 @@ https://media.8ch.net/file_store/182f81c50b3263c84c2269056bde7221026adc7971d119b
 [12:31:22 PM] HaltingState: also, label line numbers in the editor; each line needs to have line numbers on left hand side, like sublime
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 (def_func Name (in...) (out...) (expression_array...) )
 
 
@@ -721,8 +719,6 @@ Types
 -- what external functions, objects, modules are used by a line in a particular function
 
 
-=======
-=======
 
 [9/27/2016 7:05:12 AM] HaltingState: 
 1> All code must be in a function
@@ -731,11 +727,6 @@ Types
 3> functions have line 1, line 2, line 3, line 4 etc.
 4> Functions have "blocks" which are like "if X, block Y else Block Y" the blocks are embedded recursively. So there is a top block, then subblocks. 
 5> each line is an expression. start with basic things like "introduce variable X" and "set x value" and (set x (add32 5 8))   , (new x int32), or (int32.new x) //introduce type int32, with label x
-
-
-
-
-
 
 [9/30/2016 3:00:31 AM] HaltingState: yes
 [9/30/2016 3:01:00 AM] HaltingState: so (* 3 (+ 5 6)) instead of 3* (5+6) so you do not have to do any work to parse and no order of precidence
@@ -773,12 +764,8 @@ being able to create structs etc and just start simple
 But doesnt matter for now
 [7:19:28 AM] HaltingState: A virtual DOM, then an object that renders it into the square buffer
 
-<<<<<<< HEAD
 >>>>>>> c28e4e893e8b22f4008399ed63e86c220a13cf47
 =======
-
-
-
 
 [10/11/2016 5:10:54 AM] HaltingState: go on rise up and create an etherpad
 [10/11/2016 5:11:50 AM] HaltingState: https://pad.riseup.net/
