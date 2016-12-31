@@ -65,7 +65,7 @@ func processMessage(message []byte) {
 
 	case TypeMousePos:
 		var msgMousePos MessageMousePos
-		MustDeserialize(message, msgMousePos)
+		MustDeserialize(message, &msgMousePos)
 
 		s("TypeMousePos")
 		getFloat64("X", msgMousePos.X)
@@ -73,7 +73,7 @@ func processMessage(message []byte) {
 
 	case TypeMouseScroll:
 		var msgScroll MessageMouseScroll
-		MustDeserialize(message, msgScroll)
+		MustDeserialize(message, &msgScroll)
 
 		s("TypeMouseScroll")
 		getFloat64("X Offset", msgScroll.X)
@@ -81,7 +81,7 @@ func processMessage(message []byte) {
 
 	case TypeMouseButton:
 		var msgBtn MessageMouseButton
-		MustDeserialize(message, msgBtn)
+		MustDeserialize(message, &msgBtn)
 
 		s("TypeMouseButton")
 		getAndShowUInt8("Button", msgBtn.Button)
@@ -100,7 +100,7 @@ func processMessage(message []byte) {
 	case TypeKey:
 		var keyMsg MessageKey
 		s("TypeKey")
-		MustDeserialize(message, keyMsg)
+		MustDeserialize(message, &keyMsg)
 		getAndShowUInt8("Key", keyMsg.Key)
 		getUInt32Scan("Scan", keyMsg.Scan)
 		getAndShowUInt8("Action", keyMsg.Action)
