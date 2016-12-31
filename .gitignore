@@ -1,8 +1,4 @@
 *.bat
-<<<<<<< HEAD
-
 *.xml
-=======
 .idea/
 viscript
->>>>>>> corpusc/master
