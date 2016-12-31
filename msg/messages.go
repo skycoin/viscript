@@ -132,7 +132,7 @@ func GetMessageTypeUInt16(message []byte) uint16 {
 	return value
 }
 
-func insertRuneIntoDocument(s string, message []byte) {
+func insertRuneIntoDocument(s string, message []byte) uint32 {
 	var value rune
 	var size = 4
 
@@ -150,6 +150,7 @@ func insertRuneIntoDocument(s string, message []byte) {
 		b[f.CursY] = b[f.CursY][:f.CursX] + string(value) + b[f.CursY][f.CursX:len(b[f.CursY])]
 		f.CursX++
 	}
+	return uint32(value)
 }
 
 func getAndShowUInt8(s string, x uint8) uint8 {

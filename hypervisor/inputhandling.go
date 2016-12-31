@@ -2,12 +2,18 @@ package hypervisor
 
 import (
 	"fmt"
+	_ "image/png"
+	/*
+		"go/build"
+		"runtime"
+	*/
+	"bytes"
+	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
-<<<<<<< HEAD
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"math"
-	"strconv"
 )
 
 var Events = make(chan []byte, 256)
@@ -29,11 +35,11 @@ func onFramebufferSize(w *glfw.Window, width, height int) {
 	fmt.Printf("onFramebufferSize() - width, height: %d, %d\n", width, height)
 	gfx.CurrAppWidth = int32(width)
 	gfx.CurrAppHeight = int32(height)
+	gfx.Rend.SetSize()
 }
 
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	gfx.Curs.UpdatePosition(float32(x), float32(y))
-
 	mousePixelDeltaX = x - prevMousePixelX
 	mousePixelDeltaY = y - prevMousePixelY
 	prevMousePixelX = x
@@ -182,30 +188,21 @@ func onKey(
 		case glfw.KeyLeftControl:
 			fallthrough
 		case glfw.KeyRightControl:
-			fmt.Println("Control RELEASED")
+		//fmt.Println("Control RELEASED")
+
 		case glfw.KeyLeftAlt:
 			fallthrough
 		case glfw.KeyRightAlt:
-			fmt.Println("Alt RELEASED")
-		//fmt.Println("Control RELEASED")
+		//fmt.Println("Alt RELEASED")
+
 		case glfw.KeyLeftSuper:
 			fallthrough
 		case glfw.KeyRightSuper:
-			fmt.Println("'Super' modifier key RELEASED")
+			//fmt.Println("'Super' modifier key RELEASED")
 		}
 	} else { // glfw.Repeat   or   glfw.Press
 		b := foc.TextBodies[0]
 
-		CharWid := int32(gfx.Rend.CharWidInPixels)
-		CharHei := int32(gfx.Rend.CharHeiInPixels)
-		numOfCharsV := gfx.CurrAppHeight / CharHei
-		numOfCharsH := gfx.CurrAppWidth / CharWid
-
-		s := strconv.Itoa(int(numOfCharsV))
-
-		fmt.Printf("Rectangle Right %s\n\n\n", s)
-		
-		
 		switch mod {
 		case glfw.ModShift:
 			fmt.Println("started selecting")
@@ -227,19 +224,14 @@ func onKey(
 
 			foc.CursX = 0
 			foc.CursY++
-			foc.TextBodies[0] = b
 
 			if foc.CursY >= len(b) {
 				foc.CursY = len(b) - 1
 			}
 
 		case glfw.KeyHome:
-			if w.GetKey(glfw.KeyLeftControl) == glfw.Press || w.GetKey(glfw.KeyRightControl) == glfw.Press {
-
-			} else {
-				commonMovementKeyHandling()
-				foc.CursX = 0
-			}
+			commonMovementKeyHandling()
+			foc.CursX = 0
 		case glfw.KeyEnd:
 			commonMovementKeyHandling()
 			foc.CursX = len(b[foc.CursY])
@@ -257,9 +249,6 @@ func onKey(
 			commonMovementKeyHandling()
 
 			if foc.CursY < len(b)-1 {
-				if numOfCharsV < (int32(foc.CursY) + 1) {
-					gfx.Rend.ScrollPanelThatIsHoveredOver(0, float64(CharHei))
-				}
 				foc.CursY++
 
 				if foc.CursX > len(b[foc.CursY]) {
@@ -278,41 +267,23 @@ func onKey(
 				if mod == glfw.ModControl {
 					foc.CursX = getWordSkipPos(foc.CursX, -1)
 				} else {
-					if (numOfCharsH - int32(foc.CursX)) > (int32(foc.CursX) + 4) {
-						gfx.Rend.ScrollPanelThatIsHoveredOver(float64(-CharWid), 0)
-					}
 					foc.CursX--
 				}
 			}
 		case glfw.KeyRight:
-
 			commonMovementKeyHandling()
 
 			if foc.CursX < len(b[foc.CursY]) {
 				if mod == glfw.ModControl {
 					foc.CursX = getWordSkipPos(foc.CursX, 1)
 				} else {
-					fmt.Println(numOfCharsH)
-					if numOfCharsH < (int32(foc.CursX) + 4){
-						gfx.Rend.ScrollPanelThatIsHoveredOver(float64(CharWid), 0)
-					}
 					foc.CursX++
 				}
 			}
 		case glfw.KeyBackspace:
-			if foc.CursX == 0 {
-				b = remove(b, foc.CursY, b[foc.CursY])
-				foc.TextBodies[0] = b
-				foc.CursY--
-				foc.CursX = len(b[foc.CursY])
-
-			} else {
-				foc.RemoveCharacter(false)
-			}
-
+			foc.RemoveCharacter(false)
 		case glfw.KeyDelete:
 			foc.RemoveCharacter(true)
-			fmt.Println("Key Deleted")
 
 		}
 
@@ -342,17 +313,7 @@ func insert(slice []string, index int, value string) []string {
 	return slice
 }
 
-<<<<<<< HEAD
-// similar to insert method, instead moves current slice element and appends to one above
-func remove(slice []string, index int, value string) []string {
-	slice = append(slice[:index], slice[index+1:]...)
-	slice[index-1] = slice[index-1] + value
-	return slice
-}
-
-=======
 /*
->>>>>>> corpusc/master
 func dispatchWithPrefix(content []byte, msgType uint16) {
 	prefix := append(
 		getBytesOfUInt32(uint32(len(content))+msg.PREFIX_SIZE),
@@ -366,7 +327,6 @@ func DispatchEvent(msgType uint16, event interface{}) {
 	b := msg.Serialize(msgType, event)
 	Events <- b
 }
-
 func getWordSkipPos(xIn int, change int) int {
 	peekPos := xIn
 	foc := gfx.Rend.Focused
@@ -392,8 +352,6 @@ func getWordSkipPos(xIn int, change int) int {
 func commonMovementKeyHandling() {
 	foc := gfx.Rend.Focused
 
-	
-
 	if foc.Selection.CurrentlySelecting {
 		foc.Selection.EndX = foc.CursX
 		foc.Selection.EndY = foc.CursY
@@ -404,52 +362,6 @@ func commonMovementKeyHandling() {
 		foc.Selection.EndY = math.MaxUint32
 	}
 }
-
-// the rest of these getBytesOfType() funcs are identical except for the value type
-func getBytesOfRune(value rune) (data []byte) {
-	wBuf := new(bytes.Buffer)
-	err := binary.Write(wBuf, binary.LittleEndian, value)
-	data = getSlice(wBuf, err)
-	return
-}
-
-/*
-func getByteOfUInt8(value uint8) (data []byte) {
-	wBuf := new(bytes.Buffer)
-	err := binary.Write(wBuf, binary.LittleEndian, value)
-	data = getSlice(wBuf, err)
-	return
-}
-
-func getBytesOfSInt32(value int32) (data []byte) {
-	wBuf := new(bytes.Buffer)
-	err := binary.Write(wBuf, binary.LittleEndian, value)
-	data = getSlice(wBuf, err)
-	return
-}
-
-func getBytesOfUInt16(value uint16) (data []byte) {
-	wBuf := new(bytes.Buffer)
-	err := binary.Write(wBuf, binary.LittleEndian, value)
-	data = getSlice(wBuf, err)
-	return
-}
-
-func getBytesOfUInt32(value uint32) (data []byte) {
-	wBuf := new(bytes.Buffer)
-	err := binary.Write(wBuf, binary.LittleEndian, value)
-	data = getSlice(wBuf, err)
-	return
-}
-
-func getBytesOfFloat64(value float64) (data []byte) {
-	wBuf := new(bytes.Buffer)
-	err := binary.Write(wBuf, binary.LittleEndian, value)
-	data = getSlice(wBuf, err)
-	return
-}
-*/
-
 func getSlice(wBuf *bytes.Buffer, err error) (data []byte) {
 	data = make([]byte, 0)
 
@@ -464,38 +376,4 @@ func getSlice(wBuf *bytes.Buffer, err error) (data []byte) {
 	}
 
 	return
-=======
-	"github.com/go-gl/gl/v2.1/gl"
-)
-
-func InitRenderer() {
-	fmt.Println("InitRenderer()")
-
-	gl.Enable(gl.DEPTH_TEST)
-	gl.Enable(gl.LIGHTING)
-	//gl.Enable(gl.ALPHA_TEST)
-
-	gl.ClearColor(0.5, 0.5, 0.5, 0.0)
-	gl.ClearDepth(1)
-	gl.DepthFunc(gl.LEQUAL)
-
-	ambient := []float32{0.5, 0.5, 0.5, 1}
-	diffuse := []float32{1, 1, 1, 1}
-	lightPosition := []float32{-5, 5, 10, 0}
-	gl.Lightfv(gl.LIGHT0, gl.AMBIENT, &ambient[0])
-	gl.Lightfv(gl.LIGHT0, gl.DIFFUSE, &diffuse[0])
-	gl.Lightfv(gl.LIGHT0, gl.POSITION, &lightPosition[0])
-	gl.Enable(gl.LIGHT0)
-
-	gl.MatrixMode(gl.PROJECTION)
-	gl.LoadIdentity()
-	setFrustum(gfx.InitFrustum)
-	//gl.Frustum(-1, 1, -1, 1, 1.0, 10.0)
-	//gl.Frustum(left, right, bottom, top, zNear, zFar)
-	gl.MatrixMode(gl.MODELVIEW)
-	gl.LoadIdentity()
-
-	// future FIXME: finished app would not have a demo program loaded on startup?
-	script.Process(false)
->>>>>>> corpusc/master
 }
