@@ -188,21 +188,30 @@ func onKey(
 		case glfw.KeyLeftControl:
 			fallthrough
 		case glfw.KeyRightControl:
-		//fmt.Println("Control RELEASED")
-
+			fmt.Println("Control RELEASED")
 		case glfw.KeyLeftAlt:
 			fallthrough
 		case glfw.KeyRightAlt:
-		//fmt.Println("Alt RELEASED")
-
+			fmt.Println("Alt RELEASED")
+		//fmt.Println("Control RELEASED")
 		case glfw.KeyLeftSuper:
 			fallthrough
 		case glfw.KeyRightSuper:
-			//fmt.Println("'Super' modifier key RELEASED")
+			fmt.Println("'Super' modifier key RELEASED")
 		}
 	} else { // glfw.Repeat   or   glfw.Press
 		b := foc.TextBodies[0]
 
+		CharWid := int32(gfx.Rend.CharWidInPixels)
+		CharHei := int32(gfx.Rend.CharHeiInPixels)
+		numOfCharsV := gfx.CurrAppHeight / CharHei
+		numOfCharsH := gfx.CurrAppWidth / CharWid
+
+		s := strconv.Itoa(int(numOfCharsV))
+
+		fmt.Printf("Rectangle Right %s\n\n\n", s)
+		
+		
 		switch mod {
 		case glfw.ModShift:
 			fmt.Println("started selecting")
@@ -224,14 +233,19 @@ func onKey(
 
 			foc.CursX = 0
 			foc.CursY++
+			foc.TextBodies[0] = b
 
 			if foc.CursY >= len(b) {
 				foc.CursY = len(b) - 1
 			}
 
 		case glfw.KeyHome:
-			commonMovementKeyHandling()
-			foc.CursX = 0
+			if w.GetKey(glfw.KeyLeftControl) == glfw.Press || w.GetKey(glfw.KeyRightControl) == glfw.Press {
+
+			} else {
+				commonMovementKeyHandling()
+				foc.CursX = 0
+			}
 		case glfw.KeyEnd:
 			commonMovementKeyHandling()
 			foc.CursX = len(b[foc.CursY])
@@ -249,6 +263,9 @@ func onKey(
 			commonMovementKeyHandling()
 
 			if foc.CursY < len(b)-1 {
+				if numOfCharsV < (int32(foc.CursY) + 1) {
+					gfx.Rend.ScrollPanelThatIsHoveredOver(0, float64(CharHei))
+				}
 				foc.CursY++
 
 				if foc.CursX > len(b[foc.CursY]) {
@@ -267,49 +284,59 @@ func onKey(
 				if mod == glfw.ModControl {
 					foc.CursX = getWordSkipPos(foc.CursX, -1)
 				} else {
+					if (numOfCharsH - int32(foc.CursX)) > (int32(foc.CursX) + 4) {
+						gfx.Rend.ScrollPanelThatIsHoveredOver(float64(-CharWid), 0)
+					}
 					foc.CursX--
 				}
 			}
 		case glfw.KeyRight:
+
 			commonMovementKeyHandling()
 
 			if foc.CursX < len(b[foc.CursY]) {
 				if mod == glfw.ModControl {
 					foc.CursX = getWordSkipPos(foc.CursX, 1)
 				} else {
+					fmt.Println(numOfCharsH)
+					if numOfCharsH < (int32(foc.CursX) + 4){
+						gfx.Rend.ScrollPanelThatIsHoveredOver(float64(CharWid), 0)
+					}
 					foc.CursX++
 				}
 			}
 		case glfw.KeyBackspace:
-			foc.RemoveCharacter(false)
+			if foc.CursX == 0 {
+				b = remove(b, foc.CursY, b[foc.CursY])
+				foc.TextBodies[0] = b
+				foc.CursY--
+				foc.CursX = len(b[foc.CursY])
+
+			} else {
+				foc.RemoveCharacter(false)
+			}
+
 		case glfw.KeyDelete:
 			foc.RemoveCharacter(true)
+			fmt.Println("Key Deleted")
 
 		}
 
 		script.Process(false)
 	}
 
-	// build message
-	//content := getByteOfUInt8(uint8(key))
-	//content = append(content, getBytesOfSInt32(int32(scancode))...)
-	//content = append(content, getByteOfUInt8(uint8(action))...)
-	//content = append(content, getByteOfUInt8(uint8(mod))...)
-	//dispatchWithPrefix(content, msg.TypeKey)
-
-	var m msg.MessageKey
-	m.Key = uint8(key)
-	m.Scan = uint32(scancode)
-	m.Action = uint8(action)
-	m.Mod = uint8(mod)
-	DispatchEvent(msg.TypeKey, m)
-}
-
 // must be in range
 func insert(slice []string, index int, value string) []string {
 	slice = slice[0 : len(slice)+1]      // grow the slice by one element
 	copy(slice[index+1:], slice[index:]) // move the upper part of the slice out of the way and open a hole
 	slice[index] = value
+	return slice
+}
+
+// similar to insert method, instead moves current slice element and appends to one above
+func remove(slice []string, index int, value string) []string {
+	slice = append(slice[:index], slice[index+1:]...)
+	slice[index-1] = slice[index-1] + value
 	return slice
 }
 

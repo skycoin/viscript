@@ -119,3 +119,5 @@ func (c *Cursors) ConvertMouseClickToTextCursorPosition(button, action uint8) {
 		}
 	}
 }
+
+
