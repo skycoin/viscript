@@ -51,9 +51,14 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 		gfx.Rend.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
 	}
 
+	//content := append(getBytesOfFloat64(x), getBytesOfFloat64(y)...)
+	//dispatchWithPrefix(content, msg.TypeMousePos)
 	// build message
-	content := append(getBytesOfFloat64(x), getBytesOfFloat64(y)...)
-	dispatchWithPrefix(content, msg.TypeMousePos)
+
+	var m msg.MessageMousePos
+	m.X = x
+	m.Y = y
+	DispatchEvent(msg.TypeMousePos, m)
 }
 
 func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
@@ -67,8 +72,14 @@ func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 	}
 
 	// build message
-	content := append(getBytesOfFloat64(xOff), getBytesOfFloat64(yOff)...)
-	dispatchWithPrefix(content, msg.TypeMouseScroll)
+	//content := append(getBytesOfFloat64(xOff), getBytesOfFloat64(yOff)...)
+	//dispatchWithPrefix(content, msg.TypeMouseScroll)
+
+	var m msg.MessageMouseScroll
+	m.X = xOff
+	m.Y = yOff
+	DispatchEvent(msg.TypeMouseScroll, m)
+
 }
 
 // apparently every time this is fired, a mouse position event is ALSO fired
@@ -128,13 +139,25 @@ func onMouseButton(
 	}
 
 	// build message
-	content := append(getByteOfUInt8(uint8(b)), getByteOfUInt8(uint8(action))...)
-	content = append(content, getByteOfUInt8(uint8(mod))...)
-	dispatchWithPrefix(content, msg.TypeMouseButton)
+	//content := append(getByteOfUInt8(uint8(b)), getByteOfUInt8(uint8(action))...)
+	//content = append(content, getByteOfUInt8(uint8(mod))...)
+	//dispatchWithPrefix(content, msg.TypeMouseButton)
+
+	//MessageMouseButton
+	var m msg.MessageMouseButton
+	m.Button = uint8(b)
+	m.Action = uint8(action)
+	m.Mod = uint8(mod)
+	DispatchEvent(msg.TypeMouseButton, m)
 }
 
+//FIX
 func onChar(w *glfw.Window, char rune) {
-	dispatchWithPrefix(getBytesOfRune(char), msg.TypeCharacter)
+	//dispatchWithPrefix(getBytesOfRune(char), msg.TypeCharacter)
+
+	var m msg.MessageCharacter
+	_ = m
+	DispatchEvent(msg.TypeCharacter, m)
 }
 
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can detect a
@@ -305,11 +328,18 @@ func onKey(
 	}
 
 	// build message
-	content := getByteOfUInt8(uint8(key))
-	content = append(content, getBytesOfSInt32(int32(scancode))...)
-	content = append(content, getByteOfUInt8(uint8(action))...)
-	content = append(content, getByteOfUInt8(uint8(mod))...)
-	dispatchWithPrefix(content, msg.TypeKey)
+	//content := getByteOfUInt8(uint8(key))
+	//content = append(content, getBytesOfSInt32(int32(scancode))...)
+	//content = append(content, getByteOfUInt8(uint8(action))...)
+	//content = append(content, getByteOfUInt8(uint8(mod))...)
+	//dispatchWithPrefix(content, msg.TypeKey)
+
+	var m msg.MessageKey
+	m.Key = uint8(key)
+	m.Scan = uint32(scancode)
+	m.Action = uint8(action)
+	m.Mod = uint8(mod)
+	DispatchEvent(msg.TypeKey, m)
 }
 
 // must be in range
@@ -320,6 +350,7 @@ func insert(slice []string, index int, value string) []string {
 	return slice
 }
 
+<<<<<<< HEAD
 // similar to insert method, instead moves current slice element and appends to one above
 func remove(slice []string, index int, value string) []string {
 	slice = append(slice[:index], slice[index+1:]...)
@@ -327,12 +358,21 @@ func remove(slice []string, index int, value string) []string {
 	return slice
 }
 
+=======
+/*
+>>>>>>> corpusc/master
 func dispatchWithPrefix(content []byte, msgType uint16) {
 	prefix := append(
 		getBytesOfUInt32(uint32(len(content))+msg.PREFIX_SIZE),
 		getBytesOfUInt16(msgType)...)
 
 	Events <- append(prefix, content...)
+}
+*/
+
+func DispatchEvent(msgType uint16, event interface{}) {
+	b := msg.Serialize(msgType, event)
+	Events <- b
 }
 
 func getWordSkipPos(xIn int, change int) int {
@@ -381,6 +421,7 @@ func getBytesOfRune(value rune) (data []byte) {
 	return
 }
 
+/*
 func getByteOfUInt8(value uint8) (data []byte) {
 	wBuf := new(bytes.Buffer)
 	err := binary.Write(wBuf, binary.LittleEndian, value)
@@ -415,6 +456,7 @@ func getBytesOfFloat64(value float64) (data []byte) {
 	data = getSlice(wBuf, err)
 	return
 }
+*/
 
 func getSlice(wBuf *bytes.Buffer, err error) (data []byte) {
 	data = make([]byte, 0)

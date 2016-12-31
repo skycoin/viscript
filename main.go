@@ -53,6 +53,9 @@ func init() {
 }
 
 func main() {
+
+	fmt.Printf("Start\n")
+
 	if err := glfw.Init(); err != nil {
 		log.Fatalln("failed to initialize glfw:", err)
 	}
