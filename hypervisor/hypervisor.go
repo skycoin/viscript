@@ -2,11 +2,9 @@ package hypervisor
 
 import (
 	"fmt"
+	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/script"
-	"github.com/corpusc/viscript/ui"
-	"github.com/go-gl/glfw/v3.2/glfw"
-	"math"
-	"strconv"
+	"github.com/go-gl/gl/v2.1/gl"
 )
 
 func InitRenderer() {

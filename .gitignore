@@ -1,4 +1,5 @@
 *.bat
 *.xml
 .idea/
-viscript
+main
+vsicript
