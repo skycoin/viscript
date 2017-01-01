@@ -29,79 +29,13 @@
 package main
 
 import (
-	"fmt"
-	"go/build"
-	_ "image/png"
-	"log"
-	_ "os"
-	"runtime"
 
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/hypervisor"
-	"github.com/corpusc/viscript/msg"
-	"github.com/go-gl/gl/v2.1/gl"
-	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
-func init() {
-	fmt.Println("main.init()")
-	gfx.MakeHighlyVisibleLogHeader(app.Name, 15)
-	// GLFW event handling must run on the main OS thread
-	// See documentation for functions that are only allowed to be called from the main thread.
-	runtime.LockOSThread()
-}
 
 func main() {
+    hypervisor.ScreenSetup()
 
-	fmt.Printf("Start\n")
-
-	if err := glfw.Init(); err != nil {
-		log.Fatalln("failed to initialize glfw:", err)
-	}
-
-	defer glfw.Terminate()
-
-	glfw.WindowHint(glfw.Resizable, glfw.True)
-	glfw.WindowHint(glfw.ContextVersionMajor, 2)
-	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-	window, err := glfw.CreateWindow(int(gfx.CurrAppWidth), int(gfx.CurrAppHeight), app.Name, nil, nil)
-
-	if err != nil {
-		panic(err)
-	}
-
-	window.MakeContextCurrent()
-
-	if err := gl.Init(); err != nil {
-		panic(err)
-	}
-	hypervisor.Texture = hypervisor.NewTexture("Bisasam_24x24_Shadowed.png")
-
-	defer gl.DeleteTextures(1, &hypervisor.Texture)
-
-	hypervisor.InitRenderer()
-
-	hypervisor.InitInputEvents(window)
-
-	for !window.ShouldClose() {
-		msg.MonitorEvents(hypervisor.Events)
-		glfw.PollEvents()
-		hypervisor.DrawScene()
-		//drawScene()
-		window.SwapBuffers()
-	}
 }
 
-// importPathToDir resolves the absolute path from importPath.
-// There doesn't need to be a valid Go package inside that import path,
-// but the directory must exist.
-func importPathToDir(importPath string) (string, error) {
-	p, err := build.Import(importPath, "", build.FindOnly)
-
-	if err != nil {
-		return "", err
-	}
-
-	return p.Dir, nil
-}
