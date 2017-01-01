@@ -44,7 +44,7 @@ func (sp *ScrollablePanel) Init() {
 }
 
 func (sp *ScrollablePanel) SetSize() {
-	fmt.Printf("TextPanel.SetSize()\n")
+	fmt.Printf("ScrollablePanel.SetSize()\n")
 
 	sp.Rect = &app.Rectangle{
 		Rend.ClientExtentY - Rend.CharHei,
