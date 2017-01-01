@@ -33,6 +33,7 @@ import (
 )
 
 func main() {
-	hypervisor.Sgit creenSetup()
+
+	hypervisor.ScreenSetup()
 
 }
