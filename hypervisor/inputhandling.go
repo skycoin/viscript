@@ -14,6 +14,7 @@ import (
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"math"
+	"strconv"
 )
 
 var Events = make(chan []byte, 256)
@@ -199,7 +200,8 @@ func onKey(
 		case glfw.KeyRightSuper:
 			fmt.Println("'Super' modifier key RELEASED")
 		}
-	} else { // glfw.Repeat   or   glfw.Press
+	} else {
+		// glfw.Repeat   or   glfw.Press
 		b := foc.TextBodies[0]
 
 		CharWid := int32(gfx.Rend.CharWidInPixels)
@@ -210,8 +212,7 @@ func onKey(
 		s := strconv.Itoa(int(numOfCharsV))
 
 		fmt.Printf("Rectangle Right %s\n\n\n", s)
-		
-		
+
 		switch mod {
 		case glfw.ModShift:
 			fmt.Println("started selecting")
@@ -299,7 +300,7 @@ func onKey(
 					foc.CursX = getWordSkipPos(foc.CursX, 1)
 				} else {
 					fmt.Println(numOfCharsH)
-					if numOfCharsH < (int32(foc.CursX) + 4){
+					if numOfCharsH < (int32(foc.CursX) + 4) {
 						gfx.Rend.ScrollPanelThatIsHoveredOver(float64(CharWid), 0)
 					}
 					foc.CursX++
@@ -324,6 +325,7 @@ func onKey(
 
 		script.Process(false)
 	}
+}
 
 // must be in range
 func insert(slice []string, index int, value string) []string {
