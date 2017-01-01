@@ -414,7 +414,7 @@ being able to create structs etc and just start simple
 
 
 
-[7:05:21 AM] HaltingState: there are different types of stylign an rendering, such as horizontal scroll on current line, or only expanding to multiple lines for the selection
+[7:05:21 AM] HaltingState: there are different types of styling an rendering, such as horizontal scroll on current line, or only expanding to multiple lines for the selection
 [7:05:52 AM] HaltingState: and we should have a DOM or virtual DOM, which is virtual document object model, like react has and then have an object that renders the DOM and have the options in that object
 
 But doesnt matter for now
@@ -444,4 +444,91 @@ We build up programs by applying operations to them.
 So we do
 1> add new line operator
 2> Add operator (int32.add X Y)
-3> substitute or set X, or select X and see options for thigns that could go in there (a function that returns int32, an int32 literal, a function that casts something else to int, an int32 at local scope etc)
+3> substitute or set X, or select X and see options for things that could go in there (a function that returns int32, an int32 literal, a function that casts something else to int, an int32 at local scope etc)
+
+
+
+
+
+
+you can eventually write own log library or have someone do this
+then use ~ in upper left to open console
+and tab through different types of logs, like input event, parsing etc and etc
+
+
+
+
+
+maybe want to have a command line flag
+for opengl version and disable or enable resizing
+and to use advanced gl or use normal gl and fixed size
+
+i have loop and pass in channel from main, then i push an int into the channel, when i want to tell it to stop the loop
+look at github.com/skycoin/skycoin in cmd/skycoin/skycoin.go for an example of top level main and some stuff you might want to copy
+make sure you have the gosublime plugin installed, for sublime 3
+i have single entry point, default settings and then flags
+
+
+
+
+
+we can avoid writing parser, there is another way
+which is representing the computer program as software objects and then modifying the objects through the program/IDE
+
+look at iPython notebook
+there are two panels; you put the code in the first pane and the output is in the second pane
+create a DOM object, and ability to embed "objects" into the terminal, inside of a "Document" object.
+then add ability to do that. like have a button you can press for popdown and "add code"
+and then can script in the box
+
+
+
+
+
+
+when I put my cursor over an object, I want to see its type.
+
+you can have "4" and 4 can be displayed the same way, but could be "uint32 4" or could be "uint64 4" etc. 
+
+There are "nodes" and you put your cursor over the node and want to know what its type is.
+
+There is a type for "line" or "expression", which is one line in a function and that is root node. Then node can be (var x uint32) which is function definition.
+
+There should be a function for saying how the node is displayed on screen. For taking a line and the root node and displaying it. And for displaying a function node.
+eventually.
+
+We should be able to navigate between the "nodes". and go left and right through an expression or go up and down between expressions. or up and down between functions/structs/ and higher level stuff.
+
+Then if we are at a node, we should be able to hold a key and get a pop down, for the actions we can take to edit a node.
+
+We also need a symbol for "Anything" or "Wild card", which is a node that has not been filled in
+A function F. has name, type sig etc.
+
+Then next lines start the expressions (one per line)
+
+Then when we are at the expressions, we can do "insert expression", which is like new line, to insert a new line of code into the function.
+
+Then we can do (var x int32)  , etc var x int32
+
+and when we hold down key will see "create var" and will add a var node, but the name and type will not be filled in yet. So we put a wild card there.
+
+so we have a (var * *), then we nagivate to the first * and put in a name. Then we navigate to the second * and we give it a type.
+
+(varset x int32 5)
+
+is like create var and set var, or var x int32 = 5
+
+(set x 5) is "assign variable", that already exists, where as var defines new variables and varset, defines new variable, then sets it to expression value
+(var x int32) is a "node". and it has 3 entries. first is node type. Then 2nd is "name" which is restricted to a string. Then third node inside of the parent node is "type" and must be a type.
+
+So we have "restrictions" on the "slots". A node has slots, and other nodes can go into those slots. and there are requirements for what can go into the slots or what is permissible
+
+
+
+
+
+
+
+
+
+

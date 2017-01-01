@@ -184,14 +184,14 @@ func lexAll() {
 	textColors = []*gfx.ColorSpot{}
 
 	for i, line := range bods[0] {
-		lexAndColorMarkup(i, line)
+		lexAndColorize(i, line)
 	}
 
 	// FIXME if wanting colors in non-script panels
 	gfx.Rend.Panels[0].TextColors = textColors
 }
 
-func lexAndColorMarkup(y int, line string) string {
+func lexAndColorize(y int, line string) string {
 	s := line // the dynamic/processed offshoot string
 	comment := ""
 
