@@ -215,13 +215,13 @@ func lexAndColorize(y int, line string) string {
 	s = strings.TrimSpace(s)
 
 	if /* we're not left with an empty string */ len(s) > 0 {
-		fmt.Println("s:", s)
+		//fmt.Println("s:", s)
 
 		// tokenize
 		lex := strings.Split(s, " ")
 
 		for i := range lex {
-			fmt.Printf("lexer element %d: \"%s\"\n", i, lex[i])
+			//fmt.Printf("lexer element %d: \"%s\"\n", i, lex[i])
 
 			switch {
 			case tokenizedAny(keywords, LexType_Keyword, lex[i]):
@@ -263,14 +263,14 @@ func lexAndColorize(y int, line string) string {
 
 func color(x, y int, color []float32) {
 	textColors = append(textColors, &gfx.ColorSpot{app.Vec2I{x, y}, color})
-	fmt.Println("------------textColors[len(textColors)-1]:", textColors[len(textColors)-1])
+	//fmt.Println("------------textColors[len(textColors)-1]:", textColors[len(textColors)-1])
 }
 
 func tokenizedAny(slice []string, i int, elem string) bool {
 	for j := range slice {
 		if elem == slice[j] {
 			tokens = append(tokens, &Token{i, elem})
-			fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(i), `"`+elem+`"`)
+			//fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(i), `"`+elem+`"`)
 			return true
 		} else { // to allow tokenizing bundled func name and opening paren, in that order & separately
 			if /* looking for func */ i == LexType_IntegralFunc || i == LexType_IdentifierFunc {
@@ -279,11 +279,11 @@ func tokenizedAny(slice []string, i int, elem string) bool {
 					for k, c := range elem {
 						switch c {
 						case '(':
-							fmt.Println("ENCOUNTERED open paren")
+							//fmt.Println("ENCOUNTERED open paren")
 							tokens = append(tokens, &Token{i, elem[:k]})
-							fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(i), `"`+elem[:k]+`"`)
+							//fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(i), `"`+elem[:k]+`"`)
 							tokens = append(tokens, &Token{LexType_ParenStart, "("})
-							fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(LexType_ParenStart), `"("`)
+							//fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(LexType_ParenStart), `"("`)
 
 							parenCaptureTier++
 
