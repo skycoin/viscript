@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/script"
 	//"log"
@@ -92,8 +93,6 @@ func processMessage(message []byte) {
 	case TypeCharacter:
 
 		s("TypeCharacter")
-		//var typeChar MessageCharacter
-		//TODO aleksbgs i dont know what is this
 		insertRuneIntoDocument("Rune", message)
 		script.Process(false)
 
@@ -132,7 +131,7 @@ func GetMessageTypeUInt16(message []byte) uint16 {
 	return value
 }
 
-func insertRuneIntoDocument(s string, message []byte) uint32 {
+func insertRuneIntoDocument(s string, message []byte) {
 	var value rune
 	var size = 4
 
@@ -150,7 +149,7 @@ func insertRuneIntoDocument(s string, message []byte) uint32 {
 		b[f.CursY] = b[f.CursY][:f.CursX] + string(value) + b[f.CursY][f.CursX:len(b[f.CursY])]
 		f.CursX++
 	}
-	return uint32(value)
+
 }
 
 func getAndShowUInt8(s string, x uint8) uint8 {

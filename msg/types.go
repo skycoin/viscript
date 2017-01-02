@@ -40,7 +40,7 @@ type MessageMouseButton struct {
 }
 
 type MessageCharacter struct {
-	Rune uint16 //what type is this?
+	Rune uint32
 }
 
 type MessageKey struct {
@@ -50,18 +50,6 @@ type MessageKey struct {
 	Mod    uint8
 }
 
-func (m *MessageMousePos) setMessageMousePosValue(x, y float64) {
-	m.X = x
-	m.Y = y
-}
-func (m *MessageMouseScroll) setMessageMouseScrollValue(x, y float64) {
-	m.X = x
-	m.Y = y
-}
-func (m *MessageMouseButton) setMessageMouseButtonValue(button, action, mod uint8) {
-	m.Button = button
-	m.Action = action
-	m.Mod = mod
-}
+
 
 //Terminal Driving Messages
