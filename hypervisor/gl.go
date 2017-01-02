@@ -36,8 +36,6 @@ func DrawScene() {
 		gl.LoadIdentity()
 		setFrustum(gfx.CurrFrustum)
 		fmt.Println("CHANGE OF FRUSTUM")
-		fmt.Printf(".Panels[0].Rect.Right: %.2f\n", gfx.Rend.Panels[0].Rect.Right)
-		fmt.Printf(".Panels[0].Rect.Top: %.2f\n", gfx.Rend.Panels[0].Rect.Top)
 	}
 	gl.MatrixMode(gl.MODELVIEW) //.PROJECTION)                   //.MODELVIEW)
 	gl.LoadIdentity()
