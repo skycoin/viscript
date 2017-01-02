@@ -33,7 +33,5 @@ import (
 )
 
 func main() {
-
 	hypervisor.ScreenSetup()
-
 }

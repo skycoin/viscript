@@ -11,7 +11,6 @@ import (
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
-	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"math"
 	"strconv"
@@ -39,6 +38,7 @@ func onFramebufferSize(w *glfw.Window, width, height int) {
 	gfx.Rend.SetSize()
 }
 
+// this can also be triggered by onMouseButton
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	gfx.Curs.UpdatePosition(float32(x), float32(y))
 	mousePixelDeltaX = x - prevMousePixelX
@@ -79,75 +79,6 @@ func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 	m.Y = yOff
 	DispatchEvent(msg.TypeMouseScroll, m)
 
-}
-
-// apparently every time this is fired, a mouse position event is ALSO fired
-func onMouseButton(
-	w *glfw.Window,
-	b glfw.MouseButton,
-	action glfw.Action,
-	mod glfw.ModifierKey) {
-
-	if action == glfw.Press {
-		switch glfw.MouseButton(b) {
-		case glfw.MouseButtonLeft:
-			// respond to button push
-			if gfx.MouseCursorIsInside(ui.MainMenu.Rect) {
-				for _, bu := range ui.MainMenu.Buttons {
-					if gfx.MouseCursorIsInside(bu.Rect) {
-						bu.Activated = !bu.Activated
-
-						switch bu.Name {
-						case "Run":
-							if bu.Activated {
-								script.Process(true)
-							}
-							break
-						case "Testing Tree":
-							if bu.Activated {
-								script.Process(true)
-								script.MakeTree()
-							} else { // deactivated
-								// remove all panels with trees
-								b := gfx.Rend.Panels[:0]
-								for _, pan := range gfx.Rend.Panels {
-									if len(pan.Trees) < 1 {
-										b = append(b, pan)
-									}
-								}
-								gfx.Rend.Panels = b
-								//fmt.Printf("len of b (from gfx.Rend.Panels) after removing ones with trees: %d\n", len(b))
-								//fmt.Printf("len of gfx.Rend.Panels: %d\n", len(gfx.Rend.Panels))
-							}
-							break
-						}
-
-						gfx.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
-					}
-				}
-			} else {
-				// respond to click in text panel
-				for _, pan := range gfx.Rend.Panels {
-					if pan.ContainsMouseCursor() {
-						pan.RespondToMouseClick()
-					}
-				}
-			}
-		default:
-		}
-	}
-
-	// build message
-	//content := append(getByteOfUInt8(uint8(b)), getByteOfUInt8(uint8(action))...)
-	//content = append(content, getByteOfUInt8(uint8(mod))...)
-	//dispatchWithPrefix(content, msg.TypeMouseButton)
-
-	//MessageMouseButton
-	var m msg.MessageMouseButton
-	m.Button = uint8(b)
-	m.Action = uint8(action)
-	m.Mod = uint8(mod)
-	DispatchEvent(msg.TypeMouseButton, m)
 }
 
 //FIX
@@ -194,7 +125,6 @@ func onKey(
 			fallthrough
 		case glfw.KeyRightAlt:
 			fmt.Println("Alt RELEASED")
-		//fmt.Println("Control RELEASED")
 		case glfw.KeyLeftSuper:
 			fallthrough
 		case glfw.KeyRightSuper:
@@ -222,14 +152,10 @@ func onKey(
 		}
 
 		switch key {
-
 		case glfw.KeyEnter:
 			startOfLine := b[foc.CursY][:foc.CursX]
 			restOfLine := b[foc.CursY][foc.CursX:len(b[foc.CursY])]
-			//fmt.Printf("startOfLine: \"%s\"\n", startOfLine)
-			//fmt.Printf(" restOfLine: \"%s\"\n", restOfLine)
 			b[foc.CursY] = startOfLine
-			//fmt.Printf("foc.CursX: \"%d\"  -  foc.CursY: \"%d\"\n", foc.CursX, foc.CursY)
 			b = insert(b, foc.CursY+1, restOfLine)
 
 			foc.CursX = 0
@@ -239,20 +165,21 @@ func onKey(
 			if foc.CursY >= len(b) {
 				foc.CursY = len(b) - 1
 			}
-
 		case glfw.KeyHome:
-			if w.GetKey(glfw.KeyLeftControl) == glfw.Press || w.GetKey(glfw.KeyRightControl) == glfw.Press {
-
-			} else {
-				commonMovementKeyHandling()
-				foc.CursX = 0
+			if eitherControlKeyHeld(w) {
+				foc.CursY = 0
 			}
-		case glfw.KeyEnd:
-			commonMovementKeyHandling()
-			foc.CursX = len(b[foc.CursY])
-		case glfw.KeyUp:
-			commonMovementKeyHandling()
 
+			foc.CursX = 0
+			movedCursorSoUpdateDependents()
+		case glfw.KeyEnd:
+			if eitherControlKeyHeld(w) {
+				foc.CursY = len(b) - 1
+			}
+
+			foc.CursX = len(b[foc.CursY])
+			movedCursorSoUpdateDependents()
+		case glfw.KeyUp:
 			if foc.CursY > 0 {
 				foc.CursY--
 
@@ -260,9 +187,9 @@ func onKey(
 					foc.CursX = len(b[foc.CursY])
 				}
 			}
-		case glfw.KeyDown:
-			commonMovementKeyHandling()
 
+			movedCursorSoUpdateDependents()
+		case glfw.KeyDown:
 			if foc.CursY < len(b)-1 {
 				if numOfCharsV < (int32(foc.CursY) + 1) {
 					gfx.Rend.ScrollPanelThatIsHoveredOver(0, float64(CharHei))
@@ -273,9 +200,9 @@ func onKey(
 					foc.CursX = len(b[foc.CursY])
 				}
 			}
-		case glfw.KeyLeft:
-			commonMovementKeyHandling()
 
+			movedCursorSoUpdateDependents()
+		case glfw.KeyLeft:
 			if foc.CursX == 0 {
 				if foc.CursY > 0 {
 					foc.CursY--
@@ -291,10 +218,9 @@ func onKey(
 					foc.CursX--
 				}
 			}
+
+			movedCursorSoUpdateDependents()
 		case glfw.KeyRight:
-
-			commonMovementKeyHandling()
-
 			if foc.CursX < len(b[foc.CursY]) {
 				if mod == glfw.ModControl {
 					foc.CursX = getWordSkipPos(foc.CursX, 1)
@@ -306,6 +232,8 @@ func onKey(
 					foc.CursX++
 				}
 			}
+
+			movedCursorSoUpdateDependents()
 		case glfw.KeyBackspace:
 			if foc.CursX == 0 {
 				b = remove(b, foc.CursY, b[foc.CursY])
@@ -324,6 +252,14 @@ func onKey(
 		}
 
 		script.Process(false)
+	}
+}
+
+func eitherControlKeyHeld(w *glfw.Window) bool {
+	if w.GetKey(glfw.KeyLeftControl) == glfw.Press || w.GetKey(glfw.KeyRightControl) == glfw.Press {
+		return true
+	} else {
+		return false
 	}
 }
 
@@ -378,13 +314,27 @@ func getWordSkipPos(xIn int, change int) int {
 	}
 }
 
-func commonMovementKeyHandling() {
+func movedCursorSoUpdateDependents() {
+	// --- Always-Visible-Cursor Autoscrolling ---
+	//
+	// TODO ^
+
+	//
+	// --- Selection Marking ---
+	//
+	// when SM is made functional,
+	// we should probably detect whether cursor
+	// position should update Start_ or End_ at this point.
+	// rather than always making that the "end".
+	// i doubt marking forwards or backwards will ever alter what is
+	// done with the selection
+
 	foc := gfx.Rend.Focused
 
 	if foc.Selection.CurrentlySelecting {
 		foc.Selection.EndX = foc.CursX
 		foc.Selection.EndY = foc.CursY
-	} else { // arrow keys without shift gets rid selection
+	} else { // moving cursor without shift gets rid of selection
 		foc.Selection.StartX = math.MaxUint32
 		foc.Selection.StartY = math.MaxUint32
 		foc.Selection.EndX = math.MaxUint32

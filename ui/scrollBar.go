@@ -13,6 +13,7 @@ type ScrollBar struct {
 	LenOfVoid      float32        // length of the negative space representing the length of entire document
 	LenOfOffscreen float32        // total hidden offscreen space (bookending the visible portal)
 	ScrollDelta    float32        // distance/offset from home/start of document (negative in Y cuz Y increases upwards)
+	VirtualWid     float32        // virtual space width.  allocating just enough to accommodate the longest line
 	Rect           *app.Rectangle // ... of the grabbable handle
 }
 
@@ -71,9 +72,9 @@ func (bar *ScrollBar) SetSize(panel *app.Rectangle, body []string, charWid, char
 			bar.LenOfVoid = panWid
 			bar.LenOfOffscreen = 0
 		} else { // need bar
-			totalTextWid := float32(numCharsInLongest) * charWid
-			bar.LenOfOffscreen = totalTextWid - panWid
-			bar.LenOfBar = panWid / totalTextWid * panWid
+			bar.VirtualWid = float32(numCharsInLongest) * charWid
+			bar.LenOfOffscreen = bar.VirtualWid - panWid
+			bar.LenOfBar = panWid / bar.VirtualWid * panWid
 			bar.LenOfVoid = panWid - bar.LenOfBar
 			bar.Rect.Left = panel.Left + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
 			bar.ClampX() // OPTIMIZEME: only do when app resized

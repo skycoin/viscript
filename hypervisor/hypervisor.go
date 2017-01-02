@@ -2,29 +2,25 @@ package hypervisor
 
 import (
 	"fmt"
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
 	"github.com/go-gl/gl/v2.1/gl"
-	"log"
 	"github.com/go-gl/glfw/v3.2/glfw"
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/msg"
+	"log"
 	"runtime"
 )
 
-
-
-
 func init() {
-	fmt.Println("main.init()")
+	fmt.Println("hypervisor.init()")
 	gfx.MakeHighlyVisibleLogHeader(app.Name, 15)
 	// GLFW event handling must run on the main OS thread
 	// See documentation for functions that are only allowed to be called from the main thread.
 	runtime.LockOSThread()
 }
 
-
-func ScreenSetup(){
+func ScreenSetup() {
 
 	fmt.Printf("Start\n")
 
@@ -63,8 +59,6 @@ func ScreenSetup(){
 		//drawScene()
 		window.SwapBuffers()
 	}
-
-
 
 }
 

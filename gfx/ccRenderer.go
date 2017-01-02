@@ -129,7 +129,7 @@ func (cr *CcRenderer) DrawCharAtRect(char rune, r *app.Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
-func (cr *CcRenderer) DrawTriangle(atlasX, atlasY float32, a, b, c app.Vec2) {
+func (cr *CcRenderer) DrawTriangle(atlasX, atlasY float32, a, b, c app.Vec2F) {
 	// for convenience, and because drawing some extra triangles
 	// (only for flow arrows between tree node blocks ATM) won't matter,
 	// we are actually drawing a quad, with the last 2 verts @ the same spot
