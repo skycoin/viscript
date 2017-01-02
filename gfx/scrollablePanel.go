@@ -69,10 +69,12 @@ func (sp *ScrollablePanel) RespondToMouseClick() {
 	Rend.Focused = sp
 
 	// diffs/deltas from home position of panel (top left corner)
-	glDeltaXFromHome := Curs.MouseGlX - sp.Rect.Left
-	glDeltaYFromHome := Curs.MouseGlY - sp.Rect.Top
-	sp.MouseX = int((glDeltaXFromHome + sp.BarHori.ScrollDelta) / Rend.CharWid)
-	sp.MouseY = int(-(glDeltaYFromHome + sp.BarVert.ScrollDelta) / Rend.CharHei)
+	glDeltaFromHome := app.Vec2F{
+		Curs.MouseGlX - sp.Rect.Left,
+		Curs.MouseGlY - sp.Rect.Top}
+
+	sp.MouseX = int((glDeltaFromHome.X + sp.BarHori.ScrollDelta) / Rend.CharWid)
+	sp.MouseY = int(-(glDeltaFromHome.Y + sp.BarVert.ScrollDelta) / Rend.CharHei)
 
 	if sp.MouseY < 0 {
 		sp.MouseY = 0
@@ -318,9 +320,9 @@ func (sp *ScrollablePanel) drawNodeAndDescendants(r *app.Rectangle, nodeId int) 
 func (sp *ScrollablePanel) drawArrowAndChild(parent, child *app.Rectangle, childId int) {
 	latExt := child.Width() * 0.15 // lateral extent of arrow's triangle top
 	Rend.DrawTriangle(9, 1,
-		app.Vec2{parent.CenterX() - latExt, parent.Bottom},
-		app.Vec2{parent.CenterX() + latExt, parent.Bottom},
-		app.Vec2{child.CenterX(), child.Top})
+		app.Vec2F{parent.CenterX() - latExt, parent.Bottom},
+		app.Vec2F{parent.CenterX() + latExt, parent.Bottom},
+		app.Vec2F{child.CenterX(), child.Top})
 	sp.drawNodeAndDescendants(child, childId)
 }
 

@@ -262,7 +262,7 @@ func lexAndColorize(y int, line string) string {
 }
 
 func color(x, y int, color []float32) {
-	textColors = append(textColors, &gfx.ColorSpot{app.Vec2Int{x, y}, color})
+	textColors = append(textColors, &gfx.ColorSpot{app.Vec2I{x, y}, color})
 	fmt.Println("------------textColors[len(textColors)-1]:", textColors[len(textColors)-1])
 }
 

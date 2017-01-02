@@ -39,6 +39,7 @@ func onFramebufferSize(w *glfw.Window, width, height int) {
 	gfx.Rend.SetSize()
 }
 
+// this can also be triggered by onMouseButton
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	gfx.Curs.UpdatePosition(float32(x), float32(y))
 	mousePixelDeltaX = x - prevMousePixelX
@@ -91,49 +92,16 @@ func onMouseButton(
 	if action == glfw.Press {
 		switch glfw.MouseButton(b) {
 		case glfw.MouseButtonLeft:
-			// respond to button push
+			// respond to clicks in ui rectangles
 			if gfx.MouseCursorIsInside(ui.MainMenu.Rect) {
-				for _, bu := range ui.MainMenu.Buttons {
-					if gfx.MouseCursorIsInside(bu.Rect) {
-						bu.Activated = !bu.Activated
-
-						switch bu.Name {
-						case "Run":
-							if bu.Activated {
-								script.Process(true)
-							}
-							break
-						case "Testing Tree":
-							if bu.Activated {
-								script.Process(true)
-								script.MakeTree()
-							} else { // deactivated
-								// remove all panels with trees
-								b := gfx.Rend.Panels[:0]
-								for _, pan := range gfx.Rend.Panels {
-									if len(pan.Trees) < 1 {
-										b = append(b, pan)
-									}
-								}
-								gfx.Rend.Panels = b
-								//fmt.Printf("len of b (from gfx.Rend.Panels) after removing ones with trees: %d\n", len(b))
-								//fmt.Printf("len of gfx.Rend.Panels: %d\n", len(gfx.Rend.Panels))
-							}
-							break
-						}
-
-						gfx.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
-					}
-				}
-			} else {
-				// respond to click in text panel
+				respondToAnyMenuButtonClicks()
+			} else { // respond to any panel clicks outside of menu
 				for _, pan := range gfx.Rend.Panels {
 					if pan.ContainsMouseCursor() {
 						pan.RespondToMouseClick()
 					}
 				}
 			}
-		default:
 		}
 	}
 
@@ -148,6 +116,41 @@ func onMouseButton(
 	m.Action = uint8(action)
 	m.Mod = uint8(mod)
 	DispatchEvent(msg.TypeMouseButton, m)
+}
+
+func respondToAnyMenuButtonClicks() {
+	for _, bu := range ui.MainMenu.Buttons {
+		if gfx.MouseCursorIsInside(bu.Rect) {
+			bu.Activated = !bu.Activated
+
+			switch bu.Name {
+			case "Run":
+				if bu.Activated {
+					script.Process(true)
+				}
+				break
+			case "Testing Tree":
+				if bu.Activated {
+					script.Process(true)
+					script.MakeTree()
+				} else { // deactivated
+					// remove all panels with trees
+					b := gfx.Rend.Panels[:0]
+					for _, pan := range gfx.Rend.Panels {
+						if len(pan.Trees) < 1 {
+							b = append(b, pan)
+						}
+					}
+					gfx.Rend.Panels = b
+					//fmt.Printf("len of b (from gfx.Rend.Panels) after removing ones with trees: %d\n", len(b))
+					//fmt.Printf("len of gfx.Rend.Panels: %d\n", len(gfx.Rend.Panels))
+				}
+				break
+			}
+
+			gfx.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
+		}
+	}
 }
 
 //FIX

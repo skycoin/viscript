@@ -5,6 +5,6 @@ import (
 )
 
 type ColorSpot struct {
-	Pos   app.Vec2Int
+	Pos   app.Vec2I
 	Color []float32
 }
