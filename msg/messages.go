@@ -8,6 +8,7 @@ import (
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/script"
 	//"log"
+	"strconv"
 )
 
 var curRecByte = 0 // current receive message index
@@ -143,10 +144,12 @@ func insertRuneIntoDocument(s string, message []byte) {
 		fmt.Println("binary.Read failed: ", err)
 	} else {
 		fmt.Printf("Rune   [%s: %s]", s, string(value))
-
 		f := gfx.Rend.Focused
 		b := f.TextBodies[0]
-		b[f.CursY] = b[f.CursY][:f.CursX] + string(value) + b[f.CursY][f.CursX:len(b[f.CursY])]
+		decodedValueFromuint8 := string([]byte(strconv.Itoa(int(value))))
+		fmt.Printf("Rune   [%s: %s]\n", s, decodedValueFromuint8)
+
+		b[f.CursY] = b[f.CursY][:f.CursX] + decodedValueFromuint8 + b[f.CursY][f.CursX:len(b[f.CursY])]
 		f.CursX++
 	}
 
