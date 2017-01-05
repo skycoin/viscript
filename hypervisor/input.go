@@ -8,12 +8,13 @@ import (
 		"runtime"
 	*/
 	"bytes"
+	"math"
+	"strconv"
+
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
 	"github.com/go-gl/glfw/v3.2/glfw"
-	"math"
-	"strconv"
 )
 
 var Events = make(chan []byte, 256)
@@ -253,6 +254,13 @@ func onKey(
 
 		script.Process(false)
 	}
+	var m msg.MessageKey
+	m.Key = uint8(key)
+	m.Scan = uint32(scancode)
+	m.Action = uint8(action)
+	m.Mod = uint8(mod)
+
+	DispatchEvent(msg.TypeKey, m)
 }
 
 func eitherControlKeyHeld(w *glfw.Window) bool {
