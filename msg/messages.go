@@ -8,7 +8,7 @@ import (
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/script"
 	//"log"
-	"strconv"
+	_ "strconv"
 )
 
 var curRecByte = 0 // current receive message index
@@ -94,7 +94,7 @@ func processMessage(message []byte) {
 	case TypeCharacter:
 
 		s("TypeCharacter")
-		insertRuneIntoDocument("Rune", message)
+		InsertRuneIntoDocumentTest("Rune", message)
 		script.Process(false)
 
 	case TypeKey:
@@ -132,7 +132,38 @@ func GetMessageTypeUInt16(message []byte) uint16 {
 	return value
 }
 
-func insertRuneIntoDocument(s string, message []byte) {
+//func insertRuneIntoDocument(s string, message []byte) {
+//	var value rune
+//	var size = 4
+//
+//	rBuf := bytes.NewReader(message[curRecByte : curRecByte+size])
+//	err := binary.Read(rBuf, binary.LittleEndian, &value)
+//	curRecByte += size
+//
+//	if err != nil {
+//		fmt.Println("binary.Read failed: ", err)
+//	} else {
+//
+//		f := gfx.Rend.Focused
+//		b := f.TextBodies[0]
+//
+//		decodedValueFromuint8 := string([]byte(strconv.Itoa(int(value))))
+//		fmt.Printf("Rune   [%s: %s]\n", s, decodedValueFromuint8)
+//		resultsDif := f.CursX - len(b[f.CursY])
+//		//if cursor it's outside
+//		if f.CursX > len(b[f.CursY]) {
+//			b[f.CursY] = b[f.CursY][:f.CursX-resultsDif] + b[f.CursY][:len(b[f.CursY])] + decodedValueFromuint8
+//			fmt.Printf("line is %s\n", b[f.CursY])
+//			f.CursX++
+//		} else {
+//			b[f.CursY] = b[f.CursY][:f.CursX] + decodedValueFromuint8 + b[f.CursY][f.CursX:len(b[f.CursY])]
+//			f.CursX++
+//		}
+//
+//	}
+//
+//}
+func InsertRuneIntoDocumentTest(s string, message []byte) {
 	var value rune
 	var size = 4
 
@@ -143,25 +174,20 @@ func insertRuneIntoDocument(s string, message []byte) {
 	if err != nil {
 		fmt.Println("binary.Read failed: ", err)
 	} else {
-
 		f := gfx.Rend.Focused
 		b := f.TextBodies[0]
-
-		decodedValueFromuint8 := string([]byte(strconv.Itoa(int(value))))
-		fmt.Printf("Rune   [%s: %s]\n", s, decodedValueFromuint8)
 		resultsDif := f.CursX - len(b[f.CursY])
-		//if cursor it's outside
+		fmt.Printf("Rune   [%s: %s]", s, string(value))
+
 		if f.CursX > len(b[f.CursY]) {
-			b[f.CursY] = b[f.CursY][:f.CursX-resultsDif] + b[f.CursY][:len(b[f.CursY])] + decodedValueFromuint8
+			b[f.CursY] = b[f.CursY][:f.CursX-resultsDif] + b[f.CursY][:len(b[f.CursY])] + string(value)
 			fmt.Printf("line is %s\n", b[f.CursY])
 			f.CursX++
 		} else {
-			b[f.CursY] = b[f.CursY][:f.CursX] + decodedValueFromuint8 + b[f.CursY][f.CursX:len(b[f.CursY])]
+			b[f.CursY] = b[f.CursY][:f.CursX] + string(value) + b[f.CursY][f.CursX:len(b[f.CursY])]
 			f.CursX++
 		}
-
 	}
-
 }
 
 func getAndShowUInt8(s string, x uint8) uint8 {
