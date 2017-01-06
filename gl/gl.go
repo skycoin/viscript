@@ -120,3 +120,7 @@ func DrawScene() {
 func SwapDrawBuffer() {
 	GlfwWindow.SwapBuffers()
 }
+
+func ScreenTeardown() {
+	glfw.Terminate()
+}

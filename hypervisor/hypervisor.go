@@ -14,6 +14,10 @@ import (
 	igl "github.com/corpusc/viscript/gl" //internal gl
 )
 
+//glfw
+//glfw.PollEvents()
+//only remaining
+
 //var GlfwWindow *glfw.Window //deprecate eventually
 var CloseWindow chan int // write to channel to close
 
@@ -30,7 +34,7 @@ func HypervisorInit() {
 }
 
 func HypervisorScreenTeardown() {
-	glfw.Terminate()
+	igl.ScreenTeardown()
 }
 
 func HypervisorScreenInit() {
@@ -46,7 +50,7 @@ func HypervisorInitInputEvents() {
 }
 
 func PollUiInputEvents() {
-	glfw.PollEvents()
+	glfw.PollEvents() //move to gl
 }
 
 //could be in messages
