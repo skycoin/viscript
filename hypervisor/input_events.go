@@ -7,6 +7,7 @@ import (
 
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/msg"
+	"github.com/corpusc/viscript/script"
 	//"log"
 	_ "strconv"
 )
@@ -58,12 +59,10 @@ func ProcessInputEvents(message []byte) {
 		gfx.Curs.ConvertMouseClickToTextCursorPosition(msgBtn.Button, msgBtn.Action)
 
 	case msg.TypeOnCharacter:
-
-		fmt.Printf("TypeCharacter/Rune, wtf fix\n")
-		//WTF: FIX THIS
-		//InsertRuneIntoDocumentTest("Rune", message)
-		//script.Process(false)
-
+		var msgChar msg.MessageOnCharacter
+		msg.MustDeserialize(message, &msgChar)
+		InsertRuneIntoDocument("Rune", msgChar.Rune)
+		script.Process(false)
 		if DebugPrintInputEvents {
 			s("TypeCharacter")
 		}
@@ -105,35 +104,23 @@ func GetMessageTypeUInt16(message []byte) uint16 {
 	return value
 }
 
-//WTF FIX THIS
-/*
-func InsertRuneIntoDocumentTest(s string, message []byte) {
-	var value rune
-	var size = 4
+func InsertRuneIntoDocument(s string, message uint32) {
 
-	rBuf := bytes.NewReader(message[curRecByte : curRecByte+size])
-	err := binary.Read(rBuf, binary.LittleEndian, &value)
-	curRecByte += size
+	f := gfx.Rend.Focused
+	b := f.TextBodies[0]
+	resultsDif := f.CursX - len(b[f.CursY])
+	fmt.Printf("Rune   [%s: %s]", s, string(message))
 
-	if err != nil {
-		fmt.Println("binary.Read failed: ", err)
+	if f.CursX > len(b[f.CursY]) {
+		b[f.CursY] = b[f.CursY][:f.CursX-resultsDif] + b[f.CursY][:len(b[f.CursY])] + string(message)
+		fmt.Printf("line is %s\n", b[f.CursY])
+		f.CursX++
 	} else {
-		f := gfx.Rend.Focused
-		b := f.TextBodies[0]
-		resultsDif := f.CursX - len(b[f.CursY])
-		fmt.Printf("Rune   [%s: %s]", s, string(value))
-
-		if f.CursX > len(b[f.CursY]) {
-			b[f.CursY] = b[f.CursY][:f.CursX-resultsDif] + b[f.CursY][:len(b[f.CursY])] + string(value)
-			fmt.Printf("line is %s\n", b[f.CursY])
-			f.CursX++
-		} else {
-			b[f.CursY] = b[f.CursY][:f.CursX] + string(value) + b[f.CursY][f.CursX:len(b[f.CursY])]
-			f.CursX++
-		}
+		b[f.CursY] = b[f.CursY][:f.CursX] + string(message) + b[f.CursY][f.CursX:len(b[f.CursY])]
+		f.CursX++
 	}
+
 }
-*/
 
 func showUInt8(s string, x uint8) uint8 {
 	fmt.Printf("   [%s: %d]", s, x)
