@@ -12,6 +12,10 @@ import (
 var GlfwWindow *glfw.Window
 var CloseWindow chan int // write to channel to close
 
+var (
+	Texture uint32
+)
+
 //gfx in gfx.CurrAppWidth
 //gfx.InitFrustum
 
@@ -51,6 +55,11 @@ func WindowInit() {
 
 }
 
+func LoadTextures() {
+	fmt.Printf("GL: load texture \n")
+	Texture = NewTexture("Bisasam_24x24_Shadowed.png")
+}
+
 func InitRenderer() {
 	fmt.Println("InitRenderer()")
 
@@ -85,6 +94,27 @@ func SetFrustum(r *app.Rectangle) {
 		float64(r.Right),
 		float64(r.Bottom),
 		float64(r.Top), 1.0, 10.0)
+}
+
+func DrawScene() {
+	gl.Viewport(0, 0, gfx.CurrAppWidth, gfx.CurrAppHeight) // OPTIMIZEME?  could set flag upon frame buffer size change event
+	if *gfx.PrevFrustum != *gfx.CurrFrustum {
+		*gfx.PrevFrustum = *gfx.CurrFrustum
+		gl.MatrixMode(gl.PROJECTION)
+		gl.LoadIdentity()
+		SetFrustum(gfx.CurrFrustum)
+		fmt.Println("CHANGE OF FRUSTUM")
+	}
+	gl.MatrixMode(gl.MODELVIEW) //.PROJECTION)                   //.MODELVIEW)
+	gl.LoadIdentity()
+	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+	gl.Translatef(0, 0, -gfx.Rend.DistanceFromOrigin)
+
+	gl.BindTexture(gl.TEXTURE_2D, Texture)
+
+	gl.Begin(gl.QUADS)
+	gfx.Rend.DrawAll()
+	gl.End()
 }
 
 func SwapDrawBuffer() {
