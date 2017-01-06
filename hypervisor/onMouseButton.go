@@ -12,12 +12,12 @@ import (
 // apparently every time this is fired, a mouse position event is ALSO fired
 func onMouseButton(
 	w *glfw.Window,
-	b glfw.MouseButton,
+	bt glfw.MouseButton,
 	action glfw.Action,
 	mod glfw.ModifierKey) {
 
 	if action == glfw.Press {
-		switch glfw.MouseButton(b) {
+		switch glfw.MouseButton(bt) {
 		case glfw.MouseButtonLeft:
 			// respond to clicks in ui rectangles
 			if gfx.MouseCursorIsInside(ui.MainMenu.Rect) {
@@ -39,10 +39,13 @@ func onMouseButton(
 
 	//MessageMouseButton
 	var m msg.MessageMouseButton
-	m.Button = uint8(b)
+	m.Button = uint8(bt)
 	m.Action = uint8(action)
 	m.Mod = uint8(mod)
-	DispatchEvent(msg.TypeMouseButton, m)
+	//DispatchEvent(msg.TypeMouseButton, m)
+	b := msg.Serialize(msg.TypeMouseButton, m)
+	InputEvents <- b
+
 }
 
 func respondToAnyMenuButtonClicks() {

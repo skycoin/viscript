@@ -18,10 +18,10 @@ func init() {
 	//rune test
 }
 
-var DebugDebugPrintInputEvents = false
+var DebugPrintInputEvents = false
 
 //this is where input events are
-func processEvents(message []byte) {
+func ProcessInputEvents(message []byte) {
 
 	switch GetMessageTypeUInt16(message) {
 

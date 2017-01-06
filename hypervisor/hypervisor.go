@@ -75,12 +75,10 @@ func PollUiInputEvents() {
 }
 
 //could be in messages
-func DispatchEvents(ch chan []byte) {
-	select {
-	case v := <-ch:
-		processEvents(v)
-	default:
-		//fmt.Println("MonitorEvents() default")
+func DispatchInputEvents(ch chan []byte) {
+	for len(ch) > 0 { //if channel has elements
+		v := <-ch //read from channel
+		ProcessInputEvents(v)
 	}
 }
 

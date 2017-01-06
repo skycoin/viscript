@@ -45,7 +45,7 @@ func main() {
 
 	fmt.Printf("Start Loop; \n")
 	for len(hypervisor.CloseWindow) == 0 {
-		hypervisor.DispatchEvents(hypervisor.Events) //event channel
+		hypervisor.DispatchInputEvents(hypervisor.InputEvents) //event channel
 		hypervisor.PollUiInputEvents()
 		hypervisor.UpdateDrawBuffer()
 		hypervisor.SwapDrawBuffer() //swap the draw frame with new frame

@@ -19,7 +19,7 @@ import (
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
-var Events = make(chan []byte, 256) //event channel
+var InputEvents = make(chan []byte, 256) //event channel
 
 var prevMousePixelX float64
 var prevMousePixelY float64
@@ -61,7 +61,10 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	var m msg.MessageMousePos
 	m.X = x
 	m.Y = y
-	DispatchEvent(msg.TypeMousePos, m)
+	//DispatchEvent(msg.TypeMousePos, m)
+	b := msg.Serialize(msg.TypeMousePos, m)
+	InputEvents <- b
+
 }
 
 func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
@@ -81,8 +84,9 @@ func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 	var m msg.MessageMouseScroll
 	m.X = xOff
 	m.Y = yOff
-	DispatchEvent(msg.TypeMouseScroll, m)
-
+	//DispatchEvent(msg.TypeMouseScroll, m)
+	b := msg.Serialize(msg.TypeMouseScroll, m)
+	InputEvents <- b
 }
 
 //FIX
@@ -264,7 +268,9 @@ func onKey(
 	m.Action = uint8(action)
 	m.Mod = uint8(mod)
 
-	DispatchEvent(msg.TypeKey, m)
+	//DispatchEvent(msg.TypeKey, m)
+	b := msg.Serialize(msg.TypeKey, m)
+	InputEvents <- b
 }
 
 func eitherControlKeyHeld(w *glfw.Window) bool {
@@ -291,19 +297,12 @@ func remove(slice []string, index int, value string) []string {
 }
 
 /*
-func dispatchWithPrefix(content []byte, msgType uint16) {
-	prefix := append(
-		getBytesOfUInt32(uint32(len(content))+msg.PREFIX_SIZE),
-		getBytesOfUInt16(msgType)...)
-
-	Events <- append(prefix, content...)
+func DispatchEvent(msgType uint16, event interface{}) {
+	b := msg.Serialize(msgType, event)
+	InputEvents <- b
 }
 */
 
-func DispatchEvent(msgType uint16, event interface{}) {
-	b := msg.Serialize(msgType, event)
-	Events <- b
-}
 func getWordSkipPos(xIn int, change int) int {
 	peekPos := xIn
 	foc := gfx.Rend.Focused
@@ -353,6 +352,7 @@ func movedCursorSoUpdateDependents() {
 		foc.Selection.EndY = math.MaxUint32
 	}
 }
+
 func getSlice(wBuf *bytes.Buffer, err error) (data []byte) {
 	data = make([]byte, 0)
 
