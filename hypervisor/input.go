@@ -92,13 +92,7 @@ func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 
 //FIX
 func onChar(w *glfw.Window, char rune) {
-	//dispatchWithPrefix(getBytesOfRune(char), msg.TypeCharacter)
 
-	//this works without serialization
-	//msg.InsertRuneIntoDocumentTest("Rune", getBytesOfRune(char))
-	//TODO Aleks check with serialization black boxes typing
-
-	//DispatchEvent(msg.TypeCharacter, getBytesOfRune(char))
 	var m msg.MessageOnCharacter
 	m.Rune = uint32(char)
 	b := msg.Serialize(msg.TypeOnCharacter, m)

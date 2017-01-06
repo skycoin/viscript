@@ -61,10 +61,10 @@ func ProcessInputEvents(message []byte) {
 	case msg.TypeOnCharacter:
 		var msgChar msg.MessageOnCharacter
 		msg.MustDeserialize(message, &msgChar)
-		InsertRuneIntoDocument("Rune", msgChar.Rune)
-		script.Process(false)
 		if DebugPrintInputEvents {
 			s("TypeCharacter")
+			InsertRuneIntoDocument("Rune", msgChar.Rune)
+			script.Process(false)
 		}
 	case msg.TypeKey:
 		var keyMsg msg.MessageKey
