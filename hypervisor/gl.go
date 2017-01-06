@@ -2,10 +2,12 @@ package hypervisor
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/app"
+	//"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
 	//"log"
 	"github.com/go-gl/gl/v2.1/gl"
+
+	igl "github.com/corpusc/viscript/gl" //internal gl
 )
 
 var (
@@ -14,14 +16,7 @@ var (
 	rotationY float32
 )
 
-func setFrustum(r *app.Rectangle) {
-	gl.Frustum(
-		float64(r.Left),
-		float64(r.Right),
-		float64(r.Bottom),
-		float64(r.Top), 1.0, 10.0)
-}
-
+//move to igl
 func DrawScene() {
 	//rotationX += 0.5
 	//rotationY += 0.5
@@ -30,7 +25,7 @@ func DrawScene() {
 		*gfx.PrevFrustum = *gfx.CurrFrustum
 		gl.MatrixMode(gl.PROJECTION)
 		gl.LoadIdentity()
-		setFrustum(gfx.CurrFrustum)
+		igl.SetFrustum(gfx.CurrFrustum)
 		fmt.Println("CHANGE OF FRUSTUM")
 	}
 	gl.MatrixMode(gl.MODELVIEW) //.PROJECTION)                   //.MODELVIEW)

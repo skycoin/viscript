@@ -5,16 +5,16 @@ import (
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
 	//"github.com/corpusc/viscript/msg"
-	"github.com/corpusc/viscript/script"
-	"github.com/go-gl/gl/v2.1/gl"
+	//"github.com/corpusc/viscript/script"
+	//"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
-	"log"
+	//"log"
 	"runtime"
 
 	igl "github.com/corpusc/viscript/gl" //internal gl
 )
 
-var GlfwWindow *glfw.Window
+//var GlfwWindow *glfw.Window //deprecate eventually
 var CloseWindow chan int // write to channel to close
 
 func init() {
@@ -31,45 +31,24 @@ func HypervisorInit() {
 
 func HypervisorScreenTeardown() {
 	glfw.Terminate()
-
 }
 
 func HypervisorScreenInit() {
-	fmt.Printf("Hypervisor: Init glfw \n")
+	igl.WindowInit()
+	//GlfwWindow = igl.GlfwWindow
 
-	if err := glfw.Init(); err != nil {
-		log.Fatalln("failed to initialize glfw:", err)
-	}
-
-	//defer glfw.Terminate()
-
-	fmt.Printf("Hypervisor: set windowhint\n")
-	glfw.WindowHint(glfw.Resizable, glfw.True)
-	glfw.WindowHint(glfw.ContextVersionMajor, 2)
-	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-
-	var err error
-	GlfwWindow, err = glfw.CreateWindow(int(gfx.CurrAppWidth), int(gfx.CurrAppHeight), app.Name, nil, nil)
-
-	if err != nil {
-		panic(err)
-	}
-
-	GlfwWindow.MakeContextCurrent()
-	if err := gl.Init(); err != nil {
-		panic(err)
-	}
+	//move texture load somewhere?
 	fmt.Printf("Hypervisor: load texture \n")
 	Texture = igl.NewTexture("Bisasam_24x24_Shadowed.png")
 	//defer gl.DeleteTextures(1, &Texture)
 
 	fmt.Printf("Hypervisor: init renderer \n")
-	InitRenderer()
+	igl.InitRenderer()
 }
 
 func HypervisorInitInputEvents() {
 	fmt.Printf("Hypervisor: init InitInputEvents \n")
-	InitInputEvents(GlfwWindow)
+	InitInputEvents(igl.GlfwWindow)
 }
 
 func PollUiInputEvents() {
@@ -89,9 +68,11 @@ func UpdateDrawBuffer() {
 }
 
 func SwapDrawBuffer() {
-	GlfwWindow.SwapBuffers()
+	//igl.GlfwWindow.SwapBuffers()
+	igl.SwapDrawBuffer()
 }
 
+/*
 func InitRenderer() {
 	fmt.Println("InitRenderer()")
 
@@ -122,3 +103,4 @@ func InitRenderer() {
 	// future FIXME: finished app would not have a demo program loaded on startup?
 	script.Process(false)
 }
+*/
