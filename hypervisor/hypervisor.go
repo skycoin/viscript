@@ -12,7 +12,11 @@ import (
 	"runtime"
 )
 
-func init() {
+func init() {}
+
+var GlfwWindow *glfw.Window
+
+func HypervisorInit() {
 	fmt.Println("hypervisor.init()")
 	gfx.MakeHighlyVisibleLogHeader(app.Name, 15)
 	// GLFW event handling must run on the main OS thread
@@ -20,44 +24,58 @@ func init() {
 	runtime.LockOSThread()
 }
 
-func ScreenSetup() {
+func HypervisorScreenTeardown() {
+	glfw.Terminate()
 
-	fmt.Printf("Start\n")
+}
+
+func HypervisorScreenInit() {
+	fmt.Printf("Hypervisor: Init glfw \n")
 
 	if err := glfw.Init(); err != nil {
 		log.Fatalln("failed to initialize glfw:", err)
 	}
 
-	defer glfw.Terminate()
+	//defer glfw.Terminate()
 
+	fmt.Printf("Hypervisor: set windowhint\n")
 	glfw.WindowHint(glfw.Resizable, glfw.True)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-	window, err := glfw.CreateWindow(int(gfx.CurrAppWidth), int(gfx.CurrAppHeight), app.Name, nil, nil)
+	GlfwWindow, err := glfw.CreateWindow(int(gfx.CurrAppWidth), int(gfx.CurrAppHeight), app.Name, nil, nil)
 
 	if err != nil {
 		panic(err)
 	}
 
-	window.MakeContextCurrent()
-
+	GlfwWindow.MakeContextCurrent()
 	if err := gl.Init(); err != nil {
 		panic(err)
 	}
+	fmt.Printf("Hypervisor: load texture \n")
 	Texture = NewTexture("Bisasam_24x24_Shadowed.png")
+	//defer gl.DeleteTextures(1, &Texture)
 
-	defer gl.DeleteTextures(1, &Texture)
-
+	fmt.Printf("Hypervisor: init renderer \n")
 	InitRenderer()
 
-	InitInputEvents(window)
+	fmt.Printf("Hypervisor: init InitInputEvents \n")
+	InitInputEvents(GlfwWindow)
 
-	for !window.ShouldClose() {
+}
+
+func ScreenSetup() {
+
+	//InitRenderer()
+
+	//InitInputEvents(window)
+
+	for !GlfwWindow.ShouldClose() {
 		msg.MonitorEvents(Events)
 		glfw.PollEvents()
 		DrawScene()
 		//drawScene()
-		window.SwapBuffers()
+		GlfwWindow.SwapBuffers()
 	}
 
 }

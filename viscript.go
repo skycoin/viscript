@@ -29,9 +29,14 @@
 package main
 
 import (
+	"fmt"
 	"github.com/corpusc/viscript/hypervisor"
 )
 
 func main() {
-	hypervisor.ScreenSetup()
+
+	fmt.Printf("Start\n")
+
+	//HypervisorInit()
+	hypervisor.HypervisorScreenInit()
 }
