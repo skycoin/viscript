@@ -2,7 +2,8 @@ package hypervisor
 
 import (
 	"fmt"
-	_ "image/png"
+	//_ "image/png"
+	"log"
 	/*
 		"go/build"
 		"runtime"
@@ -94,9 +95,21 @@ func onChar(w *glfw.Window, char rune) {
 	//dispatchWithPrefix(getBytesOfRune(char), msg.TypeCharacter)
 
 	//this works without serialization
-	msg.InsertRuneIntoDocumentTest("Rune", getBytesOfRune(char))
+	//msg.InsertRuneIntoDocumentTest("Rune", getBytesOfRune(char))
 	//TODO Aleks check with serialization black boxes typing
+
 	//DispatchEvent(msg.TypeCharacter, getBytesOfRune(char))
+	var m msg.MessageOnCharacter
+	m.Rune = uint32(char)
+	b := msg.Serialize(msg.TypeOnCharacter, m)
+	InputEvents <- b
+
+	//unit test rune conversion
+	x1 := uint32(char)
+	y1 := rune(x1)
+	if y1 != char {
+		log.Panic("Rune routetrip convertion to uint32 fails\n")
+	}
 }
 
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can detect a

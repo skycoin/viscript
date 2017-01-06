@@ -57,7 +57,7 @@ func ProcessInputEvents(message []byte) {
 		}
 		gfx.Curs.ConvertMouseClickToTextCursorPosition(msgBtn.Button, msgBtn.Action)
 
-	case msg.TypeCharacter:
+	case msg.TypeOnCharacter:
 
 		fmt.Printf("TypeCharacter/Rune, wtf fix\n")
 		//WTF: FIX THIS

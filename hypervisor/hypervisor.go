@@ -10,6 +10,8 @@ import (
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"log"
 	"runtime"
+
+	igl "github.com/corpusc/viscript/gl" //internal gl
 )
 
 var GlfwWindow *glfw.Window
@@ -58,7 +60,7 @@ func HypervisorScreenInit() {
 		panic(err)
 	}
 	fmt.Printf("Hypervisor: load texture \n")
-	Texture = NewTexture("Bisasam_24x24_Shadowed.png")
+	Texture = igl.NewTexture("Bisasam_24x24_Shadowed.png")
 	//defer gl.DeleteTextures(1, &Texture)
 
 	fmt.Printf("Hypervisor: init renderer \n")

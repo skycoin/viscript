@@ -1,147 +1,53 @@
 package msg
 
 import (
-	"bytes"
-	"encoding/binary"
-	"fmt"
-
-	"github.com/corpusc/viscript/gfx"
-	"github.com/corpusc/viscript/script"
-	//"log"
-	_ "strconv"
+	_ "bytes"
+	_ "encoding/binary"
+	_ "fmt"
+	//"math/rand"
 )
 
-//DEPRECATE
-var curRecByte = 0 // current receive message index
+const PREFIX_SIZE = 6 // guaranteed minimum size of every message (4 for length + 2 for type)
 
-func MonitorEvents(ch chan []byte) {
-	select {
-	case v := <-ch:
-		processMessage(v)
-	default:
-		//fmt.Println("MonitorEvents() default")
-	}
+// HyperVisor -> Process, input event
+const (
+	TypeMousePos    = iota // 0
+	TypeMouseScroll        // 1
+	TypeMouseButton        // 2
+	TypeOnCharacter        // etc.
+	TypeKey
+)
+
+//Input Messages
+
+// HyperVisor -> Process
+
+//message received by process, by hypervisor
+type MessageMousePos struct {
+	X float64
+	Y float64
 }
 
-func processMessage(message []byte) {
-
-	switch GetMessageTypeUInt16(message) {
-
-	case TypeMousePos:
-		var msgMousePos MessageMousePos
-		MustDeserialize(message, &msgMousePos)
-
-		s("TypeMousePos")
-		showFloat64("X", msgMousePos.X)
-		showFloat64("Y", msgMousePos.Y)
-
-	case TypeMouseScroll:
-		var msgScroll MessageMouseScroll
-		MustDeserialize(message, &msgScroll)
-
-		s("TypeMouseScroll")
-		showFloat64("X Offset", msgScroll.X)
-		showFloat64("Y Offset", msgScroll.Y)
-
-	case TypeMouseButton:
-		var msgBtn MessageMouseButton
-		MustDeserialize(message, &msgBtn)
-
-		s("TypeMouseButton")
-		showUInt8("Button", msgBtn.Button)
-		showUInt8("Action", msgBtn.Action)
-		showUInt8("Mod", msgBtn.Mod)
-		gfx.Curs.ConvertMouseClickToTextCursorPosition(msgBtn.Button, msgBtn.Action)
-
-	case TypeCharacter:
-		//WTF: FIX THIS
-		s("TypeCharacter")
-		InsertRuneIntoDocumentTest("Rune", message)
-		script.Process(false)
-
-	case TypeKey:
-		var keyMsg MessageKey
-		s("TypeKey")
-		MustDeserialize(message, &keyMsg)
-		showUInt8("Key", keyMsg.Key)
-		showUInt32Scan("Scan", keyMsg.Scan)
-		showUInt8("Action", keyMsg.Action)
-		showUInt8("Mod", keyMsg.Mod)
-
-	default:
-		fmt.Println("UNKNOWN MESSAGE TYPE!")
-	}
-
-	fmt.Println()
-	curRecByte = 0
+type MessageMouseScroll struct {
+	X float64
+	Y float64
 }
 
-func s(s string) {
-	fmt.Print(s)
+type MessageMouseButton struct {
+	Button uint8
+	Action uint8
+	Mod    uint8
 }
 
-func GetMessageTypeUInt16(message []byte) uint16 {
-	var value uint16
-	rBuf := bytes.NewReader(message[0:2])
-	err := binary.Read(rBuf, binary.LittleEndian, &value)
-
-	if err != nil {
-		fmt.Println("binary.Read failed: ", err)
-	} else {
-		//fmt.Printf("from byte buffer, %s: %d\n", s, value)
-	}
-
-	return value
+type MessageOnCharacter struct {
+	Rune uint32
 }
 
-//WTF FIX THIS
-func InsertRuneIntoDocumentTest(s string, message []byte) {
-	var value rune
-	var size = 4
-
-	rBuf := bytes.NewReader(message[curRecByte : curRecByte+size])
-	err := binary.Read(rBuf, binary.LittleEndian, &value)
-	curRecByte += size
-
-	if err != nil {
-		fmt.Println("binary.Read failed: ", err)
-	} else {
-		f := gfx.Rend.Focused
-		b := f.TextBodies[0]
-		resultsDif := f.CursX - len(b[f.CursY])
-		fmt.Printf("Rune   [%s: %s]", s, string(value))
-
-		if f.CursX > len(b[f.CursY]) {
-			b[f.CursY] = b[f.CursY][:f.CursX-resultsDif] + b[f.CursY][:len(b[f.CursY])] + string(value)
-			fmt.Printf("line is %s\n", b[f.CursY])
-			f.CursX++
-		} else {
-			b[f.CursY] = b[f.CursY][:f.CursX] + string(value) + b[f.CursY][f.CursX:len(b[f.CursY])]
-			f.CursX++
-		}
-	}
+type MessageKey struct {
+	Key    uint8
+	Scan   uint32
+	Action uint8
+	Mod    uint8
 }
 
-func showUInt8(s string, x uint8) uint8 {
-	fmt.Printf("   [%s: %d]", s, x)
-	return x
-}
-
-// the rest of these funcs are almost identical, just top 2 vars customized (and string format)
-func showSInt32(s string, x int32) {
-	fmt.Printf("   [%s: %d]", s, x)
-}
-
-func showUInt32(s string, x uint32) {
-	fmt.Printf("   [%s: %d]", s, x)
-}
-
-func showUInt32Scan(s string, x uint32) uint32 {
-	fmt.Printf("   [%s: %d]", s, x)
-	return x
-}
-
-func showFloat64(s string, f float64) float64 {
-	fmt.Printf("   [%s: %.1f]", s, f)
-	return f
-}
+//Terminal Driving Messages
