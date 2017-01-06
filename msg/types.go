@@ -40,8 +40,10 @@ type MessageMouseButton struct {
 }
 
 type MessageCharacter struct {
-	Rune uint32
+	Rune []byte
+
 }
+
 
 type MessageKey struct {
 	Key    uint8

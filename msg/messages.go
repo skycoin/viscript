@@ -94,7 +94,10 @@ func processMessage(message []byte) {
 	case TypeCharacter:
 
 		s("TypeCharacter")
-		InsertRuneIntoDocumentTest("Rune", message)
+		var msg MessageCharacter
+		MustDeserialize(message, &msg)
+
+		InsertRuneIntoDocumentTest("Rune", msg.Rune)
 		script.Process(false)
 
 	case TypeKey:
