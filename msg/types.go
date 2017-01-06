@@ -50,6 +50,4 @@ type MessageKey struct {
 	Mod    uint8
 }
 
-
-
 //Terminal Driving Messages

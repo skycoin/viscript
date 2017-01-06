@@ -19,7 +19,8 @@ import (
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
-var Events = make(chan []byte, 256)
+var Events = make(chan []byte, 256) //event channel
+
 var prevMousePixelX float64
 var prevMousePixelY float64
 var mousePixelDeltaX float64

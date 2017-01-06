@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
-	"github.com/corpusc/viscript/msg"
+	//"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
@@ -12,9 +12,12 @@ import (
 	"runtime"
 )
 
-func init() {}
-
 var GlfwWindow *glfw.Window
+var CloseWindow chan int // write to channel to close
+
+func init() {
+	CloseWindow = make(chan int)
+}
 
 func HypervisorInit() {
 	fmt.Println("hypervisor.init()")
@@ -42,7 +45,9 @@ func HypervisorScreenInit() {
 	glfw.WindowHint(glfw.Resizable, glfw.True)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-	GlfwWindow, err := glfw.CreateWindow(int(gfx.CurrAppWidth), int(gfx.CurrAppHeight), app.Name, nil, nil)
+
+	var err error
+	GlfwWindow, err = glfw.CreateWindow(int(gfx.CurrAppWidth), int(gfx.CurrAppHeight), app.Name, nil, nil)
 
 	if err != nil {
 		panic(err)
@@ -58,26 +63,33 @@ func HypervisorScreenInit() {
 
 	fmt.Printf("Hypervisor: init renderer \n")
 	InitRenderer()
-
-	fmt.Printf("Hypervisor: init InitInputEvents \n")
-	InitInputEvents(GlfwWindow)
-
 }
 
-func ScreenSetup() {
+func HypervisorInitInputEvents() {
+	fmt.Printf("Hypervisor: init InitInputEvents \n")
+	InitInputEvents(GlfwWindow)
+}
 
-	//InitRenderer()
+func PollUiInputEvents() {
+	glfw.PollEvents()
+}
 
-	//InitInputEvents(window)
-
-	for !GlfwWindow.ShouldClose() {
-		msg.MonitorEvents(Events)
-		glfw.PollEvents()
-		DrawScene()
-		//drawScene()
-		GlfwWindow.SwapBuffers()
+//could be in messages
+func DispatchEvents(ch chan []byte) {
+	select {
+	case v := <-ch:
+		processEvents(v)
+	default:
+		//fmt.Println("MonitorEvents() default")
 	}
+}
 
+func UpdateDrawBuffer() {
+	DrawScene()
+}
+
+func SwapDrawBuffer() {
+	GlfwWindow.SwapBuffers()
 }
 
 func InitRenderer() {
