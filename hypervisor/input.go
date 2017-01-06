@@ -11,6 +11,8 @@ import (
 	"math"
 	"strconv"
 
+	"encoding/binary"
+
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
@@ -86,9 +88,10 @@ func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 func onChar(w *glfw.Window, char rune) {
 	//dispatchWithPrefix(getBytesOfRune(char), msg.TypeCharacter)
 
-	var m msg.MessageCharacter
-	_ = m
-	DispatchEvent(msg.TypeCharacter, m)
+	//this works without serialization
+	msg.InsertRuneIntoDocumentTest("Rune", getBytesOfRune(char))
+	//TODO Aleks check with serialization black boxes typing
+	//DispatchEvent(msg.TypeCharacter, getBytesOfRune(char))
 }
 
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can detect a
@@ -362,5 +365,11 @@ func getSlice(wBuf *bytes.Buffer, err error) (data []byte) {
 		}
 	}
 
+	return
+}
+func getBytesOfRune(value rune) (data []byte) {
+	wBuf := new(bytes.Buffer)
+	err := binary.Write(wBuf, binary.LittleEndian, value)
+	data = getSlice(wBuf, err)
 	return
 }
