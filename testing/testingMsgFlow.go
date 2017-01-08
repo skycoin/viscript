@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/corpusc/viscript/gl"
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 )
@@ -31,8 +32,8 @@ func TestRuneMsgFlow(t *testing.T) {
 }
 func flowTest(b []byte) []byte {
 
-	hypervisor.InputEvents <- b
-	message := hypervisor.DispatchInputEvents(hypervisor.InputEvents)
+	gl.InputEvents <- b
+	message := hypervisor.DispatchInputEvents(gl.InputEvents)
 
 	return message
 }
