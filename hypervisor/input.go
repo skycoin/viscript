@@ -15,14 +15,13 @@ import (
 	"encoding/binary"
 
 	"github.com/corpusc/viscript/gfx"
-	"github.com/corpusc/viscript/msg"
+	//"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
 //var InputEvents = make(chan []byte, 256) //event channel
 
-/*
 var prevMousePixelX float64
 var prevMousePixelY float64
 var mousePixelDeltaX float64
@@ -35,7 +34,6 @@ func InitInputEvents(w *glfw.Window) {
 	w.SetScrollCallback(onMouseScroll)
 	w.SetCursorPosCallback(onMouseCursorPos)
 }
-*/
 
 // this can also be triggered by onMouseButton
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
@@ -66,13 +64,8 @@ func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 }
 
 //FIX
-/*
-func onChar(w *glfw.Window, char rune) {
 
-	var m msg.MessageOnCharacter
-	m.Rune = uint32(char)
-	b := msg.Serialize(msg.TypeOnCharacter, m)
-	InputEvents <- b
+func onChar(w *glfw.Window, char rune) {
 
 	//unit test rune conversion
 	x1 := uint32(char)
@@ -81,7 +74,6 @@ func onChar(w *glfw.Window, char rune) {
 		log.Panic("Rune routetrip convertion to uint32 fails\n")
 	}
 }
-*/
 
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can detect a
 // shift/alt/ctrl/super key through the "mod" variable,

@@ -3,7 +3,7 @@ package hypervisor
 import (
 	"fmt"
 	"github.com/corpusc/viscript/gfx"
-	"github.com/corpusc/viscript/msg"
+	//"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/glfw/v3.2/glfw"
@@ -38,14 +38,15 @@ func onMouseButton(
 	//dispatchWithPrefix(content, msg.TypeMouseButton)
 
 	//MessageMouseButton
-	var m msg.MessageMouseButton
-	m.Button = uint8(bt)
-	m.Action = uint8(action)
-	m.Mod = uint8(mod)
-	//DispatchEvent(msg.TypeMouseButton, m)
-	b := msg.Serialize(msg.TypeMouseButton, m)
-	InputEvents <- b
-
+	/*
+		var m msg.MessageMouseButton
+		m.Button = uint8(bt)
+		m.Action = uint8(action)
+		m.Mod = uint8(mod)
+		//DispatchEvent(msg.TypeMouseButton, m)
+		b := msg.Serialize(msg.TypeMouseButton, m)
+		InputEvents <- b
+	*/
 }
 
 func respondToAnyMenuButtonClicks() {
