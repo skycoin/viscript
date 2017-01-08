@@ -9,5 +9,4 @@ import (
 type Terminal struct {
 	xsize int //x character size
 	ysize int //y character size
-
 }
