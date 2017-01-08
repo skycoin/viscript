@@ -20,8 +20,9 @@ import (
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
-var InputEvents = make(chan []byte, 256) //event channel
+//var InputEvents = make(chan []byte, 256) //event channel
 
+/*
 var prevMousePixelX float64
 var prevMousePixelY float64
 var mousePixelDeltaX float64
@@ -33,38 +34,22 @@ func InitInputEvents(w *glfw.Window) {
 	w.SetMouseButtonCallback(onMouseButton)
 	w.SetScrollCallback(onMouseScroll)
 	w.SetCursorPosCallback(onMouseCursorPos)
-	w.SetFramebufferSizeCallback(onFramebufferSize)
 }
-
-func onFramebufferSize(w *glfw.Window, width, height int) {
-	fmt.Printf("onFramebufferSize() - width, height: %d, %d\n", width, height)
-	gfx.CurrAppWidth = int32(width)
-	gfx.CurrAppHeight = int32(height)
-	gfx.Rend.SetSize()
-}
+*/
 
 // this can also be triggered by onMouseButton
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
-	gfx.Curs.UpdatePosition(float32(x), float32(y))
+	gfx.Curs.UpdatePosition(float32(x), float32(y)) //state update
+
 	mousePixelDeltaX = x - prevMousePixelX
 	mousePixelDeltaY = y - prevMousePixelY
 	prevMousePixelX = x
 	prevMousePixelY = y
 
+	//rendering update
 	if /* LMB held */ w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
 		gfx.Rend.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
 	}
-
-	//content := append(getBytesOfFloat64(x), getBytesOfFloat64(y)...)
-	//dispatchWithPrefix(content, msg.TypeMousePos)
-	// build message
-
-	var m msg.MessageMousePos
-	m.X = x
-	m.Y = y
-	//DispatchEvent(msg.TypeMousePos, m)
-	b := msg.Serialize(msg.TypeMousePos, m)
-	InputEvents <- b
 
 }
 
@@ -72,25 +57,16 @@ func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 	var delta float64 = 30
 
 	// if horizontal
+	//state update
 	if w.GetKey(glfw.KeyLeftShift) == glfw.Press || w.GetKey(glfw.KeyRightShift) == glfw.Press {
 		gfx.Rend.ScrollPanelThatIsHoveredOver(yOff*-delta, 0)
 	} else {
 		gfx.Rend.ScrollPanelThatIsHoveredOver(xOff*delta, yOff*-delta)
 	}
-
-	// build message
-	//content := append(getBytesOfFloat64(xOff), getBytesOfFloat64(yOff)...)
-	//dispatchWithPrefix(content, msg.TypeMouseScroll)
-
-	var m msg.MessageMouseScroll
-	m.X = xOff
-	m.Y = yOff
-	//DispatchEvent(msg.TypeMouseScroll, m)
-	b := msg.Serialize(msg.TypeMouseScroll, m)
-	InputEvents <- b
 }
 
 //FIX
+/*
 func onChar(w *glfw.Window, char rune) {
 
 	var m msg.MessageOnCharacter
@@ -105,6 +81,7 @@ func onChar(w *glfw.Window, char rune) {
 		log.Panic("Rune routetrip convertion to uint32 fails\n")
 	}
 }
+*/
 
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can detect a
 // shift/alt/ctrl/super key through the "mod" variable,
@@ -269,15 +246,17 @@ func onKey(
 
 		script.Process(false)
 	}
-	var m msg.MessageKey
-	m.Key = uint8(key)
-	m.Scan = uint32(scancode)
-	m.Action = uint8(action)
-	m.Mod = uint8(mod)
+	/*
+		var m msg.MessageKey
+		m.Key = uint8(key)
+		m.Scan = uint32(scancode)
+		m.Action = uint8(action)
+		m.Mod = uint8(mod)
 
-	//DispatchEvent(msg.TypeKey, m)
-	b := msg.Serialize(msg.TypeKey, m)
-	InputEvents <- b
+		//DispatchEvent(msg.TypeKey, m)
+		b := msg.Serialize(msg.TypeKey, m)
+		InputEvents <- b
+	*/
 }
 
 func eitherControlKeyHeld(w *glfw.Window) bool {

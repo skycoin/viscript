@@ -8,7 +8,7 @@ import (
 	//"github.com/corpusc/viscript/msg"
 	//"github.com/corpusc/viscript/script"
 	//"github.com/go-gl/gl/v2.1/gl"
-	"github.com/go-gl/glfw/v3.2/glfw"
+	//"github.com/go-gl/glfw/v3.2/glfw"
 	//"log"
 	"runtime"
 
@@ -23,7 +23,7 @@ import (
 var CloseWindow chan int // write to channel to close
 
 func init() {
-	CloseWindow = make(chan int)
+	CloseWindow = make(chan int) //write to close windows
 }
 
 func HypervisorInit() {
@@ -47,16 +47,16 @@ func HypervisorScreenInit() {
 
 func HypervisorInitInputEvents() {
 	fmt.Printf("Hypervisor: init InitInputEvents \n")
-	InitInputEvents(igl.GlfwWindow)
+	igl.InitInputEvents(igl.GlfwWindow)
+	igl.InitMiscEvents(igl.GlfwWindow)
 }
 
 func PollUiInputEvents() {
-	glfw.PollEvents() //move to gl
+	igl.PollEvents() //move to gl
 }
 
 //could be in messages
 func DispatchInputEvents(ch chan []byte) []byte {
-
 	message := []byte{}
 	for len(ch) > 0 { //if channel has elements
 		v := <-ch //read from channel

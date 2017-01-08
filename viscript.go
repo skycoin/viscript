@@ -30,6 +30,7 @@ package main
 
 import (
 	"fmt"
+	igl "github.com/corpusc/viscript/gl" //internal gl
 	"github.com/corpusc/viscript/hypervisor"
 )
 
@@ -45,7 +46,7 @@ func main() {
 
 	fmt.Printf("Start Loop; \n")
 	for len(hypervisor.CloseWindow) == 0 {
-		hypervisor.DispatchInputEvents(hypervisor.InputEvents) //event channel
+		hypervisor.DispatchInputEvents(igl.InputEvents) //event channel
 		hypervisor.PollUiInputEvents()
 		hypervisor.UpdateDrawBuffer()
 		hypervisor.SwapDrawBuffer() //swap the draw frame with new frame

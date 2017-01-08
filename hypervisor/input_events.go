@@ -9,6 +9,7 @@ import (
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
 	//"log"
+	//igl "github.com/corpusc/viscript/gl"
 	_ "strconv"
 )
 
@@ -67,6 +68,7 @@ func ProcessInputEvents(message []byte) []byte {
 			InsertRuneIntoDocument("Rune", msgChar.Rune)
 			script.Process(false)
 		}
+
 	case msg.TypeKey:
 		var keyMsg msg.MessageKey
 		s("TypeKey")
