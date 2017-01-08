@@ -3,39 +3,40 @@ package hypervisor
 import (
 	"fmt"
 	"github.com/corpusc/viscript/gfx"
-	//"github.com/corpusc/viscript/msg"
+	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
 	"github.com/corpusc/viscript/ui"
-	"github.com/go-gl/glfw/v3.2/glfw"
+	//"github.com/go-gl/glfw/v3.2/glfw"
 )
 
 // apparently every time this is fired, a mouse position event is ALSO fired
-func onMouseButton(
-	w *glfw.Window,
-	bt glfw.MouseButton,
-	action glfw.Action,
-	mod glfw.ModifierKey) {
+// func onMouseButton(
+// 	w *glfw.Window,
+// 	bt glfw.MouseButton,
+// 	action glfw.Action,
+// 	mod glfw.ModifierKey) {
 
-	if action == glfw.Press {
-		switch glfw.MouseButton(bt) {
-		case glfw.MouseButtonLeft:
-			// respond to clicks in ui rectangles
-			if gfx.MouseCursorIsInside(ui.MainMenu.Rect) {
-				respondToAnyMenuButtonClicks()
-			} else { // respond to any panel clicks outside of menu
-				for _, pan := range gfx.Rend.Panels {
-					if pan.ContainsMouseCursor() {
-						pan.RespondToMouseClick()
+func onMouseButton(m msg.MessageMouseButton) {
+
+	gfx.Curs.ConvertMouseClickToTextCursorPosition(m.Button, m.Action)
+
+	/*
+		if action == glfw.Press {
+			switch glfw.MouseButton(bt) {
+			case glfw.MouseButtonLeft:
+				// respond to clicks in ui rectangles
+				if gfx.MouseCursorIsInside(ui.MainMenu.Rect) {
+					respondToAnyMenuButtonClicks()
+				} else { // respond to any panel clicks outside of menu
+					for _, pan := range gfx.Rend.Panels {
+						if pan.ContainsMouseCursor() {
+							pan.RespondToMouseClick()
+						}
 					}
 				}
 			}
 		}
-	}
-
-	// build message
-	//content := append(getByteOfUInt8(uint8(b)), getByteOfUInt8(uint8(action))...)
-	//content = append(content, getByteOfUInt8(uint8(mod))...)
-	//dispatchWithPrefix(content, msg.TypeMouseButton)
+	*/
 
 	//MessageMouseButton
 	/*

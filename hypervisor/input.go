@@ -3,76 +3,66 @@ package hypervisor
 import (
 	"fmt"
 	//_ "image/png"
-	"log"
+	//"log"
 	/*
 		"go/build"
 		"runtime"
 	*/
 	"bytes"
 	"math"
-	"strconv"
+	//"strconv"
 
 	"encoding/binary"
 
 	"github.com/corpusc/viscript/gfx"
-	//"github.com/corpusc/viscript/msg"
+	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
-//var InputEvents = make(chan []byte, 256) //event channel
-
+/*
 var prevMousePixelX float64
 var prevMousePixelY float64
 var mousePixelDeltaX float64
 var mousePixelDeltaY float64
-
-func InitInputEvents(w *glfw.Window) {
-	w.SetCharCallback(onChar)
-	w.SetKeyCallback(onKey)
-	w.SetMouseButtonCallback(onMouseButton)
-	w.SetScrollCallback(onMouseScroll)
-	w.SetCursorPosCallback(onMouseCursorPos)
-}
+*/
 
 // this can also be triggered by onMouseButton
-func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
-	gfx.Curs.UpdatePosition(float32(x), float32(y)) //state update
+func onMouseCursorPos(m msg.MessageMousePos) {
 
-	mousePixelDeltaX = x - prevMousePixelX
-	mousePixelDeltaY = y - prevMousePixelY
-	prevMousePixelX = x
-	prevMousePixelY = y
+	// gfx.Curs.UpdatePosition(float32(x), float32(y)) //state update
 
-	//rendering update
-	if /* LMB held */ w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		gfx.Rend.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
-	}
+	// mousePixelDeltaX = x - prevMousePixelX
+	// mousePixelDeltaY = y - prevMousePixelY
+	// prevMousePixelX = x
+	// prevMousePixelY = y
+
+	// //rendering update
+	// if /* LMB held */ w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
+	// 	gfx.Rend.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
+	// }
 
 }
 
-func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
-	var delta float64 = 30
+func onMouseScroll(m msg.MessageMouseScroll) {
+	/*
+		var delta float64 = 30
 
-	// if horizontal
-	//state update
-	if w.GetKey(glfw.KeyLeftShift) == glfw.Press || w.GetKey(glfw.KeyRightShift) == glfw.Press {
-		gfx.Rend.ScrollPanelThatIsHoveredOver(yOff*-delta, 0)
-	} else {
-		gfx.Rend.ScrollPanelThatIsHoveredOver(xOff*delta, yOff*-delta)
-	}
+		// if horizontal
+		//state update
+		if w.GetKey(glfw.KeyLeftShift) == glfw.Press || w.GetKey(glfw.KeyRightShift) == glfw.Press {
+			gfx.Rend.ScrollPanelThatIsHoveredOver(yOff*-delta, 0)
+		} else {
+			gfx.Rend.ScrollPanelThatIsHoveredOver(xOff*delta, yOff*-delta)
+		}
+	*/
 }
 
-//FIX
-
-func onChar(w *glfw.Window, char rune) {
-
-	//unit test rune conversion
-	x1 := uint32(char)
-	y1 := rune(x1)
-	if y1 != char {
-		log.Panic("Rune routetrip convertion to uint32 fails\n")
-	}
+//Working
+//func onChar(w *glfw.Window, char rune) {
+func onChar(m msg.MessageOnCharacter) {
+	InsertRuneIntoDocument("Rune", m.Rune)
+	script.Process(false)
 }
 
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can detect a
@@ -81,173 +71,165 @@ func onChar(w *glfw.Window, char rune) {
 // regardless of left/right key used.
 // BUT for RELEASE, the "mod" variable will NOT tell you what key it is!
 // so you will have to handle both left & right mod keys via the "action" variable!
-func onKey(
-	w *glfw.Window,
-	key glfw.Key,
-	scancode int,
-	action glfw.Action,
-	mod glfw.ModifierKey) {
 
-	foc := gfx.Rend.Focused
+// func onKey(
+// 	w *glfw.Window,
+// 	key glfw.Key,
+// 	scancode int,
+// 	action glfw.Action,
+// 	mod glfw.ModifierKey) {
+func onKey(m msg.MessageKey) {
+	/*
+		foc := gfx.Rend.Focused
 
-	if action == glfw.Release {
-		switch key {
+		if action == glfw.Release {
+			switch key {
 
-		case glfw.KeyEscape:
-			w.SetShouldClose(true)
+			case glfw.KeyEscape:
+				w.SetShouldClose(true)
 
-		case glfw.KeyLeftShift:
-			fallthrough
-		case glfw.KeyRightShift:
-			fmt.Println("done selecting")
-			foc.Selection.CurrentlySelecting = false // TODO?  possibly flip around if selectionStart comes after selectionEnd in the page flow?
+			case glfw.KeyLeftShift:
+				fallthrough
+			case glfw.KeyRightShift:
+				fmt.Println("done selecting")
+				foc.Selection.CurrentlySelecting = false // TODO?  possibly flip around if selectionStart comes after selectionEnd in the page flow?
 
-		case glfw.KeyLeftControl:
-			fallthrough
-		case glfw.KeyRightControl:
-			fmt.Println("Control RELEASED")
-		case glfw.KeyLeftAlt:
-			fallthrough
-		case glfw.KeyRightAlt:
-			fmt.Println("Alt RELEASED")
-		case glfw.KeyLeftSuper:
-			fallthrough
-		case glfw.KeyRightSuper:
-			fmt.Println("'Super' modifier key RELEASED")
-		}
-	} else {
-		// glfw.Repeat   or   glfw.Press
-		b := foc.TextBodies[0]
-
-		CharWid := int32(gfx.Rend.CharWidInPixels)
-		CharHei := int32(gfx.Rend.CharHeiInPixels)
-		numOfCharsV := gfx.CurrAppHeight / CharHei
-		numOfCharsH := gfx.CurrAppWidth / CharWid
-
-		s := strconv.Itoa(int(numOfCharsV))
-
-		fmt.Printf("Rectangle Right %s\n\n\n", s)
-
-		switch mod {
-		case glfw.ModShift:
-			fmt.Println("started selecting")
-			foc.Selection.CurrentlySelecting = true
-			foc.Selection.StartX = foc.CursX
-			foc.Selection.StartY = foc.CursY
-		}
-
-		switch key {
-		case glfw.KeyEnter:
-			startOfLine := b[foc.CursY][:foc.CursX]
-			restOfLine := b[foc.CursY][foc.CursX:len(b[foc.CursY])]
-			b[foc.CursY] = startOfLine
-			b = insert(b, foc.CursY+1, restOfLine)
-
-			foc.CursX = 0
-			foc.CursY++
-			foc.TextBodies[0] = b
-
-			if foc.CursY >= len(b) {
-				foc.CursY = len(b) - 1
+			case glfw.KeyLeftControl:
+				fallthrough
+			case glfw.KeyRightControl:
+				fmt.Println("Control RELEASED")
+			case glfw.KeyLeftAlt:
+				fallthrough
+			case glfw.KeyRightAlt:
+				fmt.Println("Alt RELEASED")
+			case glfw.KeyLeftSuper:
+				fallthrough
+			case glfw.KeyRightSuper:
+				fmt.Println("'Super' modifier key RELEASED")
 			}
-		case glfw.KeyHome:
-			if eitherControlKeyHeld(w) {
-				foc.CursY = 0
+		} else {
+			// glfw.Repeat   or   glfw.Press
+			b := foc.TextBodies[0]
+
+			CharWid := int32(gfx.Rend.CharWidInPixels)
+			CharHei := int32(gfx.Rend.CharHeiInPixels)
+			numOfCharsV := gfx.CurrAppHeight / CharHei
+			numOfCharsH := gfx.CurrAppWidth / CharWid
+
+			s := strconv.Itoa(int(numOfCharsV))
+
+			fmt.Printf("Rectangle Right %s\n\n\n", s)
+
+			switch mod {
+			case glfw.ModShift:
+				fmt.Println("started selecting")
+				foc.Selection.CurrentlySelecting = true
+				foc.Selection.StartX = foc.CursX
+				foc.Selection.StartY = foc.CursY
 			}
 
-			foc.CursX = 0
-			movedCursorSoUpdateDependents()
-		case glfw.KeyEnd:
-			if eitherControlKeyHeld(w) {
-				foc.CursY = len(b) - 1
-			}
+			switch key {
+			case glfw.KeyEnter:
+				startOfLine := b[foc.CursY][:foc.CursX]
+				restOfLine := b[foc.CursY][foc.CursX:len(b[foc.CursY])]
+				b[foc.CursY] = startOfLine
+				b = insert(b, foc.CursY+1, restOfLine)
 
-			foc.CursX = len(b[foc.CursY])
-			movedCursorSoUpdateDependents()
-		case glfw.KeyUp:
-			if foc.CursY > 0 {
-				foc.CursY--
-
-				if foc.CursX > len(b[foc.CursY]) {
-					foc.CursX = len(b[foc.CursY])
-				}
-			}
-
-			movedCursorSoUpdateDependents()
-		case glfw.KeyDown:
-			if foc.CursY < len(b)-1 {
-				if numOfCharsV < (int32(foc.CursY) + 1) {
-					gfx.Rend.ScrollPanelThatIsHoveredOver(0, float64(CharHei))
-				}
+				foc.CursX = 0
 				foc.CursY++
+				foc.TextBodies[0] = b
 
-				if foc.CursX > len(b[foc.CursY]) {
-					foc.CursX = len(b[foc.CursY])
+				if foc.CursY >= len(b) {
+					foc.CursY = len(b) - 1
 				}
-			}
+			case glfw.KeyHome:
+				if eitherControlKeyHeld(w) {
+					foc.CursY = 0
+				}
 
-			movedCursorSoUpdateDependents()
-		case glfw.KeyLeft:
-			if foc.CursX == 0 {
+				foc.CursX = 0
+				movedCursorSoUpdateDependents()
+			case glfw.KeyEnd:
+				if eitherControlKeyHeld(w) {
+					foc.CursY = len(b) - 1
+				}
+
+				foc.CursX = len(b[foc.CursY])
+				movedCursorSoUpdateDependents()
+			case glfw.KeyUp:
 				if foc.CursY > 0 {
 					foc.CursY--
+
+					if foc.CursX > len(b[foc.CursY]) {
+						foc.CursX = len(b[foc.CursY])
+					}
+				}
+
+				movedCursorSoUpdateDependents()
+			case glfw.KeyDown:
+				if foc.CursY < len(b)-1 {
+					if numOfCharsV < (int32(foc.CursY) + 1) {
+						gfx.Rend.ScrollPanelThatIsHoveredOver(0, float64(CharHei))
+					}
+					foc.CursY++
+
+					if foc.CursX > len(b[foc.CursY]) {
+						foc.CursX = len(b[foc.CursY])
+					}
+				}
+
+				movedCursorSoUpdateDependents()
+			case glfw.KeyLeft:
+				if foc.CursX == 0 {
+					if foc.CursY > 0 {
+						foc.CursY--
+						foc.CursX = len(b[foc.CursY])
+					}
+				} else {
+					if mod == glfw.ModControl {
+						foc.CursX = getWordSkipPos(foc.CursX, -1)
+					} else {
+						if (numOfCharsH - int32(foc.CursX)) > (int32(foc.CursX) + 4) {
+							gfx.Rend.ScrollPanelThatIsHoveredOver(float64(-CharWid), 0)
+						}
+						foc.CursX--
+					}
+				}
+
+				movedCursorSoUpdateDependents()
+			case glfw.KeyRight:
+				if foc.CursX < len(b[foc.CursY]) {
+					if mod == glfw.ModControl {
+						foc.CursX = getWordSkipPos(foc.CursX, 1)
+					} else {
+						fmt.Println(numOfCharsH)
+						if numOfCharsH < (int32(foc.CursX) + 4) {
+							gfx.Rend.ScrollPanelThatIsHoveredOver(float64(CharWid), 0)
+						}
+						foc.CursX++
+					}
+				}
+
+				movedCursorSoUpdateDependents()
+			case glfw.KeyBackspace:
+				if foc.CursX == 0 {
+					b = remove(b, foc.CursY, b[foc.CursY])
+					foc.TextBodies[0] = b
+					foc.CursY--
 					foc.CursX = len(b[foc.CursY])
-				}
-			} else {
-				if mod == glfw.ModControl {
-					foc.CursX = getWordSkipPos(foc.CursX, -1)
+
 				} else {
-					if (numOfCharsH - int32(foc.CursX)) > (int32(foc.CursX) + 4) {
-						gfx.Rend.ScrollPanelThatIsHoveredOver(float64(-CharWid), 0)
-					}
-					foc.CursX--
+					foc.RemoveCharacter(false)
 				}
+
+			case glfw.KeyDelete:
+				foc.RemoveCharacter(true)
+				fmt.Println("Key Deleted")
+
 			}
 
-			movedCursorSoUpdateDependents()
-		case glfw.KeyRight:
-			if foc.CursX < len(b[foc.CursY]) {
-				if mod == glfw.ModControl {
-					foc.CursX = getWordSkipPos(foc.CursX, 1)
-				} else {
-					fmt.Println(numOfCharsH)
-					if numOfCharsH < (int32(foc.CursX) + 4) {
-						gfx.Rend.ScrollPanelThatIsHoveredOver(float64(CharWid), 0)
-					}
-					foc.CursX++
-				}
-			}
-
-			movedCursorSoUpdateDependents()
-		case glfw.KeyBackspace:
-			if foc.CursX == 0 {
-				b = remove(b, foc.CursY, b[foc.CursY])
-				foc.TextBodies[0] = b
-				foc.CursY--
-				foc.CursX = len(b[foc.CursY])
-
-			} else {
-				foc.RemoveCharacter(false)
-			}
-
-		case glfw.KeyDelete:
-			foc.RemoveCharacter(true)
-			fmt.Println("Key Deleted")
-
+			script.Process(false)
 		}
-
-		script.Process(false)
-	}
-	/*
-		var m msg.MessageKey
-		m.Key = uint8(key)
-		m.Scan = uint32(scancode)
-		m.Action = uint8(action)
-		m.Mod = uint8(mod)
-
-		//DispatchEvent(msg.TypeKey, m)
-		b := msg.Serialize(msg.TypeKey, m)
-		InputEvents <- b
 	*/
 }
 
@@ -273,13 +255,6 @@ func remove(slice []string, index int, value string) []string {
 	slice[index-1] = slice[index-1] + value
 	return slice
 }
-
-/*
-func DispatchEvent(msgType uint16, event interface{}) {
-	b := msg.Serialize(msgType, event)
-	InputEvents <- b
-}
-*/
 
 func getWordSkipPos(xIn int, change int) int {
 	peekPos := xIn

@@ -7,7 +7,7 @@ import (
 
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/msg"
-	"github.com/corpusc/viscript/script"
+	//"github.com/corpusc/viscript/script"
 	//"log"
 	//igl "github.com/corpusc/viscript/gl"
 	_ "strconv"
@@ -38,6 +38,8 @@ func ProcessInputEvents(message []byte) []byte {
 			showFloat64("Y", msgMousePos.Y)
 		}
 
+		onMouseCursorPos(msgMousePos)
+
 	case msg.TypeMouseScroll:
 		var msgScroll msg.MessageMouseScroll
 		msg.MustDeserialize(message, &msgScroll)
@@ -47,6 +49,7 @@ func ProcessInputEvents(message []byte) []byte {
 			showFloat64("X Offset", msgScroll.X)
 			showFloat64("Y Offset", msgScroll.Y)
 		}
+		onMouseScroll(msgScroll)
 
 	case msg.TypeMouseButton:
 		var msgBtn msg.MessageMouseButton
@@ -58,16 +61,15 @@ func ProcessInputEvents(message []byte) []byte {
 			showUInt8("Action", msgBtn.Action)
 			showUInt8("Mod", msgBtn.Mod)
 		}
-		gfx.Curs.ConvertMouseClickToTextCursorPosition(msgBtn.Button, msgBtn.Action)
+		onMouseButton(msgBtn)
 
 	case msg.TypeOnCharacter:
 		var msgChar msg.MessageOnCharacter
 		msg.MustDeserialize(message, &msgChar)
 		if DebugPrintInputEvents {
 			s("TypeCharacter")
-			InsertRuneIntoDocument("Rune", msgChar.Rune)
-			script.Process(false)
 		}
+		onChar(msgChar)
 
 	case msg.TypeKey:
 		var keyMsg msg.MessageKey
@@ -80,7 +82,7 @@ func ProcessInputEvents(message []byte) []byte {
 			showUInt8("Action", keyMsg.Action)
 			showUInt8("Mod", keyMsg.Mod)
 		}
-
+		onKey(keyMsg)
 	default:
 		fmt.Println("UNKNOWN MESSAGE TYPE!")
 	}
