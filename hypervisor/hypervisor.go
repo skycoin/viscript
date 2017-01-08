@@ -2,6 +2,7 @@ package hypervisor
 
 import (
 	"fmt"
+
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
 	//"github.com/corpusc/viscript/msg"
@@ -54,11 +55,15 @@ func PollUiInputEvents() {
 }
 
 //could be in messages
-func DispatchInputEvents(ch chan []byte) {
+func DispatchInputEvents(ch chan []byte) []byte {
+
+	message := []byte{}
 	for len(ch) > 0 { //if channel has elements
 		v := <-ch //read from channel
-		ProcessInputEvents(v)
+		message = ProcessInputEvents(v)
+
 	}
+	return message
 }
 
 func UpdateDrawBuffer() {

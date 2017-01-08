@@ -22,7 +22,8 @@ func init() {
 var DebugPrintInputEvents = false
 
 //this is where input events are
-func ProcessInputEvents(message []byte) {
+
+func ProcessInputEvents(message []byte) []byte {
 
 	switch GetMessageTypeUInt16(message) {
 
@@ -84,6 +85,7 @@ func ProcessInputEvents(message []byte) {
 
 	fmt.Println()
 	//curRecByte = 0
+	return message
 }
 
 func s(s string) {
@@ -104,7 +106,7 @@ func GetMessageTypeUInt16(message []byte) uint16 {
 	return value
 }
 
-func InsertRuneIntoDocument(s string, message uint32) {
+func InsertRuneIntoDocument(s string, message uint32) string {
 
 	f := gfx.Rend.Focused
 	b := f.TextBodies[0]
@@ -119,6 +121,7 @@ func InsertRuneIntoDocument(s string, message uint32) {
 		b[f.CursY] = b[f.CursY][:f.CursX] + string(message) + b[f.CursY][f.CursX:len(b[f.CursY])]
 		f.CursX++
 	}
+	return string(message)
 
 }
 
