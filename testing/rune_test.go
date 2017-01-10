@@ -10,7 +10,6 @@ import (
 )
 
 func TestRuneMsgFlow(t *testing.T) {
-
 	var m msg.MessageOnCharacter
 	m.Rune = uint32(107)
 	b := msg.Serialize(msg.TypeChar, m)
@@ -30,6 +29,7 @@ func TestRuneMsgFlow(t *testing.T) {
 		fmt.Println("rune test msg flow passed\n")
 	}
 }
+
 func flowTest(b []byte) []byte {
 
 	gl.InputEvents <- b
@@ -54,8 +54,8 @@ func TestMsgMousePosFlow(t *testing.T) {
 	} else {
 		fmt.Println("Test msg mouse pos flow it's passed")
 	}
-
 }
+
 func TestMsgMouseScrollFlow(t *testing.T) {
 	var m msg.MessageMouseScroll
 	m.X = 0
@@ -72,10 +72,9 @@ func TestMsgMouseScrollFlow(t *testing.T) {
 	} else {
 		fmt.Println("Test msg mouse scroll flow it's passed")
 	}
-
 }
-func TestMsgMouseButtonFlow(t *testing.T) {
 
+func TestMsgMouseButtonFlow(t *testing.T) {
 	var m msg.MessageMouseButton
 	m.Button = uint8(0)
 	m.Action = uint8(1)
@@ -92,10 +91,9 @@ func TestMsgMouseButtonFlow(t *testing.T) {
 	} else {
 		fmt.Println("Test msg mouse button flow it's passed")
 	}
-
 }
-func TestMsgKeyFlow(t *testing.T) {
 
+func TestMsgKeyFlow(t *testing.T) {
 	var m msg.MessageKey
 	m.Key = uint8(69)
 	m.Scan = uint32(14)
@@ -113,5 +111,4 @@ func TestMsgKeyFlow(t *testing.T) {
 	} else {
 		fmt.Println("Test msg key flow it's passed")
 	}
-
 }
