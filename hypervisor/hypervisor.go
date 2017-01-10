@@ -58,11 +58,13 @@ func PollUiInputEvents() {
 //could be in messages
 func DispatchInputEvents(ch chan []byte) []byte {
 	message := []byte{}
+
 	for len(ch) > 0 { //if channel has elements
 		v := <-ch //read from channel
 		message = ProcessInputEvents(v)
 
 	}
+
 	return message
 }
 

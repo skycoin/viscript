@@ -22,10 +22,11 @@ import (
 // 	action glfw.Action,
 // 	mod glfw.ModifierKey) {
 func onKey(m msg.MessageKey) {
-	fmt.Println("onKey()")
 	foc := gfx.Rend.Focused
 
 	if glfw.Action(m.Action) == glfw.Release {
+		fmt.Println("release", m.Key)
+
 		switch glfw.Key(m.Key) {
 
 		case glfw.KeyEscape:
@@ -37,7 +38,7 @@ func onKey(m msg.MessageKey) {
 		case glfw.KeyLeftShift:
 			fallthrough
 		case glfw.KeyRightShift:
-			fmt.Println("done selecting")
+			fmt.Println("Done selecting")
 			foc.Selection.CurrentlySelecting = false // TODO?  possibly flip around if selectionStart comes after selectionEnd in the page flow?
 
 		case glfw.KeyLeftControl:
@@ -54,11 +55,13 @@ func onKey(m msg.MessageKey) {
 			fmt.Println("'Super' modifier key RELEASED")
 		}
 	} else { // glfw.Press   or   glfw.Repeat
+		fmt.Println("press")
+
 		b := foc.TextBodies[0]
 
 		switch glfw.ModifierKey(m.Mod) {
 		case glfw.ModShift:
-			fmt.Println("started selecting")
+			fmt.Println("Started selecting")
 			foc.Selection.CurrentlySelecting = true
 			foc.Selection.StartX = foc.CursX
 			foc.Selection.StartY = foc.CursY

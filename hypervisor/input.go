@@ -72,11 +72,20 @@ func remove(slice []string, index int, value string) []string {
 }
 
 func movedCursorSoUpdateDependents() {
-	// --- Always-Visible-Cursor Autoscrolling ---
-	//
-	// TODO ^
+	foc := gfx.Rend.Focused
 
-	//
+	// autoscroll to keep cursor visible
+	ls := float32(foc.CursX) * gfx.Rend.CharWid // left side (of cursor, in virtual space)
+	rs := ls + gfx.Rend.CharWid
+
+	if ls < foc.BarHori.ScrollDelta {
+		foc.BarHori.ScrollDelta = ls
+	}
+
+	if rs > foc.BarHori.ScrollDelta+foc.Content.Width() {
+		foc.BarHori.ScrollDelta = rs - foc.Content.Width()
+	}
+
 	// --- Selection Marking ---
 	//
 	// when SM is made functional,
@@ -85,8 +94,6 @@ func movedCursorSoUpdateDependents() {
 	// rather than always making that the "end".
 	// i doubt marking forwards or backwards will ever alter what is
 	// done with the selection
-
-	foc := gfx.Rend.Focused
 
 	if foc.Selection.CurrentlySelecting {
 		foc.Selection.EndX = foc.CursX
