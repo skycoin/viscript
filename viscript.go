@@ -36,7 +36,7 @@ import (
 
 func main() {
 
-	hypervisor.DebugPrintInputEvents = true //print input events
+	//hypervisor.DebugPrintInputEvents = true //print input events
 
 	fmt.Printf("Start\n")
 

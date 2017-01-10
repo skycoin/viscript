@@ -2,20 +2,9 @@ package hypervisor
 
 import (
 	"fmt"
-	//_ "image/png"
-	//"log"
-	/*
-		"go/build"
-		"runtime"
-	*/
-	//"bytes"
-	"strconv"
-
-	//"encoding/binary"
-
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/msg"
-	"github.com/corpusc/viscript/script"
+	//"github.com/corpusc/viscript/script"
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
@@ -33,6 +22,7 @@ import (
 // 	action glfw.Action,
 // 	mod glfw.ModifierKey) {
 func onKey(m msg.MessageKey) {
+	fmt.Println("onKey()")
 	foc := gfx.Rend.Focused
 
 	if glfw.Action(m.Action) == glfw.Release {
@@ -41,6 +31,7 @@ func onKey(m msg.MessageKey) {
 		case glfw.KeyEscape:
 			//w.SetShouldClose(true)
 			fmt.Println("case glfw.KeyEscape:")
+			CloseWindow <- 1
 			HypervisorScreenTeardown()
 
 		case glfw.KeyLeftShift:
@@ -64,15 +55,6 @@ func onKey(m msg.MessageKey) {
 		}
 	} else { // glfw.Press   or   glfw.Repeat
 		b := foc.TextBodies[0]
-
-		CharWid := int32(gfx.Rend.CharWidInPixels)
-		CharHei := int32(gfx.Rend.CharHeiInPixels)
-		numOfCharsV := gfx.CurrAppHeight / CharHei
-		numOfCharsH := gfx.CurrAppWidth / CharWid
-
-		s := strconv.Itoa(int(numOfCharsV))
-
-		fmt.Printf("Rectangle Right %s\n\n\n", s)
 
 		switch glfw.ModifierKey(m.Mod) {
 		case glfw.ModShift:
@@ -122,9 +104,6 @@ func onKey(m msg.MessageKey) {
 			movedCursorSoUpdateDependents()
 		case glfw.KeyDown:
 			if foc.CursY < len(b)-1 {
-				if numOfCharsV < (int32(foc.CursY) + 1) {
-					gfx.Rend.ScrollPanelThatIsHoveredOver(0, float64(CharHei))
-				}
 				foc.CursY++
 
 				if foc.CursX > len(b[foc.CursY]) {
@@ -153,10 +132,6 @@ func onKey(m msg.MessageKey) {
 				if glfw.ModifierKey(m.Mod) == glfw.ModControl {
 					foc.CursX = getWordSkipPos(foc.CursX, 1)
 				} else {
-					fmt.Println(numOfCharsH)
-					if numOfCharsH < (int32(foc.CursX) + 4) {
-						gfx.Rend.ScrollPanelThatIsHoveredOver(float64(CharWid), 0)
-					}
 					foc.CursX++
 				}
 			}
@@ -179,7 +154,7 @@ func onKey(m msg.MessageKey) {
 
 		}
 
-		script.Process(false)
+		//script.Process(false)
 	}
 }
 

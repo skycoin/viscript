@@ -1,24 +1,13 @@
 package hypervisor
 
 import (
-	"fmt"
-	//_ "image/png"
-	//"log"
-	/*
-		"go/build"
-		"runtime"
-	*/
 	"bytes"
-	"math"
-	//"strconv"
-
-	"encoding/binary"
-
+	"fmt"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/gl"
 	"github.com/corpusc/viscript/msg"
-	"github.com/corpusc/viscript/script"
 	"github.com/go-gl/glfw/v3.2/glfw"
+	"math"
 )
 
 /*
@@ -57,13 +46,6 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 			gfx.Rend.ScrollPanelThatIsHoveredOver(xOff*delta, yOff*-delta)
 		}
 	*/
-}
-
-//Working
-//func onChar(w *glfw.Window, char rune) {
-func onChar(m msg.MessageOnCharacter) {
-	InsertRuneIntoDocument("Rune", m.Rune)
-	script.Process(false)
 }
 
 func eitherControlKeyHeld() bool {
@@ -130,11 +112,5 @@ func getSlice(wBuf *bytes.Buffer, err error) (data []byte) {
 		}
 	}
 
-	return
-}
-func getBytesOfRune(value rune) (data []byte) {
-	wBuf := new(bytes.Buffer)
-	err := binary.Write(wBuf, binary.LittleEndian, value)
-	data = getSlice(wBuf, err)
 	return
 }

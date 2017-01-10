@@ -4,12 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-
-	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/msg"
-	//"github.com/corpusc/viscript/script"
-	//"log"
-	//igl "github.com/corpusc/viscript/gl"
 	_ "strconv"
 )
 
@@ -73,16 +68,16 @@ func ProcessInputEvents(message []byte) []byte {
 
 	case msg.TypeKey:
 		var keyMsg msg.MessageKey
-		s("TypeKey")
 		msg.MustDeserialize(message, &keyMsg)
+		onKey(keyMsg)
 
 		if DebugPrintInputEvents {
+			s("TypeKey")
 			showUInt8("Key", keyMsg.Key)
 			showUInt32Scan("Scan", keyMsg.Scan)
 			showUInt8("Action", keyMsg.Action)
 			showUInt8("Mod", keyMsg.Mod)
 		}
-		onKey(keyMsg)
 	default:
 		fmt.Println("UNKNOWN MESSAGE TYPE!")
 	}
@@ -108,25 +103,6 @@ func GetMessageTypeUInt16(message []byte) uint16 {
 	}
 
 	return value
-}
-
-func InsertRuneIntoDocument(s string, message uint32) string {
-
-	f := gfx.Rend.Focused
-	b := f.TextBodies[0]
-	resultsDif := f.CursX - len(b[f.CursY])
-	fmt.Printf("Rune   [%s: %s]", s, string(message))
-
-	if f.CursX > len(b[f.CursY]) {
-		b[f.CursY] = b[f.CursY][:f.CursX-resultsDif] + b[f.CursY][:len(b[f.CursY])] + string(message)
-		fmt.Printf("line is %s\n", b[f.CursY])
-		f.CursX++
-	} else {
-		b[f.CursY] = b[f.CursY][:f.CursX] + string(message) + b[f.CursY][f.CursX:len(b[f.CursY])]
-		f.CursX++
-	}
-	return string(message)
-
 }
 
 func showUInt8(s string, x uint8) uint8 {
