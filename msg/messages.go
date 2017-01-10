@@ -14,7 +14,7 @@ const (
 	TypeMousePos    = iota // 0
 	TypeMouseScroll        // 1
 	TypeMouseButton        // 2
-	TypeOnCharacter        // etc.
+	TypeChar               // etc.
 	TypeKey
 )
 

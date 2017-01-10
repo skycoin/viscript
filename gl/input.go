@@ -82,7 +82,7 @@ func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 func onChar(w *glfw.Window, char rune) {
 	var m msg.MessageOnCharacter
 	m.Rune = uint32(char)
-	b := msg.Serialize(msg.TypeOnCharacter, m)
+	b := msg.Serialize(msg.TypeChar, m)
 	InputEvents <- b
 }
 

@@ -13,7 +13,7 @@ func TestRuneMsgFlow(t *testing.T) {
 
 	var m msg.MessageOnCharacter
 	m.Rune = uint32(107)
-	b := msg.Serialize(msg.TypeOnCharacter, m)
+	b := msg.Serialize(msg.TypeChar, m)
 
 	message := flowTest(b)
 

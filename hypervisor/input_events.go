@@ -28,7 +28,7 @@ func ProcessInputEvents(message []byte) []byte {
 		msg.MustDeserialize(message, &msgMousePos)
 
 		if DebugPrintInputEvents {
-			s("TypeMousePos")
+			fmt.Print("TypeMousePos")
 			showFloat64("X", msgMousePos.X)
 			showFloat64("Y", msgMousePos.Y)
 		}
@@ -40,10 +40,11 @@ func ProcessInputEvents(message []byte) []byte {
 		msg.MustDeserialize(message, &msgScroll)
 
 		if DebugPrintInputEvents {
-			s("TypeMouseScroll")
+			fmt.Print("TypeMouseScroll")
 			showFloat64("X Offset", msgScroll.X)
 			showFloat64("Y Offset", msgScroll.Y)
 		}
+
 		onMouseScroll(msgScroll)
 
 	case msg.TypeMouseButton:
@@ -51,44 +52,48 @@ func ProcessInputEvents(message []byte) []byte {
 		msg.MustDeserialize(message, &msgBtn)
 
 		if DebugPrintInputEvents {
-			s("TypeMouseButton")
+			fmt.Print("TypeMouseButton")
 			showUInt8("Button", msgBtn.Button)
 			showUInt8("Action", msgBtn.Action)
 			showUInt8("Mod", msgBtn.Mod)
 		}
+
 		onMouseButton(msgBtn)
 
-	case msg.TypeOnCharacter:
+	case msg.TypeChar:
 		var msgChar msg.MessageOnCharacter
 		msg.MustDeserialize(message, &msgChar)
+
 		if DebugPrintInputEvents {
-			s("TypeCharacter")
+			fmt.Print("TypeChar")
 		}
+
 		onChar(msgChar)
 
 	case msg.TypeKey:
 		var keyMsg msg.MessageKey
 		msg.MustDeserialize(message, &keyMsg)
+
+		//if DebugPrintInputEvents {
+		fmt.Print("TypeKey")
+		showUInt8("Key", keyMsg.Key)
+		showUInt32("Scan", keyMsg.Scan)
+		showUInt8("Action", keyMsg.Action)
+		showUInt8("Mod", keyMsg.Mod)
+		//}
+
 		onKey(keyMsg)
 
-		if DebugPrintInputEvents {
-			s("TypeKey")
-			showUInt8("Key", keyMsg.Key)
-			showUInt32Scan("Scan", keyMsg.Scan)
-			showUInt8("Action", keyMsg.Action)
-			showUInt8("Mod", keyMsg.Mod)
-		}
 	default:
 		fmt.Println("UNKNOWN MESSAGE TYPE!")
 	}
 
-	fmt.Println()
+	if DebugPrintInputEvents {
+		fmt.Println()
+	}
+
 	//curRecByte = 0
 	return message
-}
-
-func s(s string) {
-	fmt.Print(s)
 }
 
 func GetMessageTypeUInt16(message []byte) uint16 {
@@ -117,11 +122,6 @@ func showSInt32(s string, x int32) {
 
 func showUInt32(s string, x uint32) {
 	fmt.Printf("   [%s: %d]", s, x)
-}
-
-func showUInt32Scan(s string, x uint32) uint32 {
-	fmt.Printf("   [%s: %d]", s, x)
-	return x
 }
 
 func showFloat64(s string, f float64) float64 {
