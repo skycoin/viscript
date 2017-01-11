@@ -3,7 +3,6 @@ package gfx
 import (
 	//"fmt"
 	"github.com/corpusc/viscript/app"
-	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"time"
 )
@@ -67,35 +66,6 @@ func (c *Cursors) GetAnimationModifiedRect(r app.Rectangle) *app.Rectangle {
 	}
 
 	return &r
-}
-
-// this function was designed for a single panel, and before scrolling was added
-func (c *Cursors) DEPRECATED_DrawCharAt(char rune, posX, posY int) {
-	sp := Rend.UvSpan
-	u := sp * float32(int(char)%16)
-	v := sp * float32(int(char)/16)
-	w := Rend.CharWid // char width
-	h := Rend.CharHei // char height
-	x := -Rend.ClientExtentX + float32(posX)*w
-	y := Rend.ClientExtentY - float32(posY)*h
-
-	gl.Normal3f(0, 0, 1)
-
-	// bottom left
-	gl.TexCoord2f(u, v+sp)
-	gl.Vertex3f(x, y-h, 0)
-
-	// bottom right
-	gl.TexCoord2f(u+sp, v+sp)
-	gl.Vertex3f(x+w, y-h, 0)
-
-	// top right
-	gl.TexCoord2f(u+sp, v)
-	gl.Vertex3f(x+w, y, 0)
-
-	// top left
-	gl.TexCoord2f(u, v)
-	gl.Vertex3f(x, y, 0)
 }
 
 func (c *Cursors) ConvertMouseClickToTextCursorPosition(button, action uint8) {

@@ -6,7 +6,7 @@ import (
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
 	"github.com/corpusc/viscript/ui"
-	//"github.com/go-gl/glfw/v3.2/glfw"
+	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
 // apparently every time this is fired, a mouse position event is ALSO fired
@@ -17,37 +17,23 @@ import (
 // 	mod glfw.ModifierKey) {
 
 func onMouseButton(m msg.MessageMouseButton) {
-
 	gfx.Curs.ConvertMouseClickToTextCursorPosition(m.Button, m.Action)
 
-	/*
-		if action == glfw.Press {
-			switch glfw.MouseButton(bt) {
-			case glfw.MouseButtonLeft:
-				// respond to clicks in ui rectangles
-				if gfx.MouseCursorIsInside(ui.MainMenu.Rect) {
-					respondToAnyMenuButtonClicks()
-				} else { // respond to any panel clicks outside of menu
-					for _, pan := range gfx.Rend.Panels {
-						if pan.ContainsMouseCursor() {
-							pan.RespondToMouseClick()
-						}
+	if glfw.Action(m.Action) == glfw.Press {
+		switch glfw.MouseButton(m.Button) {
+		case glfw.MouseButtonLeft:
+			// respond to clicks in ui rectangles
+			if gfx.MouseCursorIsInside(ui.MainMenu.Rect) {
+				respondToAnyMenuButtonClicks()
+			} else { // respond to any panel clicks outside of menu
+				for _, pan := range gfx.Rend.Panels {
+					if pan.ContainsMouseCursor() {
+						pan.RespondToMouseClick()
 					}
 				}
 			}
 		}
-	*/
-
-	//MessageMouseButton
-	/*
-		var m msg.MessageMouseButton
-		m.Button = uint8(bt)
-		m.Action = uint8(action)
-		m.Mod = uint8(mod)
-		//DispatchEvent(msg.TypeMouseButton, m)
-		b := msg.Serialize(msg.TypeMouseButton, m)
-		InputEvents <- b
-	*/
+	}
 }
 
 func respondToAnyMenuButtonClicks() {
