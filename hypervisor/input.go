@@ -3,11 +3,12 @@ package hypervisor
 import (
 	"bytes"
 	"fmt"
+	"math"
+
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/gl"
 	"github.com/corpusc/viscript/msg"
 	"github.com/go-gl/glfw/v3.2/glfw"
-	"math"
 )
 
 var prevMousePixelX float64
