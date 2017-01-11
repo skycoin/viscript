@@ -35,17 +35,13 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 }
 
 func onMouseScroll(m msg.MessageMouseScroll) {
-	/*
-		var delta float64 = 30
+	var delta float64 = 30
 
-		// if horizontal
-		//state update
-		if w.GetKey(glfw.KeyLeftShift) == glfw.Press || w.GetKey(glfw.KeyRightShift) == glfw.Press {
-			gfx.Rend.ScrollPanelThatIsHoveredOver(yOff*-delta, 0)
-		} else {
-			gfx.Rend.ScrollPanelThatIsHoveredOver(xOff*delta, yOff*-delta)
-		}
-	*/
+	if eitherControlKeyHeld() { // horizontal ability from 1D scrolling
+		gfx.Rend.ScrollPanelThatIsHoveredOver(m.Y*-delta, 0)
+	} else { // can handle both x & y for 2D scrolling
+		gfx.Rend.ScrollPanelThatIsHoveredOver(m.X*delta, m.Y*-delta)
+	}
 }
 
 func eitherControlKeyHeld() bool {
@@ -56,7 +52,7 @@ func eitherControlKeyHeld() bool {
 	}
 }
 
-// must be in range
+// WARNING: given arguments must be in range
 func insert(slice []string, index int, value string) []string {
 	slice = slice[0 : len(slice)+1]      // grow the slice by one element
 	copy(slice[index+1:], slice[index:]) // move the upper part of the slice out of the way and open a hole
