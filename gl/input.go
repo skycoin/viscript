@@ -13,6 +13,7 @@ import (
 	//"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/msg"
 	//"github.com/corpusc/viscript/script"
+
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
@@ -54,7 +55,10 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	var m msg.MessageMousePos
 	m.X = x
 	m.Y = y
-	//DispatchEvent(msg.TypeMousePos, m)
+
+	//deltaX, deltaY := m.GetDelta(m.X, m.Y)
+	//fmt.Printf("deltax %f :deltaY %f\n", deltaX, deltaY)
+
 	b := msg.Serialize(msg.TypeMousePos, m)
 	InputEvents <- b
 }

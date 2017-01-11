@@ -22,10 +22,23 @@ const (
 
 // HyperVisor -> Process
 
+var oldMousePositionX float64
+var oldMousePostionY float64
+
 //message received by process, by hypervisor
 type MessageMousePos struct {
 	X float64
 	Y float64
+}
+
+func (m *MessageMousePos) GetDelta(currentX, currentY float64) (float64, float64) {
+
+	xMovement := oldMousePositionX - currentX
+	yMovement := oldMousePostionY - currentY
+	oldMousePositionX = currentX
+	oldMousePostionY = currentY
+
+	return xMovement, yMovement
 }
 
 type MessageMouseScroll struct {
