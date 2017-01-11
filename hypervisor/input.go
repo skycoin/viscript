@@ -10,28 +10,24 @@ import (
 	"math"
 )
 
-/*
 var prevMousePixelX float64
 var prevMousePixelY float64
 var mousePixelDeltaX float64
 var mousePixelDeltaY float64
-*/
 
-// this can also be triggered by onMouseButton
+// triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(m msg.MessageMousePos) {
+	gfx.Curs.UpdatePosition(float32(m.X), float32(m.Y)) // state update
 
-	// gfx.Curs.UpdatePosition(float32(x), float32(y)) //state update
+	mousePixelDeltaX = m.X - prevMousePixelX
+	mousePixelDeltaY = m.Y - prevMousePixelY
+	prevMousePixelX = m.X
+	prevMousePixelY = m.Y
 
-	// mousePixelDeltaX = x - prevMousePixelX
-	// mousePixelDeltaY = y - prevMousePixelY
-	// prevMousePixelX = x
-	// prevMousePixelY = y
-
-	// //rendering update
-	// if /* LMB held */ w.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-	// 	gfx.Rend.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
-	// }
-
+	// rendering update
+	if /* LMB held */ gl.GlfwWindow.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
+		gfx.Rend.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
+	}
 }
 
 func onMouseScroll(m msg.MessageMouseScroll) {

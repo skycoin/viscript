@@ -18,12 +18,7 @@ import (
 
 var InputEvents = make(chan []byte, 256) //event channel
 
-var prevMousePixelX float64
-var prevMousePixelY float64
-var mousePixelDeltaX float64
-var mousePixelDeltaY float64
-
-//push events to the event queue
+// push events to the event queue
 func PollEvents() {
 	glfw.PollEvents() //move to gl
 }
@@ -54,14 +49,8 @@ func onMouseButton(
 
 }
 
-// this can also be triggered by onMouseButton
+// triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
-	//gfx.Curs.UpdatePosition(float32(x), float32(y))
-	mousePixelDeltaX = x - prevMousePixelX
-	mousePixelDeltaY = y - prevMousePixelY
-	prevMousePixelX = x
-	prevMousePixelY = y
-
 	var m msg.MessageMousePos
 	m.X = x
 	m.Y = y
