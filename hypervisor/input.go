@@ -6,7 +6,7 @@ import (
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/gl"
-	"github.com/corpusc/viscript/mouse"
+	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"math"

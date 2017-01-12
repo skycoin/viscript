@@ -3,7 +3,7 @@ package hypervisor
 import (
 	"fmt"
 	"github.com/corpusc/viscript/gfx"
-	"github.com/corpusc/viscript/mouse"
+	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
 	"github.com/corpusc/viscript/ui"
