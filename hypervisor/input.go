@@ -12,36 +12,29 @@ import (
 	"math"
 )
 
-var prevMousePixelX float64
-var prevMousePixelY float64
-var mousePixelDeltaX float64
-var mousePixelDeltaY float64
-
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(m msg.MessageMousePos) {
+	x := float32(m.X)
+	y := float32(m.Y)
+
 	mouse.UpdatePosition(
-		app.Vec2F{float32(m.X), float32(m.Y)},
+		app.Vec2F{x, y},
 		gfx.CanvasExtents,
 		gfx.PixelSize) // state update
 
-	mousePixelDeltaX = m.X - prevMousePixelX
-	mousePixelDeltaY = m.Y - prevMousePixelY
-	prevMousePixelX = m.X
-	prevMousePixelY = m.Y
-
 	// rendering update
 	if /* LMB held */ gl.GlfwWindow.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		gfx.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
+		gfx.ScrollPanelThatIsHoveredOver(mouse.PixelDelta.X, mouse.PixelDelta.Y)
 	}
 }
 
 func onMouseScroll(m msg.MessageMouseScroll) {
-	var delta float64 = 30
+	var delta float32 = 30
 
 	if eitherControlKeyHeld() { // horizontal ability from 1D scrolling
-		gfx.ScrollPanelThatIsHoveredOver(m.Y*-delta, 0)
+		gfx.ScrollPanelThatIsHoveredOver(float32(m.Y)*-delta, 0)
 	} else { // can handle both x & y for 2D scrolling
-		gfx.ScrollPanelThatIsHoveredOver(m.X*delta, m.Y*-delta)
+		gfx.ScrollPanelThatIsHoveredOver(float32(m.X)*delta, float32(m.Y)*-delta)
 	}
 }
 

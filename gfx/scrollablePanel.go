@@ -249,11 +249,11 @@ func (sp *ScrollablePanel) DrawBackground(atlasCellX, atlasCellY float32) {
 			sp.Whole.Left})
 }
 
-func (sp *ScrollablePanel) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float64) {
+func (sp *ScrollablePanel) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float32) {
 	if sp.ContainsMouseCursor() {
 		// position increments in gl space
-		xInc := float32(mousePixelDeltaX) * PixelSize.X
-		yInc := float32(mousePixelDeltaY) * PixelSize.Y
+		xInc := mousePixelDeltaX * PixelSize.X
+		yInc := mousePixelDeltaY * PixelSize.Y
 		sp.BarHori.Scroll(xInc)
 		sp.BarVert.Scroll(yInc)
 	}

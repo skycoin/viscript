@@ -52,7 +52,7 @@ func SetSize() {
 	}
 }
 
-func ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {
+func ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float32) {
 	for _, pan := range Panels {
 		pan.ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY)
 	}
