@@ -3,8 +3,10 @@ package hypervisor
 import (
 	"bytes"
 	"fmt"
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/gl"
+	"github.com/corpusc/viscript/mouse"
 	"github.com/corpusc/viscript/msg"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"math"
@@ -17,7 +19,10 @@ var mousePixelDeltaY float64
 
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(m msg.MessageMousePos) {
-	gfx.Curs.UpdatePosition(float32(m.X), float32(m.Y)) // state update
+	mouse.UpdatePosition(
+		app.Vec2F{float32(m.X), float32(m.Y)},
+		gfx.CanvasExtents,
+		gfx.PixelSize) // state update
 
 	mousePixelDeltaX = m.X - prevMousePixelX
 	mousePixelDeltaY = m.Y - prevMousePixelY
@@ -26,7 +31,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 
 	// rendering update
 	if /* LMB held */ gl.GlfwWindow.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		gfx.Rend.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
+		gfx.ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY)
 	}
 }
 
@@ -34,9 +39,9 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 	var delta float64 = 30
 
 	if eitherControlKeyHeld() { // horizontal ability from 1D scrolling
-		gfx.Rend.ScrollPanelThatIsHoveredOver(m.Y*-delta, 0)
+		gfx.ScrollPanelThatIsHoveredOver(m.Y*-delta, 0)
 	} else { // can handle both x & y for 2D scrolling
-		gfx.Rend.ScrollPanelThatIsHoveredOver(m.X*delta, m.Y*-delta)
+		gfx.ScrollPanelThatIsHoveredOver(m.X*delta, m.Y*-delta)
 	}
 }
 
@@ -64,11 +69,11 @@ func remove(slice []string, index int, value string) []string {
 }
 
 func movedCursorSoUpdateDependents() {
-	foc := gfx.Rend.Focused
+	foc := gfx.Focused
 
 	// autoscroll to keep cursor visible
-	ls := float32(foc.CursX) * gfx.Rend.CharWid // left side (of cursor, in virtual space)
-	rs := ls + gfx.Rend.CharWid
+	ls := float32(foc.CursX) * gfx.CharWid // left side (of cursor, in virtual space)
+	rs := ls + gfx.CharWid
 
 	if ls < foc.BarHori.ScrollDelta {
 		foc.BarHori.ScrollDelta = ls

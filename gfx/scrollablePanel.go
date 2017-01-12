@@ -3,6 +3,7 @@ package gfx
 import (
 	"fmt"
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/mouse"
 	"github.com/corpusc/viscript/tree"
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/gl/v2.1/gl"
@@ -48,10 +49,10 @@ func (sp *ScrollablePanel) SetSize() {
 	fmt.Printf("ScrollablePanel.SetSize()\n")
 
 	sp.Whole = &app.Rectangle{
-		Rend.ClientExtentY - Rend.CharHei,
-		Rend.ClientExtentX,
-		-Rend.ClientExtentY,
-		-Rend.ClientExtentX}
+		CanvasExtents.Y - CharHei,
+		CanvasExtents.X,
+		-CanvasExtents.Y,
+		-CanvasExtents.X}
 
 	if sp.FractionOfStrip == runPanelHeiFrac { // FIXME: this is hardwired for one use case for now
 		sp.Whole.Top = sp.Whole.Bottom + sp.Whole.Height()*sp.FractionOfStrip
@@ -73,15 +74,15 @@ func (sp *ScrollablePanel) SetSize() {
 }
 
 func (sp *ScrollablePanel) RespondToMouseClick() {
-	Rend.Focused = sp
+	Focused = sp
 
 	// diffs/deltas from home position of panel (top left corner)
 	glDeltaFromHome := app.Vec2F{
-		Curs.MouseGlX - sp.Whole.Left,
-		Curs.MouseGlY - sp.Whole.Top}
+		mouse.GlX - sp.Whole.Left,
+		mouse.GlY - sp.Whole.Top}
 
-	sp.MouseX = int((glDeltaFromHome.X + sp.BarHori.ScrollDelta) / Rend.CharWid)
-	sp.MouseY = int(-(glDeltaFromHome.Y + sp.BarVert.ScrollDelta) / Rend.CharHei)
+	sp.MouseX = int((glDeltaFromHome.X + sp.BarHori.ScrollDelta) / CharWid)
+	sp.MouseY = int(-(glDeltaFromHome.Y + sp.BarVert.ScrollDelta) / CharHei)
 
 	if sp.MouseY < 0 {
 		sp.MouseY = 0
@@ -93,11 +94,11 @@ func (sp *ScrollablePanel) RespondToMouseClick() {
 }
 
 func (sp *ScrollablePanel) GoToTopEdge() {
-	Rend.CurrY = sp.Whole.Top - sp.BarVert.ScrollDelta
+	CurrY = sp.Whole.Top - sp.BarVert.ScrollDelta
 }
 func (sp *ScrollablePanel) GoToLeftEdge() float32 {
-	Rend.CurrX = sp.Whole.Left - sp.BarHori.ScrollDelta
-	return Rend.CurrX
+	CurrX = sp.Whole.Left - sp.BarHori.ScrollDelta
+	return CurrX
 }
 func (sp *ScrollablePanel) GoToTopLeftCorner() {
 	sp.GoToTopEdge()
@@ -113,19 +114,19 @@ func (sp *ScrollablePanel) Draw() {
 	sp.DrawScrollbarChrome(13, 12, sp.Whole.Left, sp.Whole.Bottom+ui.ScrollBarThickness)                        // horizontal bar background
 	sp.DrawScrollbarChrome(12, 11, sp.Whole.Right-ui.ScrollBarThickness, sp.Whole.Bottom+ui.ScrollBarThickness) // corner elbow piece
 	SetColor(Gray)
-	sp.BarHori.SetSize(sp.Whole, sp.TextBodies[0], Rend.CharWid, Rend.CharHei) // FIXME? (to consider multiple bodies & multiple trees)
-	sp.BarVert.SetSize(sp.Whole, sp.TextBodies[0], Rend.CharWid, Rend.CharHei)
-	Rend.DrawStretchableRect(11, 13, sp.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
-	Rend.DrawStretchableRect(11, 13, sp.BarVert.Rect) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
+	sp.BarHori.SetSize(sp.Whole, sp.TextBodies[0], CharWid, CharHei) // FIXME? (to consider multiple bodies & multiple trees)
+	sp.BarVert.SetSize(sp.Whole, sp.TextBodies[0], CharWid, CharHei)
+	DrawStretchableRect(11, 13, sp.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
+	DrawStretchableRect(11, 13, sp.BarVert.Rect) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
 	SetColor(White)
 	sp.DrawTree()
 }
 
 func (sp *ScrollablePanel) DrawText() {
-	cX := Rend.CurrX // current drawing position
-	cY := Rend.CurrY
-	cW := Rend.CharWid
-	cH := Rend.CharHei
+	cX := CurrX // current drawing position
+	cY := CurrY
+	cW := CharWid
+	cH := CharHei
 	b := sp.BarHori.Rect.Top // bottom of text area
 
 	// setup for colored text
@@ -158,13 +159,13 @@ func (sp *ScrollablePanel) DrawText() {
 				// drawing
 				if /* char visible */ cX >= sp.Whole.Left-cW && cX < sp.BarVert.Rect.Left {
 					app.ClampLeftAndRightOf(r, sp.Whole.Left, sp.BarVert.Rect.Left)
-					Rend.DrawCharAtRect(c, r)
+					DrawCharAtRect(c, r)
 
 					if sp.IsEditable { //&& Curs.Visible == true {
 						if x == sp.CursX && y == sp.CursY {
 							SetColor(White)
-							//Rend.DrawCharAtRect('_', r)
-							Rend.DrawStretchableRect(11, 13, Curs.GetAnimationModifiedRect(*r))
+							//DrawCharAtRect('_', r)
+							DrawStretchableRect(11, 13, Curs.GetAnimationModifiedRect(*r))
 							SetColor(PrevColor)
 						}
 					}
@@ -180,8 +181,8 @@ func (sp *ScrollablePanel) DrawText() {
 				if sp.IsEditable { //&& Curs.Visible == true {
 					SetColor(White)
 					app.ClampLeftAndRightOf(r, sp.Whole.Left, sp.BarVert.Rect.Left)
-					//Rend.DrawCharAtRect('_', r)
-					Rend.DrawStretchableRect(11, 13, Curs.GetAnimationModifiedRect(*r))
+					//DrawCharAtRect('_', r)
+					DrawStretchableRect(11, 13, Curs.GetAnimationModifiedRect(*r))
 				}
 			}
 
@@ -215,7 +216,7 @@ func (sp *ScrollablePanel) changeColorIfCodeAt(x, y, ncId int, nc *ColorSpot) (i
 
 // ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)
 func (sp *ScrollablePanel) DrawScrollbarChrome(atlasCellX, atlasCellY, l, t float32) { // left, top
-	span := Rend.UvSpan
+	span := UvSpan
 	u := float32(atlasCellX) * span
 	v := float32(atlasCellY) * span
 
@@ -240,7 +241,7 @@ func (sp *ScrollablePanel) DrawScrollbarChrome(atlasCellX, atlasCellY, l, t floa
 
 func (sp *ScrollablePanel) DrawBackground(atlasCellX, atlasCellY float32) {
 	SetColor(GrayDark)
-	Rend.DrawStretchableRect(atlasCellX, atlasCellY,
+	DrawStretchableRect(atlasCellX, atlasCellY,
 		&app.Rectangle{
 			sp.Whole.Top,
 			sp.Whole.Right - ui.ScrollBarThickness,
@@ -251,15 +252,15 @@ func (sp *ScrollablePanel) DrawBackground(atlasCellX, atlasCellY float32) {
 func (sp *ScrollablePanel) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float64) {
 	if sp.ContainsMouseCursor() {
 		// position increments in gl space
-		xInc := float32(mousePixelDeltaX) * Rend.PixelWid
-		yInc := float32(mousePixelDeltaY) * Rend.PixelHei
+		xInc := float32(mousePixelDeltaX) * PixelSize.X
+		yInc := float32(mousePixelDeltaY) * PixelSize.Y
 		sp.BarHori.Scroll(xInc)
 		sp.BarVert.Scroll(yInc)
 	}
 }
 
 func (sp *ScrollablePanel) ContainsMouseCursor() bool {
-	return MouseCursorIsInside(sp.Whole)
+	return mouse.CursorIsInside(sp.Whole)
 }
 
 func (sp *ScrollablePanel) RemoveCharacter(fromUnderCursor bool) {
@@ -292,10 +293,10 @@ func (sp *ScrollablePanel) DrawTree() {
 func (sp *ScrollablePanel) drawNodeAndDescendants(r *app.Rectangle, nodeId int) {
 	//fmt.Println("drawNode(r *app.Rectangle)")
 	nameBar := &app.Rectangle{r.Top, r.Right, r.Top - 0.2*r.Height(), r.Left}
-	Rend.DrawStretchableRect(11, 13, r)
+	DrawStretchableRect(11, 13, r)
 	SetColor(Blue)
-	Rend.DrawStretchableRect(11, 13, nameBar)
-	Rend.DrawTextInRect(sp.Trees[0].Nodes[nodeId].Text, nameBar)
+	DrawStretchableRect(11, 13, nameBar)
+	DrawTextInRect(sp.Trees[0].Nodes[nodeId].Text, nameBar)
 	SetColor(White)
 
 	cX := r.CenterX()
@@ -321,7 +322,7 @@ func (sp *ScrollablePanel) drawNodeAndDescendants(r *app.Rectangle, nodeId int) 
 
 func (sp *ScrollablePanel) drawArrowAndChild(parent, child *app.Rectangle, childId int) {
 	latExt := child.Width() * 0.15 // lateral extent of arrow's triangle top
-	Rend.DrawTriangle(9, 1,
+	DrawTriangle(9, 1,
 		app.Vec2F{parent.CenterX() - latExt, parent.Bottom},
 		app.Vec2F{parent.CenterX() + latExt, parent.Bottom},
 		app.Vec2F{child.CenterX(), child.Top})

@@ -26,5 +26,5 @@ func onFramebufferSize(w *glfw.Window, width, height int) {
 	fmt.Printf("onFramebufferSize() - width, height: %d, %d\n", width, height)
 	gfx.CurrAppWidth = int32(width)
 	gfx.CurrAppHeight = int32(height)
-	gfx.Rend.SetSize()
+	gfx.SetSize()
 }

@@ -108,12 +108,12 @@ func DrawScene() {
 	gl.MatrixMode(gl.MODELVIEW) //.PROJECTION)                   //.MODELVIEW)
 	gl.LoadIdentity()
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-	gl.Translatef(0, 0, -gfx.Rend.DistanceFromOrigin)
+	gl.Translatef(0, 0, -gfx.DistanceFromOrigin)
 
 	gl.BindTexture(gl.TEXTURE_2D, Texture)
 
 	gl.Begin(gl.QUADS)
-	gfx.Rend.DrawAll()
+	gfx.DrawAll()
 	gl.End()
 }
 

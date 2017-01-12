@@ -7,8 +7,6 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
-var Rend = CcRenderer{}
-
 var PrevColor []float32 // previous
 var CurrColor []float32
 
@@ -99,24 +97,24 @@ func init() {
 	PrevColor = GrayDark
 	CurrColor = GrayDark
 
-	Rend.MaxCharsX = 80
-	Rend.MaxCharsY = 25
-	Rend.DistanceFromOrigin = 3
-	Rend.UvSpan = float32(1.0) / 16 // how much uv a pixel spans
+	MaxCharsX = 80
+	MaxCharsY = 25
+	DistanceFromOrigin = 3
+	UvSpan = float32(1.0) / 16 // how much uv a pixel spans
 
 	// things that are resized later
-	Rend.ClientExtentX = Rend.DistanceFromOrigin * longerDimension
-	Rend.ClientExtentY = Rend.DistanceFromOrigin
-	Rend.CharWid = float32(Rend.ClientExtentX*2) / float32(Rend.MaxCharsX)
-	Rend.CharHei = float32(Rend.ClientExtentY*2) / float32(Rend.MaxCharsY)
-	Rend.CharWidInPixels = int(float32(CurrAppWidth) / float32(Rend.MaxCharsX))
-	Rend.CharHeiInPixels = int(float32(CurrAppHeight) / float32(Rend.MaxCharsY))
-	Rend.PixelWid = Rend.ClientExtentX * 2 / float32(CurrAppWidth)
-	Rend.PixelHei = Rend.ClientExtentY * 2 / float32(CurrAppHeight)
+	CanvasExtents.X = DistanceFromOrigin * longerDimension
+	CanvasExtents.Y = DistanceFromOrigin
+	CharWid = float32(CanvasExtents.X*2) / float32(MaxCharsX)
+	CharHei = float32(CanvasExtents.Y*2) / float32(MaxCharsY)
+	CharWidInPixels = int(float32(CurrAppWidth) / float32(MaxCharsX))
+	CharHeiInPixels = int(float32(CurrAppHeight) / float32(MaxCharsY))
+	PixelSize.X = CanvasExtents.X * 2 / float32(CurrAppWidth)
+	PixelSize.Y = CanvasExtents.Y * 2 / float32(CurrAppHeight)
 
 	// MORE one-time setup
 	initPanels()
-	ui.MainMenu.SetSize(Rend.GetMenuSizedRect())
+	ui.MainMenu.SetSize(GetMenuSizedRect())
 }
 
 func SetColor(newColor []float32) {
@@ -126,11 +124,11 @@ func SetColor(newColor []float32) {
 }
 
 func initPanels() {
-	Rend.Panels = append(Rend.Panels, &ScrollablePanel{FractionOfStrip: 1 - runPanelHeiFrac, IsEditable: true})
-	Rend.Panels = append(Rend.Panels, &ScrollablePanel{FractionOfStrip: runPanelHeiFrac, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
-	Rend.Focused = Rend.Panels[0]
+	Panels = append(Panels, &ScrollablePanel{FractionOfStrip: 1 - runPanelHeiFrac, IsEditable: true})
+	Panels = append(Panels, &ScrollablePanel{FractionOfStrip: runPanelHeiFrac, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
+	Focused = Panels[0]
 
-	Rend.Panels[0].Init()
-	Rend.Panels[0].SetupDemoProgram()
-	Rend.Panels[1].Init()
+	Panels[0].Init()
+	Panels[0].SetupDemoProgram()
+	Panels[1].Init()
 }

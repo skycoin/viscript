@@ -3,6 +3,7 @@ package hypervisor
 import (
 	"fmt"
 	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/mouse"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/script"
 	"github.com/corpusc/viscript/ui"
@@ -17,16 +18,16 @@ import (
 // 	mod glfw.ModifierKey) {
 
 func onMouseButton(m msg.MessageMouseButton) {
-	gfx.Curs.ConvertMouseClickToTextCursorPosition(m.Button, m.Action)
+	convertClickToTextCursorPosition(m.Button, m.Action)
 
 	if glfw.Action(m.Action) == glfw.Press {
 		switch glfw.MouseButton(m.Button) {
 		case glfw.MouseButtonLeft:
 			// respond to clicks in ui rectangles
-			if gfx.MouseCursorIsInside(ui.MainMenu.Rect) {
+			if mouse.CursorIsInside(ui.MainMenu.Rect) {
 				respondToAnyMenuButtonClicks()
 			} else { // respond to any panel clicks outside of menu
-				for _, pan := range gfx.Rend.Panels {
+				for _, pan := range gfx.Panels {
 					if pan.ContainsMouseCursor() {
 						pan.RespondToMouseClick()
 					}
@@ -36,9 +37,31 @@ func onMouseButton(m msg.MessageMouseButton) {
 	}
 }
 
+func convertClickToTextCursorPosition(button, action uint8) {
+	if glfw.MouseButton(button) == glfw.MouseButtonLeft &&
+		glfw.Action(action) == glfw.Press {
+
+		foc := gfx.Focused
+
+		if foc.IsEditable && foc.Content.Contains(mouse.GlX, mouse.GlY) {
+			if foc.MouseY < len(foc.TextBodies[0]) {
+				foc.CursY = foc.MouseY
+
+				if foc.MouseX <= len(foc.TextBodies[0][foc.CursY]) {
+					foc.CursX = foc.MouseX
+				} else {
+					foc.CursX = len(foc.TextBodies[0][foc.CursY])
+				}
+			} else {
+				foc.CursY = len(foc.TextBodies[0]) - 1
+			}
+		}
+	}
+}
+
 func respondToAnyMenuButtonClicks() {
 	for _, bu := range ui.MainMenu.Buttons {
-		if gfx.MouseCursorIsInside(bu.Rect) {
+		if mouse.CursorIsInside(bu.Rect) {
 			bu.Activated = !bu.Activated
 
 			switch bu.Name {
@@ -53,15 +76,15 @@ func respondToAnyMenuButtonClicks() {
 					script.MakeTree()
 				} else { // deactivated
 					// remove all panels with trees
-					b := gfx.Rend.Panels[:0]
-					for _, pan := range gfx.Rend.Panels {
+					b := gfx.Panels[:0]
+					for _, pan := range gfx.Panels {
 						if len(pan.Trees) < 1 {
 							b = append(b, pan)
 						}
 					}
-					gfx.Rend.Panels = b
-					//fmt.Printf("len of b (from gfx.Rend.Panels) after removing ones with trees: %d\n", len(b))
-					//fmt.Printf("len of gfx.Rend.Panels: %d\n", len(gfx.Rend.Panels))
+					gfx.Panels = b
+					//fmt.Printf("len of b (from gfx.Panels) after removing ones with trees: %d\n", len(b))
+					//fmt.Printf("len of gfx.Panels: %d\n", len(gfx.Panels))
 				}
 				break
 			}

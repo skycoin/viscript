@@ -18,8 +18,8 @@ func (log CcLog) Add(s string) {
 	s = strings.Replace(s, "\n", "", -1)
 	log.Lines = append(log.Lines, s)
 
-	if len(Rend.Panels) > 1 {
-		Rend.Panels[1].TextBodies[0] = append(Rend.Panels[1].TextBodies[0], s)
+	if len(Panels) > 1 {
+		Panels[1].TextBodies[0] = append(Panels[1].TextBodies[0], s)
 	}
 }
 

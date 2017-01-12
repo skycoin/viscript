@@ -130,15 +130,15 @@ func lexTypeString(i int) string {
 
 func MakeTree() {
 	// setup hardwired test tree
-	pI := len(gfx.Rend.Panels) // panel id
+	pI := len(gfx.Panels) // panel id
 
 	// new panel
-	gfx.Rend.Panels = append(gfx.Rend.Panels, &gfx.ScrollablePanel{FractionOfStrip: 1})
-	gfx.Rend.Panels[pI].Init()
+	gfx.Panels = append(gfx.Panels, &gfx.ScrollablePanel{FractionOfStrip: 1})
+	gfx.Panels[pI].Init()
 
 	// new tree
-	gfx.Rend.Panels[pI].Trees = append(
-		gfx.Rend.Panels[pI].Trees, &tree.Tree{pI, []*tree.Node{}})
+	gfx.Panels[pI].Trees = append(
+		gfx.Panels[pI].Trees, &tree.Tree{pI, []*tree.Node{}})
 	//makeNode(pI, 1, math.MaxInt32, math.MaxInt32, "top") // 0
 	makeNode(pI, 1, 2, math.MaxInt32, "top")                  // 0
 	makeNode(pI, 6, math.MaxInt32, 0, "1st left")             // 1
@@ -150,8 +150,8 @@ func MakeTree() {
 }
 
 func makeNode(panelId, childIdL, childIdR, parentId int, s string) {
-	gfx.Rend.Panels[panelId].Trees[0].Nodes = append(
-		gfx.Rend.Panels[panelId].Trees[0].Nodes, &tree.Node{s, childIdL, childIdR, parentId})
+	gfx.Panels[panelId].Trees[0].Nodes = append(
+		gfx.Panels[panelId].Trees[0].Nodes, &tree.Node{s, childIdL, childIdR, parentId})
 }
 
 func Process(feedbackWanted bool) {
@@ -160,7 +160,7 @@ func Process(feedbackWanted bool) {
 
 	// clear OS and graphical consoles
 	gfx.Con.Lines = []string{}
-	gfx.Rend.Panels[1].TextBodies[0] = []string{}
+	gfx.Panels[1].TextBodies[0] = []string{}
 
 	if feedbackWanted {
 		gfx.MakeHighlyVisibleLogHeader(`LEXING`, 5)
@@ -179,7 +179,7 @@ func Process(feedbackWanted bool) {
 }
 
 func lexAll() {
-	bods := gfx.Rend.Panels[0].TextBodies
+	bods := gfx.Panels[0].TextBodies
 
 	textColors = []*gfx.ColorSpot{}
 
@@ -188,7 +188,7 @@ func lexAll() {
 	}
 
 	// FIXME if wanting colors in non-script panels
-	gfx.Rend.Panels[0].TextColors = textColors
+	gfx.Panels[0].TextColors = textColors
 }
 
 func lexAndColorize(y int, line string) string {

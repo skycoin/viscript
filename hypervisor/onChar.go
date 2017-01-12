@@ -14,7 +14,7 @@ func onChar(m msg.MessageOnCharacter) {
 }
 
 func InsertRuneIntoDocument(s string, message uint32) string {
-	f := gfx.Rend.Focused
+	f := gfx.Focused
 	b := f.TextBodies[0]
 	resultsDif := f.CursX - len(b[f.CursY])
 	fmt.Printf("Rune   [%s: %s]", s, string(message))

@@ -23,7 +23,7 @@ import (
 // 	action glfw.Action,
 // 	mod glfw.ModifierKey) {
 func onKey(m msg.MessageKey) {
-	foc := gfx.Rend.Focused
+	foc := gfx.Focused
 
 	if glfw.Action(m.Action) == glfw.Release {
 		fmt.Println("release --------- ", m.Key)
@@ -168,7 +168,7 @@ func onKey(m msg.MessageKey) {
 
 func getWordSkipPos(xIn int, change int) int {
 	peekPos := xIn
-	foc := gfx.Rend.Focused
+	foc := gfx.Focused
 	b := foc.TextBodies[0]
 
 	for {

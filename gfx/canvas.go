@@ -7,31 +7,30 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
-type CcRenderer struct {
-	DistanceFromOrigin float32
-	ClientExtentX      float32 // distance from the center to an edge of the app's root/client area
-	ClientExtentY      float32
+var (
+	// distance from the center to an edge of the app's root/client area
 	// ....in the cardinal directions from the center, corners would be farther away)
-	PixelWid        float32
-	PixelHei        float32
-	CharWid         float32
-	CharHei         float32
-	CharWidInPixels int
-	CharHeiInPixels int
-	UvSpan          float32 // looking into 16/16 atlas/grid of character tiles
+	CanvasExtents      app.Vec2F
+	PixelSize          app.Vec2F
+	DistanceFromOrigin float32
+	CharWid            float32
+	CharHei            float32
+	CharWidInPixels    int
+	CharHeiInPixels    int
+	UvSpan             float32 // looking into 16/16 atlas/grid of character tiles
 	// FIXME: below is no longer a maximum of what fits on a max-sized panel (taking up the whole app window) anymore.
 	// 		but is still used as a guide for sizes
 	MaxCharsX int // this is used to give us proportions like an 80x25 text console screen, ....
-	MaxCharsY int // ....from a cr.DistanceFromOrigin*2-by-cr.DistanceFromOrigin*2 gl space
+	MaxCharsY int // ....from a DistanceFromOrigin*2-by-DistanceFromOrigin*2 gl space
 	// current position renderer draws to
 	CurrX   float32
 	CurrY   float32
 	Focused *ScrollablePanel
 	Panels  []*ScrollablePanel
-}
+)
 
-func (cr *CcRenderer) SetSize() {
-	fmt.Printf("CcRenderer.SetSize() - ClientExtentX: %.2f\n", cr.ClientExtentX)
+func SetSize() {
+	fmt.Printf("CcRenderer.SetSize() - CanvasExtents.X: %.2f\n", CanvasExtents.X)
 	*PrevFrustum = *CurrFrustum
 
 	CurrFrustum.Right = float32(CurrAppWidth) / float32(InitAppWidth) * InitFrustum.Right
@@ -42,41 +41,41 @@ func (cr *CcRenderer) SetSize() {
 	fmt.Printf("CcRenderer.SetSize() - PrevFrustum.Left: %.3f\n", PrevFrustum.Left)
 	fmt.Printf("CcRenderer.SetSize() - CurrFrustum.Left: %.3f\n", CurrFrustum.Left)
 
-	cr.ClientExtentX = cr.DistanceFromOrigin * CurrFrustum.Right
-	cr.ClientExtentY = cr.DistanceFromOrigin * CurrFrustum.Top
+	CanvasExtents.X = DistanceFromOrigin * CurrFrustum.Right
+	CanvasExtents.Y = DistanceFromOrigin * CurrFrustum.Top
 
 	// things that weren't initialized in this func
-	ui.MainMenu.SetSize(cr.GetMenuSizedRect())
+	ui.MainMenu.SetSize(GetMenuSizedRect())
 
-	for _, pan := range cr.Panels {
+	for _, pan := range Panels {
 		pan.SetSize()
 	}
 }
 
-func (cr *CcRenderer) ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {
-	for _, pan := range cr.Panels {
+func ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float64) {
+	for _, pan := range Panels {
 		pan.ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY)
 	}
 }
 
-func (cr *CcRenderer) GetMenuSizedRect() *app.Rectangle {
+func GetMenuSizedRect() *app.Rectangle {
 	return &app.Rectangle{
-		Rend.ClientExtentY,
-		Rend.ClientExtentX,
-		Rend.ClientExtentY - Rend.CharHei,
-		-Rend.ClientExtentX}
+		CanvasExtents.Y,
+		CanvasExtents.X,
+		CanvasExtents.Y - CharHei,
+		-CanvasExtents.X}
 }
 
-func (cr *CcRenderer) DrawAll() {
+func DrawAll() {
 	Curs.Update()
-	cr.DrawMenu()
+	DrawMenu()
 
-	for _, pan := range cr.Panels {
+	for _, pan := range Panels {
 		pan.Draw()
 	}
 }
 
-func (cr *CcRenderer) DrawMenu() {
+func DrawMenu() {
 	for _, bu := range ui.MainMenu.Buttons {
 		if bu.Activated {
 			SetColor(Green)
@@ -84,12 +83,12 @@ func (cr *CcRenderer) DrawMenu() {
 			SetColor(White)
 		}
 
-		Rend.DrawStretchableRect(11, 13, bu.Rect)
-		Rend.DrawTextInRect(bu.Name, bu.Rect)
+		DrawStretchableRect(11, 13, bu.Rect)
+		DrawTextInRect(bu.Name, bu.Rect)
 	}
 }
 
-func (cr *CcRenderer) DrawTextInRect(s string, r *app.Rectangle) {
+func DrawTextInRect(s string, r *app.Rectangle) {
 	h := r.Height() * goldenFraction   // height of chars
 	w := h                             // width of chars (same as height, or else squished to fit rect)
 	glTextWidth := float32(len(s)) * w // in terms of OpenGL/float32 space
@@ -104,15 +103,15 @@ func (cr *CcRenderer) DrawTextInRect(s string, r *app.Rectangle) {
 	x := r.Left + (r.Width()-glTextWidth)/2
 
 	for _, c := range s {
-		Rend.DrawCharAtRect(c, &app.Rectangle{r.Top - lipSpan, x + w, r.Bottom + lipSpan, x})
+		DrawCharAtRect(c, &app.Rectangle{r.Top - lipSpan, x + w, r.Bottom + lipSpan, x})
 		x += w
 	}
 }
 
-func (cr *CcRenderer) DrawCharAtRect(char rune, r *app.Rectangle) {
+func DrawCharAtRect(char rune, r *app.Rectangle) {
 	u := float32(int(char) % 16)
 	v := float32(int(char) / 16)
-	sp := Rend.UvSpan
+	sp := UvSpan
 
 	gl.Normal3f(0, 0, 1)
 
@@ -129,12 +128,12 @@ func (cr *CcRenderer) DrawCharAtRect(char rune, r *app.Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
-func (cr *CcRenderer) DrawTriangle(atlasX, atlasY float32, a, b, c app.Vec2F) {
+func DrawTriangle(atlasX, atlasY float32, a, b, c app.Vec2F) {
 	// for convenience, and because drawing some extra triangles
 	// (only for flow arrows between tree node blocks ATM) won't matter,
 	// we are actually drawing a quad, with the last 2 verts @ the same spot
 
-	sp /* span */ := Rend.UvSpan
+	sp /* span */ := UvSpan
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp
 
@@ -152,8 +151,8 @@ func (cr *CcRenderer) DrawTriangle(atlasX, atlasY float32, a, b, c app.Vec2F) {
 	gl.Vertex3f(c.X, c.Y, 0)
 }
 
-func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *app.Rectangle) {
-	sp /* span */ := Rend.UvSpan
+func DrawQuad(atlasX, atlasY float32, r *app.Rectangle) {
+	sp /* span */ := UvSpan
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp
 
@@ -172,7 +171,7 @@ func (cr *CcRenderer) DrawQuad(atlasX, atlasY float32, r *app.Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
-func (cr *CcRenderer) DrawStretchableRect(atlasX, atlasY float32, r *app.Rectangle) {
+func DrawStretchableRect(atlasX, atlasY float32, r *app.Rectangle) {
 	// (sometimes called 9 Slicing)
 	// draw 9 quads which keep a predictable frame/margin/edge undistorted,
 	// while stretching the middle to fit the desired space
@@ -189,7 +188,7 @@ func (cr *CcRenderer) DrawStretchableRect(atlasX, atlasY float32, r *app.Rectang
 	var uvEdgeFraction float32 = 0.125 / 2 // 1/16
 	// we're gonna draw from top to bottom (positivemost to negativemost)
 
-	sp /* span */ := Rend.UvSpan
+	sp /* span */ := UvSpan
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp
 
@@ -208,7 +207,7 @@ func (cr *CcRenderer) DrawStretchableRect(atlasX, atlasY float32, r *app.Rectang
 	vSpots = append(vSpots, (v+sp)-sp*uvEdgeFraction)
 	vSpots = append(vSpots, (v + sp))
 
-	edgeSpan := Rend.PixelWid * 4
+	edgeSpan := PixelSize.X * 4
 	if edgeSpan > w/2 {
 		edgeSpan = w / 2
 	}
@@ -219,7 +218,7 @@ func (cr *CcRenderer) DrawStretchableRect(atlasX, atlasY float32, r *app.Rectang
 	xSpots = append(xSpots, r.Right-edgeSpan)
 	xSpots = append(xSpots, r.Right)
 
-	edgeSpan = Rend.PixelHei * 4
+	edgeSpan = PixelSize.Y * 4
 	if edgeSpan > h/2 {
 		edgeSpan = h / 2
 	}
