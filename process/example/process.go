@@ -32,7 +32,7 @@ func NewProcess() *Process {
 	p.MessageIn = make(chan []byte)
 	p.MessageOut = make(chan []byte)
 
-	state.InitState(&p)
+	p.State.InitState(&p)
 
 	return &p
 }
@@ -63,5 +63,6 @@ func (self *Process) GetOutgoingChannel() chan []byte {
 
 // do bussiness logic
 func (self *Process) Tick() {
+	self.State.HandleMessages()
 
 }

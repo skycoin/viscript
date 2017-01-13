@@ -45,6 +45,8 @@ func main() {
 	hypervisor.HypervisorInitInputEvents()
 	hypervisor.HypervisorInitProcessList()
 
+	hypervisor.AddTestProcess()
+
 	fmt.Printf("Start Loop; \n")
 	for len(hypervisor.CloseWindow) == 0 {
 		hypervisor.DispatchInputEvents(igl.InputEvents) //event channel

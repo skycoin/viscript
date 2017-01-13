@@ -3,6 +3,11 @@ package msg
 import (
 	"github.com/skycoin/skycoin/src/cipher/encoder"
 	"log"
+
+	"fmt"
+
+	"bytes"
+	"encoding/binary"
 )
 
 func Deserialize(msg []byte, obj interface{}) error {
@@ -49,3 +54,32 @@ func init() {
 		}
 	}
 }
+
+func GetMessageTypeUInt16(message []byte) uint16 {
+	var value uint16
+	rBuf := bytes.NewReader(message[0:2])
+	err := binary.Read(rBuf, binary.LittleEndian, &value)
+
+	if err != nil {
+		fmt.Println("binary.Read failed: ", err)
+	} else {
+		//fmt.Printf("from byte buffer, %s: %d\n", s, value)
+	}
+
+	return value
+}
+
+/*
+	//simplify with direct
+	var value2 uint16
+	value2 = uint16(message[0] << 8)
+	value2 = value2 | uint16(message[1])
+
+	if value != value2 {
+		fmt.Printf("value1, value2= 0x%.4X, 0x%.4X \n", value, value2)
+
+		value3 := uint16(message[0] << 8)
+		value4 := uint16(message[1])
+
+		fmt.Printf("value3, value4= 0x%.4X, 0x%.4X \n", value3, value4)
+*/

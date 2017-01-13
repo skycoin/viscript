@@ -25,6 +25,6 @@ func SetCursor(out chan []byte, x uint32, y uint32) {
 	m.X = x
 	m.Y = y
 	//write event to out channel
-	b := msg.Serialize(msg.MessageSetCursor, m) //serialize as byte string
-	out <- b                                    //write to output channel
+	b := msg.Serialize(msg.TypeSetCursor, m) //serialize as byte string
+	out <- b                                 //write to output channel
 }

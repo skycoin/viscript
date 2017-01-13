@@ -1,8 +1,8 @@
 package hypervisor
 
 import (
-	"bytes"
-	"encoding/binary"
+	//"bytes"
+	//"encoding/binary"
 	"fmt"
 	"github.com/corpusc/viscript/msg"
 	_ "strconv"
@@ -21,7 +21,7 @@ var DebugPrintInputEvents = false
 
 func ProcessInputEvents(message []byte) []byte {
 
-	switch GetMessageTypeUInt16(message) {
+	switch msg.GetMessageTypeUInt16(message) {
 
 	case msg.TypeMousePos:
 		var msgMousePos msg.MessageMousePos
@@ -106,20 +106,6 @@ func ProcessInputEvents(message []byte) []byte {
 
 	//curRecByte = 0
 	return message
-}
-
-func GetMessageTypeUInt16(message []byte) uint16 {
-	var value uint16
-	rBuf := bytes.NewReader(message[0:2])
-	err := binary.Read(rBuf, binary.LittleEndian, &value)
-
-	if err != nil {
-		fmt.Println("binary.Read failed: ", err)
-	} else {
-		//fmt.Printf("from byte buffer, %s: %d\n", s, value)
-	}
-
-	return value
 }
 
 func showUInt8(s string, x uint8) uint8 {

@@ -15,12 +15,12 @@ Messages from:
 // - terminal resource IDs, destroy determinism
 // - how do we eliminate or abstract resource ids?
 
-const mp2 uint16 = 0x02 //input message prefix
+const MP2 uint16 = 0x02 //input message prefix
 
 // Process to Hypervisor, input event
 const (
-	TypeSetTerminal = 1 + mp2
-	TypeSetCursor   = 1 + mp2
+	TypeSetTerminal = 1 + MP2
+	TypeSetCursor   = 1 + MP2
 )
 
 type MessageSetTerminal struct {

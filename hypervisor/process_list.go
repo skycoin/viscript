@@ -2,7 +2,7 @@ package hypervisor
 
 import (
 	"github.com/corpusc/viscript/msg"
-	//"github.com/corpusc/viscript/process/example"
+	example "github.com/corpusc/viscript/process/example"
 )
 
 /*
@@ -69,4 +69,11 @@ func DispatchProcesEvents() {
 //an incoming message from a process
 func ProcessEvent(msg []byte, Id msg.ProcessId) {
 	//process messages received by process
+}
+
+//Test by adding example Process
+func AddTestProcess() {
+	var p *example.Process = example.NewProcess()
+	var pi msg.ProcessInterface = msg.ProcessInterface(p)
+	AddProcess(pi)
 }

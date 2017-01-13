@@ -12,16 +12,16 @@ Messages from:
 	HyperVisor -> Process
 */
 
-const mp1 uint16 = 0x0100 //input message prefix
+const MP1 uint16 = 0x0100 //input message prefix
 
 // HyperVisor -> Process, input event
 const (
-	TypeMousePos        = 1 + mp1
-	TypeMouseScroll     = 2 + mp1
-	TypeMouseButton     = 3 + mp1
-	TypeChar            = 4 + mp1
-	TypeKey             = 5 + mp1
-	TypeFrameBufferSize = 6 + mp1
+	TypeMousePos        = 1 + MP1
+	TypeMouseScroll     = 2 + MP1
+	TypeMouseButton     = 3 + MP1
+	TypeChar            = 4 + MP1
+	TypeKey             = 5 + MP1
+	TypeFrameBufferSize = 6 + MP1
 )
 
 //Input Messages
