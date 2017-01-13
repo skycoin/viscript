@@ -18,6 +18,8 @@ type DefaultProcess struct {
 
 	MessageIn  chan []byte
 	MessageOut chan []byte
+
+	State State
 }
 
 func NewDefaultProcess() *DefaultProcess {
@@ -27,6 +29,8 @@ func NewDefaultProcess() *DefaultProcess {
 
 	p.MessageIn = make(chan []byte)
 	p.MessageOut = make(chan []byte)
+
+	state.InitState(&p)
 
 	return &p
 }

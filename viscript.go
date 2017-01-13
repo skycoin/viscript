@@ -48,6 +48,8 @@ func main() {
 	fmt.Printf("Start Loop; \n")
 	for len(hypervisor.CloseWindow) == 0 {
 		hypervisor.DispatchInputEvents(igl.InputEvents) //event channel
+		hypervisor.DispatchProcesEvents()               //hypervisor handles incoming process events
+		hypervisor.ProcessTick()                        //processes, handle incoming events
 		hypervisor.PollUiInputEvents()
 		hypervisor.UpdateDrawBuffer()
 		hypervisor.SwapDrawBuffer() //swap the draw frame with new frame

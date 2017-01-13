@@ -5,6 +5,21 @@ import (
 	//"github.com/corpusc/viscript/process/default"
 )
 
+/*
+	Process can
+	- receive messages from hypervisor
+	- can emite messages back to hyper visor
+	- have a tick method for processing incoming messages
+
+	Incoming messages from process to hypervisor come in anytime
+	- on input dispatch
+	Messages outgoing to hypervisor are processed in HandleDispatchProcesEvents()
+	- we check each process channel for outgoing messages to the hypervisor
+	Each process has a tick() method
+	- tick method, input messages are processed, output messages created
+
+
+*/
 var _ProcessList ProcessList
 
 type ProcessList struct {
@@ -25,15 +40,20 @@ func AddProcess(p msg.ProcessInterface) {
 	_ProcessList.ProcessMap[id] = p
 }
 
-func TickProcesses() {
+func GetProcessEvents() {
 
-	for i, p := range _ProcessList.ProcessMap {
-		_ = i
+}
+
+//run the process, creating new events for hypervisor
+func ProcessTick() {
+	for id, p := range _ProcessList.ProcessMap {
+		_ = id
 		p.Tick() //only do if incoming messages
 	}
 }
 
-func GetProcessEvents() {
+//events from process to hypervisor
+func DispatchProcesEvents() {
 	for id, p := range _ProcessList.ProcessMap {
 		var c chan []byte = p.GetOutgoingChannel() //channel
 		//p.Tick() //only do if incoming messages
@@ -41,12 +61,12 @@ func GetProcessEvents() {
 		if len(c) > 0 {
 			m := <-c //read events
 			//do events
-			ProcessEventDispatch(m, id)
+			ProcessEvent(m, id)
 		}
 	}
-
 }
 
-func ProcessEventDispatch(msg []byte, Id msg.ProcessId) {
+//an incoming message from a process
+func ProcessEvent(msg []byte, Id msg.ProcessId) {
 	//process messages received by process
 }
