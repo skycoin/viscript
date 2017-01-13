@@ -4,10 +4,10 @@ import ()
 
 //put all your process state here
 type State struct {
-	proc *DefaultProcess
+	proc *Process
 }
 
-func (self *State) InitState(proc *DefaultProcess) {
+func (self *State) InitState(proc *Process) {
 	self.proc = proc
 }
 

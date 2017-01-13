@@ -13,7 +13,9 @@ type ProcessInterface interface {
 }
 */
 
-type DefaultProcess struct {
+//Example Process
+//implements process interface
+type Process struct {
 	Id msg.ProcessId
 
 	MessageIn  chan []byte
@@ -22,8 +24,8 @@ type DefaultProcess struct {
 	State State
 }
 
-func NewDefaultProcess() *DefaultProcess {
-	var p DefaultProcess
+func NewProcess() *Process {
+	var p Process
 
 	p.Id = msg.RandProcessId()
 
@@ -35,31 +37,31 @@ func NewDefaultProcess() *DefaultProcess {
 	return &p
 }
 
-func (self *DefaultProcess) GetProcessInterface() msg.ProcessInterface {
+func (self *Process) GetProcessInterface() msg.ProcessInterface {
 	var m msg.ProcessInterface
 	m = msg.ProcessInterface(self)
 	return m
 }
 
-func (self *DefaultProcess) DeleteDefaultProces() {
+func (self *Process) DeleteProcess() {
 
 }
 
 //implement the interface
 
-func (self *DefaultProcess) GetId() msg.ProcessId {
+func (self *Process) GetId() msg.ProcessId {
 	return self.Id
 }
 
-func (self *DefaultProcess) GetIncomingChannel() chan []byte {
+func (self *Process) GetIncomingChannel() chan []byte {
 	return self.MessageIn
 }
 
-func (self *DefaultProcess) GetOutgoingChannel() chan []byte {
+func (self *Process) GetOutgoingChannel() chan []byte {
 	return self.MessageOut
 }
 
 // do bussiness logic
-func (self *DefaultProcess) Tick() {
+func (self *Process) Tick() {
 
 }

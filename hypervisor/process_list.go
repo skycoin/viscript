@@ -2,7 +2,7 @@ package hypervisor
 
 import (
 	"github.com/corpusc/viscript/msg"
-	//"github.com/corpusc/viscript/process/default"
+	//"github.com/corpusc/viscript/process/example"
 )
 
 /*
