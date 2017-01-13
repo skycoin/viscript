@@ -43,6 +43,7 @@ func main() {
 	hypervisor.HypervisorInit() //runtime.LockOSThread()
 	hypervisor.HypervisorScreenInit()
 	hypervisor.HypervisorInitInputEvents()
+	hypervisor.HypervisorInitProcessList()
 
 	fmt.Printf("Start Loop; \n")
 	for len(hypervisor.CloseWindow) == 0 {
@@ -53,4 +54,6 @@ func main() {
 	}
 
 	hypervisor.HypervisorScreenTeardown()
+	hypervisor.HypervisorProcessListTeardown()
+
 }

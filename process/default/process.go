@@ -20,27 +20,39 @@ type DefaultProcess struct {
 	MessageOut chan []byte
 }
 
-func NewDefaultProcess() *msg.ProccesId {
+func NewDefaultProcess() *DefaultProcess {
 	var p DefaultProcess
 
 	p.Id = msg.RandProcessId()
 
-	p.MessageIn = new(chan []byte)
-	p.MessageOut = new(chan []byte)
+	p.MessageIn = make(chan []byte)
+	p.MessageOut = make(chan []byte)
 
 	return &p
+}
+
+func (self *DefaultProcess) GetProcessInterface() msg.ProcessInterface {
+	var m msg.ProcessInterface
+	m = msg.ProcessInterface(self)
+	return m
 }
 
 func (self *DefaultProcess) DeleteDefaultProces() {
 
 }
 
-func (self *DefaultProcess) GetIncomingChannel() *chan []byte {
-	return &self.MessageIn
+//implement the interface
+
+func (self *DefaultProcess) GetId() msg.ProcessId {
+	return self.Id
 }
 
-func (self *DefaultProcess) GetOutgoingChannel() *chan []byte {
-	return &self.MessageOut
+func (self *DefaultProcess) GetIncomingChannel() chan []byte {
+	return self.MessageIn
+}
+
+func (self *DefaultProcess) GetOutgoingChannel() chan []byte {
+	return self.MessageOut
 }
 
 // do bussiness logic
