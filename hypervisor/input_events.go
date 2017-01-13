@@ -84,6 +84,18 @@ func ProcessInputEvents(message []byte) []byte {
 
 		onKey(keyMsg)
 
+	case msg.TypeFrameBufferSize:
+		// FIXME: BRAD SAYS THIS IS NOT INPUT
+		var m msg.MessageFrameBufferSize
+		msg.MustDeserialize(message, &m)
+
+		//if DebugPrintInputEvents {
+		fmt.Print("TypeFrameBufferSize")
+		showUInt32("X", m.X)
+		showUInt32("Y", m.Y)
+		//}
+
+		onFrameBufferSize(m)
 	default:
 		fmt.Println("UNKNOWN MESSAGE TYPE!")
 	}

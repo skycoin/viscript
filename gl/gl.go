@@ -9,8 +9,8 @@ import (
 	"log"
 )
 
-var GlfwWindow *glfw.Window
-var CloseWindow chan int // write to channel to close
+var GlfwWindow *glfw.Window //deprecate eventually
+var CloseWindow chan int    // write to channel to close
 
 var (
 	Texture uint32

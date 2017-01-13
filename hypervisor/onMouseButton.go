@@ -2,10 +2,10 @@ package hypervisor
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"
-	"github.com/corpusc/viscript/script"
+	//"github.com/corpusc/viscript/script"
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
@@ -27,7 +27,7 @@ func onMouseButton(m msg.MessageMouseButton) {
 			if mouse.CursorIsInside(ui.MainMenu.Rect) {
 				respondToAnyMenuButtonClicks()
 			} else { // respond to any panel clicks outside of menu
-				for _, pan := range gfx.Panels {
+				for _, pan := range Panels {
 					if pan.ContainsMouseCursor() {
 						pan.RespondToMouseClick()
 					}
@@ -41,7 +41,7 @@ func convertClickToTextCursorPosition(button, action uint8) {
 	if glfw.MouseButton(button) == glfw.MouseButtonLeft &&
 		glfw.Action(action) == glfw.Press {
 
-		foc := gfx.Focused
+		foc := Focused
 
 		if foc.IsEditable && foc.Content.Contains(mouse.GlX, mouse.GlY) {
 			if foc.MouseY < len(foc.TextBodies[0]) {
@@ -67,29 +67,29 @@ func respondToAnyMenuButtonClicks() {
 			switch bu.Name {
 			case "Run":
 				if bu.Activated {
-					script.Process(true)
+					//script.Process(true)
 				}
 				break
 			case "Testing Tree":
 				if bu.Activated {
-					script.Process(true)
-					script.MakeTree()
+					//script.Process(true)
+					//script.MakeTree()
 				} else { // deactivated
 					// remove all panels with trees
-					b := gfx.Panels[:0]
-					for _, pan := range gfx.Panels {
+					b := Panels[:0]
+					for _, pan := range Panels {
 						if len(pan.Trees) < 1 {
 							b = append(b, pan)
 						}
 					}
-					gfx.Panels = b
+					Panels = b
 					//fmt.Printf("len of b (from gfx.Panels) after removing ones with trees: %d\n", len(b))
 					//fmt.Printf("len of gfx.Panels: %d\n", len(gfx.Panels))
 				}
 				break
 			}
 
-			gfx.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
+			app.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
 		}
 	}
 }

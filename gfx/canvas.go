@@ -23,10 +23,8 @@ var (
 	MaxCharsX int // this is used to give us proportions like an 80x25 text console screen, ....
 	MaxCharsY int // ....from a DistanceFromOrigin*2-by-DistanceFromOrigin*2 gl space
 	// current position renderer draws to
-	CurrX   float32
-	CurrY   float32
-	Focused *Terminal
-	Panels  []*Terminal
+	CurrX float32
+	CurrY float32
 )
 
 func SetSize() {
@@ -46,16 +44,6 @@ func SetSize() {
 
 	// things that weren't initialized in this func
 	ui.MainMenu.SetSize(GetMenuSizedRect())
-
-	for _, pan := range Panels {
-		pan.SetSize()
-	}
-}
-
-func ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float32) {
-	for _, pan := range Panels {
-		pan.ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY)
-	}
 }
 
 func GetMenuSizedRect() *app.Rectangle {
@@ -69,10 +57,6 @@ func GetMenuSizedRect() *app.Rectangle {
 func DrawAll() {
 	Curs.Update()
 	DrawMenu()
-
-	for _, pan := range Panels {
-		pan.Draw()
-	}
 }
 
 func DrawMenu() {

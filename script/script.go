@@ -1,6 +1,7 @@
 package script
 
 import (
+/*
 	"fmt"
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
@@ -10,7 +11,7 @@ import (
 	"math"
 	"regexp"
 	"strconv"
-)
+*/)
 
 /*
 
@@ -32,6 +33,8 @@ TODO:
 */
 
 // lexing
+
+/*
 var integralTypes = []string{"bool", "int32", "float32", "rune", "string"} // FIXME: should allow [] and [42] prefixes
 var integralFuncs = []string{"add32", "sub32", "mult32", "div32"}
 var operators = []string{"=", ":=", "==", "!=", "+=", "-=", "*=", "/=", "%=", "+", "-", "*", "/", "%"}
@@ -159,21 +162,21 @@ func Process(feedbackWanted bool) {
 	mainBlock = &CodeBlock{Name: "main"}
 
 	// clear OS and graphical consoles
-	gfx.Con.Lines = []string{}
+	app.Con.Lines = []string{}
 	gfx.Panels[1].TextBodies[0] = []string{}
 
 	if feedbackWanted {
-		gfx.MakeHighlyVisibleLogHeader(`LEXING`, 5)
+		app.MakeHighlyVisibleLogHeader(`LEXING`, 5)
 	}
 	lexAll()
 
 	//if feedbackWanted {
-	//	gfx.MakeHighlyVisibleLogHeader(`PARSING`, 5)
+	//	app.MakeHighlyVisibleLogHeader(`PARSING`, 5)
 	//}
 	//parseAll()
 
 	if feedbackWanted {
-		gfx.MakeHighlyVisibleLogHeader(`RUNNING`, 5)
+		app.MakeHighlyVisibleLogHeader(`RUNNING`, 5)
 	}
 	run(mainBlock)
 }
@@ -197,7 +200,8 @@ func lexAndColorize(y int, line string) string {
 
 	// strip any comments
 	x := strings.Index(line, "//")
-	if /* comment exists */ x != -1 {
+	if x != -1 {
+		// (comment exists)
 		s = line[:x]
 		comment = line[x:]
 	}
@@ -214,7 +218,8 @@ func lexAndColorize(y int, line string) string {
 	x = start
 	s = strings.TrimSpace(s)
 
-	if /* we're not left with an empty string */ len(s) > 0 {
+	if  len(s) > 0 {
+		// (we're not left with an empty string)
 		//fmt.Println("s:", s)
 
 		// tokenize
@@ -242,7 +247,8 @@ func lexAndColorize(y int, line string) string {
 
 			x += len(lex[i])
 
-			if /* not the last token */ i != len(lex)-1 {
+			if i != len(lex)-1 {
+				// (not the last token)
 				x++ // for a space
 			}
 		}
@@ -273,8 +279,10 @@ func tokenizedAny(slice []string, i int, elem string) bool {
 			//fmt.Printf("<<<<<<<<<<<<<< TOKENIZED %s >>>>>>>>>>>>>>: %s\n", lexTypeString(i), `"`+elem+`"`)
 			return true
 		} else { // to allow tokenizing bundled func name and opening paren, in that order & separately
-			if /* looking for func */ i == LexType_IntegralFunc || i == LexType_IdentifierFunc {
-				if /* this contains func name */ strings.Index(elem, slice[j]) != -1 {
+			if i == LexType_IntegralFunc || i == LexType_IdentifierFunc {
+				// (looking for func)
+				if strings.Index(elem, slice[j]) != -1 {
+					// (this contains func name)
 					// look for opening of enclosing pairs
 					for k, c := range elem {
 						switch c {
@@ -324,89 +332,89 @@ func regexLine(i int, line string) {
 			}
 		}
 
-		gfx.Con.Add(fmt.Sprintf("%s\n", s))
+		app.Con.Add(fmt.Sprintf("%s\n", s))
 	case declFuncStart.MatchString(line):
 		result := declFuncStart.FindStringSubmatch(line)
 
-		gfx.Con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
+		app.Con.Add(fmt.Sprintf("%d: func (%s) declared, with params: %s\n", i, result[1], result[3]))
 
 		if currBlock.Name == "main" {
 			currBlock = &CodeBlock{Name: result[1]}
 			mainBlock.SubBlocks = append(mainBlock.SubBlocks, currBlock) // FUTURE FIXME: methods in structs shouldn't be on main/root func
 		} else {
-			gfx.Con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
+			app.Con.Add("Func'y func-ception! CAN'T PUT A FUNC INSIDE A FUNC!\n")
 		}
 	case declFuncEnd.MatchString(line):
-		gfx.Con.Add(fmt.Sprintf("func close...\n"))
+		app.Con.Add(fmt.Sprintf("func close...\n"))
 		//printIntsFrom(mainBlock)
 		//printIntsFrom(currBlock)
 
 		if currBlock.Name == "main" {
-			gfx.Con.Add(fmt.Sprintf("ERROR! Main\\Root level function doesn't need enclosure!\n"))
+			app.Con.Add(fmt.Sprintf("ERROR! Main\\Root level function doesn't need enclosure!\n"))
 		} else {
 			currBlock = mainBlock
 		}
 	case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
 		result := calledFunc.FindStringSubmatch(line)
 
-		gfx.Con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
-		gfx.Con.Add(fmt.Sprintf("currBlock: %s\n", currBlock))
+		app.Con.Add(fmt.Sprintf("%d: func call (%s) expressed\n", i, result[2]))
+		app.Con.Add(fmt.Sprintf("currBlock: %s\n", currBlock))
 		currBlock.Expressions = append(currBlock.Expressions, line)
-		/*
-			currBlock.Expressions = append(currBlock.Expressions, result[2])
-			currBlock.Parameters = append(currBlock.Parameters, result[3])
-			currBlock.Parameters = append(currBlock.Parameters, result[5])
-		*/
-		//printIntsFrom(currBlock)
 
-		/*
-			// prints out all captures
-			for i, v := range result {
-				gfx.Con.Add(fmt.Sprintf("%d. %s\n", i, v))
-			}
-		*/
+		//currBlock.Expressions = append(currBlock.Expressions, result[2])
+		//currBlock.Parameters = append(currBlock.Parameters, result[3])
+		//currBlock.Parameters = append(currBlock.Parameters, result[5])
+
+
+		// // prints out all captures
+		// for i, v := range result {
+		// 	app.Con.Add(fmt.Sprintf("%d. %s\n", i, v))
+		// }
+
 	case line == "":
 		// just ignore
 	default:
-		gfx.Con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
+		app.Con.Add(fmt.Sprintf("SYNTAX ERROR on line %d: \"%s\"\n", i, line))
 	}
 }
 
 func run(pb *CodeBlock) { // passed block of code
-	gfx.Con.Add(fmt.Sprintf("running function: '%s'\n", pb.Name))
+	app.Con.Add(fmt.Sprintf("running function: '%s'\n", pb.Name))
 
 	for i, line := range pb.Expressions {
-		gfx.Con.Add(fmt.Sprintf("------evaluating expression: '%s\n", line))
+		app.Con.Add(fmt.Sprintf("------evaluating expression: '%s\n", line))
 
 		switch {
 		case calledFunc.MatchString(line): // FIXME: hardwired for 2 params each
 			result := calledFunc.FindStringSubmatch(line)
-			gfx.Con.Add(fmt.Sprintf("%d: calling func (%s) with params: %s, %s\n", i, result[2], result[3], result[5]))
+			app.Con.Add(fmt.Sprintf("%d: calling func (%s) with params: %s, %s\n", i, result[2], result[3], result[5]))
 
 			a := getInt32(result[3])
-			if /* not legit num */ a == math.MaxInt32 {
+			if a == math.MaxInt32 {
+				// (not legit num)
 				return
 			}
 			b := getInt32(result[5])
-			if /* not legit num */ b == math.MaxInt32 {
+			if b == math.MaxInt32 {
+				// (not legit num)
 				return
 			}
 
 			switch result[2] {
 			case "add32":
-				gfx.Con.Add(fmt.Sprintf("%d + %d = %d\n", a, b, a+b))
+				app.Con.Add(fmt.Sprintf("%d + %d = %d\n", a, b, a+b))
 			case "sub32":
-				gfx.Con.Add(fmt.Sprintf("%d - %d = %d\n", a, b, a-b))
+				app.Con.Add(fmt.Sprintf("%d - %d = %d\n", a, b, a-b))
 			case "mult32":
-				gfx.Con.Add(fmt.Sprintf("%d * %d = %d\n", a, b, a*b))
+				app.Con.Add(fmt.Sprintf("%d * %d = %d\n", a, b, a*b))
 			case "div32":
-				gfx.Con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
+				app.Con.Add(fmt.Sprintf("%d / %d = %d\n", a, b, a/b))
 			default:
 				for _, cb := range pb.SubBlocks {
-					gfx.Con.Add((fmt.Sprintf("CodeBlock.Name considered: %s   switching on: %s\n", cb.Name, result[2])))
+					app.Con.Add((fmt.Sprintf("CodeBlock.Name considered: %s   switching on: %s\n", cb.Name, result[2])))
 
 					if cb.Name == result[2] {
-						gfx.Con.Add((fmt.Sprintf("'%s' matched '%s'\n", cb.Name, result[2])))
+						app.Con.Add((fmt.Sprintf("'%s' matched '%s'\n", cb.Name, result[2])))
 						run(cb)
 					}
 				}
@@ -433,7 +441,7 @@ func getInt32(s string) int32 {
 			}
 		}
 
-		gfx.Con.Add(fmt.Sprintf("ERROR!  '%s' IS NOT A VALID VARIABLE/FUNCTION!\n", s))
+		app.Con.Add(fmt.Sprintf("ERROR!  '%s' IS NOT A VALID VARIABLE/FUNCTION!\n", s))
 		return math.MaxInt32
 	}
 
@@ -442,13 +450,14 @@ func getInt32(s string) int32 {
 
 func printIntsFrom(f *CodeBlock) {
 	if len(f.VarInt32s) == 0 {
-		gfx.Con.Add(fmt.Sprintf("%s has no elements!\n", f.Name))
+		app.Con.Add(fmt.Sprintf("%s has no elements!\n", f.Name))
 	} else {
 		for i, v := range f.VarInt32s {
-			gfx.Con.Add(fmt.Sprintf("%s.VarInt32s[%d]: %s = %d\n", f.Name, i, v.Name, v.Value))
+			app.Con.Add(fmt.Sprintf("%s.VarInt32s[%d]: %s = %d\n", f.Name, i, v.Name, v.Value))
 		}
 	}
 }
+*/
 
 /*
 The FindAllStringSubmatch-function will, for each match, return an array with the

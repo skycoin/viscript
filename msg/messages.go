@@ -16,6 +16,7 @@ const (
 	TypeMouseButton        // 2
 	TypeChar               // etc.
 	TypeKey
+	TypeFrameBufferSize
 )
 
 //Input Messages
@@ -50,4 +51,8 @@ type MessageKey struct {
 	Mod    uint8
 }
 
-//Terminal Driving Messages
+// Terminal Driving Messages
+type MessageFrameBufferSize struct {
+	X uint32
+	Y uint32
+}

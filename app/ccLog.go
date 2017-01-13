@@ -1,8 +1,8 @@
-package gfx
+package app
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/app"
+	//"github.com/corpusc/viscript/hypervisor"
 	"strings"
 )
 
@@ -18,16 +18,18 @@ func (log CcLog) Add(s string) {
 	s = strings.Replace(s, "\n", "", -1)
 	log.Lines = append(log.Lines, s)
 
-	if len(Panels) > 1 {
-		Panels[1].TextBodies[0] = append(Panels[1].TextBodies[0], s)
-	}
+	/*
+		if len(Panels) > 1 {
+			Panels[1].TextBodies[0] = append(Panels[1].TextBodies[0], s)
+		}
+	*/
 }
 
 // numLines: use odd number for an exact middle point
 func MakeHighlyVisibleLogHeader(s string, numLines int) {
 	s = " " + s + " "
 	fillChar := "#"
-	osOnly := s == app.Name
+	osOnly := s == Name
 
 	var bar string
 	for i := 0; i < 79; i++ {

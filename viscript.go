@@ -53,5 +53,4 @@ func main() {
 	}
 
 	hypervisor.HypervisorScreenTeardown()
-
 }

@@ -2,7 +2,6 @@ package hypervisor
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/gl"
 	"github.com/corpusc/viscript/msg"
 	//"github.com/corpusc/viscript/script"
@@ -23,7 +22,7 @@ import (
 // 	action glfw.Action,
 // 	mod glfw.ModifierKey) {
 func onKey(m msg.MessageKey) {
-	foc := gfx.Focused
+	foc := Focused
 
 	if glfw.Action(m.Action) == glfw.Release {
 		fmt.Println("release --------- ", m.Key)
@@ -168,7 +167,7 @@ func onKey(m msg.MessageKey) {
 
 func getWordSkipPos(xIn int, change int) int {
 	peekPos := xIn
-	foc := gfx.Focused
+	foc := Focused
 	b := foc.TextBodies[0]
 
 	for {

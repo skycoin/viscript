@@ -24,7 +24,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 
 	// rendering update
 	if /* LMB held */ gl.GlfwWindow.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		gfx.ScrollPanelThatIsHoveredOver(mouse.PixelDelta.X, mouse.PixelDelta.Y)
+		ScrollPanelThatIsHoveredOver(mouse.PixelDelta.X, mouse.PixelDelta.Y)
 	}
 }
 
@@ -32,13 +32,21 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 	var delta float32 = 30
 
 	if eitherControlKeyHeld() { // horizontal ability from 1D scrolling
-		gfx.ScrollPanelThatIsHoveredOver(float32(m.Y)*-delta, 0)
+		ScrollPanelThatIsHoveredOver(float32(m.Y)*-delta, 0)
 	} else { // can handle both x & y for 2D scrolling
-		gfx.ScrollPanelThatIsHoveredOver(float32(m.X)*delta, float32(m.Y)*-delta)
+		ScrollPanelThatIsHoveredOver(float32(m.X)*delta, float32(m.Y)*-delta)
 	}
 }
 
-func eitherControlKeyHeld() bool {
+func onFrameBufferSize(m msg.MessageFrameBufferSize) {
+	fmt.Printf("onFrameBufferSize() - x, y: %d, %d\n", m.X, m.Y)
+	gfx.CurrAppWidth = int32(m.X)
+	gfx.CurrAppHeight = int32(m.Y)
+	gfx.SetSize()
+	SetSize()
+}
+
+func eitherControlKeyHeld() bool { // FIXME: bake into msg when serialized (or use bundled Mod field for 1s that have it)
 	if gl.GlfwWindow.GetKey(glfw.KeyLeftControl) == glfw.Press || gl.GlfwWindow.GetKey(glfw.KeyRightControl) == glfw.Press {
 		return true
 	} else {
@@ -62,7 +70,7 @@ func remove(slice []string, index int, value string) []string {
 }
 
 func movedCursorSoUpdateDependents() {
-	foc := gfx.Focused
+	foc := Focused
 
 	// autoscroll to keep cursor visible
 	ls := float32(foc.CursX) * gfx.CharWid // left side (of cursor, in virtual space)

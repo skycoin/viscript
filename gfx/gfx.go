@@ -10,8 +10,6 @@ import (
 var PrevColor []float32 // previous
 var CurrColor []float32
 
-// private
-var runPanelHeiFrac = float32(0.4) // fraction of vertical strip height which is dedicated to running code
 var goldenRatio = 1.61803398875
 var goldenFraction = float32(goldenRatio / (goldenRatio + 1))
 
@@ -113,7 +111,6 @@ func init() {
 	PixelSize.Y = CanvasExtents.Y * 2 / float32(CurrAppHeight)
 
 	// MORE one-time setup
-	initPanels()
 	ui.MainMenu.SetSize(GetMenuSizedRect())
 }
 
@@ -121,14 +118,4 @@ func SetColor(newColor []float32) {
 	PrevColor = CurrColor
 	CurrColor = newColor
 	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &newColor[0])
-}
-
-func initPanels() {
-	Panels = append(Panels, &Terminal{FractionOfStrip: 1 - runPanelHeiFrac, IsEditable: true})
-	Panels = append(Panels, &Terminal{FractionOfStrip: runPanelHeiFrac, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
-	Focused = Panels[0]
-
-	Panels[0].Init()
-	Panels[0].SetupDemoProgram()
-	Panels[1].Init()
 }
