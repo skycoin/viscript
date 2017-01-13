@@ -7,7 +7,7 @@ import (
 	//"math/rand"
 )
 
-const PREFIX_SIZE = 6 // guaranteed minimum size of every message (4 for length + 2 for type)
+//const PREFIX_SIZE = 6 // guaranteed minimum size of every message (4 for length + 2 for type)
 
 // HyperVisor -> Process, input event
 const (

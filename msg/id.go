@@ -5,10 +5,12 @@ import (
 )
 
 //HyperVisor: processId
-type ProccesId uint64
+type ProcessId uint64
 
-/*
-func RandProccesId() ProccesId {
-	return (TransportId)(rand.Int63())
+var ProcessIdGlobal ProcessId = 0 //sequential
+
+func RandProcessId() ProcessId {
+	ProcessIdGlobal += 1
+	return ProcessIdGlobal
+	//return (ProccesId)(rand.Int63())
 }
-*/
