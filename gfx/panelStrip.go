@@ -4,7 +4,7 @@ import (
 //"fmt"
 )
 
-// a strip/bar which gets divided into (maximum thickness) subsections along 1 dimension
+// a band/bar which gets divided into subsections along 1 dimension
 type PanelStrip struct {
 	IsHorizontal bool
 }

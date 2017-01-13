@@ -133,7 +133,7 @@ func MakeTree() {
 	pI := len(gfx.Panels) // panel id
 
 	// new panel
-	gfx.Panels = append(gfx.Panels, &gfx.ScrollablePanel{FractionOfStrip: 1})
+	gfx.Panels = append(gfx.Panels, &gfx.Terminal{FractionOfStrip: 1})
 	gfx.Panels[pI].Init()
 
 	// new tree

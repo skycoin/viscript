@@ -25,8 +25,8 @@ var (
 	// current position renderer draws to
 	CurrX   float32
 	CurrY   float32
-	Focused *ScrollablePanel
-	Panels  []*ScrollablePanel
+	Focused *Terminal
+	Panels  []*Terminal
 )
 
 func SetSize() {

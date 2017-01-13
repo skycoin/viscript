@@ -124,8 +124,8 @@ func SetColor(newColor []float32) {
 }
 
 func initPanels() {
-	Panels = append(Panels, &ScrollablePanel{FractionOfStrip: 1 - runPanelHeiFrac, IsEditable: true})
-	Panels = append(Panels, &ScrollablePanel{FractionOfStrip: runPanelHeiFrac, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
+	Panels = append(Panels, &Terminal{FractionOfStrip: 1 - runPanelHeiFrac, IsEditable: true})
+	Panels = append(Panels, &Terminal{FractionOfStrip: runPanelHeiFrac, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
 	Focused = Panels[0]
 
 	Panels[0].Init()

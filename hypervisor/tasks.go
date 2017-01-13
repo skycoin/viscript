@@ -10,5 +10,5 @@ var Tasks *[]Task
 type Task struct {
 	In    [][]byte
 	Out   [][]byte
-	Panel *gfx.ScrollablePanel // if nil, no visual needed
+	Panel *gfx.Terminal // if nil, no visual needed
 }
