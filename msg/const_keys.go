@@ -2,19 +2,13 @@ package msg
 
 // 1st the C originals
 const (
-	GLFW_KEY_UNKNOWN = -1
-
-	GLFW_KEY_SPACE = 32
-
+	GLFW_KEY_UNKNOWN    = -1
+	GLFW_KEY_SPACE      = 32
 	GLFW_KEY_APOSTROPHE = 39 /* ' */
-
-	GLFW_KEY_COMMA = 44 /* , */
-
-	GLFW_KEY_MINUS = 45 /* - */
-
-	GLFW_KEY_PERIOD = 46 /* . */
-
-	GLFW_KEY_SLASH = 47 /* / */
+	GLFW_KEY_COMMA      = 44 /* , */
+	GLFW_KEY_MINUS      = 45 /* - */
+	GLFW_KEY_PERIOD     = 46 /* . */
+	GLFW_KEY_SLASH      = 47 /* / */
 
 	GLFW_KEY_0 = 48
 
