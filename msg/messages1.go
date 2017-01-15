@@ -50,7 +50,7 @@ type MessageOnCharacter struct {
 }
 
 type MessageKey struct {
-	Key    uint8
+	Key    uint32
 	Scan   uint32
 	Action uint8
 	Mod    uint8

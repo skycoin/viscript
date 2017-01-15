@@ -56,7 +56,6 @@ func main() {
 		hypervisor.UpdateDrawBuffer()
 		hypervisor.SwapDrawBuffer() //swap the draw frame with new frame
 	}
-
 	hypervisor.HypervisorScreenTeardown()
 	hypervisor.HypervisorProcessListTeardown()
 
