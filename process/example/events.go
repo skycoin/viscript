@@ -62,7 +62,7 @@ func (self *State) ProcessInputEvents(msgType uint16, message []byte) []byte {
 
 		if self.DebugPrintInputEvents {
 			fmt.Print("TypeKey")
-			showUInt8("Key", keyMsg.Key)
+			showUInt32("Key", keyMsg.Key)
 			showUInt32("Scan", keyMsg.Scan)
 			showUInt8("Action", keyMsg.Action)
 			showUInt8("Mod", keyMsg.Mod)

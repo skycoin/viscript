@@ -1,7 +1,7 @@
 package gl
 
 import (
-	//"fmt"
+	"fmt"
 	//"log"
 
 	//"bytes"
@@ -83,11 +83,14 @@ func onKey(
 	mod glfw.ModifierKey) {
 
 	var m msg.MessageKey
-	m.Key = uint8(key)
+	m.Key = uint32(key)
 	m.Scan = uint32(scancode)
 	m.Action = uint8(action)
 	m.Mod = uint8(mod)
 
+	if key != glfw.Key(m.Key) {
+		fmt.Printf("ERROR KEY SERIALIZATION FUCKUP: key= %d, key= %d \n", key, m.Key)
+	}
 	//DispatchEvent(msg.TypeKey, m)
 	b := msg.Serialize(msg.TypeKey, m)
 	InputEvents <- b
