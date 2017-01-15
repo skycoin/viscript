@@ -11,23 +11,14 @@ const (
 	GLFW_KEY_SLASH      = 47 /* / */
 
 	GLFW_KEY_0 = 48
-
 	GLFW_KEY_1 = 49
-
 	GLFW_KEY_2 = 50
-
 	GLFW_KEY_3 = 51
-
 	GLFW_KEY_4 = 52
-
 	GLFW_KEY_5 = 53
-
 	GLFW_KEY_6 = 54
-
 	GLFW_KEY_7 = 55
-
 	GLFW_KEY_8 = 56
-
 	GLFW_KEY_9 = 57
 
 	GLFW_KEY_SEMICOLON = 59 /* ; */
