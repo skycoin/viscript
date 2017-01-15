@@ -22,59 +22,33 @@ const (
 	GLFW_KEY_9 = 57
 
 	GLFW_KEY_SEMICOLON = 59 /* ; */
-
-	GLFW_KEY_EQUAL = 61 /* = */
+	GLFW_KEY_EQUAL     = 61 /* = */
 
 	GLFW_KEY_A = 65
-
 	GLFW_KEY_B = 66
-
 	GLFW_KEY_C = 67
-
 	GLFW_KEY_D = 68
-
 	GLFW_KEY_E = 69
-
 	GLFW_KEY_F = 70
-
 	GLFW_KEY_G = 71
-
 	GLFW_KEY_H = 72
-
 	GLFW_KEY_I = 73
-
 	GLFW_KEY_J = 74
-
 	GLFW_KEY_K = 75
-
 	GLFW_KEY_L = 76
-
 	GLFW_KEY_M = 77
-
 	GLFW_KEY_N = 78
-
 	GLFW_KEY_O = 79
-
 	GLFW_KEY_P = 80
-
 	GLFW_KEY_Q = 81
-
 	GLFW_KEY_R = 82
-
 	GLFW_KEY_S = 83
-
 	GLFW_KEY_T = 84
-
 	GLFW_KEY_U = 85
-
 	GLFW_KEY_V = 86
-
 	GLFW_KEY_W = 87
-
 	GLFW_KEY_X = 88
-
 	GLFW_KEY_Y = 89
-
 	GLFW_KEY_Z = 90
 
 	GLFW_KEY_LEFT_BRACKET = 91 /* [ */
