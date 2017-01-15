@@ -19,8 +19,8 @@ func (log CcLog) Add(s string) {
 	log.Lines = append(log.Lines, s)
 
 	/*
-		if len(Panels) > 1 {
-			Panels[1].TextBodies[0] = append(Panels[1].TextBodies[0], s)
+		if len(Terms) > 1 {
+			Terms[1].TextBodies[0] = append(Terms[1].TextBodies[0], s)
 		}
 	*/
 }

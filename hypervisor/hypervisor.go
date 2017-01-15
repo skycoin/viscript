@@ -24,7 +24,7 @@ var CloseWindow chan int // write to channel to close
 func init() {
 	fmt.Println("hypervisor.init()")
 	CloseWindow = make(chan int) //write to close windows
-	initPanels()
+	initTerminals()
 }
 
 func HypervisorInit() {
@@ -72,9 +72,9 @@ func DispatchInputEvents(ch chan []byte) []byte {
 func UpdateDrawBuffer() {
 	igl.DrawScene()
 
-	for _, pan := range Panels {
-		//fmt.Println("drawing a panel", pan.FractionOfStrip)
-		pan.Draw()
+	for _, term := range Terms {
+		//fmt.Println("drawing a terminal", term.FractionOfStrip)
+		term.Draw()
 	}
 }
 

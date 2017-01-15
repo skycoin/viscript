@@ -7,7 +7,7 @@
 * BACKSPACE/DELETE at the ends of lines
 	pulls us up to prev line, or pulls up next line
 * when there is no scrollbar, should be able to see/interact with text in that area
-* when auto appending to the end of a text panel, scroll all the way down
+* when auto appending to the end of a terminal, scroll all the way down
 		(manual activity in the middle could increase size, so do this only when appending to body)
 
 

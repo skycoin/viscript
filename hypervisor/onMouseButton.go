@@ -11,12 +11,6 @@ import (
 )
 
 // apparently every time this is fired, a mouse position event is ALSO fired
-// func onMouseButton(
-// 	w *glfw.Window,
-// 	bt glfw.MouseButton,
-// 	action glfw.Action,
-// 	mod glfw.ModifierKey) {
-
 func onMouseButton(m msg.MessageMouseButton) {
 	convertClickToTextCursorPosition(m.Button, m.Action)
 
@@ -27,9 +21,9 @@ func onMouseButton(m msg.MessageMouseButton) {
 			if mouse.CursorIsInside(ui.MainMenu.Rect) {
 				respondToAnyMenuButtonClicks()
 			} else { // respond to any panel clicks outside of menu
-				for _, pan := range Panels {
-					if pan.ContainsMouseCursor() {
-						pan.RespondToMouseClick()
+				for _, t := range Terms {
+					if t.ContainsMouseCursor() {
+						t.RespondToMouseClick()
 					}
 				}
 			}
@@ -75,16 +69,16 @@ func respondToAnyMenuButtonClicks() {
 					//script.Process(true)
 					//script.MakeTree()
 				} else { // deactivated
-					// remove all panels with trees
-					b := Panels[:0]
-					for _, pan := range Panels {
-						if len(pan.Trees) < 1 {
-							b = append(b, pan)
+					// remove all terminals with trees
+					b := Terms[:0]
+					for _, t := range Terms {
+						if len(t.Trees) < 1 {
+							b = append(b, t)
 						}
 					}
-					Panels = b
-					//fmt.Printf("len of b (from gfx.Panels) after removing ones with trees: %d\n", len(b))
-					//fmt.Printf("len of gfx.Panels: %d\n", len(gfx.Panels))
+					Terms = b
+					//fmt.Printf("len of b (from Terms) after removing ones with trees: %d\n", len(b))
+					//fmt.Printf("len of Terms: %d\n", len(Terms))
 				}
 				break
 			}

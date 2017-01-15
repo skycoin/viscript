@@ -12,6 +12,11 @@ import (
 	"math"
 )
 
+func onChar(m msg.MessageOnCharacter) {
+	InsertRuneIntoDocument("Rune", m.Rune)
+	//script.Process(false)
+}
+
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(m msg.MessageMousePos) {
 	x := float32(m.X)
@@ -24,7 +29,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 
 	// rendering update
 	if /* LMB held */ gl.GlfwWindow.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-		ScrollPanelThatIsHoveredOver(mouse.PixelDelta.X, mouse.PixelDelta.Y)
+		ScrollTermThatHasMousePointer(mouse.PixelDelta.X, mouse.PixelDelta.Y)
 	}
 }
 
@@ -32,9 +37,9 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 	var delta float32 = 30
 
 	if eitherControlKeyHeld() { // horizontal ability from 1D scrolling
-		ScrollPanelThatIsHoveredOver(float32(m.Y)*-delta, 0)
+		ScrollTermThatHasMousePointer(float32(m.Y)*-delta, 0)
 	} else { // can handle both x & y for 2D scrolling
-		ScrollPanelThatIsHoveredOver(float32(m.X)*delta, float32(m.Y)*-delta)
+		ScrollTermThatHasMousePointer(float32(m.X)*delta, float32(m.Y)*-delta)
 	}
 }
 

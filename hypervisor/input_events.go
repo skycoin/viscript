@@ -8,9 +8,6 @@ import (
 	_ "strconv"
 )
 
-//DEPRECATE
-//var curRecByte = 0 // current receive message index
-
 func init() {
 	//rune test
 }
@@ -104,7 +101,6 @@ func ProcessInputEvents(message []byte) []byte {
 		fmt.Println()
 	}
 
-	//curRecByte = 0
 	return message
 }
 

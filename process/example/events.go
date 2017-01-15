@@ -90,7 +90,6 @@ func (self *State) ProcessInputEvents(msgType uint16, message []byte) []byte {
 		fmt.Println()
 	}
 
-	//curRecByte = 0
 	return message
 }
 
@@ -131,7 +130,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 		// rendering update
 		//if LMB held
 		gl.GlfwWindow.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-			ScrollPanelThatIsHoveredOver(mouse.PixelDelta.X, mouse.PixelDelta.Y)
+			ScrollTermThatHasMousePointer(mouse.PixelDelta.X, mouse.PixelDelta.Y)
 		}
 	*/
 }
@@ -141,9 +140,9 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 		var delta float32 = 30
 
 		if eitherControlKeyHeld() { // horizontal ability from 1D scrolling
-			ScrollPanelThatIsHoveredOver(float32(m.Y)*-delta, 0)
+			ScrollTermThatHasMousePointer(float32(m.Y)*-delta, 0)
 		} else { // can handle both x & y for 2D scrolling
-			ScrollPanelThatIsHoveredOver(float32(m.X)*delta, float32(m.Y)*-delta)
+			ScrollTermThatHasMousePointer(float32(m.X)*delta, float32(m.Y)*-delta)
 		}
 	*/
 }
@@ -320,9 +319,9 @@ func onMouseButton(m msg.MessageMouseButton) {
 				if mouse.CursorIsInside(ui.MainMenu.Rect) {
 					respondToAnyMenuButtonClicks()
 				} else { // respond to any panel clicks outside of menu
-					for _, pan := range Panels {
-						if pan.ContainsMouseCursor() {
-							pan.RespondToMouseClick()
+					for _, t := range Terms {
+						if t.ContainsMouseCursor() {
+							t.RespondToMouseClick()
 						}
 					}
 				}

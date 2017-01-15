@@ -55,10 +55,10 @@ func (t *Terminal) SetSize() {
 		-gfx.CanvasExtents.Y,
 		-gfx.CanvasExtents.X}
 
-	if t.FractionOfStrip == runPanelHeiFrac { // FIXME: this is hardwired for one use case for now
+	if t.FractionOfStrip == runOutputTerminalFrac { // FIXME: this is hardwired for one use case for now
 		t.Whole.Top = t.Whole.Bottom + t.Whole.Height()*t.FractionOfStrip
 	} else {
-		t.Whole.Bottom = t.Whole.Bottom + t.Whole.Height()*runPanelHeiFrac
+		t.Whole.Bottom = t.Whole.Bottom + t.Whole.Height()*runOutputTerminalFrac
 	}
 
 	t.Content = &app.Rectangle{}
@@ -117,8 +117,8 @@ func (t *Terminal) Draw() {
 	gfx.SetColor(gfx.Gray)
 	t.BarHori.SetSize(t.Whole, t.TextBodies[0], gfx.CharWid, gfx.CharHei) // FIXME? (to consider multiple bodies & multiple trees)
 	t.BarVert.SetSize(t.Whole, t.TextBodies[0], gfx.CharWid, gfx.CharHei)
-	gfx.DrawStretchableRect(11, 13, t.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
-	gfx.DrawStretchableRect(11, 13, t.BarVert.Rect) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
+	gfx.Draw9SlicedRect(11, 13, t.BarHori.Rect) // 2,11 (pixel checkerboard)    // 14, 15 (square in the middle)
+	gfx.Draw9SlicedRect(11, 13, t.BarVert.Rect) // 13, 12 (double horizontal lines)    // 10, 11 (double vertical lines)
 	gfx.SetColor(gfx.White)
 	t.DrawTree()
 }
@@ -166,7 +166,7 @@ func (t *Terminal) DrawText() {
 						if x == t.CursX && y == t.CursY {
 							gfx.SetColor(gfx.White)
 							//DrawCharAtRect('_', r)
-							gfx.DrawStretchableRect(11, 13, gfx.Curs.GetAnimationModifiedRect(*r))
+							gfx.Draw9SlicedRect(11, 13, gfx.Curs.GetAnimationModifiedRect(*r))
 							gfx.SetColor(gfx.PrevColor)
 						}
 					}
@@ -183,7 +183,7 @@ func (t *Terminal) DrawText() {
 					gfx.SetColor(gfx.White)
 					app.ClampLeftAndRightOf(r, t.Whole.Left, t.BarVert.Rect.Left)
 					//DrawCharAtRect('_', r)
-					gfx.DrawStretchableRect(11, 13, gfx.Curs.GetAnimationModifiedRect(*r))
+					gfx.Draw9SlicedRect(11, 13, gfx.Curs.GetAnimationModifiedRect(*r))
 				}
 			}
 
@@ -242,7 +242,7 @@ func (t *Terminal) DrawScrollbarChrome(atlasCellX, atlasCellY, l, top float32) {
 
 func (t *Terminal) DrawBackground(atlasCellX, atlasCellY float32) {
 	gfx.SetColor(gfx.GrayDark)
-	gfx.DrawStretchableRect(atlasCellX, atlasCellY,
+	gfx.Draw9SlicedRect(atlasCellX, atlasCellY,
 		&app.Rectangle{
 			t.Whole.Top,
 			t.Whole.Right - ui.ScrollBarThickness,
@@ -295,9 +295,9 @@ func (t *Terminal) drawNodeAndDescendants(r *app.Rectangle, nodeId int) {
 	/*
 		//fmt.Println("drawNode(r *app.Rectangle)")
 		nameBar := &app.Rectangle{r.Top, r.Right, r.Top - 0.2*r.Height(), r.Left}
-		DrawStretchableRect(11, 13, r)
+		Draw9SlicedRect(11, 13, r)
 		SetColor(Blue)
-		DrawStretchableRect(11, 13, nameBar)
+		Draw9SlicedRect(11, 13, nameBar)
 		DrawTextInRect(t.Trees[0].Nodes[nodeId].Text, nameBar)
 		SetColor(White)
 

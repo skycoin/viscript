@@ -1,16 +1,6 @@
 package gl
 
 import (
-	//"fmt"
-	//"log"
-
-	//"bytes"
-	//"math"
-	//"strconv"
-
-	//"encoding/binary"
-
-	//"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/msg"
 	//"github.com/corpusc/viscript/script"
 	"github.com/go-gl/glfw/v3.2/glfw"

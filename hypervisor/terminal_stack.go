@@ -5,30 +5,30 @@ import (
 )
 
 var Focused *Terminal
-var Panels []*Terminal
+var Terms []*Terminal
 
-var runPanelHeiFrac = float32(0.4) // TEMPORARY fraction of vertical strip height which is dedicated to running code
+var runOutputTerminalFrac = float32(0.4) // TEMPORARY fraction of vertical strip height which is dedicated to running code
 
-func initPanels() {
-	Panels = append(Panels, &Terminal{FractionOfStrip: 1 - runPanelHeiFrac, IsEditable: true})
-	Panels = append(Panels, &Terminal{FractionOfStrip: runPanelHeiFrac, IsEditable: true}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
-	Focused = Panels[0]
+func initTerminals() {
+	Terms = append(Terms, &Terminal{FractionOfStrip: 1 - runOutputTerminalFrac, IsEditable: true})
+	Terms = append(Terms, &Terminal{FractionOfStrip: runOutputTerminalFrac, IsEditable: false}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
+	Focused = Terms[0]
 
-	Panels[0].Init()
-	Panels[0].SetupDemoProgram()
-	Panels[1].Init()
+	Terms[0].Init()
+	Terms[0].SetupDemoProgram()
+	Terms[1].Init()
 }
 
 // refactoring (possibly termporary) additions
 func SetSize() {
-	for _, pan := range Panels {
-		pan.SetSize()
+	for _, t := range Terms {
+		t.SetSize()
 	}
 }
 
-func ScrollPanelThatIsHoveredOver(mousePixelDeltaX, mousePixelDeltaY float32) {
-	for _, pan := range Panels {
-		pan.ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY)
+func ScrollTermThatHasMousePointer(mousePixelDeltaX, mousePixelDeltaY float32) {
+	for _, t := range Terms {
+		t.ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY)
 	}
 }
 

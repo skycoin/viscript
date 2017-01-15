@@ -1,7 +1,8 @@
 package app
 
-import (
-//"fmt"
+const (
+	RectType_9Slice = iota
+	RectType_SimplyStretched
 )
 
 type Rectangle struct {
@@ -9,6 +10,12 @@ type Rectangle struct {
 	Right  float32
 	Bottom float32
 	Left   float32
+	// higher level properties that MAYBE should be in a seperate rectangle?
+	// with inheritance that would be an obvious thing to do, but....
+	// do we use these for anything that doesn't end up getting rendered?
+	// if not, there's no point in seperating these fields
+	Type     uint8
+	AtlasPos Vec2I
 }
 
 func (r *Rectangle) Width() float32 {

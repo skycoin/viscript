@@ -133,28 +133,28 @@ func lexTypeString(i int) string {
 
 func MakeTree() {
 	// setup hardwired test tree
-	pI := len(gfx.Panels) // panel id
+	tI := len(Terms) // terminal id
 
 	// new panel
-	gfx.Panels = append(gfx.Panels, &gfx.Terminal{FractionOfStrip: 1})
-	gfx.Panels[pI].Init()
+	Terms = append(Terms, &gfx.Terminal{FractionOfStrip: 1})
+	Terms[tI].Init()
 
 	// new tree
-	gfx.Panels[pI].Trees = append(
-		gfx.Panels[pI].Trees, &tree.Tree{pI, []*tree.Node{}})
-	//makeNode(pI, 1, math.MaxInt32, math.MaxInt32, "top") // 0
-	makeNode(pI, 1, 2, math.MaxInt32, "top")                  // 0
-	makeNode(pI, 6, math.MaxInt32, 0, "1st left")             // 1
-	makeNode(pI, math.MaxInt32, 3, 0, "1st right")            // 2
-	makeNode(pI, 4, math.MaxInt32, 2, "level 3")              // 3
-	makeNode(pI, math.MaxInt32, 5, 3, "level 4")              // 4
-	makeNode(pI, math.MaxInt32, math.MaxInt32, 4, "level 5")  // 5
-	makeNode(pI, math.MaxInt32, math.MaxInt32, 1, "freddled") // 6
+	Terms[tI].Trees = append(
+		Terms[tI].Trees, &tree.Tree{tI, []*tree.Node{}})
+	//makeNode(tI, 1, math.MaxInt32, math.MaxInt32, "top") // 0
+	makeNode(tI, 1, 2, math.MaxInt32, "top")                  // 0
+	makeNode(tI, 6, math.MaxInt32, 0, "1st left")             // 1
+	makeNode(tI, math.MaxInt32, 3, 0, "1st right")            // 2
+	makeNode(tI, 4, math.MaxInt32, 2, "level 3")              // 3
+	makeNode(tI, math.MaxInt32, 5, 3, "level 4")              // 4
+	makeNode(tI, math.MaxInt32, math.MaxInt32, 4, "level 5")  // 5
+	makeNode(tI, math.MaxInt32, math.MaxInt32, 1, "freddled") // 6
 }
 
 func makeNode(panelId, childIdL, childIdR, parentId int, s string) {
-	gfx.Panels[panelId].Trees[0].Nodes = append(
-		gfx.Panels[panelId].Trees[0].Nodes, &tree.Node{s, childIdL, childIdR, parentId})
+	Terms[panelId].Trees[0].Nodes = append(
+		Terms[panelId].Trees[0].Nodes, &tree.Node{s, childIdL, childIdR, parentId})
 }
 
 func Process(feedbackWanted bool) {
@@ -163,7 +163,7 @@ func Process(feedbackWanted bool) {
 
 	// clear OS and graphical consoles
 	app.Con.Lines = []string{}
-	gfx.Panels[1].TextBodies[0] = []string{}
+	Terms[1].TextBodies[0] = []string{}
 
 	if feedbackWanted {
 		app.MakeHighlyVisibleLogHeader(`LEXING`, 5)
@@ -182,7 +182,7 @@ func Process(feedbackWanted bool) {
 }
 
 func lexAll() {
-	bods := gfx.Panels[0].TextBodies
+	bods := Terms[0].TextBodies
 
 	textColors = []*gfx.ColorSpot{}
 
@@ -190,8 +190,8 @@ func lexAll() {
 		lexAndColorize(i, line)
 	}
 
-	// FIXME if wanting colors in non-script panels
-	gfx.Panels[0].TextColors = textColors
+	// FIXME when needing colors in non-script terminals
+	Terms[0].TextColors = textColors
 }
 
 func lexAndColorize(y int, line string) string {

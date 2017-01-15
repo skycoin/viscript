@@ -28,7 +28,7 @@ var (
 )
 
 func SetSize() {
-	fmt.Printf("CcRenderer.SetSize() - CanvasExtents.X: %.2f\n", CanvasExtents.X)
+	fmt.Printf("canvas.SetSize() - CanvasExtents.X: %.2f\n", CanvasExtents.X)
 	*PrevFrustum = *CurrFrustum
 
 	CurrFrustum.Right = float32(CurrAppWidth) / float32(InitAppWidth) * InitFrustum.Right
@@ -36,8 +36,8 @@ func SetSize() {
 	CurrFrustum.Top = float32(CurrAppHeight) / float32(InitAppHeight) * InitFrustum.Top
 	CurrFrustum.Bottom = -CurrFrustum.Top
 
-	fmt.Printf("CcRenderer.SetSize() - PrevFrustum.Left: %.3f\n", PrevFrustum.Left)
-	fmt.Printf("CcRenderer.SetSize() - CurrFrustum.Left: %.3f\n", CurrFrustum.Left)
+	fmt.Printf("canvas.SetSize() - PrevFrustum.Left: %.3f\n", PrevFrustum.Left)
+	fmt.Printf("canvas.SetSize() - CurrFrustum.Left: %.3f\n", CurrFrustum.Left)
 
 	CanvasExtents.X = DistanceFromOrigin * CurrFrustum.Right
 	CanvasExtents.Y = DistanceFromOrigin * CurrFrustum.Top
@@ -67,7 +67,7 @@ func DrawMenu() {
 			SetColor(White)
 		}
 
-		DrawStretchableRect(11, 13, bu.Rect)
+		Draw9SlicedRect(bu.Rect)
 		DrawTextInRect(bu.Name, bu.Rect)
 	}
 }
@@ -155,7 +155,7 @@ func DrawQuad(atlasX, atlasY float32, r *app.Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
-func DrawStretchableRect(atlasX, atlasY float32, r *app.Rectangle) {
+func Draw9SlicedRect(atlasX, atlasY float32, r *app.Rectangle) {
 	// (sometimes called 9 Slicing)
 	// draw 9 quads which keep a predictable frame/margin/edge undistorted,
 	// while stretching the middle to fit the desired space

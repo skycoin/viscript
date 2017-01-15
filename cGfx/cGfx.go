@@ -1,0 +1,39 @@
+package cGfx
+
+import (
+	"github.com/corpusc/viscript/app"
+)
+
+/*
+------------- STARTING UP A NEW *CLEAN* VERSION OF GFX -------------
+
+.....which has only "app" as a dependency
+("app" has NONE)
+
+migrate things over here until we can delete/replace
+the current "gfx" package with THIS
+
+*/
+
+// pics
+var Pic_9Slice = Vec2I{11, 13}
+
+// colors
+var Black = []float32{0, 0, 0, 1}
+var Blue = []float32{0, 0, 1, 1}
+var Cyan = []float32{0, 0.5, 1, 1}
+var Fuschia = []float32{0.6, 0.2, 0.3, 1}
+var Gray = []float32{0.25, 0.25, 0.25, 1}
+var GrayDark = []float32{0.15, 0.15, 0.15, 1}
+var GrayLight = []float32{0.4, 0.4, 0.4, 1}
+var Green = []float32{0, 1, 0, 1}
+var Magenta = []float32{1, 0, 1, 1}
+var Maroon = []float32{0.5, 0.03, 0.207, 1}
+var MaroonDark = []float32{0.24, 0.014, 0.1035, 1}
+var Orange = []float32{0.8, 0.35, 0, 1}
+var Purple = []float32{0.6, 0, 0.8, 1}
+var Red = []float32{1, 0, 0, 1}
+var Tan = []float32{0.55, 0.47, 0.37, 1}
+var Violet = []float32{0.4, 0.2, 1, 1}
+var White = []float32{1, 1, 1, 1}
+var Yellow = []float32{1, 1, 0, 1}
