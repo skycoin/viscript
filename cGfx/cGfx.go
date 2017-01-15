@@ -16,7 +16,7 @@ the current "gfx" package with THIS
 */
 
 // pics
-var Pic_9Slice = Vec2I{11, 13}
+var Pic_9Slice = app.Vec2I{11, 13}
 
 // colors
 var Black = []float32{0, 0, 0, 1}

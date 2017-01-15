@@ -28,6 +28,7 @@ func (self *State) HandleMessages() {
 		//route the message
 		msgType = msg.GetMessageTypeUInt16(m)
 		msgTypeMask = msgType & 0xff00
+
 		switch msgTypeMask {
 		case msg.MP1: //input events
 			self.ProcessInputEvents(msgType, m) //input event

@@ -82,6 +82,7 @@ func onKey(
 	if key != glfw.Key(m.Key) {
 		fmt.Printf("ERROR KEY SERIALIZATION FUCKUP: key= %d, key= %d \n", key, m.Key)
 	}
+
 	//DispatchEvent(msg.TypeKey, m)
 	b := msg.Serialize(msg.TypeKey, m)
 	InputEvents <- b
