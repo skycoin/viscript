@@ -1,4 +1,4 @@
-package gfx
+package cGfx
 
 import (
 	"github.com/corpusc/viscript/app"

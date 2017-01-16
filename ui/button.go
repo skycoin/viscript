@@ -7,5 +7,5 @@ import (
 type Button struct {
 	Name      string
 	Activated bool
-	Rect      *app.Rectangle
+	Rect      *app.PicRectangle
 }

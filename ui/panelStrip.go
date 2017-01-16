@@ -1,4 +1,4 @@
-package gfx
+package ui
 
 import (
 //"fmt"
@@ -9,6 +9,6 @@ type PanelStrip struct {
 	IsHorizontal bool
 }
 
-func (pb *PanelStrip) Init() {
+func (me *PanelStrip) Init() {
 
 }

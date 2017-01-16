@@ -32,14 +32,14 @@ func (m *Menu) SetSize(r *app.Rectangle) {
 	hei := m.Rect.Height() / float32(len(m.Buttons)) // height of buttons
 
 	for _, b := range m.Buttons {
-		nr := &app.Rectangle{r.Top, r.Right, r.Bottom, r.Left, 0, cGfx.Pic_9Slice}
+		nr := &app.PicRectangle{0, cGfx.Pic_9Slice, &app.Rectangle{r.Top, r.Right, r.Bottom, r.Left}}
 
 		if m.IsVertical {
-			nr.Top = y
-			nr.Bottom = y - hei
+			nr.Rect.Top = y
+			nr.Rect.Bottom = y - hei
 		} else { // horizontally laid out
-			nr.Left = x
-			nr.Right = x + wid
+			nr.Rect.Left = x
+			nr.Rect.Right = x + wid
 		}
 
 		b.Rect = nr

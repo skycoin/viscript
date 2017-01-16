@@ -1,21 +1,10 @@
 package app
 
-const (
-	RectType_9Slice = iota
-	RectType_SimplyStretched
-)
-
 type Rectangle struct {
 	Top    float32
 	Right  float32
 	Bottom float32
 	Left   float32
-	// higher level properties that MAYBE should be in a seperate rectangle?
-	// with inheritance that would be an obvious thing to do, but....
-	// do we use these for anything that doesn't end up getting rendered?
-	// if not, there's no point in seperating these fields
-	Type     uint8
-	AtlasPos Vec2I
 }
 
 func (r *Rectangle) Width() float32 {
@@ -40,4 +29,20 @@ func (r *Rectangle) Contains(x, y float32) bool {
 	}
 
 	return false
+}
+
+// ----------------------------------
+// rectangles with extra graphic data
+// ----------------------------------
+
+// rectangle types
+const (
+	RectType_9Slice = iota
+	RectType_Simple // only requires one quad which is uniformly shrunk or stretched
+)
+
+type PicRectangle struct {
+	Type     uint8
+	AtlasPos Vec2I // x, y position in the atlas
+	Rect     *Rectangle
 }

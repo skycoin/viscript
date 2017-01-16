@@ -3,6 +3,7 @@ package gfx
 import (
 	"fmt"
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/cGfx"
 	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/gl/v2.1/gl"
 )
@@ -62,9 +63,9 @@ func DrawAll() {
 func DrawMenu() {
 	for _, bu := range ui.MainMenu.Buttons {
 		if bu.Activated {
-			SetColor(Green)
+			SetColor(cGfx.Green)
 		} else {
-			SetColor(White)
+			SetColor(cGfx.White)
 		}
 
 		Draw9SlicedRect(bu.Rect)
@@ -155,7 +156,7 @@ func DrawQuad(atlasX, atlasY float32, r *app.Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
-func Draw9SlicedRect(atlasX, atlasY float32, r *app.Rectangle) {
+func Draw9SlicedRect(r *app.PicRectangle) {
 	// (sometimes called 9 Slicing)
 	// draw 9 quads which keep a predictable frame/margin/edge undistorted,
 	// while stretching the middle to fit the desired space
@@ -173,8 +174,8 @@ func Draw9SlicedRect(atlasX, atlasY float32, r *app.Rectangle) {
 	// we're gonna draw from top to bottom (positivemost to negativemost)
 
 	sp /* span */ := UvSpan
-	u := float32(atlasX) * sp
-	v := float32(atlasY) * sp
+	u := float32(r.AtlasPos.X) * sp
+	v := float32(r.AtlasPos.Y) * sp
 
 	gl.Normal3f(0, 0, 1)
 
