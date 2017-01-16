@@ -13,10 +13,15 @@ import (
 migrate things over here until we can delete/replace
 the current "gfx" package with THIS
 
+--------------------------------------------------------------------
 */
 
-// pics
-var Pic_9Slice = app.Vec2I{11, 13}
+// pics (tile positions in atlas)
+var Pic_GradientBorder = app.Vec2I{11, 13}
+var Pic_PixelCheckerboard = app.Vec2I{2, 11}
+var Pic_SquareInTheMiddle = app.Vec2I{14, 15}
+var Pic_DoubleLinesHorizontal = app.Vec2I{13, 12}
+var Pic_DoubleLinesVertical = app.Vec2I{10, 11}
 
 // colors
 var Black = []float32{0, 0, 0, 1}

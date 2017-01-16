@@ -68,7 +68,7 @@ func DrawMenu() {
 			SetColor(cGfx.White)
 		}
 
-		Draw9SlicedRect(bu.Rect)
+		Update9SlicedRect(bu.Rect)
 		DrawTextInRect(bu.Name, bu.Rect)
 	}
 }
@@ -156,9 +156,9 @@ func DrawQuad(atlasX, atlasY float32, r *app.Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
-func Draw9SlicedRect(r *app.PicRectangle) {
-	// (sometimes called 9 Slicing)
-	// draw 9 quads which keep a predictable frame/margin/edge undistorted,
+func Update9SlicedRect(r *app.PicRectangle) {
+	// 9 quads (like a tic-tac-toe grid, or a "#", which has 9 cells)
+	// which keep a predictable frame/margin/edge undistorted,
 	// while stretching the middle to fit the desired space
 
 	w := r.Width()
@@ -220,22 +220,17 @@ func Draw9SlicedRect(r *app.PicRectangle) {
 
 	for iX := 0; iX < 3; iX++ {
 		for iY := 0; iY < 3; iY++ {
-			// draw 1 of 9 rects
+			gl.TexCoord2f(uSpots[iX], vSpots[iY+1]) // left bottom
+			gl.Vertex3f(xSpots[iX], ySpots[iY+1], 0)
 
-			if false { //iX == 1 && iY == 1 {
-			} else {
-				gl.TexCoord2f(uSpots[iX], vSpots[iY+1]) // left bottom
-				gl.Vertex3f(xSpots[iX], ySpots[iY+1], 0)
+			gl.TexCoord2f(uSpots[iX+1], vSpots[iY+1]) // right bottom
+			gl.Vertex3f(xSpots[iX+1], ySpots[iY+1], 0)
 
-				gl.TexCoord2f(uSpots[iX+1], vSpots[iY+1]) // right bottom
-				gl.Vertex3f(xSpots[iX+1], ySpots[iY+1], 0)
+			gl.TexCoord2f(uSpots[iX+1], vSpots[iY]) // right top
+			gl.Vertex3f(xSpots[iX+1], ySpots[iY], 0)
 
-				gl.TexCoord2f(uSpots[iX+1], vSpots[iY]) // right top
-				gl.Vertex3f(xSpots[iX+1], ySpots[iY], 0)
-
-				gl.TexCoord2f(uSpots[iX], vSpots[iY]) // left top
-				gl.Vertex3f(xSpots[iX], ySpots[iY], 0)
-			}
+			gl.TexCoord2f(uSpots[iX], vSpots[iY]) // left top
+			gl.Vertex3f(xSpots[iX], ySpots[iY], 0)
 		}
 	}
 }

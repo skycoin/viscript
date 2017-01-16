@@ -35,8 +35,3 @@ type Vec2F struct {
 	X float32
 	Y float32
 }
-
-type Vec2F64 struct {
-	X float64
-	Y float64
-}
