@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/cGfx"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/gl"
 	"github.com/corpusc/viscript/hypervisor/input/mouse"
@@ -24,8 +25,8 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 
 	mouse.UpdatePosition(
 		app.Vec2F{x, y},
-		gfx.CanvasExtents,
-		gfx.PixelSize) // state update
+		cGfx.CanvasExtents,
+		cGfx.PixelSize) // state update
 
 	// rendering update
 	if /* LMB held */ gl.GlfwWindow.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
@@ -79,15 +80,15 @@ func movedCursorSoUpdateDependents() {
 	foc := Focused
 
 	// autoscroll to keep cursor visible
-	ls := float32(foc.CursX) * gfx.CharWid // left side (of cursor, in virtual space)
-	rs := ls + gfx.CharWid
+	ls := float32(foc.CursX) * cGfx.CharWid // left side (of cursor, in virtual space)
+	rs := ls + cGfx.CharWid
 
 	if ls < foc.BarHori.ScrollDelta {
 		foc.BarHori.ScrollDelta = ls
 	}
 
-	if rs > foc.BarHori.ScrollDelta+foc.Content.Width() {
-		foc.BarHori.ScrollDelta = rs - foc.Content.Width()
+	if rs > foc.BarHori.ScrollDelta+foc.Content.Rect.Width() {
+		foc.BarHori.ScrollDelta = rs - foc.Content.Rect.Width()
 	}
 
 	// --- Selection Marking ---

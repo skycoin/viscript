@@ -10,11 +10,11 @@ var ScrollBarThickness float32 = 0.14 // FUTURE FIXME: base this on screen size,
 type ScrollBar struct {
 	IsHorizontal   bool
 	LenOfBar       float32
-	LenOfVoid      float32        // length of the negative space representing the length of entire document
-	LenOfOffscreen float32        // total hidden offscreen space (bookending the visible portal)
-	ScrollDelta    float32        // distance/offset from home/start of document (negative in Y cuz Y increases upwards)
-	VirtualWid     float32        // virtual space width.  allocating just enough to accommodate the longest line
-	Rect           *app.Rectangle // ... of the grabbable handle
+	LenOfVoid      float32           // length of the negative space representing the length of entire document
+	LenOfOffscreen float32           // total hidden offscreen space (bookending the visible portal)
+	ScrollDelta    float32           // distance/offset from home/start of document (negative in Y cuz Y increases upwards)
+	VirtualWid     float32           // virtual space width.  allocating just enough to accommodate the longest line
+	Rect           *app.PicRectangle // ... of the grabbable handle
 }
 
 func (bar *ScrollBar) Scroll(delta float32) {
@@ -76,7 +76,7 @@ func (bar *ScrollBar) SetSize(panel *app.Rectangle, body []string, charWid, char
 			bar.LenOfOffscreen = bar.VirtualWid - panWid
 			bar.LenOfBar = panWid / bar.VirtualWid * panWid
 			bar.LenOfVoid = panWid - bar.LenOfBar
-			bar.Rect.Left = panel.Left + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
+			bar.Rect.Rect.Left = panel.Left + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
 			bar.ClampX() // OPTIMIZEME: only do when app resized
 		}
 	} else { // vertical bar
@@ -97,17 +97,17 @@ func (bar *ScrollBar) SetSize(panel *app.Rectangle, body []string, charWid, char
 			//fmt.Printf("LenOfBar: %.2f\n", bar.LenOfBar)
 			bar.LenOfVoid = panHei - bar.LenOfBar
 			//fmt.Printf("LenOfVoid: %.2f\n", bar.LenOfVoid)
-			bar.Rect.Top = panel.Top + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
+			bar.Rect.Rect.Top = panel.Top + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
 			bar.ClampY() // OPTIMIZEME: only do when app resized
 		}
 	}
 
 	// setup bottom right corner of final rectangle for drawing
 	if bar.IsHorizontal {
-		bar.Rect.Right = bar.Rect.Left + bar.LenOfBar
-		bar.Rect.Bottom = panel.Bottom
+		bar.Rect.Rect.Right = bar.Rect.Rect.Left + bar.LenOfBar
+		bar.Rect.Rect.Bottom = panel.Bottom
 	} else {
-		bar.Rect.Bottom = bar.Rect.Top - bar.LenOfBar
-		bar.Rect.Right = panel.Right
+		bar.Rect.Rect.Bottom = bar.Rect.Rect.Top - bar.LenOfBar
+		bar.Rect.Rect.Right = panel.Right
 	}
 }

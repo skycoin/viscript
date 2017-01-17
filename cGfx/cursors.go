@@ -1,4 +1,4 @@
-package gfx
+package cGfx
 
 import (
 	//"fmt"
@@ -38,13 +38,13 @@ func (c *Cursors) Update() {
 	}
 }
 
-func (c *Cursors) GetAnimationModifiedRect(r app.Rectangle) *app.Rectangle {
+func (c *Cursors) GetAnimationModifiedRect(r app.PicRectangle) *app.PicRectangle {
 	if c.shrinking {
-		r.Bottom = r.Top - c.shrinkFraction*r.Height()
-		r.Left = r.Right - c.shrinkFraction*r.Width()
+		r.Rect.Bottom = r.Rect.Top - c.shrinkFraction*r.Rect.Height()
+		r.Rect.Left = r.Rect.Right - c.shrinkFraction*r.Rect.Width()
 	} else {
-		r.Top = r.Bottom + c.shrinkFraction*r.Height()
-		r.Right = r.Left + c.shrinkFraction*r.Width()
+		r.Rect.Top = r.Rect.Bottom + c.shrinkFraction*r.Rect.Height()
+		r.Rect.Right = r.Rect.Left + c.shrinkFraction*r.Rect.Width()
 	}
 
 	return &r

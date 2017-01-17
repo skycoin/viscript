@@ -47,9 +47,6 @@ var Yellow = []float32{1, 1, 0, 1}
 var PrevColor []float32 // previous
 var CurrColor []float32
 
-var goldenRatio = 1.61803398875
-var goldenFraction = float32(goldenRatio / (goldenRatio + 1))
-
 // dimensions (in pixel units)
 var InitAppWidth int32 = 800
 var InitAppHeight int32 = 600
@@ -129,4 +126,8 @@ func GetMenuSizedRect() *app.Rectangle {
 		CanvasExtents.X,
 		CanvasExtents.Y - CharHei,
 		-CanvasExtents.X}
+}
+
+func DrawAll() {
+	Curs.Update()
 }

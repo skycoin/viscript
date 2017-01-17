@@ -3,6 +3,7 @@ package hypervisor
 import (
 	"fmt"
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/cGfx"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/tree"
@@ -19,13 +20,13 @@ type Terminal struct {
 	MouseY          int
 	IsEditable      bool // editing is hardwired to TextBodies[0], but we probably never want
 	// to edit text unless the whole panel is dedicated to just one TextBody (& no graphical trees)
-	Whole      *app.Rectangle // the whole panel, including chrome (title bar & scroll bars)
-	Content    *app.Rectangle // viewport into virtual space, subset of the Whole rect
+	Whole      *app.Rectangle    // the whole panel, including chrome (title bar & scroll bars)
+	Content    *app.PicRectangle // viewport into virtual space, subset of the Whole rect
 	Selection  *ui.SelectionRange
 	BarHori    *ui.ScrollBar // horizontal
 	BarVert    *ui.ScrollBar // vertical
 	TextBodies [][]string
-	TextColors []*gfx.ColorSpot
+	TextColors []*cGfx.ColorSpot
 	Trees      []*tree.Tree
 }
 
@@ -40,8 +41,8 @@ func (t *Terminal) Init() {
 	// scrollbars
 	t.BarHori = &ui.ScrollBar{IsHorizontal: true}
 	t.BarVert = &ui.ScrollBar{}
-	t.BarHori.Rect = &app.Rectangle{}
-	t.BarVert.Rect = &app.Rectangle{}
+	t.BarHori.Rect = &app.PicRectangle{0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
+	t.BarVert.Rect = &app.PicRectangle{0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
 
 	t.SetSize()
 }
@@ -50,10 +51,10 @@ func (t *Terminal) SetSize() {
 	fmt.Printf("Terminal.SetSize()\n")
 
 	t.Whole = &app.Rectangle{
-		gfx.CanvasExtents.Y - gfx.CharHei,
-		gfx.CanvasExtents.X,
-		-gfx.CanvasExtents.Y,
-		-gfx.CanvasExtents.X}
+		cGfx.CanvasExtents.Y - cGfx.CharHei,
+		cGfx.CanvasExtents.X,
+		-cGfx.CanvasExtents.Y,
+		-cGfx.CanvasExtents.X}
 
 	if t.FractionOfStrip == runOutputTerminalFrac { // FIXME: this is hardwired for one use case for now
 		t.Whole.Top = t.Whole.Bottom + t.Whole.Height()*t.FractionOfStrip
@@ -61,17 +62,17 @@ func (t *Terminal) SetSize() {
 		t.Whole.Bottom = t.Whole.Bottom + t.Whole.Height()*runOutputTerminalFrac
 	}
 
-	t.Content = &app.Rectangle{}
-	t.Content.Top = t.Whole.Top
-	t.Content.Right = t.Whole.Right - ui.ScrollBarThickness
-	t.Content.Bottom = t.Whole.Bottom + ui.ScrollBarThickness
-	t.Content.Left = t.Whole.Left
+	t.Content = &app.PicRectangle{0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
+	t.Content.Rect.Top = t.Whole.Top
+	t.Content.Rect.Right = t.Whole.Right - ui.ScrollBarThickness
+	t.Content.Rect.Bottom = t.Whole.Bottom + ui.ScrollBarThickness
+	t.Content.Rect.Left = t.Whole.Left
 
 	// set scrollbars' upper left corners
-	t.BarHori.Rect.Left = t.Whole.Left
-	t.BarHori.Rect.Top = t.Content.Bottom
-	t.BarVert.Rect.Left = t.Content.Right
-	t.BarVert.Rect.Top = t.Whole.Top
+	t.BarHori.Rect.Rect.Left = t.Whole.Left
+	t.BarHori.Rect.Rect.Top = t.Content.Rect.Bottom
+	t.BarVert.Rect.Rect.Left = t.Content.Rect.Right
+	t.BarVert.Rect.Rect.Top = t.Whole.Top
 }
 
 func (t *Terminal) RespondToMouseClick() {
@@ -82,8 +83,8 @@ func (t *Terminal) RespondToMouseClick() {
 		mouse.GlX - t.Whole.Left,
 		mouse.GlY - t.Whole.Top}
 
-	t.MouseX = int((glDeltaFromHome.X + t.BarHori.ScrollDelta) / gfx.CharWid)
-	t.MouseY = int(-(glDeltaFromHome.Y + t.BarVert.ScrollDelta) / gfx.CharHei)
+	t.MouseX = int((glDeltaFromHome.X + t.BarHori.ScrollDelta) / cGfx.CharWid)
+	t.MouseY = int(-(glDeltaFromHome.Y + t.BarVert.ScrollDelta) / cGfx.CharHei)
 
 	if t.MouseY < 0 {
 		t.MouseY = 0
@@ -95,11 +96,11 @@ func (t *Terminal) RespondToMouseClick() {
 }
 
 func (t *Terminal) GoToTopEdge() {
-	gfx.CurrY = t.Whole.Top - t.BarVert.ScrollDelta
+	cGfx.CurrY = t.Whole.Top - t.BarVert.ScrollDelta
 }
 func (t *Terminal) GoToLeftEdge() float32 {
-	gfx.CurrX = t.Whole.Left - t.BarHori.ScrollDelta
-	return gfx.CurrX
+	cGfx.CurrX = t.Whole.Left - t.BarHori.ScrollDelta
+	return cGfx.CurrX
 }
 func (t *Terminal) GoToTopLeftCorner() {
 	t.GoToTopEdge()
@@ -108,31 +109,31 @@ func (t *Terminal) GoToTopLeftCorner() {
 
 func (t *Terminal) Draw() {
 	t.GoToTopLeftCorner()
-	t.DrawBackground(Pic_GradientBorder)
+	t.DrawBackground(t.Content)
 	t.DrawText()
-	gfx.SetColor(gfx.GrayDark)
+	//gfx.SetColor(cGfx..GrayDark)
 	t.DrawScrollbarChrome(10, 11, t.Whole.Right-ui.ScrollBarThickness, t.Whole.Top)                          // vertical bar background
 	t.DrawScrollbarChrome(13, 12, t.Whole.Left, t.Whole.Bottom+ui.ScrollBarThickness)                        // horizontal bar background
 	t.DrawScrollbarChrome(12, 11, t.Whole.Right-ui.ScrollBarThickness, t.Whole.Bottom+ui.ScrollBarThickness) // corner elbow piece
-	gfx.SetColor(gfx.Gray)
-	t.BarHori.SetSize(t.Whole, t.TextBodies[0], gfx.CharWid, gfx.CharHei) // FIXME? (to consider multiple bodies & multiple trees)
-	t.BarVert.SetSize(t.Whole, t.TextBodies[0], gfx.CharWid, gfx.CharHei)
-	gfx.Update9SlicedRect(Pic_GradientBorder, t.BarHori.Rect)
-	gfx.Update9SlicedRect(Pic_GradientBorder, t.BarVert.Rect)
-	gfx.SetColor(gfx.White)
+	//gfx.SetColor(cGfx..Gray)
+	t.BarHori.SetSize(t.Whole, t.TextBodies[0], cGfx.CharWid, cGfx.CharHei) // FIXME? (to consider multiple bodies & multiple trees)
+	t.BarVert.SetSize(t.Whole, t.TextBodies[0], cGfx.CharWid, cGfx.CharHei)
+	gfx.Update9SlicedRect(t.BarHori.Rect)
+	gfx.Update9SlicedRect(t.BarVert.Rect)
+	//gfx.SetColor(cGfx..White)
 	t.DrawTree()
 }
 
 func (t *Terminal) DrawText() {
-	cX := gfx.CurrX // current drawing position
-	cY := gfx.CurrY
-	cW := gfx.CharWid
-	cH := gfx.CharHei
-	b := t.BarHori.Rect.Top // bottom of text area
+	cX := cGfx.CurrX // current drawing position
+	cY := cGfx.CurrY
+	cW := cGfx.CharWid
+	cH := cGfx.CharHei
+	b := t.BarHori.Rect.Rect.Top // bottom of text area
 
 	// setup for colored text
-	ncId := 0             // next color
-	var nc *gfx.ColorSpot // ^
+	ncId := 0              // next color
+	var nc *cGfx.ColorSpot // ^
 	if /* colors exist */ len(t.TextColors) > 0 {
 		nc = t.TextColors[ncId]
 	}
@@ -142,48 +143,46 @@ func (t *Terminal) DrawText() {
 		lineVisible := cY <= t.Whole.Top+cH && cY >= b
 
 		if lineVisible {
-			r := &app.Rectangle{cY, cX + cW, cY - cH, cX} // t, r, b, l
+			r := &app.PicRectangle{0, cGfx.Pic_GradientBorder, &app.Rectangle{cY, cX + cW, cY - cH, cX}} // t, r, b, l
 
 			// if line needs vertical adjustment
 			if cY > t.Whole.Top {
-				r.Top = t.Whole.Top
+				r.Rect.Top = t.Whole.Top
 			}
 			if cY-cH < b {
-				r.Bottom = b
+				r.Rect.Bottom = b
 			}
 
 			// iterate over runes
-			gfx.SetColor(gfx.Gray)
+			//cGfx.SetColor(cGfx.Gray)
 			for x, c := range line {
 				ncId, nc = t.changeColorIfCodeAt(x, y, ncId, nc)
 
 				// drawing
-				if /* char visible */ cX >= t.Whole.Left-cW && cX < t.BarVert.Rect.Left {
-					app.ClampLeftAndRightOf(r, t.Whole.Left, t.BarVert.Rect.Left)
-					gfx.DrawCharAtRect(c, r)
+				if /* char visible */ cX >= t.Whole.Left-cW && cX < t.BarVert.Rect.Rect.Left {
+					app.ClampLeftAndRightOf(r.Rect, t.Whole.Left, t.BarVert.Rect.Rect.Left)
+					gfx.DrawCharAtRect(c, r.Rect)
 
 					if t.IsEditable { //&& Curs.Visible == true {
 						if x == t.CursX && y == t.CursY {
-							gfx.SetColor(gfx.White)
-							//DrawCharAtRect('_', r)
-							gfx.Update9SlicedRect(Pic_GradientBorder, gfx.Curs.GetAnimationModifiedRect(*r))
-							gfx.SetColor(gfx.PrevColor)
+							//gfx.SetColor(gfx.White)
+							gfx.Update9SlicedRect(cGfx.Curs.GetAnimationModifiedRect(*r))
+							//gfx.SetColor(gfx.PrevColor)
 						}
 					}
 				}
 
 				cX += cW
-				r.Left = cX
-				r.Right = cX + cW
+				r.Rect.Left = cX
+				r.Rect.Right = cX + cW
 			}
 
 			// draw cursor at the end of line if needed
-			if cX < t.BarVert.Rect.Left && y == t.CursY && t.CursX == len(line) {
+			if cX < t.BarVert.Rect.Rect.Left && y == t.CursY && t.CursX == len(line) {
 				if t.IsEditable { //&& Curs.Visible == true {
-					gfx.SetColor(gfx.White)
-					app.ClampLeftAndRightOf(r, t.Whole.Left, t.BarVert.Rect.Left)
-					//DrawCharAtRect('_', r)
-					gfx.Update9SlicedRect(Pic_GradientBorder, gfx.Curs.GetAnimationModifiedRect(*r))
+					//gfx.SetColor(gfx.White)
+					app.ClampLeftAndRightOf(r.Rect, t.Whole.Left, t.BarVert.Rect.Rect.Left)
+					gfx.Update9SlicedRect(cGfx.Curs.GetAnimationModifiedRect(*r))
 				}
 			}
 
@@ -198,11 +197,11 @@ func (t *Terminal) DrawText() {
 	}
 }
 
-func (t *Terminal) changeColorIfCodeAt(x, y, ncId int, nc *gfx.ColorSpot) (int, *gfx.ColorSpot) {
+func (t *Terminal) changeColorIfCodeAt(x, y, ncId int, nc *cGfx.ColorSpot) (int, *cGfx.ColorSpot) {
 	if /* colors exist */ len(t.TextColors) > 0 {
 		if x == nc.Pos.X &&
 			y == nc.Pos.Y {
-			gfx.SetColor(nc.Color)
+			//gfx.SetColor(nc.Color)
 			//fmt.Println("-------- nc-------, then 3rd():", nc, t.TextColors[2])
 			ncId++
 
@@ -217,7 +216,7 @@ func (t *Terminal) changeColorIfCodeAt(x, y, ncId int, nc *gfx.ColorSpot) (int, 
 
 // ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)
 func (t *Terminal) DrawScrollbarChrome(atlasCellX, atlasCellY, l, top float32) { // l = left
-	span := gfx.UvSpan
+	span := cGfx.UvSpan
 	u := float32(atlasCellX) * span
 	v := float32(atlasCellY) * span
 
@@ -240,21 +239,16 @@ func (t *Terminal) DrawScrollbarChrome(atlasCellX, atlasCellY, l, top float32) {
 	gl.Vertex3f(l, top, 0)
 }
 
-func (t *Terminal) DrawBackground(atlasCellX, atlasCellY float32) {
-	gfx.SetColor(gfx.GrayDark)
-	gfx.Update9SlicedRect(atlasCellX, atlasCellY,
-		&app.Rectangle{
-			t.Whole.Top,
-			t.Whole.Right - ui.ScrollBarThickness,
-			t.Whole.Bottom + ui.ScrollBarThickness,
-			t.Whole.Left})
+func (t *Terminal) DrawBackground(r *app.PicRectangle) {
+	//gfx.SetColor(gfx.GrayDark)
+	gfx.Update9SlicedRect(r)
 }
 
 func (t *Terminal) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float32) {
 	if t.ContainsMouseCursor() {
 		// position increments in gl space
-		xInc := mousePixelDeltaX * gfx.PixelSize.X
-		yInc := mousePixelDeltaY * gfx.PixelSize.Y
+		xInc := mousePixelDeltaX * cGfx.PixelSize.X
+		yInc := mousePixelDeltaY * cGfx.PixelSize.Y
 		t.BarHori.Scroll(xInc)
 		t.BarVert.Scroll(yInc)
 	}

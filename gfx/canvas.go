@@ -8,6 +8,9 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
+var goldenRatio = 1.61803398875
+var goldenFraction = float32(goldenRatio / (goldenRatio + 1))
+
 func init() {
 	fmt.Println("init() - canvas.go")
 
@@ -21,20 +24,19 @@ func SetSize() {
 }
 
 func DrawAll() {
-	Curs.Update()
 	DrawMenu()
 }
 
 func DrawMenu() {
 	for _, bu := range ui.MainMenu.Buttons {
 		if bu.Activated {
-			SetColor(cGfx.Green)
+			//SetColor(cGfx.Green)
 		} else {
-			SetColor(cGfx.White)
+			//SetColor(cGfx.White)
 		}
 
 		Update9SlicedRect(bu.Rect)
-		DrawTextInRect(bu.Name, bu.Rect)
+		DrawTextInRect(bu.Name, bu.Rect.Rect)
 	}
 }
 
@@ -61,7 +63,7 @@ func DrawTextInRect(s string, r *app.Rectangle) {
 func DrawCharAtRect(char rune, r *app.Rectangle) {
 	u := float32(int(char) % 16)
 	v := float32(int(char) / 16)
-	sp := UvSpan
+	sp := cGfx.UvSpan
 
 	gl.Normal3f(0, 0, 1)
 
@@ -83,7 +85,7 @@ func DrawTriangle(atlasX, atlasY float32, a, b, c app.Vec2F) {
 	// (only for flow arrows between tree node blocks ATM) won't matter,
 	// we are actually drawing a quad, with the last 2 verts @ the same spot
 
-	sp /* span */ := UvSpan
+	sp /* span */ := cGfx.UvSpan
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp
 
@@ -102,7 +104,7 @@ func DrawTriangle(atlasX, atlasY float32, a, b, c app.Vec2F) {
 }
 
 func DrawQuad(atlasX, atlasY float32, r *app.Rectangle) {
-	sp /* span */ := UvSpan
+	sp /* span */ := cGfx.UvSpan
 	u := float32(atlasX) * sp
 	v := float32(atlasY) * sp
 
@@ -126,8 +128,8 @@ func Update9SlicedRect(r *app.PicRectangle) {
 	// which keep a predictable frame/margin/edge undistorted,
 	// while stretching the middle to fit the desired space
 
-	w := r.Width()
-	h := r.Height()
+	w := r.Rect.Width()
+	h := r.Rect.Height()
 
 	// skip invisible or inverted rects
 	if w <= 0 || h <= 0 {
@@ -138,7 +140,7 @@ func Update9SlicedRect(r *app.PicRectangle) {
 	var uvEdgeFraction float32 = 0.125 / 2 // 1/16
 	// we're gonna draw from top to bottom (positivemost to negativemost)
 
-	sp /* span */ := UvSpan
+	sp /* span */ := cGfx.UvSpan
 	u := float32(r.AtlasPos.X) * sp
 	v := float32(r.AtlasPos.Y) * sp
 
@@ -157,27 +159,27 @@ func Update9SlicedRect(r *app.PicRectangle) {
 	vSpots = append(vSpots, (v+sp)-sp*uvEdgeFraction)
 	vSpots = append(vSpots, (v + sp))
 
-	edgeSpan := PixelSize.X * 4
+	edgeSpan := cGfx.PixelSize.X * 4
 	if edgeSpan > w/2 {
 		edgeSpan = w / 2
 	}
 
 	xSpots := []float32{}
-	xSpots = append(xSpots, r.Left)
-	xSpots = append(xSpots, r.Left+edgeSpan)
-	xSpots = append(xSpots, r.Right-edgeSpan)
-	xSpots = append(xSpots, r.Right)
+	xSpots = append(xSpots, r.Rect.Left)
+	xSpots = append(xSpots, r.Rect.Left+edgeSpan)
+	xSpots = append(xSpots, r.Rect.Right-edgeSpan)
+	xSpots = append(xSpots, r.Rect.Right)
 
-	edgeSpan = PixelSize.Y * 4
+	edgeSpan = cGfx.PixelSize.Y * 4
 	if edgeSpan > h/2 {
 		edgeSpan = h / 2
 	}
 
 	ySpots := []float32{}
-	ySpots = append(ySpots, r.Top)
-	ySpots = append(ySpots, r.Top-edgeSpan)
-	ySpots = append(ySpots, r.Bottom+edgeSpan)
-	ySpots = append(ySpots, r.Bottom)
+	ySpots = append(ySpots, r.Rect.Top)
+	ySpots = append(ySpots, r.Rect.Top-edgeSpan)
+	ySpots = append(ySpots, r.Rect.Bottom+edgeSpan)
+	ySpots = append(ySpots, r.Rect.Bottom)
 
 	if ySpots[1] > ySpots[0] {
 		ySpots[1] = ySpots[0]

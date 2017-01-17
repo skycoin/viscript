@@ -3,21 +3,21 @@ package gl
 import (
 	"fmt"
 	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/cGfx"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"log"
 )
 
-var GlfwWindow *glfw.Window //deprecate eventually
+var GlfwWindow *glfw.Window // deprecate eventually
 var CloseWindow chan int    // write to channel to close
 
 var (
 	Texture uint32
 )
 
-//gfx in gfx.CurrAppWidth
-//gfx.InitFrustum
+//gfx in cGfx.CurrAppWidth
+//cGfx.InitFrustum
 
 //only two gfx parameters should be eliminated
 //gfx import should be eliminated
@@ -42,7 +42,7 @@ func WindowInit() {
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
 
 	var err error
-	GlfwWindow, err = glfw.CreateWindow(int(gfx.CurrAppWidth), int(gfx.CurrAppHeight), app.Name, nil, nil)
+	GlfwWindow, err = glfw.CreateWindow(int(cGfx.CurrAppWidth), int(cGfx.CurrAppHeight), app.Name, nil, nil)
 
 	if err != nil {
 		panic(err)
@@ -81,7 +81,7 @@ func InitRenderer() {
 
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadIdentity()
-	SetFrustum(gfx.InitFrustum)
+	SetFrustum(cGfx.InitFrustum)
 	//gl.Frustum(-1, 1, -1, 1, 1.0, 10.0)
 	//gl.Frustum(left, right, bottom, top, zNear, zFar)
 	gl.MatrixMode(gl.MODELVIEW)
@@ -97,23 +97,24 @@ func SetFrustum(r *app.Rectangle) {
 }
 
 func DrawScene() {
-	gl.Viewport(0, 0, gfx.CurrAppWidth, gfx.CurrAppHeight) // OPTIMIZEME?  could set flag upon frame buffer size change event
-	if *gfx.PrevFrustum != *gfx.CurrFrustum {
-		*gfx.PrevFrustum = *gfx.CurrFrustum
+	gl.Viewport(0, 0, cGfx.CurrAppWidth, cGfx.CurrAppHeight) // OPTIMIZEME?  could set flag upon frame buffer size change event
+	if *cGfx.PrevFrustum != *cGfx.CurrFrustum {
+		*cGfx.PrevFrustum = *cGfx.CurrFrustum
 		gl.MatrixMode(gl.PROJECTION)
 		gl.LoadIdentity()
-		SetFrustum(gfx.CurrFrustum)
+		SetFrustum(cGfx.CurrFrustum)
 		fmt.Println("CHANGE OF FRUSTUM")
 	}
 	gl.MatrixMode(gl.MODELVIEW) //.PROJECTION)                   //.MODELVIEW)
 	gl.LoadIdentity()
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-	gl.Translatef(0, 0, -gfx.DistanceFromOrigin)
+	gl.Translatef(0, 0, -cGfx.DistanceFromOrigin)
 
 	gl.BindTexture(gl.TEXTURE_2D, Texture)
 
 	gl.Begin(gl.QUADS)
 	gfx.DrawAll()
+	cGfx.DrawAll()
 	gl.End()
 }
 

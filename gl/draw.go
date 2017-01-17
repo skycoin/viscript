@@ -6,7 +6,7 @@ import (
 )
 
 func SetColor(newColor []float32) {
-	PrevColor = CurrColor
-	CurrColor = newColor
+	cGfx.PrevColor = cGfx.CurrColor
+	cGfx.CurrColor = newColor
 	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &newColor[0])
 }
