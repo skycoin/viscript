@@ -153,6 +153,7 @@ func onFrameBufferSize(m msg.MessageFrameBufferSize) {
 		gfx.CurrAppWidth = int32(m.X)
 		gfx.CurrAppHeight = int32(m.Y)
 		gfx.SetSize()
+		cGfx.SetSize()
 		SetSize()
 	*/
 }

@@ -8,51 +8,16 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
-var (
-	// distance from the center to an edge of the app's root/client area
-	// ....in the cardinal directions from the center, corners would be farther away)
-	CanvasExtents      app.Vec2F
-	PixelSize          app.Vec2F
-	DistanceFromOrigin float32
-	CharWid            float32
-	CharHei            float32
-	CharWidInPixels    int
-	CharHeiInPixels    int
-	UvSpan             float32 // looking into 16/16 atlas/grid of character tiles
-	// FIXME: below is no longer a maximum of what fits on a max-sized panel (taking up the whole app window) anymore.
-	// 		but is still used as a guide for sizes
-	MaxCharsX int // this is used to give us proportions like an 80x25 text console screen, ....
-	MaxCharsY int // ....from a DistanceFromOrigin*2-by-DistanceFromOrigin*2 gl space
-	// current position renderer draws to
-	CurrX float32
-	CurrY float32
-)
+func init() {
+	fmt.Println("init() - canvas.go")
 
-func SetSize() {
-	fmt.Printf("canvas.SetSize() - CanvasExtents.X: %.2f\n", CanvasExtents.X)
-	*PrevFrustum = *CurrFrustum
-
-	CurrFrustum.Right = float32(CurrAppWidth) / float32(InitAppWidth) * InitFrustum.Right
-	CurrFrustum.Left = -CurrFrustum.Right
-	CurrFrustum.Top = float32(CurrAppHeight) / float32(InitAppHeight) * InitFrustum.Top
-	CurrFrustum.Bottom = -CurrFrustum.Top
-
-	fmt.Printf("canvas.SetSize() - PrevFrustum.Left: %.3f\n", PrevFrustum.Left)
-	fmt.Printf("canvas.SetSize() - CurrFrustum.Left: %.3f\n", CurrFrustum.Left)
-
-	CanvasExtents.X = DistanceFromOrigin * CurrFrustum.Right
-	CanvasExtents.Y = DistanceFromOrigin * CurrFrustum.Top
-
-	// things that weren't initialized in this func
-	ui.MainMenu.SetSize(GetMenuSizedRect())
+	// MORE one-time setup
+	ui.MainMenu.SetSize(cGfx.GetMenuSizedRect())
 }
 
-func GetMenuSizedRect() *app.Rectangle {
-	return &app.Rectangle{
-		CanvasExtents.Y,
-		CanvasExtents.X,
-		CanvasExtents.Y - CharHei,
-		-CanvasExtents.X}
+func SetSize() {
+	// things that weren't initialized in this func
+	ui.MainMenu.SetSize(cGfx.GetMenuSizedRect())
 }
 
 func DrawAll() {

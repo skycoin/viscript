@@ -45,8 +45,9 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 
 func onFrameBufferSize(m msg.MessageFrameBufferSize) {
 	fmt.Printf("onFrameBufferSize() - x, y: %d, %d\n", m.X, m.Y)
-	gfx.CurrAppWidth = int32(m.X)
-	gfx.CurrAppHeight = int32(m.Y)
+	cGfx.CurrAppWidth = int32(m.X)
+	cGfx.CurrAppHeight = int32(m.Y)
+	cGfx.SetSize()
 	gfx.SetSize()
 	SetSize()
 }

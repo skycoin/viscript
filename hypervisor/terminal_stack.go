@@ -19,7 +19,7 @@ func initTerminals() {
 	Terms[1].Init()
 }
 
-// refactoring (possibly termporary) additions
+// (maybe temporary) refactoring additions
 func SetSize() {
 	for _, t := range Terms {
 		t.SetSize()
