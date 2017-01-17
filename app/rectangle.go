@@ -53,13 +53,23 @@ const (
 	RectType_Simple // only requires one quad which is uniformly shrunk or stretched
 )
 
+// state
+const (
+	RectState_Active   = iota
+	RectState_Inactive // .../invisible
+	RectState_Dead
+)
+
 type PicRectangle struct {
-	Type     uint8
+	Id    int32
+	Type  uint8
+	State uint8
+	//Color    float32
 	AtlasPos Vec2I // x, y position in the atlas
 	Rect     *Rectangle
 }
 
-type NineSliceRectangle struct {
+type NineSliceRectangle struct { // UNUSED ATM
 	X [3]float32 // positions of vertical lines
 	Y [3]float32 // positions of horizontal lines
 	U [3]float32 // texture coords of vertical lines

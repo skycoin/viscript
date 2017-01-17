@@ -103,26 +103,6 @@ func DrawTriangle(atlasX, atlasY float32, a, b, c app.Vec2F) {
 	gl.Vertex3f(c.X, c.Y, 0)
 }
 
-func DrawQuad(atlasX, atlasY float32, r *app.Rectangle) {
-	sp /* span */ := cGfx.UvSpan
-	u := float32(atlasX) * sp
-	v := float32(atlasY) * sp
-
-	gl.Normal3f(0, 0, 1)
-
-	gl.TexCoord2f(u, v+sp)
-	gl.Vertex3f(r.Left, r.Bottom, 0)
-
-	gl.TexCoord2f(u+sp, v+sp)
-	gl.Vertex3f(r.Right, r.Bottom, 0)
-
-	gl.TexCoord2f(u+sp, v)
-	gl.Vertex3f(r.Right, r.Top, 0)
-
-	gl.TexCoord2f(u, v)
-	gl.Vertex3f(r.Left, r.Top, 0)
-}
-
 func Update9SlicedRect(r *app.PicRectangle) {
 	// 9 quads (like a tic-tac-toe grid, or a "#", which has 9 cells)
 	// which keep a predictable frame/margin/edge undistorted,
@@ -200,4 +180,6 @@ func Update9SlicedRect(r *app.PicRectangle) {
 			gl.Vertex3f(xSpots[iX], ySpots[iY], 0)
 		}
 	}
+
+	cGfx.SetRect(r)
 }

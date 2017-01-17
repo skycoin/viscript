@@ -113,8 +113,7 @@ func DrawScene() {
 	gl.BindTexture(gl.TEXTURE_2D, Texture)
 
 	gl.Begin(gl.QUADS)
-	gfx.DrawAll()
-	cGfx.DrawAll()
+	drawAll()
 	gl.End()
 }
 

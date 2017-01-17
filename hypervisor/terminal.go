@@ -41,8 +41,8 @@ func (t *Terminal) Init() {
 	// scrollbars
 	t.BarHori = &ui.ScrollBar{IsHorizontal: true}
 	t.BarVert = &ui.ScrollBar{}
-	t.BarHori.Rect = &app.PicRectangle{0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
-	t.BarVert.Rect = &app.PicRectangle{0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
+	t.BarHori.Rect = &app.PicRectangle{0, 0, 0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
+	t.BarVert.Rect = &app.PicRectangle{0, 0, 0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
 
 	t.SetSize()
 }
@@ -62,7 +62,7 @@ func (t *Terminal) SetSize() {
 		t.Whole.Bottom = t.Whole.Bottom + t.Whole.Height()*runOutputTerminalFrac
 	}
 
-	t.Content = &app.PicRectangle{0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
+	t.Content = &app.PicRectangle{0, 0, 0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
 	t.Content.Rect.Top = t.Whole.Top
 	t.Content.Rect.Right = t.Whole.Right - ui.ScrollBarThickness
 	t.Content.Rect.Bottom = t.Whole.Bottom + ui.ScrollBarThickness
@@ -143,7 +143,7 @@ func (t *Terminal) DrawText() {
 		lineVisible := cY <= t.Whole.Top+cH && cY >= b
 
 		if lineVisible {
-			r := &app.PicRectangle{0, cGfx.Pic_GradientBorder, &app.Rectangle{cY, cX + cW, cY - cH, cX}} // t, r, b, l
+			r := &app.PicRectangle{0, 0, 0, cGfx.Pic_GradientBorder, &app.Rectangle{cY, cX + cW, cY - cH, cX}} // t, r, b, l
 
 			// if line needs vertical adjustment
 			if cY > t.Whole.Top {
