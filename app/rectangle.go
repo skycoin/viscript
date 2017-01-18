@@ -1,17 +1,5 @@
 package app
 
-type IRect interface {
-	/*Top    float32
-	Right  float32
-	Bottom float32
-	Left   float32*/
-	Width() float32
-	Height() float32
-	CenterX() float32
-	CenterY() float32
-	Contains() bool
-}
-
 type Rectangle struct {
 	Top    float32
 	Right  float32
@@ -66,12 +54,13 @@ type PicRectangle struct {
 	State uint8
 	//Color    float32
 	AtlasPos Vec2I // x, y position in the atlas
-	Rect     *Rectangle
+	*Rectangle
 }
 
-type NineSliceRectangle struct { // UNUSED ATM
-	X [3]float32 // positions of vertical lines
-	Y [3]float32 // positions of horizontal lines
-	U [3]float32 // texture coords of vertical lines
-	V [3]float32 // texture coords of horizontal lines
+type NineSliceRectangle struct {
+	PicRectangle
+	XSpots [3]float32 // positions of vertical lines
+	YSpots [3]float32 // positions of horizontal lines
+	USpots [3]float32 // texture coords of vertical lines
+	VSpots [3]float32 // texture coords of horizontal lines
 }

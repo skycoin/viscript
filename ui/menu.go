@@ -35,11 +35,11 @@ func (m *Menu) SetSize(r *app.Rectangle) {
 		nr := &app.PicRectangle{0, 0, 0, cGfx.Pic_GradientBorder, &app.Rectangle{r.Top, r.Right, r.Bottom, r.Left}}
 
 		if m.IsVertical {
-			nr.Rect.Top = y
-			nr.Rect.Bottom = y - hei
+			nr.Top = y
+			nr.Bottom = y - hei
 		} else { // horizontally laid out
-			nr.Rect.Left = x
-			nr.Rect.Right = x + wid
+			nr.Left = x
+			nr.Right = x + wid
 		}
 
 		b.Rect = nr

@@ -2,7 +2,7 @@ package hypervisor
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/gl"
+	//"github.com/corpusc/viscript/gl"
 	"github.com/corpusc/viscript/msg"
 	//"github.com/corpusc/viscript/script"
 	"github.com/go-gl/glfw/v3.2/glfw"
@@ -15,25 +15,19 @@ import (
 // BUT for RELEASE, the "mod" variable will NOT tell you what key it is!
 // so you will have to handle both left & right modifier keys via the "action" variable!
 
-// func onKey(
-// 	w *glfw.Window,
-// 	key glfw.Key,
-// 	scancode int,
-// 	action glfw.Action,
-// 	mod glfw.ModifierKey) {
 func onKey(m msg.MessageKey) {
 	foc := Focused
 
 	if glfw.Action(m.Action) == glfw.Release {
-		fmt.Println("release --------- ", m.Key)
+		fmt.Println("\nrelease --------- ", m.Key)
 
 		switch glfw.Key(m.Key) {
 
 		case glfw.KeyEscape:
 			fmt.Println("case glfw.KeyEscape:")
-			gl.GlfwWindow.SetShouldClose(true)
+			//gl.GlfwWindow.SetShouldClose(true)
 			CloseWindow <- 1
-			HypervisorScreenTeardown()
+			//HypervisorScreenTeardown()
 
 		case glfw.KeyLeftShift:
 			fallthrough
@@ -55,7 +49,7 @@ func onKey(m msg.MessageKey) {
 			fmt.Println("'Super' modifier key RELEASED")
 		}
 	} else { // glfw.Press   or   glfw.Repeat
-		fmt.Println("press --------- ", m.Key)
+		fmt.Println("\npress --------- ", m.Key)
 
 		b := foc.TextBodies[0]
 

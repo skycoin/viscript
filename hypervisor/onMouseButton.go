@@ -37,7 +37,7 @@ func convertClickToTextCursorPosition(button, action uint8) {
 
 		foc := Focused
 
-		if foc.IsEditable && foc.Content.Rect.Contains(mouse.GlX, mouse.GlY) {
+		if foc.IsEditable && foc.Content.Contains(mouse.GlX, mouse.GlY) {
 			if foc.MouseY < len(foc.TextBodies[0]) {
 				foc.CursY = foc.MouseY
 
@@ -55,7 +55,7 @@ func convertClickToTextCursorPosition(button, action uint8) {
 
 func respondToAnyMenuButtonClicks() {
 	for _, bu := range ui.MainMenu.Buttons {
-		if mouse.CursorIsInside(bu.Rect.Rect) {
+		if mouse.CursorIsInside(bu.Rect.Rectangle) {
 			bu.Activated = !bu.Activated
 
 			switch bu.Name {

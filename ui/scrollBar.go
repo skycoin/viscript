@@ -76,7 +76,7 @@ func (bar *ScrollBar) SetSize(panel *app.Rectangle, body []string, charWid, char
 			bar.LenOfOffscreen = bar.VirtualWid - panWid
 			bar.LenOfBar = panWid / bar.VirtualWid * panWid
 			bar.LenOfVoid = panWid - bar.LenOfBar
-			bar.Rect.Rect.Left = panel.Left + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
+			bar.Rect.Left = panel.Left + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
 			bar.ClampX() // OPTIMIZEME: only do when app resized
 		}
 	} else { // vertical bar
@@ -97,17 +97,17 @@ func (bar *ScrollBar) SetSize(panel *app.Rectangle, body []string, charWid, char
 			//fmt.Printf("LenOfBar: %.2f\n", bar.LenOfBar)
 			bar.LenOfVoid = panHei - bar.LenOfBar
 			//fmt.Printf("LenOfVoid: %.2f\n", bar.LenOfVoid)
-			bar.Rect.Rect.Top = panel.Top + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
+			bar.Rect.Top = panel.Top + bar.ScrollDelta/bar.LenOfOffscreen*bar.LenOfVoid
 			bar.ClampY() // OPTIMIZEME: only do when app resized
 		}
 	}
 
 	// setup bottom right corner of final rectangle for drawing
 	if bar.IsHorizontal {
-		bar.Rect.Rect.Right = bar.Rect.Rect.Left + bar.LenOfBar
-		bar.Rect.Rect.Bottom = panel.Bottom
+		bar.Rect.Right = bar.Rect.Left + bar.LenOfBar
+		bar.Rect.Bottom = panel.Bottom
 	} else {
-		bar.Rect.Rect.Bottom = bar.Rect.Rect.Top - bar.LenOfBar
-		bar.Rect.Rect.Right = panel.Right
+		bar.Rect.Bottom = bar.Rect.Top - bar.LenOfBar
+		bar.Rect.Right = panel.Right
 	}
 }

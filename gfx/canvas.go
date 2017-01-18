@@ -36,7 +36,7 @@ func DrawMenu() {
 		}
 
 		Update9SlicedRect(bu.Rect)
-		DrawTextInRect(bu.Name, bu.Rect.Rect)
+		DrawTextInRect(bu.Name, bu.Rect.Rectangle)
 	}
 }
 
@@ -108,13 +108,8 @@ func Update9SlicedRect(r *app.PicRectangle) {
 	// which keep a predictable frame/margin/edge undistorted,
 	// while stretching the middle to fit the desired space
 
-	w := r.Rect.Width()
-	h := r.Rect.Height()
-
-	// skip invisible or inverted rects
-	if w <= 0 || h <= 0 {
-		return
-	}
+	w := r.Width()
+	h := r.Height()
 
 	//var uvEdgeFraction float32 = 0.125 // 1/8
 	var uvEdgeFraction float32 = 0.125 / 2 // 1/16
@@ -123,8 +118,6 @@ func Update9SlicedRect(r *app.PicRectangle) {
 	sp /* span */ := cGfx.UvSpan
 	u := float32(r.AtlasPos.X) * sp
 	v := float32(r.AtlasPos.Y) * sp
-
-	gl.Normal3f(0, 0, 1)
 
 	// setup the 4 lines needed (for 3 spanning sections)
 	uSpots := []float32{}
@@ -145,10 +138,10 @@ func Update9SlicedRect(r *app.PicRectangle) {
 	}
 
 	xSpots := []float32{}
-	xSpots = append(xSpots, r.Rect.Left)
-	xSpots = append(xSpots, r.Rect.Left+edgeSpan)
-	xSpots = append(xSpots, r.Rect.Right-edgeSpan)
-	xSpots = append(xSpots, r.Rect.Right)
+	xSpots = append(xSpots, r.Left)
+	xSpots = append(xSpots, r.Left+edgeSpan)
+	xSpots = append(xSpots, r.Right-edgeSpan)
+	xSpots = append(xSpots, r.Right)
 
 	edgeSpan = cGfx.PixelSize.Y * 4
 	if edgeSpan > h/2 {
@@ -156,29 +149,13 @@ func Update9SlicedRect(r *app.PicRectangle) {
 	}
 
 	ySpots := []float32{}
-	ySpots = append(ySpots, r.Rect.Top)
-	ySpots = append(ySpots, r.Rect.Top-edgeSpan)
-	ySpots = append(ySpots, r.Rect.Bottom+edgeSpan)
-	ySpots = append(ySpots, r.Rect.Bottom)
+	ySpots = append(ySpots, r.Top)
+	ySpots = append(ySpots, r.Top-edgeSpan)
+	ySpots = append(ySpots, r.Bottom+edgeSpan)
+	ySpots = append(ySpots, r.Bottom)
 
 	if ySpots[1] > ySpots[0] {
 		ySpots[1] = ySpots[0]
-	}
-
-	for iX := 0; iX < 3; iX++ {
-		for iY := 0; iY < 3; iY++ {
-			gl.TexCoord2f(uSpots[iX], vSpots[iY+1]) // left bottom
-			gl.Vertex3f(xSpots[iX], ySpots[iY+1], 0)
-
-			gl.TexCoord2f(uSpots[iX+1], vSpots[iY+1]) // right bottom
-			gl.Vertex3f(xSpots[iX+1], ySpots[iY+1], 0)
-
-			gl.TexCoord2f(uSpots[iX+1], vSpots[iY]) // right top
-			gl.Vertex3f(xSpots[iX+1], ySpots[iY], 0)
-
-			gl.TexCoord2f(uSpots[iX], vSpots[iY]) // left top
-			gl.Vertex3f(xSpots[iX], ySpots[iY], 0)
-		}
 	}
 
 	cGfx.SetRect(r)

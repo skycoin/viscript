@@ -63,16 +63,16 @@ func (t *Terminal) SetSize() {
 	}
 
 	t.Content = &app.PicRectangle{0, 0, 0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
-	t.Content.Rect.Top = t.Whole.Top
-	t.Content.Rect.Right = t.Whole.Right - ui.ScrollBarThickness
-	t.Content.Rect.Bottom = t.Whole.Bottom + ui.ScrollBarThickness
-	t.Content.Rect.Left = t.Whole.Left
+	t.Content.Top = t.Whole.Top
+	t.Content.Right = t.Whole.Right - ui.ScrollBarThickness
+	t.Content.Bottom = t.Whole.Bottom + ui.ScrollBarThickness
+	t.Content.Left = t.Whole.Left
 
 	// set scrollbars' upper left corners
-	t.BarHori.Rect.Rect.Left = t.Whole.Left
-	t.BarHori.Rect.Rect.Top = t.Content.Rect.Bottom
-	t.BarVert.Rect.Rect.Left = t.Content.Rect.Right
-	t.BarVert.Rect.Rect.Top = t.Whole.Top
+	t.BarHori.Rect.Left = t.Whole.Left
+	t.BarHori.Rect.Top = t.Content.Bottom
+	t.BarVert.Rect.Left = t.Content.Right
+	t.BarVert.Rect.Top = t.Whole.Top
 }
 
 func (t *Terminal) RespondToMouseClick() {
@@ -129,7 +129,7 @@ func (t *Terminal) DrawText() {
 	cY := cGfx.CurrY
 	cW := cGfx.CharWid
 	cH := cGfx.CharHei
-	b := t.BarHori.Rect.Rect.Top // bottom of text area
+	b := t.BarHori.Rect.Top // bottom of text area
 
 	// setup for colored text
 	ncId := 0              // next color
@@ -147,10 +147,10 @@ func (t *Terminal) DrawText() {
 
 			// if line needs vertical adjustment
 			if cY > t.Whole.Top {
-				r.Rect.Top = t.Whole.Top
+				r.Top = t.Whole.Top
 			}
 			if cY-cH < b {
-				r.Rect.Bottom = b
+				r.Bottom = b
 			}
 
 			// iterate over runes
@@ -159,9 +159,9 @@ func (t *Terminal) DrawText() {
 				ncId, nc = t.changeColorIfCodeAt(x, y, ncId, nc)
 
 				// drawing
-				if /* char visible */ cX >= t.Whole.Left-cW && cX < t.BarVert.Rect.Rect.Left {
-					app.ClampLeftAndRightOf(r.Rect, t.Whole.Left, t.BarVert.Rect.Rect.Left)
-					gfx.DrawCharAtRect(c, r.Rect)
+				if /* char visible */ cX >= t.Whole.Left-cW && cX < t.BarVert.Rect.Left {
+					app.ClampLeftAndRightOf(r.Rectangle, t.Whole.Left, t.BarVert.Rect.Left)
+					gfx.DrawCharAtRect(c, r.Rectangle)
 
 					if t.IsEditable { //&& Curs.Visible == true {
 						if x == t.CursX && y == t.CursY {
@@ -173,15 +173,15 @@ func (t *Terminal) DrawText() {
 				}
 
 				cX += cW
-				r.Rect.Left = cX
-				r.Rect.Right = cX + cW
+				r.Left = cX
+				r.Right = cX + cW
 			}
 
 			// draw cursor at the end of line if needed
-			if cX < t.BarVert.Rect.Rect.Left && y == t.CursY && t.CursX == len(line) {
+			if cX < t.BarVert.Rect.Left && y == t.CursY && t.CursX == len(line) {
 				if t.IsEditable { //&& Curs.Visible == true {
 					//gfx.SetColor(gfx.White)
-					app.ClampLeftAndRightOf(r.Rect, t.Whole.Left, t.BarVert.Rect.Rect.Left)
+					app.ClampLeftAndRightOf(r.Rectangle, t.Whole.Left, t.BarVert.Rect.Left)
 					gfx.Update9SlicedRect(cGfx.Curs.GetAnimationModifiedRect(*r))
 				}
 			}

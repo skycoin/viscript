@@ -87,8 +87,8 @@ func movedCursorSoUpdateDependents() {
 		foc.BarHori.ScrollDelta = ls
 	}
 
-	if rs > foc.BarHori.ScrollDelta+foc.Content.Rect.Width() {
-		foc.BarHori.ScrollDelta = rs - foc.Content.Rect.Width()
+	if rs > foc.BarHori.ScrollDelta+foc.Content.Width() {
+		foc.BarHori.ScrollDelta = rs - foc.Content.Width()
 	}
 
 	// --- Selection Marking ---

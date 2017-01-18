@@ -40,11 +40,11 @@ func (c *Cursors) Update() {
 
 func (c *Cursors) GetAnimationModifiedRect(r app.PicRectangle) *app.PicRectangle {
 	if c.shrinking {
-		r.Rect.Bottom = r.Rect.Top - c.shrinkFraction*r.Rect.Height()
-		r.Rect.Left = r.Rect.Right - c.shrinkFraction*r.Rect.Width()
+		r.Bottom = r.Top - c.shrinkFraction*r.Height()
+		r.Left = r.Right - c.shrinkFraction*r.Width()
 	} else {
-		r.Rect.Top = r.Rect.Bottom + c.shrinkFraction*r.Rect.Height()
-		r.Rect.Right = r.Rect.Left + c.shrinkFraction*r.Rect.Width()
+		r.Top = r.Bottom + c.shrinkFraction*r.Height()
+		r.Right = r.Left + c.shrinkFraction*r.Width()
 	}
 
 	return &r
