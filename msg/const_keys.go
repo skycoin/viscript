@@ -1,6 +1,44 @@
 package msg
 
-// 1st the C originals
+/*
+
+
+original versions
+
+
+*/
+
+const (
+	GLFW_MOD_SHIFT   = 0x0001 // 	If this bit is set one or more Shift keys were held
+	GLFW_MOD_CONTROL = 0x0002 // ^
+	GLFW_MOD_ALT     = 0x0004 // ^
+	GLFW_MOD_SUPER   = 0x0008 // ^
+)
+
+/*
+
+
+go-gl versions
+
+
+*/
+
+type ModifierKey uint32 // "int" in go-gl docs
+const (
+	ModShift   ModifierKey = GLFW_MOD_SHIFT
+	ModControl ModifierKey = GLFW_MOD_CONTROL
+	ModAlt     ModifierKey = GLFW_MOD_ALT
+	ModSuper   ModifierKey = GLFW_MOD_SUPER
+)
+
+/*
+
+
+original versions
+
+
+*/
+
 const (
 	GLFW_KEY_UNKNOWN    = -1
 	GLFW_KEY_SPACE      = 32
@@ -140,7 +178,14 @@ const (
 	GLFW_KEY_LAST = GLFW_KEY_MENU
 )
 
-// 2nd, the go-gl versions
+/*
+
+
+go-gl versions
+
+
+*/
+
 const (
 	KeyUnknown      = GLFW_KEY_UNKNOWN
 	KeySpace        = GLFW_KEY_SPACE

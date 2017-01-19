@@ -670,3 +670,38 @@ then it gets length prefixed messages from the hypervisor for input.
 
 
 
+get game Uplink, and study the gui.
+
+
+we want want on global renderer, that loops through the terminals or terminal renders itself.
+
+
+we will have
+1> 1 type of terminal (it will do set cursor and do will do set char x,y)
+2> a "process" interface, and this will determine how the key inputs are handled and will be responsible for rendering
+3> there will be a "master process" for hypervisor, to deal with the sub-terminals or windows and moving them and things like that?
+4> in theory we can run a master process inside another master process for recursion/containment and for lulz
+
+
+we have pseudo widgets and a lot of stuff flushed out ,but the module interfaces are not correct or simple enough or contained
+
+
+hypervisor may import terminal
+i am not sure i want terminal inside of hypervisor
+because it seems seperate
+"panel" is important concept
+
+https://upload.wikimedia.org/wikipedia/en/c/cd/Fmli_lu.PNG
+
+
+how do you want to do this?
+1> an array of terminal classes in hyper visor
+2> on method for rendering them all
+3> an associated "process"  interface for handling input messages
+4> messages terminal process sends to the terminal or hypervisor for "set character" and for "set cursor"
+
+
+
+
+we should have keyboard messages going into the terminal from hypervisor
+and have the process interface, sending messages for "set cursor" and "set character" to the terminal
