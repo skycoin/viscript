@@ -653,5 +653,20 @@ another might be a configuration tool.
 
 
 
+----------------------
 we need to create a "terminal" class,then have it receive the input messages and set the gfx stuff
+----------------------
+
+
+
+
+
+Do you want a "region" or "terminal object" so that we can pass input down like a widget?
+where the big terminal gets event, then it determines the sub terminal to reply event to based upon focus and region.
+
+
+the top level hypervisor, we have some "terminal object" and list of these, then the terminal object has "set cursor position" and "Set char" and that is all it has called on it.
+then it gets length prefixed messages from the hypervisor for input.
+
+
 
