@@ -18,7 +18,7 @@ var DebugPrintInputEvents = false
 
 func ProcessInputEvents(message []byte) []byte {
 
-	switch msg.GetMessageTypeUInt16(message) {
+	switch msg.GetType(message) {
 
 	case msg.TypeMousePos:
 		var msgMousePos msg.MessageMousePos

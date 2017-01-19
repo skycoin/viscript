@@ -20,7 +20,7 @@ const MP2 uint16 = 0x02 //input message prefix
 // Process to Hypervisor, input event
 const (
 	TypeSetTerminal = 1 + MP2
-	TypeSetCursor   = 1 + MP2
+	TypeSetCursor   = 2 + MP2
 )
 
 type MessageSetTerminal struct {

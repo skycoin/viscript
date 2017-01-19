@@ -55,7 +55,7 @@ func init() {
 	}
 }
 
-func GetMessageTypeUInt16(message []byte) uint16 {
+func GetType(message []byte) uint16 {
 	var value uint16
 	rBuf := bytes.NewReader(message[0:2])
 	err := binary.Read(rBuf, binary.LittleEndian, &value)

@@ -58,9 +58,9 @@ type PicRectangle struct {
 }
 
 type NineSliceRectangle struct {
-	PicRectangle
 	XSpots [3]float32 // positions of vertical lines
 	YSpots [3]float32 // positions of horizontal lines
 	USpots [3]float32 // texture coords of vertical lines
 	VSpots [3]float32 // texture coords of horizontal lines
+	*PicRectangle
 }

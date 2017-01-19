@@ -532,3 +532,126 @@ So we have "restrictions" on the "slots". A node has slots, and other nodes can 
 
 
 
+
+
+
+
+-------------------------------------
+this is one way of doing messags as structs, converting the messages to []byte and then converting them back again, and givng each message an ID, and labeling what component the message is to and from
+
+
+we have to get the UI and system to do the length prefixed message channels and Tick() methods for dispatching them
+
+
+get the opengl stuff in main.go into the hyper visor folder
+
+
+we have provide an api through hypevisor.
+that will allow a task bar to exist.
+and task bar is just another program.
+we do not need a task bar, but do need method to get the GUI windows.
+and then methods to get the running processes and will eventually have terminal app for that.
+I will do a process list, and a method for running multiple processes and message dispatch.
+
+eventually the processes need to be in the scripting language, along with the UI library and handling and processing.
+we have one computer process in golang, but inside that, we have "terminals" or discrete processes (can accept messages and can emit messages).
+
+for menu button, make a 3x3 or 4x4 button of characters, no text.
+look at uplink, hacker elite for interface.
+for tabs, tab character is 2 spaces.
+
+eventually you will have
+- a DOM< a document object (document object model in the scripting language)
+- a rendering object in the scripting language, which has hints or suggestions for how to render or constraints it will try to satisfy.
+
+how long do you think?
+and how do we deal with windows/terminals?
+
+do you want to assign an int32 id to each process?
+and assign an int32 id for each terminal?
+and have each process specify the id of terminal they are sending message to?
+or will hypervisor track an id for attached terminal?
+
+there will be a object that receives length prefixed messages, then it will emit length prefixed messages back to the hyper visor.
+and it will have a tick() method to clear its length prefixed messages from the queue.
+
+i think terminals or display objects might need own id.
+generally all resources like files or network  connections get int id,
+and we can bind the terminal object to the process object.
+but a lot of process will be in background and wont have display.
+or one display may have ~10 process objects feeding it into for each pane and will multiplex them.
+
+create a channel, for messages going to hypervisor, and create channel for each process.
+and have a Tick() method to pop the messages off and return the messages to hypervisor.
+
+in this framework, the UI changes have to only occur on user events,
+or in response to a length prefixed message.
+
+
+
+i will only give you "set character" and then you have to do things like "set cursor position" and the scrolll bar and advanced rendering stuff.
+and write golang functions to wrap the messaging functionality,
+and the messaging functionality is all state change based.
+so setting cursor position is a state change,  or screen resize etc.
+
+so we will need to seperate out the rendering thing from the process and then have API and it will probably be similar to opengl with the state change functions etc.
+
+also, we have to support korean, russian and japanese and chinese.
+
+
+
+i am doing input as length prefixed messages and doing rendering as length prefixed messages and I cannot remember why i am wrapping this or what the point is.
+
+
+
+do we want the top level of hypervisor to be special?
+or we want top level to be a terminal itself?
+that has other terminals inside of it, and turtles all the way down?
+
+do we want to pass messages to the parent?
+or pass it to hypervisor, who passes to parent?
+and is terminal a process object?
+
+
+
+i have a thing called a process and it accepts length prefixed messages and it emits them.
+do we want it setting cursor and screen with the length prefixed messages?
+and we have a screen or terminal thing, which might be different type of resource than a process, but the processes may drive the screens or terminals.
+
+how do we do this?
+
+
+there are three things:
+
+1> A blank screen, with start button in button left. ability to click the button to get popup of programs to run
+2> A terminal window or monospaced thing pops up (a terminal and a process)
+3> we will have multiple of these things (different programs/process types)
+
+
+we can allow the terminal windows to call out to opengl and set their graphics etc and use your graphics library from opengl
+
+but will restrict input and key presses and mouse through length prefixed message channel I guess
+
+
+
+for simple app, it needs to know terminal size, and needs only two functions:
+set cursor position and set character.
+
+
+
+we need
+1> to be able to have multiple windows (how to do this)
+2> to be able to run different programs (the thing driving the terminal may be different)
+3> to have good library for creating UIs for terminal applications (because we will be writing multiple applications), so good if this can be done quickly
+
+
+
+one program might be a bulletin board system.
+another might be a configuration tool.
+
+
+
+
+
+we need to create a "terminal" class,then have it receive the input messages and set the gfx stuff
+

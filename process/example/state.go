@@ -17,16 +17,14 @@ func (self *State) InitState(proc *Process) {
 }
 
 func (self *State) HandleMessages() {
-
 	var c chan []byte = self.proc.MessageIn
-
 	var msgType uint16
 	var msgTypeMask uint16
 
 	for len(c) > 0 {
 		m := <-c // read from channel
 		//route the message
-		msgType = msg.GetMessageTypeUInt16(m)
+		msgType = msg.GetType(m)
 		msgTypeMask = msgType & 0xff00
 
 		switch msgTypeMask {

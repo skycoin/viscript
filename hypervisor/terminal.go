@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/cGfx"
-	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/tree"
 	"github.com/corpusc/viscript/ui"
-	"github.com/go-gl/gl/v2.1/gl"
 	//"math"
 )
 
@@ -22,6 +20,7 @@ type Terminal struct {
 	// to edit text unless the whole panel is dedicated to just one TextBody (& no graphical trees)
 	Whole      *app.Rectangle    // the whole panel, including chrome (title bar & scroll bars)
 	Content    *app.PicRectangle // viewport into virtual space, subset of the Whole rect
+	Virtual    *app.Rectangle    // virtual space, which can be less or more than Whole/Content, in both dimensions
 	Selection  *ui.SelectionRange
 	BarHori    *ui.ScrollBar // horizontal
 	BarVert    *ui.ScrollBar // vertical
@@ -95,108 +94,6 @@ func (t *Terminal) RespondToMouseClick() {
 	}
 }
 
-func (t *Terminal) GoToTopEdge() {
-	cGfx.CurrY = t.Whole.Top - t.BarVert.ScrollDelta
-}
-func (t *Terminal) GoToLeftEdge() float32 {
-	cGfx.CurrX = t.Whole.Left - t.BarHori.ScrollDelta
-	return cGfx.CurrX
-}
-func (t *Terminal) GoToTopLeftCorner() {
-	t.GoToTopEdge()
-	t.GoToLeftEdge()
-}
-
-func (t *Terminal) Draw() {
-	t.GoToTopLeftCorner()
-	t.DrawBackground(t.Content)
-	t.DrawText()
-	//gfx.SetColor(cGfx..GrayDark)
-	t.DrawScrollbarChrome(10, 11, t.Whole.Right-ui.ScrollBarThickness, t.Whole.Top)                          // vertical bar background
-	t.DrawScrollbarChrome(13, 12, t.Whole.Left, t.Whole.Bottom+ui.ScrollBarThickness)                        // horizontal bar background
-	t.DrawScrollbarChrome(12, 11, t.Whole.Right-ui.ScrollBarThickness, t.Whole.Bottom+ui.ScrollBarThickness) // corner elbow piece
-	//gfx.SetColor(cGfx..Gray)
-	t.BarHori.SetSize(t.Whole, t.TextBodies[0], cGfx.CharWid, cGfx.CharHei) // FIXME? (to consider multiple bodies & multiple trees)
-	t.BarVert.SetSize(t.Whole, t.TextBodies[0], cGfx.CharWid, cGfx.CharHei)
-	gfx.Update9SlicedRect(t.BarHori.Rect)
-	gfx.Update9SlicedRect(t.BarVert.Rect)
-	//gfx.SetColor(cGfx..White)
-	t.DrawTree()
-}
-
-func (t *Terminal) DrawText() {
-	cX := cGfx.CurrX // current drawing position
-	cY := cGfx.CurrY
-	cW := cGfx.CharWid
-	cH := cGfx.CharHei
-	b := t.BarHori.Rect.Top // bottom of text area
-
-	// setup for colored text
-	ncId := 0              // next color
-	var nc *cGfx.ColorSpot // ^
-	if /* colors exist */ len(t.TextColors) > 0 {
-		nc = t.TextColors[ncId]
-	}
-
-	// iterate over lines
-	for y, line := range t.TextBodies[0] {
-		lineVisible := cY <= t.Whole.Top+cH && cY >= b
-
-		if lineVisible {
-			r := &app.PicRectangle{0, 0, 0, cGfx.Pic_GradientBorder, &app.Rectangle{cY, cX + cW, cY - cH, cX}} // t, r, b, l
-
-			// if line needs vertical adjustment
-			if cY > t.Whole.Top {
-				r.Top = t.Whole.Top
-			}
-			if cY-cH < b {
-				r.Bottom = b
-			}
-
-			// iterate over runes
-			//cGfx.SetColor(cGfx.Gray)
-			for x, c := range line {
-				ncId, nc = t.changeColorIfCodeAt(x, y, ncId, nc)
-
-				// drawing
-				if /* char visible */ cX >= t.Whole.Left-cW && cX < t.BarVert.Rect.Left {
-					app.ClampLeftAndRightOf(r.Rectangle, t.Whole.Left, t.BarVert.Rect.Left)
-					gfx.DrawCharAtRect(c, r.Rectangle)
-
-					if t.IsEditable { //&& Curs.Visible == true {
-						if x == t.CursX && y == t.CursY {
-							//gfx.SetColor(gfx.White)
-							gfx.Update9SlicedRect(cGfx.Curs.GetAnimationModifiedRect(*r))
-							//gfx.SetColor(gfx.PrevColor)
-						}
-					}
-				}
-
-				cX += cW
-				r.Left = cX
-				r.Right = cX + cW
-			}
-
-			// draw cursor at the end of line if needed
-			if cX < t.BarVert.Rect.Left && y == t.CursY && t.CursX == len(line) {
-				if t.IsEditable { //&& Curs.Visible == true {
-					//gfx.SetColor(gfx.White)
-					app.ClampLeftAndRightOf(r.Rectangle, t.Whole.Left, t.BarVert.Rect.Left)
-					gfx.Update9SlicedRect(cGfx.Curs.GetAnimationModifiedRect(*r))
-				}
-			}
-
-			cX = t.GoToLeftEdge()
-		} else { // line not visible
-			for x := range line {
-				ncId, nc = t.changeColorIfCodeAt(x, y, ncId, nc)
-			}
-		}
-
-		cY -= cH // go down a line height
-	}
-}
-
 func (t *Terminal) changeColorIfCodeAt(x, y, ncId int, nc *cGfx.ColorSpot) (int, *cGfx.ColorSpot) {
 	if /* colors exist */ len(t.TextColors) > 0 {
 		if x == nc.Pos.X &&
@@ -212,36 +109,6 @@ func (t *Terminal) changeColorIfCodeAt(x, y, ncId int, nc *cGfx.ColorSpot) (int,
 	}
 
 	return ncId, nc
-}
-
-// ATM the only different between the 2 funcs below is the top left corner (involving 3 vertices)
-func (t *Terminal) DrawScrollbarChrome(atlasCellX, atlasCellY, l, top float32) { // l = left
-	span := cGfx.UvSpan
-	u := float32(atlasCellX) * span
-	v := float32(atlasCellY) * span
-
-	gl.Normal3f(0, 0, 1)
-
-	// bottom left   0, 1
-	gl.TexCoord2f(u, v+span)
-	gl.Vertex3f(l, t.Whole.Bottom, 0)
-
-	// bottom right   1, 1
-	gl.TexCoord2f(u+span, v+span)
-	gl.Vertex3f(t.Whole.Right, t.Whole.Bottom, 0)
-
-	// top right   1, 0
-	gl.TexCoord2f(u+span, v)
-	gl.Vertex3f(t.Whole.Right, top, 0)
-
-	// top left   0, 0
-	gl.TexCoord2f(u, v)
-	gl.Vertex3f(l, top, 0)
-}
-
-func (t *Terminal) DrawBackground(r *app.PicRectangle) {
-	//gfx.SetColor(gfx.GrayDark)
-	gfx.Update9SlicedRect(r)
 }
 
 func (t *Terminal) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float32) {
@@ -371,4 +238,11 @@ func (t *Terminal) SetupDemoProgram() {
 	*/
 
 	t.TextBodies[0] = txt
+}
+
+func (t *Terminal) respondToVirtualSpaceResize() {
+	// ************ FIXME these should be called when .Virtual space is implemented (& when it changes)
+	// ************ FIXME also when physical space changes since bar is proportional to that
+	//barHori.SetSize(t.Whole, t.TextBodies[0], CharWid, CharHei) // FIXME? (to consider multiple bodies & multiple trees)
+	//barVert.SetSize(t.Whole, t.TextBodies[0], CharWid, CharHei)
 }

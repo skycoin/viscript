@@ -1,6 +1,7 @@
 package app
 
-var Name = "V I S C R I P T"
+const Name = "V I S C R I P T"
+const UvSpan = float32(1.0) / 16 // span of a tile/cell in uv space
 
 // params: float value, negativemost, & positivemost bounds
 func Clamp(f, negBoundary, posBoundary float32) float32 {

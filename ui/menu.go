@@ -3,7 +3,6 @@ package ui
 import (
 	"fmt"
 	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/cGfx"
 )
 
 var MainMenu = Menu{}
@@ -32,7 +31,7 @@ func (m *Menu) SetSize(r *app.Rectangle) {
 	hei := m.Rect.Height() / float32(len(m.Buttons)) // height of buttons
 
 	for _, b := range m.Buttons {
-		nr := &app.PicRectangle{0, 0, 0, cGfx.Pic_GradientBorder, &app.Rectangle{r.Top, r.Right, r.Bottom, r.Left}}
+		nr := &app.PicRectangle{0, 0, 0, app.Vec2I{11, 13} /*Pic_GradientBorder*/, &app.Rectangle{r.Top, r.Right, r.Bottom, r.Left}}
 
 		if m.IsVertical {
 			nr.Top = y

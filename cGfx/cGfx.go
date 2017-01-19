@@ -3,6 +3,7 @@ package cGfx
 import (
 	"fmt"
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/ui"
 )
 
 /*
@@ -10,6 +11,7 @@ import (
 
 .....which (ATM) has only "app" as a dependency
 ("app" has NONE)
+..... [UPDATE]: added ui for now, but it only has app & "math"
 
 migrate things over here until we can delete/replace
 the current "gfx" package with THIS
@@ -23,6 +25,7 @@ var Pic_PixelCheckerboard = app.Vec2I{2, 11}
 var Pic_SquareInTheMiddle = app.Vec2I{14, 15}
 var Pic_DoubleLinesHorizontal = app.Vec2I{13, 12}
 var Pic_DoubleLinesVertical = app.Vec2I{10, 11}
+var Pic_DoubleLinesElbowBR = app.Vec2I{12, 11} // BR = bottom right
 
 // colors
 var Black = []float32{0, 0, 0, 1}
@@ -70,7 +73,6 @@ var (
 	CharHei            float32
 	CharWidInPixels    int
 	CharHeiInPixels    int
-	UvSpan             float32 // looking into 16/16 atlas/grid of character tiles
 	// FIXME: below is no longer a maximum of what fits on a max-sized panel (taking up the whole app window) anymore.
 	// 		but is still used as a guide for sizes
 	MaxCharsX int // this is used to give us proportions like an 80x25 text console screen, ....
@@ -91,7 +93,6 @@ func init() {
 	MaxCharsX = 80
 	MaxCharsY = 25
 	DistanceFromOrigin = 3
-	UvSpan = float32(1.0) / 16 // how much uv a pixel spans
 
 	// things that are resized later
 	CanvasExtents.X = DistanceFromOrigin * longerDimension
@@ -104,6 +105,7 @@ func init() {
 	PixelSize.Y = CanvasExtents.Y * 2 / float32(CurrAppHeight)
 
 	// MORE one-time setup
+	ui.MainMenu.SetSize(GetMenuSizedRect())
 }
 
 func SetSize() {
@@ -122,6 +124,7 @@ func SetSize() {
 	CanvasExtents.Y = DistanceFromOrigin * CurrFrustum.Top
 
 	// things that weren't initialized in this func
+	ui.MainMenu.SetSize(GetMenuSizedRect())
 }
 
 func GetMenuSizedRect() *app.Rectangle {
@@ -130,10 +133,6 @@ func GetMenuSizedRect() *app.Rectangle {
 		CanvasExtents.X,
 		CanvasExtents.Y - CharHei,
 		-CanvasExtents.X}
-}
-
-func DrawAll() {
-	Curs.Update()
 }
 
 func SetRect(r *app.PicRectangle) { // will add one if it doesn't exist yet

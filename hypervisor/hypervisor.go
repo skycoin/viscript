@@ -72,10 +72,10 @@ func DispatchInputEvents(ch chan []byte) []byte {
 func UpdateDrawBuffer() {
 	igl.DrawScene()
 
-	for _, term := range Terms {
-		//fmt.Println("drawing a terminal", term.FractionOfStrip)
-		term.Draw()
-	}
+	// for _, term := range Terms {
+	// 	//fmt.Println("drawing a terminal", term.FractionOfStrip)
+	// 	term.Draw()
+	// }
 }
 
 func SwapDrawBuffer() {

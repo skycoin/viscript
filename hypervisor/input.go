@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/cGfx"
-	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/gl"
 	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"
@@ -49,7 +48,6 @@ func onFrameBufferSize(m msg.MessageFrameBufferSize) {
 	cGfx.CurrAppWidth = int32(m.X)
 	cGfx.CurrAppHeight = int32(m.Y)
 	cGfx.SetSize()
-	gfx.SetSize()
 	SetSize()
 }
 
@@ -81,7 +79,7 @@ func movedCursorSoUpdateDependents() {
 
 	// autoscroll to keep cursor visible
 	ls := float32(foc.CursX) * cGfx.CharWid // left side (of cursor, in virtual space)
-	rs := ls + cGfx.CharWid
+	rs := ls + cGfx.CharWid                 // right side ^
 
 	if ls < foc.BarHori.ScrollDelta {
 		foc.BarHori.ScrollDelta = ls

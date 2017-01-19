@@ -9,11 +9,13 @@ import (
 	"log"
 )
 
-var GlfwWindow *glfw.Window // deprecate eventually
-var CloseWindow chan int    // write to channel to close
+var goldenRatio = 1.61803398875
+var goldenFraction = float32(goldenRatio / (goldenRatio + 1))
 
 var (
-	Texture uint32
+	GlfwWindow  *glfw.Window // deprecate eventually
+	CloseWindow chan int     // write to channel to close
+	Texture     uint32
 )
 
 //gfx in cGfx.CurrAppWidth
