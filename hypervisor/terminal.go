@@ -8,7 +8,7 @@ import (
 )
 
 type Terminal struct {
-	TerminalId      msg.TermininalId
+	TerminalId      msg.TerminalId
 	AttachedProcess msg.ProcessId
 
 	CursX int // current cursor/insert position (in character grid cells/units)
@@ -34,10 +34,10 @@ type Terminal struct {
 func (t *Terminal) Init() {
 	fmt.Printf("Terminal.Init()\n")
 
-	self.TerminalId = msg.RandTerminalId()
+	t.TerminalId = msg.RandTerminalId()
 
-	Xsize = 32 //default
-	Ysize = 64 //default
+	t.Xsize = 32 //default
+	t.Ysize = 64 //default
 
 	t.SetSize()
 }

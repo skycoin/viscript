@@ -1,7 +1,7 @@
 package hypervisor
 
 import (
-	"fmt"
+	//"fmt"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -44,23 +44,3 @@ func (self *TerminalStack) Draw() {}
 func (self *TerminalStack) ResizeTerminal(id msg.TerminalId, x int, y int) {}
 
 func (self *TerminalStack) MoveTerminal(id msg.TerminalId, xoff int, yoff int) {}
-
-/*
-func initTerminals() {
-
-	Terms = append(Terms, &Terminal{})
-	Terms = append(Terms, &Terminal{})
-
-	Focused = Terms[0]
-
-	Terms[0].Init()
-	Terms[1].Init()
-}
-*/
-
-// (maybe temporary) refactoring additions
-//func SetSize() {
-//	for _, t := range Terms {
-//		t.SetSize()
-//	}
-//}

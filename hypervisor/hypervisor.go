@@ -24,7 +24,6 @@ var CloseWindow chan int // write to channel to close
 func init() {
 	fmt.Println("hypervisor.init()")
 	CloseWindow = make(chan int) //write to close windows
-	initTerminals()
 }
 
 func HypervisorInit() {
