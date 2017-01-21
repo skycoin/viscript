@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/corpusc/viscript/msg"
 	//"github.com/corpusc/viscript/app"
-	//"github.com/corpusc/viscript/tree"
 	//"math"
 )
 

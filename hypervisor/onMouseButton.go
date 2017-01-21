@@ -5,8 +5,6 @@ import (
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"
-	//"github.com/corpusc/viscript/script"
-	"github.com/corpusc/viscript/ui"
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 

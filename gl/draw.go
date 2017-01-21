@@ -2,16 +2,16 @@ package gl
 
 import (
 	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/cGfx"
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
 func SetColor(newColor []float32) {
-	cGfx.PrevColor = cGfx.CurrColor
-	cGfx.CurrColor = newColor
+	//cGfx.PrevColor = cGfx.CurrColor
+	//cGfx.CurrColor = newColor
 	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &newColor[0])
 }
 
+/*
 func DrawTextInRect(s string, r *app.Rectangle) {
 	h := r.Height() * goldenFraction   // height of chars
 	w := h                             // width of chars (same as height, or else squished to fit rect)
@@ -31,6 +31,7 @@ func DrawTextInRect(s string, r *app.Rectangle) {
 		x += w
 	}
 }
+*/
 
 func DrawCharAtRect(char rune, r *app.Rectangle) {
 	u := float32(int(char) % 16)
@@ -121,19 +122,21 @@ func Draw9Sliced(r *app.PicRectangle) {
 }
 
 func drawAll() { // ATM ONLY draws 9slices, but without 9 slicing them
-	cGfx.DrawAll()
+	/*
+		cGfx.DrawAll()
 
-	// skip 0 so we can use it as a code for being uninitialized
-	for i := 1; i < len(cGfx.Rects); i++ {
-		if cGfx.Rects[i].State == app.RectState_Active {
-			//gfx.SetColor(gfx.Rects[i].Color)
+		// skip 0 so we can use it as a code for being uninitialized
+		for i := 1; i < len(cGfx.Rects); i++ {
+			if cGfx.Rects[i].State == app.RectState_Active {
+				//gfx.SetColor(gfx.Rects[i].Color)
 
-			if cGfx.Rects[i].Type == app.RectType_9Slice {
-				Draw9Sliced(cGfx.Rects[i])
-				DrawQuad(cGfx.Pic_GradientBorder.X, cGfx.Pic_GradientBorder.Y, cGfx.Rects[i].Rectangle)
-			} else {
-				DrawQuad(cGfx.Pic_GradientBorder.X, cGfx.Pic_GradientBorder.Y, cGfx.Rects[i].Rectangle)
+				if cGfx.Rects[i].Type == app.RectType_9Slice {
+					Draw9Sliced(cGfx.Rects[i])
+					DrawQuad(cGfx.Pic_GradientBorder.X, cGfx.Pic_GradientBorder.Y, cGfx.Rects[i].Rectangle)
+				} else {
+					DrawQuad(cGfx.Pic_GradientBorder.X, cGfx.Pic_GradientBorder.Y, cGfx.Rects[i].Rectangle)
+				}
 			}
 		}
-	}
+	*/
 }

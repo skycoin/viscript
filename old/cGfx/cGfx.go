@@ -50,29 +50,18 @@ var Yellow = []float32{1, 1, 0, 1}
 var PrevColor []float32 // previous
 var CurrColor []float32
 
-// dimensions (in pixel units)
-var InitAppWidth int32 = 800
-var InitAppHeight int32 = 600
-var CurrAppWidth int32 = InitAppWidth
-var CurrAppHeight int32 = InitAppHeight
-var longerDimension = float32(InitAppWidth) / float32(InitAppHeight)
-var InitFrustum = &app.Rectangle{1, longerDimension, -1, -longerDimension}
-var PrevFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
-var CurrFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
-
 // rectangle data soup
 var Rects []*app.PicRectangle
 
 var (
 	// distance from the center to an edge of the app's root/client area
 	// ....in the cardinal directions from the center, corners would be farther away)
-	CanvasExtents      app.Vec2F
-	PixelSize          app.Vec2F
-	DistanceFromOrigin float32
-	CharWid            float32
-	CharHei            float32
-	CharWidInPixels    int
-	CharHeiInPixels    int
+	CanvasExtents   app.Vec2F
+	PixelSize       app.Vec2F
+	CharWid         float32
+	CharHei         float32
+	CharWidInPixels int
+	CharHeiInPixels int
 	// FIXME: below is no longer a maximum of what fits on a max-sized panel (taking up the whole app window) anymore.
 	// 		but is still used as a guide for sizes
 	MaxCharsX int // this is used to give us proportions like an 80x25 text console screen, ....
@@ -92,7 +81,6 @@ func init() {
 	// FIXME: these are NO LONGER used as maximums, but more as guidelines for text size
 	MaxCharsX = 80
 	MaxCharsY = 25
-	DistanceFromOrigin = 3
 
 	// things that are resized later
 	CanvasExtents.X = DistanceFromOrigin * longerDimension

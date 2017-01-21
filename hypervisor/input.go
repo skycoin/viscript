@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/cGfx"
 	"github.com/corpusc/viscript/gl"
 	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"

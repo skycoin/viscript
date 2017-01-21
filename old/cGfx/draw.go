@@ -6,11 +6,6 @@ import (
 	"github.com/corpusc/viscript/ui"
 )
 
-func DrawAll() {
-	Curs.Update()
-	DrawMenu()
-}
-
 func DrawMenu() {
 	for _, bu := range ui.MainMenu.Buttons {
 		if bu.Activated {
