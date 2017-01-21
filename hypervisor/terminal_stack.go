@@ -2,50 +2,65 @@ package hypervisor
 
 import (
 	"fmt"
+	"github.com/corpusc/viscript/msg"
 )
 
-var Focused *Terminal
-var Terms []*Terminal
+/*
+	What operations?
+	- create terminal
+	- delete terminal
+	- draw terminal state
+	- change terminal in focus
+	- resize terminal (in pixels or chars)
+	- move terminal
 
-var runOutputTerminalFrac = float32(0.4) // TEMPORARY fraction of vertical strip height which is dedicated to running code
+*/
+type TerminalStack struct {
+	Focused msg.TerminalId
+	Terms   map[msg.TerminalId]*Terminal
+}
 
+//var Focused *Terminal //use terminal ID
+//var Terms []*Terminal
+
+//var runOutputTerminalFrac = float32(0.4) // TEMPORARY fraction of vertical strip height which is dedicated to running code
+
+func (self *TerminalStack) Init() {
+
+}
+
+func (self *TerminalStack) AddTerminal() {
+
+}
+
+func (self *TerminalStack) RemoveTerminal() {
+
+}
+
+//MOST IMPORTANT
+func (self *TerminalStack) Draw() {}
+
+//MOST IMPORTANT
+func (self *TerminalStack) ResizeTerminal(id msg.TerminalId, x int, y int) {}
+
+func (self *TerminalStack) MoveTerminal(id msg.TerminalId, xoff int, yoff int) {}
+
+/*
 func initTerminals() {
-	Terms = append(Terms, &Terminal{FractionOfStrip: 1 - runOutputTerminalFrac, IsEditable: true})
-	Terms = append(Terms, &Terminal{FractionOfStrip: runOutputTerminalFrac, IsEditable: false}) // console (runtime feedback log)	// FIXME so its not editable once we're done debugging some things
+
+	Terms = append(Terms, &Terminal{})
+	Terms = append(Terms, &Terminal{})
+
 	Focused = Terms[0]
 
 	Terms[0].Init()
-	Terms[0].SetupDemoProgram()
 	Terms[1].Init()
 }
+*/
 
 // (maybe temporary) refactoring additions
-func SetSize() {
-	for _, t := range Terms {
-		t.SetSize()
-	}
-}
-
-func ScrollTermThatHasMousePointer(mousePixelDeltaX, mousePixelDeltaY float32) {
-	for _, t := range Terms {
-		t.ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY)
-	}
-}
-
-func InsertRuneIntoDocument(s string, message uint32) string {
-	f := Focused
-	b := f.TextBodies[0]
-	resultsDif := f.CursX - len(b[f.CursY])
-	fmt.Printf("Rune   [%s: %s]", s, string(message))
-
-	if f.CursX > len(b[f.CursY]) {
-		b[f.CursY] = b[f.CursY][:f.CursX-resultsDif] + b[f.CursY][:len(b[f.CursY])] + string(message)
-		fmt.Printf("line is %s\n", b[f.CursY])
-		f.CursX++
-	} else {
-		b[f.CursY] = b[f.CursY][:f.CursX] + string(message) + b[f.CursY][f.CursX:len(b[f.CursY])]
-		f.CursX++
-	}
-
-	return string(message)
-}
+//func SetSize() {
+//	for _, t := range Terms {
+//		t.SetSize()
+//	}
+//}
