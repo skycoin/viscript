@@ -63,7 +63,7 @@ func LoadTextures() {
 }
 
 func InitRenderer() {
-	fmt.Println("InitRenderer()")
+	fmt.Println("gl.InitRenderer()")
 
 	gl.Enable(gl.DEPTH_TEST)
 	gl.Enable(gl.LIGHTING)
@@ -96,6 +96,10 @@ func SetFrustum(r *app.Rectangle) {
 		float64(r.Right),
 		float64(r.Bottom),
 		float64(r.Top), 1.0, 10.0)
+}
+
+func Update() {
+	gfx.Curs.Update()
 }
 
 func DrawScene() {

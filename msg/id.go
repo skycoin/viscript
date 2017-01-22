@@ -15,7 +15,6 @@ func RandProcessId() ProcessId {
 	//return (ProccesId)(rand.Int63())
 }
 
-//terminate ID
 type TerminalId uint64
 
 func RandTerminalId() TerminalId {

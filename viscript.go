@@ -52,8 +52,9 @@ func main() {
 		hypervisor.DispatchProcesEvents()               //hypervisor handles incoming process events
 		hypervisor.ProcessTick()                        //processes, handle incoming events
 		hypervisor.PollUiInputEvents()
+		hypervisor.Update() //in general
 		hypervisor.UpdateDrawBuffer()
-		hypervisor.SwapDrawBuffer() //swap the draw frame with new frame
+		hypervisor.SwapDrawBuffer() //with new frame
 	}
 	hypervisor.HypervisorScreenTeardown()
 	hypervisor.HypervisorProcessListTeardown()

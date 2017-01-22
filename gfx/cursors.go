@@ -1,4 +1,4 @@
-package cGfx
+package gfx
 
 import (
 	//"fmt"
@@ -6,21 +6,18 @@ import (
 	"time"
 )
 
-var Curs Cursors = Cursors{NextBlinkChange: time.Now(), Visible: true}
+var Curs Cursors = Cursors{NextFrame: time.Now()}
 
 type Cursors struct {
-	NextBlinkChange time.Time
-	Visible         bool
-
+	NextFrame time.Time
 	// private
 	shrinking      bool
 	shrinkFraction float32
 }
 
 func (c *Cursors) Update() {
-	if c.NextBlinkChange.Before(time.Now()) {
-		c.NextBlinkChange = time.Now().Add(time.Millisecond * 16) // 170 for simple on/off blinking
-		c.Visible = !c.Visible
+	if c.NextFrame.Before(time.Now()) {
+		c.NextFrame = time.Now().Add(time.Millisecond * 16) // 170 for simple on/off blinking
 
 		if c.shrinking {
 			c.shrinkFraction -= PixelSize.Y * 6
