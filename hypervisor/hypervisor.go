@@ -19,11 +19,10 @@ import (
 //glfw.PollEvents()
 //only remaining
 
-var CloseWindow chan int // write to channel to close
+var CloseWindow bool = false // write to channel to close
 
 func init() {
 	fmt.Println("hypervisor.init()")
-	CloseWindow = make(chan int) //write to close windows
 }
 
 func HypervisorInit() {

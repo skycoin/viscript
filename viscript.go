@@ -47,7 +47,7 @@ func main() {
 	hypervisor.AddTestProcess()
 
 	fmt.Printf("Start Loop; \n")
-	for len(hypervisor.CloseWindow) == 0 {
+	for hypervisor.CloseWindow == false {
 		hypervisor.DispatchInputEvents(igl.InputEvents) //event channel
 		hypervisor.DispatchProcesEvents()               //hypervisor handles incoming process events
 		hypervisor.ProcessTick()                        //processes, handle incoming events
@@ -56,6 +56,8 @@ func main() {
 		hypervisor.UpdateDrawBuffer()
 		hypervisor.SwapDrawBuffer() //with new frame
 	}
+
+	fmt.Printf("Closing down hypervisor \n")
 	hypervisor.HypervisorScreenTeardown()
 	hypervisor.HypervisorProcessListTeardown()
 

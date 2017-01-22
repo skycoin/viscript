@@ -24,7 +24,9 @@ func onKey(m msg.MessageKey) {
 		case msg.KeyEscape:
 			fmt.Println("case msg.KeyEscape:")
 			//gl.GlfwWindow.SetShouldClose(true)
-			CloseWindow <- 1
+			fmt.Printf("CLOSE OPENGL WINDOW \n")
+			CloseWindow = true
+
 			//HypervisorScreenTeardown()
 
 		case msg.KeyLeftShift:

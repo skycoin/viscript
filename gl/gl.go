@@ -13,9 +13,10 @@ var goldenRatio = 1.61803398875
 var goldenFraction = float32(goldenRatio / (goldenRatio + 1))
 
 var (
-	GlfwWindow  *glfw.Window // deprecate eventually
-	CloseWindow chan int     // write to channel to close
-	Texture     uint32
+	GlfwWindow *glfw.Window // deprecate eventually
+	Texture    uint32
+
+	//CloseWindow bool = false // write to channel to close
 )
 
 //gfx in cGfx.CurrAppWidth
@@ -26,7 +27,7 @@ var (
 //settings in either app or gfx
 
 func init() {
-	CloseWindow = make(chan int) //write, to attempt to close out
+	//CloseWindow = make(chan int) //write, to attempt to close out
 }
 
 func WindowInit() {
