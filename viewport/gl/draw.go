@@ -19,7 +19,7 @@ func init() {
 	println("gl.init() - draw.go")
 	Terms.Init()
 	Terms.AddTerminal()
-	Terms.AddTerminal()
+	//Terms.AddTerminal()
 }
 
 func SetColor(newColor []float32) {
@@ -141,9 +141,32 @@ func Draw9Sliced(r *app.PicRectangle) {
 func drawAll() {
 	DrawQuad(gfx.Pic_GradientBorder, desktop)
 
-	for key, value := range Terms.Terms {
-		println("drawing terminal --- Key (TermId):", key, "Value:", value)
+	for _, value := range Terms.Terms {
+		//println("drawing terminal --- Key (TermId):", key, "Value:", value)
 		DrawQuad(gfx.Pic_GradientBorder, value.Bounds)
+
+		cr := &app.Rectangle{
+			value.Bounds.Top,
+			value.Bounds.Left + value.SpanX(),
+			value.Bounds.Top - value.SpanY(),
+			value.Bounds.Left} //current rectangle
+
+		for x := 0; x < value.GridSize.X; x++ {
+			for y := 0; y < value.GridSize.Y; y++ {
+				if value.Chars[y][x] != 0 {
+					DrawCharAtRect(rune(value.Chars[y][x]), cr)
+				}
+
+				cr.Top -= value.SpanY()
+				cr.Bottom -= value.SpanY()
+			}
+
+			cr.Top = value.Bounds.Top
+			cr.Bottom = value.Bounds.Top - value.SpanY()
+
+			cr.Left += value.SpanX()
+			cr.Right += value.SpanX()
+		}
 	}
 
 	/*

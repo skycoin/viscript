@@ -29,17 +29,20 @@ type TerminalStack struct {
 func (self *TerminalStack) Init() {
 	println("TerminalStack.Init()")
 	self.Terms = make(map[msg.TerminalId]*Terminal)
-	self.nextSpan = 0.5
+	self.nextSpan = 1.5
 	self.nextRect = &app.Rectangle{
-		Top:  gfx.DistanceFromOrigin,
-		Left: -gfx.DistanceFromOrigin}
+		3,
+		gfx.DistanceFromOrigin * .7,
+		-1,
+		-4}
 }
 
 func (self *TerminalStack) AddTerminal() {
 	println("TerminalStack.AddTerminal()")
 
-	self.Terms[msg.RandTerminalId()] = &Terminal{
-		Bounds: self.nextRect}
+	rand := msg.RandTerminalId()
+	self.Terms[rand] = &Terminal{Bounds: self.nextRect}
+	self.Terms[rand].Init()
 
 	self.nextRect.Top -= self.nextSpan
 	self.nextRect.Right += self.nextSpan
