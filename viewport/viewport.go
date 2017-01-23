@@ -19,10 +19,18 @@ import (
 //glfw.PollEvents()
 //only remaining
 
-var CloseWindow bool = false
+var (
+	CloseWindow bool          = false
+	Terms       TerminalStack = TerminalStack{}
+)
 
 func init() {
+<<<<<<< HEAD:viewport/viewport.go
 	fmt.Println("viewport.init()")
+=======
+	fmt.Println("hypervisor.init()")
+	Terms.AddTerminal()
+>>>>>>> fa35f5d15450f9770866da2ff84d16c405370d67:hypervisor/hypervisor.go
 }
 
 func ViewportInit() {
