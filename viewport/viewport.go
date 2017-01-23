@@ -5,10 +5,8 @@ import (
 
 	"github.com/corpusc/viscript/app"
 	//"github.com/corpusc/viscript/gfx"
-	//"github.com/corpusc/viscript/msg"
+	"github.com/corpusc/viscript/viewport/terminal"
 	//"github.com/corpusc/viscript/script"
-	//"github.com/go-gl/gl/v2.1/gl"
-	//"github.com/go-gl/glfw/v3.2/glfw"
 	//"log"
 	"runtime"
 
@@ -20,17 +18,13 @@ import (
 //only remaining
 
 var (
-	CloseWindow bool          = false
-	Terms       TerminalStack = TerminalStack{}
+	CloseWindow bool                   = false
+	Terms       terminal.TerminalStack = terminal.TerminalStack{}
 )
 
 func init() {
-<<<<<<< HEAD:viewport/viewport.go
 	fmt.Println("viewport.init()")
-=======
-	fmt.Println("hypervisor.init()")
 	Terms.AddTerminal()
->>>>>>> fa35f5d15450f9770866da2ff84d16c405370d67:hypervisor/hypervisor.go
 }
 
 func ViewportInit() {

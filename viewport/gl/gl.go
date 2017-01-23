@@ -35,6 +35,13 @@ func WindowInit() {
 	}
 
 	//defer glfw.Terminate()
+	/*
+	   Go's defer statement schedules a function call (the deferred function)
+	   to be run immediately before the function executing the defer returns.
+	   It's an unusual but effective way to deal with situations such as resources
+	   that must be released regardless of which path a function takes to return.
+	   The canonical examples are unlocking a mutex or closing a file.
+	*/
 
 	fmt.Printf("Gl: set windowhint\n")
 	glfw.WindowHint(glfw.Resizable, glfw.True)
