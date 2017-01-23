@@ -18,11 +18,8 @@ type Terminal struct {
 
 	//vars for GL space / float
 	//(mouse pos events are the only things that use pixels)
-	//Whole *app.Rectangle // the whole panel, including chrome (title bar & scroll bars)
-
-	Offset app.Vec2F //to upper right
-	Size   app.Vec2F
-	Depth  int //0 for lowest
+	Bounds *app.Rectangle // the whole panel, including chrome (title bar & scroll bars)
+	Depth  int            //0 for lowest
 }
 
 func (t *Terminal) Init() {

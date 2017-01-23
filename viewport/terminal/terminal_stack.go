@@ -1,6 +1,8 @@
 package terminal
 
 import (
+	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -18,17 +20,34 @@ import (
 type TerminalStack struct {
 	Focused msg.TerminalId
 	Terms   map[msg.TerminalId]*Terminal
+
+	// private
+	nextRect *app.Rectangle // for next/new terminal spawn
+	nextSpan float32        // how far from previous terminal
 }
 
 func (self *TerminalStack) Init() {
 	println("TerminalStack.Init()")
+	self.Terms = make(map[msg.TerminalId]*Terminal)
+	self.nextSpan = 0.5
+	self.nextRect = &app.Rectangle{
+		Top:  gfx.DistanceFromOrigin,
+		Left: -gfx.DistanceFromOrigin}
 }
 
 func (self *TerminalStack) AddTerminal() {
 	println("TerminalStack.AddTerminal()")
+
+	self.Terms[msg.RandTerminalId()] = &Terminal{
+		Bounds: self.nextRect}
+
+	self.nextRect.Top -= self.nextSpan
+	self.nextRect.Right += self.nextSpan
+	self.nextRect.Bottom -= self.nextSpan
+	self.nextRect.Left += self.nextSpan
 }
 
-func (self *TerminalStack) RemoveTerminal() {
+func (self *TerminalStack) RemoveTerminal(id int) {
 	println("TerminalStack.RemoveTerminal()")
 }
 

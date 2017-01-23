@@ -2,8 +2,24 @@ package gl
 
 import (
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/gfx"
+	"github.com/corpusc/viscript/viewport/terminal"
 	"github.com/go-gl/gl/v2.1/gl"
 )
+
+var Terms terminal.TerminalStack = terminal.TerminalStack{}
+var desktop *app.Rectangle = &app.Rectangle{
+	gfx.DistanceFromOrigin,
+	gfx.DistanceFromOrigin,
+	-gfx.DistanceFromOrigin,
+	-gfx.DistanceFromOrigin}
+
+func init() {
+	println("gl.init() - draw.go")
+	Terms.Init()
+	Terms.AddTerminal()
+	Terms.AddTerminal()
+}
 
 func SetColor(newColor []float32) {
 	//cGfx.PrevColor = cGfx.CurrColor
@@ -53,10 +69,10 @@ func DrawCharAtRect(char rune, r *app.Rectangle) {
 	gl.Vertex3f(r.Left, r.Top, 0)
 }
 
-func DrawQuad(atlasX, atlasY int, r *app.Rectangle) {
+func DrawQuad(tile app.Vec2I, r *app.Rectangle) {
 	sp /* span */ := app.UvSpan
-	u := float32(atlasX) * sp
-	v := float32(atlasY) * sp
+	u := float32(tile.X) * sp
+	v := float32(tile.Y) * sp
 
 	gl.Normal3f(0, 0, 1)
 
@@ -121,7 +137,14 @@ func Draw9Sliced(r *app.PicRectangle) {
 	}*/
 }
 
-func drawAll() { // ATM ONLY draws 9slices, but without 9 slicing them
+func drawAll() {
+	DrawQuad(gfx.Pic_GradientBorder, desktop)
+
+	for key, value := range Terms.Terms {
+		println("drawing terminal --- Key (TermId):", key, "Value:", value)
+		DrawQuad(gfx.Pic_GradientBorder, value.Bounds)
+	}
+
 	/*
 		cGfx.DrawAll()
 

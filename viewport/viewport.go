@@ -4,8 +4,6 @@ import (
 	"fmt"
 
 	"github.com/corpusc/viscript/app"
-	//"github.com/corpusc/viscript/gfx"
-	"github.com/corpusc/viscript/viewport/terminal"
 	//"github.com/corpusc/viscript/script"
 	//"log"
 	"runtime"
@@ -18,13 +16,11 @@ import (
 //only remaining
 
 var (
-	CloseWindow bool                   = false
-	Terms       terminal.TerminalStack = terminal.TerminalStack{}
+	CloseWindow bool = false
 )
 
 func init() {
 	fmt.Println("viewport.init()")
-	Terms.AddTerminal()
 }
 
 func ViewportInit() {

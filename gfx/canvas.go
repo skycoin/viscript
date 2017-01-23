@@ -17,12 +17,12 @@ var PrevFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum
 var CurrFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
 
 var (
+	// distance from the center to an edge of the app's root/client area
+	// ....in the cardinal directions from the center, corners would be farther away)
 	DistanceFromOrigin float32 = 3
 )
 
 var (
-	// distance from the center to an edge of the app's root/client area
-	// ....in the cardinal directions from the center, corners would be farther away)
 	CanvasExtents   app.Vec2F
 	PixelSize       app.Vec2F
 	CharWid         float32
