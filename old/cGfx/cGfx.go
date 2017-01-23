@@ -1,11 +1,3 @@
-package cGfx
-
-import (
-	"fmt"
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/ui"
-)
-
 /*
 ------------- STARTING UP A NEW *CLEAN* VERSION OF GFX -------------
 
@@ -21,25 +13,6 @@ the current "gfx" package with THIS
 
 // rectangle data soup
 var Rects []*app.PicRectangle
-
-func SetSize() {
-	fmt.Printf("cGfx.SetSize() - CanvasExtents.X: %.2f\n", CanvasExtents.X)
-	*PrevFrustum = *CurrFrustum
-
-	CurrFrustum.Right = float32(CurrAppWidth) / float32(InitAppWidth) * InitFrustum.Right
-	CurrFrustum.Left = -CurrFrustum.Right
-	CurrFrustum.Top = float32(CurrAppHeight) / float32(InitAppHeight) * InitFrustum.Top
-	CurrFrustum.Bottom = -CurrFrustum.Top
-
-	fmt.Printf("cGfx.SetSize() - PrevFrustum.Left: %.3f\n", PrevFrustum.Left)
-	fmt.Printf("cGfx.SetSize() - CurrFrustum.Left: %.3f\n", CurrFrustum.Left)
-
-	CanvasExtents.X = DistanceFromOrigin * CurrFrustum.Right
-	CanvasExtents.Y = DistanceFromOrigin * CurrFrustum.Top
-
-	// things that weren't initialized in this func
-	ui.MainMenu.SetSize(GetMenuSizedRect())
-}
 
 func SetRect(r *app.PicRectangle) { // will add one if it doesn't exist yet
 	if len(Rects) < 1 {

@@ -23,11 +23,8 @@ func onKey(m msg.MessageKey) {
 
 		case msg.KeyEscape:
 			fmt.Println("case msg.KeyEscape:")
-			//gl.GlfwWindow.SetShouldClose(true)
 			fmt.Printf("CLOSE OPENGL WINDOW \n")
 			CloseWindow = true
-
-			//HypervisorScreenTeardown()
 
 		case msg.KeyLeftShift:
 			fallthrough
@@ -39,10 +36,12 @@ func onKey(m msg.MessageKey) {
 			fallthrough
 		case msg.KeyRightControl:
 			fmt.Println("Control RELEASED")
+
 		case msg.KeyLeftAlt:
 			fallthrough
 		case msg.KeyRightAlt:
 			fmt.Println("Alt RELEASED")
+
 		case msg.KeyLeftSuper:
 			fallthrough
 		case msg.KeyRightSuper:

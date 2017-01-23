@@ -70,3 +70,19 @@ func GetMenuSizedRect() *app.Rectangle {
 		CanvasExtents.Y - CharHei,
 		-CanvasExtents.X}
 }
+
+func SetSize() {
+	println("canvas.SetSize()")
+	*PrevFrustum = *CurrFrustum
+
+	CurrFrustum.Right = float32(CurrAppWidth) / float32(InitAppWidth) * InitFrustum.Right
+	CurrFrustum.Left = -CurrFrustum.Right
+	CurrFrustum.Top = float32(CurrAppHeight) / float32(InitAppHeight) * InitFrustum.Top
+	CurrFrustum.Bottom = -CurrFrustum.Top
+
+	CanvasExtents.X = DistanceFromOrigin * CurrFrustum.Right
+	CanvasExtents.Y = DistanceFromOrigin * CurrFrustum.Top
+
+	// things that weren't initialized in this func
+	ui.MainMenu.SetSize(GetMenuSizedRect())
+}
