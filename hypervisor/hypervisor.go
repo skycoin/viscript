@@ -19,10 +19,14 @@ import (
 //glfw.PollEvents()
 //only remaining
 
-var CloseWindow bool = false
+var (
+	CloseWindow bool          = false
+	Terms       TerminalStack = TerminalStack{}
+)
 
 func init() {
 	fmt.Println("hypervisor.init()")
+	Terms.AddTerminal()
 }
 
 func HypervisorInit() {

@@ -21,15 +21,15 @@ type TerminalStack struct {
 }
 
 func (self *TerminalStack) Init() {
-	println("TerminalStack.Draw()")
+	println("TerminalStack.Init()")
 }
 
 func (self *TerminalStack) AddTerminal() {
-	println("TerminalStack.Draw()")
+	println("TerminalStack.AddTerminal()")
 }
 
 func (self *TerminalStack) RemoveTerminal() {
-	println("TerminalStack.Draw()")
+	println("TerminalStack.RemoveTerminal()")
 }
 
 //MOST IMPORTANT
