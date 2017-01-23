@@ -7,12 +7,13 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
+var x float32 = float32(gfx.InitAppWidth) * gfx.PixelSize.X / 2
 var Terms terminal.TerminalStack = terminal.TerminalStack{}
 var desktop *app.Rectangle = &app.Rectangle{
 	gfx.DistanceFromOrigin,
-	gfx.DistanceFromOrigin,
+	x,
 	-gfx.DistanceFromOrigin,
-	-gfx.DistanceFromOrigin}
+	-x}
 
 func init() {
 	println("gl.init() - draw.go")
