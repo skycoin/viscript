@@ -1,4 +1,4 @@
-package hypervisor
+package terminal
 
 import (
 	"github.com/corpusc/viscript/msg"

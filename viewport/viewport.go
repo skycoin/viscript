@@ -1,4 +1,4 @@
-package hypervisor
+package viewport
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 	//"log"
 	"runtime"
 
-	igl "github.com/corpusc/viscript/gl" //internal gl
+	igl "github.com/corpusc/viscript/viewport/gl" //internal gl
 )
 
 //glfw
@@ -22,30 +22,30 @@ import (
 var CloseWindow bool = false
 
 func init() {
-	fmt.Println("hypervisor.init()")
+	fmt.Println("viewport.init()")
 }
 
-func HypervisorInit() {
-	fmt.Println("hypervisor.HypervisorInit()")
+func ViewportInit() {
+	fmt.Println("viewport.ViewportInit()")
 	app.MakeHighlyVisibleLogHeader(app.Name, 15)
 	// GLFW event handling must run on the main OS thread
 	// See documentation for functions that are only allowed to be called from the main thread.
 	runtime.LockOSThread()
 }
 
-func HypervisorScreenTeardown() {
+func ViewportScreenTeardown() {
 	igl.ScreenTeardown()
 }
 
-func HypervisorScreenInit() {
-	fmt.Printf("Hypervisor: screen init\n")
+func ViewportScreenInit() {
+	fmt.Printf("Viewport: screen init\n")
 	igl.WindowInit()
 	igl.LoadTextures()
 	igl.InitRenderer()
 }
 
-func HypervisorInitInputEvents() {
-	fmt.Printf("Hypervisor: init InitInputEvents \n")
+func ViewportInitInputEvents() {
+	fmt.Printf("Viewport: init InitInputEvents \n")
 	igl.InitInputEvents(igl.GlfwWindow)
 	igl.InitMiscEvents(igl.GlfwWindow)
 }

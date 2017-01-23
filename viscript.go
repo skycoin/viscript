@@ -30,35 +30,35 @@ package main
 
 import (
 	"fmt"
-	igl "github.com/corpusc/viscript/gl" //internal gl
-	"github.com/corpusc/viscript/hypervisor"
+	"github.com/corpusc/viscript/viewport"
+	igl "github.com/corpusc/viscript/viewport/gl" //eliminate
 )
 
 func main() {
-	hypervisor.DebugPrintInputEvents = true //print input events
+	viewport.DebugPrintInputEvents = true //print input events
 
 	fmt.Printf("Start\n")
 
-	hypervisor.HypervisorInit() //runtime.LockOSThread()
-	hypervisor.HypervisorScreenInit()
-	hypervisor.HypervisorInitInputEvents()
-	hypervisor.HypervisorInitProcessList()
+	viewport.ViewportInit() //runtime.LockOSThread()
+	viewport.ViewportScreenInit()
+	viewport.ViewportInitInputEvents()
 
-	hypervisor.AddTestProcess()
+	//hypervisor.HypervisorInitProcessList()
+	//hypervisor.AddTestProcess()
 
 	fmt.Printf("Start Loop; \n")
-	for hypervisor.CloseWindow == false {
-		hypervisor.DispatchInputEvents(igl.InputEvents) //event channel
-		hypervisor.DispatchProcesEvents()               //hypervisor handles incoming process events
-		hypervisor.ProcessTick()                        //processes, handle incoming events
-		hypervisor.PollUiInputEvents()
-		hypervisor.Update() //in general
-		hypervisor.UpdateDrawBuffer()
-		hypervisor.SwapDrawBuffer() //with new frame
+	for viewport.CloseWindow == false {
+		viewport.DispatchInputEvents(igl.InputEvents) //event channel
+		//hypervisor.DispatchProcesEvents()               //viewport handles incoming process events
+		//hypervisor.ProcessTick()                        //processes, handle incoming events
+		viewport.PollUiInputEvents()
+		viewport.Update() //in general
+		viewport.UpdateDrawBuffer()
+		viewport.SwapDrawBuffer() //with new frame
 	}
 
-	fmt.Printf("Closing down hypervisor \n")
-	hypervisor.HypervisorScreenTeardown()
-	hypervisor.HypervisorProcessListTeardown()
+	fmt.Printf("Closing down viewport \n")
+	viewport.ViewportScreenTeardown()
+	//viewport.HypervisorProcessListTeardown()
 
 }
