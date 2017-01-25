@@ -3,7 +3,6 @@ package gl
 
 import (
 	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/ui"
 )
 
 // dimensions (in pixel units)
@@ -39,8 +38,7 @@ var (
 )
 
 func init() {
-	println("gfx.init()")
-
+	println("canvas.init()")
 	// one-time setup
 	PrevColor = GrayDark
 	CurrColor = GrayDark
@@ -60,7 +58,7 @@ func init() {
 	PixelSize.Y = CanvasExtents.Y * 2 / float32(CurrAppHeight)
 
 	// MORE one-time setup
-	ui.MainMenu.SetSize(GetMenuSizedRect())
+	MainMenu.SetSize(GetMenuSizedRect())
 }
 
 func GetMenuSizedRect() *app.Rectangle {
@@ -84,5 +82,5 @@ func SetSize() {
 	CanvasExtents.Y = DistanceFromOrigin * CurrFrustum.Top
 
 	// things that weren't initialized in this func
-	ui.MainMenu.SetSize(GetMenuSizedRect())
+	MainMenu.SetSize(GetMenuSizedRect())
 }

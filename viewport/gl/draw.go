@@ -2,30 +2,23 @@ package gl
 
 import (
 	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/gfx"
-	"github.com/corpusc/viscript/viewport/terminal"
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
-var x float32 = float32(gfx.InitAppWidth) * gfx.PixelSize.X / 2
-var Terms terminal.TerminalStack = terminal.TerminalStack{}
+var x float32 = float32(InitAppWidth) * PixelSize.X / 2
 var desktop *app.Rectangle = &app.Rectangle{
-	gfx.DistanceFromOrigin,
+	DistanceFromOrigin,
 	x,
-	-gfx.DistanceFromOrigin,
+	-DistanceFromOrigin,
 	-x}
 
 func init() {
 	println("gl.init() - draw.go")
-	Terms.Init()
-	Terms.AddTerminal()
-	Terms.AddTerminal()
-	Terms.AddTerminal()
 }
 
 func SetColor(newColor []float32) {
-	//cGfx.PrevColor = cGfx.CurrColor
-	//cGfx.CurrColor = newColor
+	//PrevColor = CurrColor
+	//CurrColor = newColor
 	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &newColor[0])
 }
 
@@ -140,49 +133,22 @@ func Draw9Sliced(r *app.PicRectangle) {
 }
 
 func drawAll() {
-	DrawQuad(gfx.Pic_GradientBorder, desktop)
-
-	for _, value := range Terms.Terms {
-		//println("drawing terminal --- Key (TermId):", key, "Value:", value)
-		DrawQuad(gfx.Pic_GradientBorder, value.Bounds)
-
-		cr := &app.Rectangle{
-			value.Bounds.Top,
-			value.Bounds.Left + value.SpanX(),
-			value.Bounds.Top - value.SpanY(),
-			value.Bounds.Left} //current rectangle
-
-		for x := 0; x < value.GridSize.X; x++ {
-			for y := 0; y < value.GridSize.Y; y++ {
-				if value.Chars[y][x] != 0 {
-					DrawCharAtRect(rune(value.Chars[y][x]), cr)
-				}
-
-				cr.Top -= value.SpanY()
-				cr.Bottom -= value.SpanY()
-			}
-
-			cr.Top = value.Bounds.Top
-			cr.Bottom = value.Bounds.Top - value.SpanY()
-
-			cr.Left += value.SpanX()
-			cr.Right += value.SpanX()
-		}
-	}
+	DrawQuad(Pic_GradientBorder, desktop)
 
 	/*
-		cGfx.DrawAll()
+		gfx.DrawAll()
 
+		// draw from rectangle soup
 		// skip 0 so we can use it as a code for being uninitialized
-		for i := 1; i < len(cGfx.Rects); i++ {
-			if cGfx.Rects[i].State == app.RectState_Active {
+		for i := 1; i < len(gfx.Rects); i++ {
+			if gfx.Rects[i].State == app.RectState_Active {
 				//gfx.SetColor(gfx.Rects[i].Color)
 
-				if cGfx.Rects[i].Type == app.RectType_9Slice {
-					Draw9Sliced(cGfx.Rects[i])
-					DrawQuad(cGfx.Pic_GradientBorder.X, cGfx.Pic_GradientBorder.Y, cGfx.Rects[i].Rectangle)
+				if gfx.Rects[i].Type == app.RectType_9Slice {
+					Draw9Sliced(gfx.Rects[i])
+					DrawQuad(gfx.Pic_GradientBorder.X, gfx.Pic_GradientBorder.Y, gfx.Rects[i].Rectangle)
 				} else {
-					DrawQuad(cGfx.Pic_GradientBorder.X, cGfx.Pic_GradientBorder.Y, cGfx.Rects[i].Rectangle)
+					DrawQuad(gfx.Pic_GradientBorder.X, gfx.Pic_GradientBorder.Y, gfx.Rects[i].Rectangle)
 				}
 			}
 		}

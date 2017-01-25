@@ -1,4 +1,4 @@
-package gfx
+package gl
 
 import (
 	//"fmt"
@@ -7,11 +7,6 @@ import (
 )
 
 var Curs Cursors = Cursors{NextFrame: time.Now()}
-
-var (
-	//CanvasExtents   app.Vec2F
-	PixelSize app.Vec2F
-)
 
 type Cursors struct {
 	NextFrame time.Time

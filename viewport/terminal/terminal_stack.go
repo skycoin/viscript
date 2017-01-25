@@ -2,7 +2,6 @@ package terminal
 
 import (
 	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/viewport/gl"
 )
@@ -57,11 +56,6 @@ func (self *TerminalStack) AddTerminal() {
 
 func (self *TerminalStack) RemoveTerminal(id int) {
 	println("TerminalStack.RemoveTerminal()")
-}
-
-//MOST IMPORTANT
-func (self *TerminalStack) Draw() {
-	println("TerminalStack.Draw()")
 }
 
 func (self *TerminalStack) ResizeTerminal(id msg.TerminalId, x int, y int) {

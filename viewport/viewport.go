@@ -2,8 +2,8 @@ package viewport
 
 import (
 	"fmt"
-
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/viewport/terminal"
 	//"github.com/corpusc/viscript/script"
 	//"log"
 	"runtime"
@@ -16,11 +16,16 @@ import (
 //only remaining
 
 var (
-	CloseWindow bool = false
+	CloseWindow bool                   = false
+	Terms       terminal.TerminalStack = terminal.TerminalStack{}
 )
 
 func init() {
 	fmt.Println("viewport.init()")
+	Terms.Init()
+	Terms.AddTerminal()
+	Terms.AddTerminal()
+	Terms.AddTerminal()
 }
 
 func ViewportInit() {
@@ -70,7 +75,10 @@ func Update() {
 }
 
 func UpdateDrawBuffer() {
+	//igl.DrawBegin()
 	igl.DrawScene()
+	Terms.Draw()
+	//igl.DrawEnd()
 }
 
 func SwapDrawBuffer() {
