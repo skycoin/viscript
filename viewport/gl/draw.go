@@ -44,7 +44,7 @@ func DrawTextInRect(s string, r *app.Rectangle) {
 }
 */
 
-func DrawCharAtRect(char rune, r *app.Rectangle) {
+func DrawCharAtRect(char rune, r *app.Rectangle, z float32) {
 	u := float32(int(char) % 16)
 	v := float32(int(char) / 16)
 	sp := app.UvSpan
@@ -52,19 +52,19 @@ func DrawCharAtRect(char rune, r *app.Rectangle) {
 	gl.Normal3f(0, 0, 1)
 
 	gl.TexCoord2f(u*sp, v*sp+sp)
-	gl.Vertex3f(r.Left, r.Bottom, 0)
+	gl.Vertex3f(r.Left, r.Bottom, z)
 
 	gl.TexCoord2f(u*sp+sp, v*sp+sp)
-	gl.Vertex3f(r.Right, r.Bottom, 0)
+	gl.Vertex3f(r.Right, r.Bottom, z)
 
 	gl.TexCoord2f(u*sp+sp, v*sp)
-	gl.Vertex3f(r.Right, r.Top, 0)
+	gl.Vertex3f(r.Right, r.Top, z)
 
 	gl.TexCoord2f(u*sp, v*sp)
-	gl.Vertex3f(r.Left, r.Top, 0)
+	gl.Vertex3f(r.Left, r.Top, z)
 }
 
-func DrawQuad(tile app.Vec2I, r *app.Rectangle) {
+func DrawQuad(tile app.Vec2I, r *app.Rectangle, z float32) {
 	sp /* span */ := app.UvSpan
 	u := float32(tile.X) * sp
 	v := float32(tile.Y) * sp
@@ -72,16 +72,16 @@ func DrawQuad(tile app.Vec2I, r *app.Rectangle) {
 	gl.Normal3f(0, 0, 1)
 
 	gl.TexCoord2f(u, v+sp)
-	gl.Vertex3f(r.Left, r.Bottom, 0)
+	gl.Vertex3f(r.Left, r.Bottom, z)
 
 	gl.TexCoord2f(u+sp, v+sp)
-	gl.Vertex3f(r.Right, r.Bottom, 0)
+	gl.Vertex3f(r.Right, r.Bottom, z)
 
 	gl.TexCoord2f(u+sp, v)
-	gl.Vertex3f(r.Right, r.Top, 0)
+	gl.Vertex3f(r.Right, r.Top, z)
 
 	gl.TexCoord2f(u, v)
-	gl.Vertex3f(r.Left, r.Top, 0)
+	gl.Vertex3f(r.Left, r.Top, z)
 }
 
 func DrawTriangle(atlasX, atlasY float32, a, b, c app.Vec2F) { // (so-called tri)
@@ -133,7 +133,7 @@ func Draw9Sliced(r *app.PicRectangle) {
 }
 
 func drawDesktop() {
-	DrawQuad(Pic_GradientBorder, desktop)
+	DrawQuad(Pic_GradientBorder, desktop, .8)
 
 	/*
 		// draw from rectangle soup

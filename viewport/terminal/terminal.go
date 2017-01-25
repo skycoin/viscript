@@ -24,7 +24,7 @@ type Terminal struct {
 	//vars for GL space / float
 	//(mouse pos events are the only things that use pixels)
 	Bounds *app.Rectangle
-	Depth  int //0 for lowest
+	Depth  float32 //0 for lowest
 }
 
 func (t *Terminal) Init() {
