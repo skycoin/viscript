@@ -26,12 +26,20 @@
 
 */
 
+/*
+	- Should we have hypervisor
+	- should hypervisor have process list
+	- should we have a dbus implementation in hypervisor
+*/
+
 package main
 
 import (
 	"fmt"
 	"github.com/corpusc/viscript/viewport"
 	igl "github.com/corpusc/viscript/viewport/gl" //eliminate
+
+	"github.com/corpusc/viscript/hypervisor"
 )
 
 func main() {
@@ -43,14 +51,14 @@ func main() {
 	viewport.ViewportScreenInit()
 	viewport.ViewportInitInputEvents()
 
-	//hypervisor.HypervisorInitProcessList()
-	//hypervisor.AddTestProcess()
+	hypervisor.HypervisorInitProcessList()
+	hypervisor.AddTestProcess()
 
 	fmt.Printf("Start Loop; \n")
 	for viewport.CloseWindow == false {
 		viewport.DispatchInputEvents(igl.InputEvents) //event channel
-		//hypervisor.DispatchProcesEvents()               //viewport handles incoming process events
-		//hypervisor.ProcessTick()                        //processes, handle incoming events
+		hypervisor.DispatchProcesEvents()             //viewport handles incoming process events
+		hypervisor.ProcessTick()                      //processes, handle incoming events
 		viewport.PollUiInputEvents()
 		viewport.Update() //in general
 		viewport.UpdateDrawBuffer()
@@ -59,6 +67,5 @@ func main() {
 
 	fmt.Printf("Closing down viewport \n")
 	viewport.ViewportScreenTeardown()
-	//viewport.HypervisorProcessListTeardown()
-
+	hypervisor.HypervisorProcessListTeardown()
 }
