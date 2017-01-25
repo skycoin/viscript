@@ -1,7 +1,6 @@
 package gl
 
 import (
-	//"fmt"
 	"github.com/corpusc/viscript/app"
 	"time"
 )
@@ -35,7 +34,7 @@ func (c *Cursors) Update() {
 	}
 }
 
-func (c *Cursors) GetAnimationModifiedRect(r app.PicRectangle) *app.PicRectangle {
+func (c *Cursors) GetAnimationModifiedRect(r app.Rectangle) *app.Rectangle {
 	if c.shrinking {
 		r.Bottom = r.Top - c.shrinkFraction*r.Height()
 		r.Left = r.Right - c.shrinkFraction*r.Width()

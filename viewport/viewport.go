@@ -71,14 +71,13 @@ func DispatchInputEvents(ch chan []byte) []byte {
 }
 
 func Update() {
-	igl.Update()
+	igl.Curs.Update()
 }
 
 func UpdateDrawBuffer() {
-	//igl.DrawBegin()
-	igl.DrawScene()
+	igl.DrawBegin()
 	Terms.Draw()
-	//igl.DrawEnd()
+	igl.DrawEnd()
 }
 
 func SwapDrawBuffer() {

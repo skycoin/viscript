@@ -132,12 +132,10 @@ func Draw9Sliced(r *app.PicRectangle) {
 	}*/
 }
 
-func drawAll() {
+func drawDesktop() {
 	DrawQuad(Pic_GradientBorder, desktop)
 
 	/*
-		gfx.DrawAll()
-
 		// draw from rectangle soup
 		// skip 0 so we can use it as a code for being uninitialized
 		for i := 1; i < len(gfx.Rects); i++ {

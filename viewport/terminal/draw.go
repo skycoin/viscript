@@ -8,7 +8,6 @@ import (
 func (self *TerminalStack) Draw() {
 	//println("TerminalStack.Draw()")
 
-	// draw terminals
 	for _, value := range self.Terms {
 		//println("drawing terminal --- Key (TermId):", key, "Value:", value)
 		gl.DrawQuad(gl.Pic_GradientBorder, value.Bounds)
@@ -27,7 +26,7 @@ func (self *TerminalStack) Draw() {
 
 				if x == int(value.Curs.X) && y == int(value.Curs.Y) {
 					// draw cursor
-					gl.DrawQuad(gl.Pic_GradientBorder, cr)
+					gl.DrawQuad(gl.Pic_GradientBorder, gl.Curs.GetAnimationModifiedRect(*cr))
 				}
 
 				cr.Top -= value.SpanY()

@@ -16,15 +16,8 @@ var (
 	Texture    uint32
 )
 
-//gfx in CurrAppWidth
-//InitFrustum
-
 //only two gfx parameters should be eliminated
-//gfx import should be eliminated
 //settings in either app or gfx
-
-func init() {
-}
 
 func WindowInit() {
 	fmt.Printf("Gl: Init glfw \n")
@@ -102,11 +95,7 @@ func SetFrustum(r *app.Rectangle) {
 		float64(r.Top), 1.0, 10.0)
 }
 
-func Update() {
-	Curs.Update()
-}
-
-func DrawScene() {
+func DrawBegin() {
 	gl.Viewport(0, 0, CurrAppWidth, CurrAppHeight) // OPTIMIZEME?  could set flag upon frame buffer size change event
 	if *PrevFrustum != *CurrFrustum {
 		*PrevFrustum = *CurrFrustum
@@ -123,7 +112,10 @@ func DrawScene() {
 	gl.BindTexture(gl.TEXTURE_2D, Texture)
 
 	gl.Begin(gl.QUADS)
-	drawAll()
+	drawDesktop()
+}
+
+func DrawEnd() {
 	gl.End()
 }
 
