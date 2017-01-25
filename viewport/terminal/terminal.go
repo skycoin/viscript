@@ -18,8 +18,8 @@ type Terminal struct {
 
 	//vars for character grid (of cells)
 	Chars    [NumRows][NumColumns]uint32
-	Curs     app.Vec2I //current cursor/insert pos
-	GridSize app.Vec2I //number of characters
+	Curs     app.Vec2UI32 //current cursor/insert pos
+	GridSize app.Vec2I    //number of characters
 
 	//vars for GL space / float
 	//(mouse pos events are the only things that use pixels)
@@ -34,11 +34,12 @@ func (t *Terminal) Init() {
 	t.GridSize = app.Vec2I{NumColumns, NumRows}
 	t.Chars = [NumRows][NumColumns]uint32{}
 	t.makeRandomChars(20)
+	t.SetString("this is text made by SetString()")
 }
 
 func (t *Terminal) makeRandomChars(count int) {
 	for i := 0; i < count; i++ {
-		t.SetCharacter(
+		t.SetCharacterAt(
 			uint32(rand.Int31n(NumColumns)),
 			uint32(rand.Int31n(NumRows)),
 			uint32(rand.Int31n(128)))
@@ -53,15 +54,36 @@ func (t *Terminal) SpanY() float32 {
 }
 
 func (t *Terminal) SetCursor(X uint32, Y uint32) {
-	fmt.Printf("Terminal.SetCursor()\n")
-	t.Curs.X = int(X)
-	t.Curs.Y = int(Y)
+	//fmt.Printf("Terminal.SetCursor()\n")
+	t.Curs.X = X
+	t.Curs.Y = Y
 }
 
-func (t *Terminal) SetCharacter(X uint32, Y uint32, Char uint32) {
-	fmt.Printf("Terminal.SetCharacter()\n")
+func (t *Terminal) SetCharacter(Char uint32) {
+	//fmt.Printf("Terminal.SetCharacter()\n")
+	t.SetCharacterAt(t.Curs.X, t.Curs.Y, Char)
+}
+
+func (t *Terminal) SetCharacterAt(X uint32, Y uint32, Char uint32) {
+	//fmt.Printf("Terminal.SetCharacterAt()\n")
+
 	//do bounds check
 	t.Chars[Y][X] = Char
+}
+
+func (t *Terminal) SetString(s string) {
+	//fmt.Printf("Terminal.SetString()\n")
+	t.SetStringAt(t.Curs.X, t.Curs.Y, s)
+}
+
+func (t *Terminal) SetStringAt(X uint32, Y uint32, S string) {
+	//fmt.Printf("Terminal.SetStringAt()\n")
+
+	//do bounds check
+
+	for x, c := range S {
+		t.Chars[Y][X+uint32(x)] = uint32(c)
+	}
 }
 
 func (t *Terminal) SetGridSize() {

@@ -22,26 +22,30 @@ type TerminalStack struct {
 	Terms   map[msg.TerminalId]*Terminal
 
 	// private
-	nextRect *app.Rectangle // for next/new terminal spawn
-	nextSpan float32        // how far from previous terminal
+	nextRect app.Rectangle // for next/new terminal spawn
+	nextSpan float32       // how far from previous terminal
 }
 
 func (self *TerminalStack) Init() {
 	println("TerminalStack.Init()")
 	self.Terms = make(map[msg.TerminalId]*Terminal)
-	self.nextSpan = 1.5
-	self.nextRect = &app.Rectangle{
-		3,
-		gfx.DistanceFromOrigin * .7,
-		-1,
-		-4}
+	self.nextSpan = .8
+	self.nextRect = app.Rectangle{
+		gfx.DistanceFromOrigin,
+		gfx.DistanceFromOrigin,
+		-gfx.DistanceFromOrigin,
+		-gfx.DistanceFromOrigin}
 }
 
 func (self *TerminalStack) AddTerminal() {
 	println("TerminalStack.AddTerminal()")
 
 	rand := msg.RandTerminalId()
-	self.Terms[rand] = &Terminal{Bounds: self.nextRect}
+	self.Terms[rand] = &Terminal{Bounds: &app.Rectangle{
+		self.nextRect.Top,
+		self.nextRect.Right,
+		self.nextRect.Bottom,
+		self.nextRect.Left}}
 	self.Terms[rand].Init()
 
 	self.nextRect.Top -= self.nextSpan

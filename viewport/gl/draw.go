@@ -19,7 +19,8 @@ func init() {
 	println("gl.init() - draw.go")
 	Terms.Init()
 	Terms.AddTerminal()
-	//Terms.AddTerminal()
+	Terms.AddTerminal()
+	Terms.AddTerminal()
 }
 
 func SetColor(newColor []float32) {
