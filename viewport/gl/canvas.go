@@ -1,5 +1,5 @@
 // canvas == the whole "client" area of the graphical OpenGL window
-package gfx
+package gl
 
 import (
 	"github.com/corpusc/viscript/app"

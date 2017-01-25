@@ -1,4 +1,4 @@
-package gfx
+package gl
 
 import (
 	/* OTHER packages imported into this package:

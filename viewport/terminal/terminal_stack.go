@@ -4,6 +4,7 @@ import (
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/gfx"
 	"github.com/corpusc/viscript/msg"
+	"github.com/corpusc/viscript/viewport/gl"
 )
 
 /*
@@ -31,10 +32,10 @@ func (self *TerminalStack) Init() {
 	self.Terms = make(map[msg.TerminalId]*Terminal)
 	self.nextSpan = .8
 	self.nextRect = app.Rectangle{
-		gfx.DistanceFromOrigin,
-		gfx.DistanceFromOrigin,
-		-gfx.DistanceFromOrigin,
-		-gfx.DistanceFromOrigin}
+		gl.DistanceFromOrigin,
+		gl.DistanceFromOrigin,
+		-gl.DistanceFromOrigin,
+		-gl.DistanceFromOrigin}
 }
 
 func (self *TerminalStack) AddTerminal() {
