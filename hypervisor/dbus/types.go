@@ -10,15 +10,15 @@ type ResourceId uint32
 
 //resource types
 const (
-	ResourceChannel  = 1
-	ResourceViewport = 2
-	ResourceTerminal = 3
-	ResourceProcess  = 4
+	ResourceTypeChannel  = 1
+	ResourceTypeViewport = 2
+	ResourceTypeTerminal = 3
+	ResourceTypeProcess  = 4
 )
 
 //channel type
 const (
-	ChannelPubsub = 1
+	ChannelTypePubsub = 1
 )
 
 //ID generation
