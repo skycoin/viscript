@@ -5,12 +5,11 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
-var x float32 = float32(InitAppWidth) * PixelSize.X / 2
 var desktop *app.Rectangle = &app.Rectangle{
-	DistanceFromOrigin,
-	x,
-	-DistanceFromOrigin,
-	-x}
+	CanvasExtents.Y,
+	CanvasExtents.X,
+	-CanvasExtents.Y,
+	-CanvasExtents.X}
 
 func init() {
 	println("gl.init() - draw.go")
@@ -133,7 +132,7 @@ func Draw9Sliced(r *app.PicRectangle) {
 }
 
 func drawDesktop() {
-	DrawQuad(Pic_GradientBorder, desktop, .8)
+	DrawQuad(Pic_GradientBorder, desktop, 0)
 
 	/*
 		// draw from rectangle soup

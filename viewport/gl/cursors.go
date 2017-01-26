@@ -38,7 +38,7 @@ func (c *Cursors) GetAnimationModifiedRect(r app.Rectangle) *app.Rectangle {
 	if c.shrinking {
 		r.Bottom = r.Top - c.shrinkFraction*r.Height()
 		r.Left = r.Right - c.shrinkFraction*r.Width()
-	} else {
+	} else { // growing
 		r.Top = r.Bottom + c.shrinkFraction*r.Height()
 		r.Right = r.Left + c.shrinkFraction*r.Width()
 	}

@@ -19,13 +19,6 @@ func initTerminals() {
 	Terms[1].Init()
 }
 
-// (maybe temporary) refactoring additions
-func SetSize() {
-	for _, t := range Terms {
-		t.SetSize()
-	}
-}
-
 func ScrollTermThatHasMousePointer(mousePixelDeltaX, mousePixelDeltaY float32) {
 	for _, t := range Terms {
 		t.ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY)

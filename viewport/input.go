@@ -48,10 +48,7 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 
 func onFrameBufferSize(m msg.MessageFrameBufferSize) {
 	fmt.Printf("onFrameBufferSize() - x, y: %d, %d\n", m.X, m.Y)
-	gl.CurrAppWidth = int32(m.X)
-	gl.CurrAppHeight = int32(m.Y)
-	//gl.SetSize()
-	//SetSize()
+	gl.SetSize(int32(m.X), int32(m.Y))
 }
 
 func eitherControlKeyHeld() bool { // FIXME: bake into msg when serialized (or use bundled Mod field for 1s that have it)
