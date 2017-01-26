@@ -15,30 +15,30 @@ type PubsubSubscriber struct {
 	SubscriberId   ResourceId   //who created channel
 	SubscriberType ResourceType //type of channel
 
-	Channel (*chan []byte) //is there even a reason to pass by pointer
+	Channel chan []byte //is there even a reason to pass by pointer
 }
 
-func (self *DbusManager) CreatePubsubChannel(Owner ResourceId, OwnerType ResourceType, ResourceIdentifier string) {
+func (self *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType ResourceType, ResourceIdentifier string) {
 	n := PubsubChannel{}
-	n.ChannelId = ChannelId
+	n.ChannelId = RandChannelId()
 	n.OwnerType = OwnerType
 	n.ResourceIdentifier = ResourceIdentifier
-	n.Subscribers = new([]PubsubSubscriber)
+	n.Subscribers = make([]PubsubSubscriber, 0)
 }
 
 //where do we get the channel id from
-func (self *DbusManager) AddPubsubChannelSubscriber(ResourceId ResourceId, ResourceType ResourceType, ChannelId ChannelId) {
+func (self *DbusInstance) AddPubsubChannelSubscriber(ResourceId ResourceId, ResourceType ResourceType, ChannelId ChannelId) {
 
-	n := self.PubsubChannels[ChannelId]
+	pc := self.PubsubChannels[ChannelId] //pubsub channel
 
 	x := PubsubSubscriber{}
 	x.SubscriberId = ResourceId
 	x.SubscriberType = ResourceType
 
-	n = append(n, x)
+	pc.Subscribers = append(pc.Subscribers, x)
 }
 
-func (self *DbusManager) PushPubsubChannel(ChannelId ChannelId, msg []byte) {
+func (self *DbusInstance) PushPubsubChannel(ChannelId ChannelId, msg []byte) {
 	//get pubsub channel
 	pubsub := self.PubsubChannels[ChannelId]
 
@@ -53,6 +53,6 @@ func (self *DbusManager) PushPubsubChannel(ChannelId ChannelId, msg []byte) {
 
 	//non-determinism?
 	for _, p := range pubsub.Subscribers {
-		(*p.Channel) <- msg //write the message immediately
+		p.Channel <- msg //write the message immediately
 	}
 }

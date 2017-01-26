@@ -1,8 +1,8 @@
 package hypervisor
 
 import (
+	example "github.com/corpusc/viscript/hypervisor/process/example"
 	"github.com/corpusc/viscript/msg"
-	example "github.com/corpusc/viscript/process/example"
 )
 
 /*

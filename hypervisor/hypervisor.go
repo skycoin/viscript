@@ -1,5 +1,7 @@
 package hypervisor
 
+import ()
+
 /*
 	Hypervisor
 	- routes messages
@@ -36,11 +38,12 @@ Can objects create multiple channels?
 
 func HypervisorInit() {
 
+	DbusInit()
 	HypervisorInitProcessList()
 	AddTestProcess()
-
 }
 
 func HypervisorTeardown() {
 	HypervisorProcessListTeardown()
+	DbusTeardown()
 }
