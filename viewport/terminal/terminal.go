@@ -34,7 +34,7 @@ func (t *Terminal) Init() {
 	t.GridSize = app.Vec2I{NumColumns, NumRows}
 	t.Chars = [NumRows][NumColumns]uint32{}
 	t.makeRandomChars(20)
-	t.SetString("this is text made by SetString()")
+	t.SetStringAt(37, 2, "this is text made by SetString()")
 }
 
 func (t *Terminal) makeRandomChars(count int) {
@@ -67,8 +67,9 @@ func (t *Terminal) SetCharacter(Char uint32) {
 func (t *Terminal) SetCharacterAt(X uint32, Y uint32, Char uint32) {
 	//fmt.Printf("Terminal.SetCharacterAt()\n")
 
-	//do bounds check
-	t.Chars[Y][X] = Char
+	if t.validPos(X, Y) {
+		t.Chars[Y][X] = Char
+	}
 }
 
 func (t *Terminal) SetString(s string) {
@@ -79,10 +80,10 @@ func (t *Terminal) SetString(s string) {
 func (t *Terminal) SetStringAt(X uint32, Y uint32, S string) {
 	//fmt.Printf("Terminal.SetStringAt()\n")
 
-	//do bounds check
-
 	for x, c := range S {
-		t.Chars[Y][X+uint32(x)] = uint32(c)
+		if t.validPos(X+uint32(x), Y) {
+			t.Chars[Y][X+uint32(x)] = uint32(c)
+		}
 	}
 }
 
@@ -98,4 +99,13 @@ func (t *Terminal) SetGridSize() {
 
 	// for i := range(0, t.GridSize.X):
 	// 	t.Chars[i] = make([]uint32, t.GridSize.X, t.GridSize.X)
+}
+
+func (t *Terminal) validPos(X, Y uint32) bool {
+	if X < 0 || X >= uint32(t.GridSize.X) || Y < 0 || Y >= uint32(t.GridSize.Y) {
+		println("ATTEMPTED OUT OF BOUNDS CHARACTER PLACEMENT!")
+		return false
+	} else {
+		return true
+	}
 }

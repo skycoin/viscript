@@ -1,4 +1,4 @@
-// canvas == the whole "client" area of the graphical OpenGL window
+// canvas == the whole "client" area of the graphical OpenGL window (of root app)
 package gl
 
 import (
@@ -16,9 +16,8 @@ var PrevFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum
 var CurrFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
 
 var (
-	// distance from the center to an edge of the app's root/client area
-	// ....in the cardinal directions from the center, corners would be farther away)
-	DistanceFromOrigin float32 = 3
+	// distance from the center to top & bottom edges of the canvas
+	DistanceFromOrigin float32 = 1
 )
 
 var (
@@ -30,8 +29,8 @@ var (
 	CharHeiInPixels int
 	// FIXME: below is no longer a maximum of what fits on a max-sized panel (taking up the whole app window) anymore.
 	// 		but is still used as a guide for sizes
-	MaxCharsX int // this is used to give us proportions like an 80x25 text console screen, ....
-	MaxCharsY int // ....from a DistanceFromOrigin*2-by-DistanceFromOrigin*2 gl space
+	MaxCharsX int // this is used to give us proportions similar to a 80x25 text console screen
+	MaxCharsY int
 	// current position renderer draws to
 	CurrX float32
 	CurrY float32
@@ -69,9 +68,11 @@ func GetMenuSizedRect() *app.Rectangle {
 		-CanvasExtents.X}
 }
 
-func SetSize() {
+func SetSize(x, y int32) {
 	println("canvas.SetSize()")
 	*PrevFrustum = *CurrFrustum
+	CurrAppWidth = x
+	CurrAppHeight = y
 
 	CurrFrustum.Right = float32(CurrAppWidth) / float32(InitAppWidth) * InitFrustum.Right
 	CurrFrustum.Left = -CurrFrustum.Right

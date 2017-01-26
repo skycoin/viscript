@@ -43,22 +43,6 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 	}
 }
 
-func onFrameBufferSize(m msg.MessageFrameBufferSize) {
-	fmt.Printf("onFrameBufferSize() - x, y: %d, %d\n", m.X, m.Y)
-	cGfx.CurrAppWidth = int32(m.X)
-	cGfx.CurrAppHeight = int32(m.Y)
-	cGfx.SetSize()
-	SetSize()
-}
-
-func eitherControlKeyHeld() bool { // FIXME: bake into msg when serialized (or use bundled Mod field for 1s that have it)
-	if gl.GlfwWindow.GetKey(glfw.KeyLeftControl) == glfw.Press || gl.GlfwWindow.GetKey(glfw.KeyRightControl) == glfw.Press {
-		return true
-	} else {
-		return false
-	}
-}
-
 // WARNING: given arguments must be in range
 func insert(slice []string, index int, value string) []string {
 	slice = slice[0 : len(slice)+1]      // grow the slice by one element

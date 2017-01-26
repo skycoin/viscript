@@ -80,11 +80,21 @@ func InitRenderer() {
 
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadIdentity()
-	SetFrustum(InitFrustum)
 	//gl.Frustum(-1, 1, -1, 1, 1.0, 10.0)
 	//gl.Frustum(left, right, bottom, top, zNear, zFar)
+	SetOrtho(InitFrustum)
+	//SetFrustum(InitFrustum)
 	gl.MatrixMode(gl.MODELVIEW)
 	gl.LoadIdentity()
+}
+
+func SetOrtho(r *app.Rectangle) {
+	gl.Ortho( //gl.Frustum(
+		float64(r.Left),
+		float64(r.Right),
+		float64(r.Bottom),
+		float64(r.Top),
+		-10.0, 10.0) // zNear, zFar
 }
 
 func SetFrustum(r *app.Rectangle) {
@@ -92,7 +102,8 @@ func SetFrustum(r *app.Rectangle) {
 		float64(r.Left),
 		float64(r.Right),
 		float64(r.Bottom),
-		float64(r.Top), 1.0, 10.0)
+		float64(r.Top),
+		-1.0, 10.0) // zNear, zFar
 }
 
 func DrawBegin() {
@@ -101,10 +112,11 @@ func DrawBegin() {
 		*PrevFrustum = *CurrFrustum
 		gl.MatrixMode(gl.PROJECTION)
 		gl.LoadIdentity()
-		SetFrustum(CurrFrustum)
+		//SetFrustum(CurrFrustum)
+		SetOrtho(CurrFrustum)
 		fmt.Println("CHANGE OF FRUSTUM")
 	}
-	gl.MatrixMode(gl.MODELVIEW) //.PROJECTION)                   //.MODELVIEW)
+	gl.MatrixMode(gl.MODELVIEW) //.PROJECTION) //.MODELVIEW)
 	gl.LoadIdentity()
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 	gl.Translatef(0, 0, -DistanceFromOrigin)
