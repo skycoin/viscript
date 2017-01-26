@@ -51,8 +51,7 @@ func main() {
 	viewport.ViewportScreenInit()
 	viewport.ViewportInitInputEvents()
 
-	hypervisor.HypervisorInitProcessList()
-	hypervisor.AddTestProcess()
+	hypervisor.HypervisorInit()
 
 	fmt.Printf("Start Loop; \n")
 	for viewport.CloseWindow == false {
@@ -67,5 +66,6 @@ func main() {
 
 	fmt.Printf("Closing down viewport \n")
 	viewport.ViewportScreenTeardown()
-	hypervisor.HypervisorProcessListTeardown()
+
+	hypervisor.HypervisorTeardown()
 }
