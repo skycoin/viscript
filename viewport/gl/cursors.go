@@ -15,17 +15,19 @@ type Cursors struct {
 }
 
 func (c *Cursors) Update() {
+	var speedFactor float32 = 0.06
+
 	if c.NextFrame.Before(time.Now()) {
 		c.NextFrame = time.Now().Add(time.Millisecond * 16) // 170 for simple on/off blinking
 
 		if c.shrinking {
-			c.shrinkFraction -= PixelSize.Y * 6
+			c.shrinkFraction -= speedFactor
 
 			if c.shrinkFraction < 0.2 {
 				c.shrinking = false
 			}
 		} else {
-			c.shrinkFraction += PixelSize.Y * 6
+			c.shrinkFraction += speedFactor
 
 			if c.shrinkFraction > 0.8 {
 				c.shrinking = true
