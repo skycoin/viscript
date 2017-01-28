@@ -3,6 +3,8 @@ package hypervisor
 import (
 	example "github.com/corpusc/viscript/hypervisor/process/example"
 	"github.com/corpusc/viscript/msg"
+
+	"fmt"
 )
 
 /*
@@ -27,6 +29,7 @@ type ProcessList struct {
 }
 
 func HypervisorInitProcessList() {
+	//fmt.Printf("HypervisorInitProcessList()\n")
 	_ProcessList.ProcessMap = make(map[msg.ProcessId]msg.ProcessInterface)
 }
 
@@ -34,10 +37,13 @@ func HypervisorProcessListTeardown() {
 
 }
 
-func AddProcess(p msg.ProcessInterface) {
+func AddProcess(p msg.ProcessInterface) msg.ProcessId {
+	fmt.Printf("Hypervisor.AddProcess\n")
+
 	id := p.GetId()
 	//do check to make sure processId is not already in list
 	_ProcessList.ProcessMap[id] = p
+	return id
 }
 
 func GetProcessEvents() {

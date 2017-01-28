@@ -47,11 +47,13 @@ func main() {
 
 	fmt.Printf("Start\n")
 
+	hypervisor.HypervisorInit()
+
 	viewport.ViewportInit() //runtime.LockOSThread()
 	viewport.ViewportScreenInit()
 	viewport.ViewportInitInputEvents()
 
-	hypervisor.HypervisorInit()
+	viewport.ViewportTerminalsInit() //start the terminal
 
 	fmt.Printf("Start Loop; \n")
 	for viewport.CloseWindow == false {

@@ -20,20 +20,20 @@ var (
 	Terms       terminal.TerminalStack = terminal.TerminalStack{}
 )
 
-func init() {
-	fmt.Println("viewport.init()")
-	Terms.Init()
-	Terms.AddTerminal()
-	Terms.AddTerminal()
-	Terms.AddTerminal()
-}
-
 func ViewportInit() {
 	fmt.Println("viewport.ViewportInit()")
 	app.MakeHighlyVisibleLogHeader(app.Name, 15)
 	// GLFW event handling must run on the main OS thread
 	// See documentation for functions that are only allowed to be called from the main thread.
 	runtime.LockOSThread()
+}
+
+func ViewportTerminalsInit() {
+	fmt.Println("viewport.init()")
+	Terms.Init()
+	Terms.AddTerminal()
+	Terms.AddTerminal()
+	Terms.AddTerminal()
 }
 
 func ViewportScreenTeardown() {

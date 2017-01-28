@@ -1,6 +1,8 @@
 package hypervisor
 
-import ()
+import (
+	"fmt"
+)
 
 /*
 	Hypervisor
@@ -37,9 +39,9 @@ Can objects create multiple channels?
 */
 
 func HypervisorInit() {
-
-	DbusInit()
+	//fmt.Printf("HypervisorInit\\n")
 	HypervisorInitProcessList()
+	DbusInit()
 	AddTestProcess()
 }
 

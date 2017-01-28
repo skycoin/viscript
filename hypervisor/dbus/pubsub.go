@@ -18,22 +18,25 @@ type PubsubSubscriber struct {
 	Channel chan []byte //is there even a reason to pass by pointer
 }
 
-func (self *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType ResourceType, ResourceIdentifier string) {
+func (self *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType ResourceType, ResourceIdentifier string) ChannelId {
 	n := PubsubChannel{}
 	n.ChannelId = RandChannelId()
 	n.OwnerType = OwnerType
 	n.ResourceIdentifier = ResourceIdentifier
 	n.Subscribers = make([]PubsubSubscriber, 0)
+
+	return n.ChannelId
 }
 
 //where do we get the channel id from
-func (self *DbusInstance) AddPubsubChannelSubscriber(ResourceId ResourceId, ResourceType ResourceType, ChannelId ChannelId) {
+func (self *DbusInstance) AddPubsubChannelSubscriber(ChannelId ChannelId, ResourceId ResourceId, ResourceType ResourceType, channelIn chan []byte) {
 
 	pc := self.PubsubChannels[ChannelId] //pubsub channel
 
 	x := PubsubSubscriber{}
 	x.SubscriberId = ResourceId
 	x.SubscriberType = ResourceType
+	x.Channel = channelIn
 
 	pc.Subscribers = append(pc.Subscribers, x)
 }
