@@ -64,5 +64,4 @@ func (self *Process) GetOutgoingChannel() chan []byte {
 // do bussiness logic
 func (self *Process) Tick() {
 	self.State.HandleMessages()
-
 }

@@ -57,16 +57,6 @@ func ProcessInputEvents(message []byte) []byte {
 
 		onMouseButton(msgBtn)
 
-	case msg.TypeChar:
-		var msgChar msg.MessageOnCharacter
-		msg.MustDeserialize(message, &msgChar)
-
-		if DebugPrintInputEvents {
-			fmt.Print("TypeChar")
-		}
-
-		onChar(msgChar)
-
 	case msg.TypeKey:
 		var keyMsg msg.MessageKey
 		msg.MustDeserialize(message, &keyMsg)

@@ -159,6 +159,7 @@ func onFrameBufferSize(m msg.MessageFrameBufferSize) {
 }
 
 func onChar(m msg.MessageOnCharacter) {
+	println("hypervisor/process/terminal/events.onChar(m msg.Message)")
 	//InsertRuneIntoDocument("Rune", m.Rune)
 	//script.Process(false)
 }
@@ -168,8 +169,6 @@ func onKey(m msg.MessageKey) {
 		foc := Focused
 
 		if glfw.Action(m.Action) == glfw.Release {
-			fmt.Println("release --------- ", m.Key)
-
 			switch glfw.Key(m.Key) {
 
 			case glfw.KeyEscape:
@@ -198,8 +197,6 @@ func onKey(m msg.MessageKey) {
 				fmt.Println("'Super' modifier key RELEASED")
 			}
 		} else { // glfw.Press   or   glfw.Repeat
-			fmt.Println("press --------- ", m.Key)
-
 			b := foc.TextBodies[0]
 
 			switch glfw.ModifierKey(m.Mod) {

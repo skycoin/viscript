@@ -19,8 +19,6 @@ func onKey(m msg.MessageKey) {
 	foc := Focused
 
 	if glfw.Action(m.Action) == glfw.Release {
-		fmt.Println("\nrelease --------- ", m.Key)
-
 		switch glfw.Key(m.Key) {
 
 		case glfw.KeyEscape:
@@ -49,8 +47,6 @@ func onKey(m msg.MessageKey) {
 			fmt.Println("'Super' modifier key RELEASED")
 		}
 	} else { // glfw.Press   or   glfw.Repeat
-		fmt.Println("\npress --------- ", m.Key)
-
 		b := foc.TextBodies[0]
 
 		switch glfw.ModifierKey(m.Mod) {
