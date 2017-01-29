@@ -39,7 +39,7 @@ Can objects create multiple channels?
 */
 
 func HypervisorInit() {
-	//fmt.Printf("HypervisorInit\\n")
+	println("hypervisor.go --- HypervisorInit()")
 	HypervisorInitProcessList()
 	DbusInit()
 	AddTestProcess()

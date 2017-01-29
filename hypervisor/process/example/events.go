@@ -5,7 +5,7 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-func (self *State) ProcessInputEvents(msgType uint16, message []byte) []byte {
+func (self *State) UnpackInputEvents(msgType uint16, message []byte) []byte {
 
 	switch msgType {
 
@@ -151,6 +151,7 @@ func onFrameBufferSize(m msg.MessageFrameBufferSize) {
 }
 
 func onChar(m msg.MessageOnCharacter) {
+	println("hypervisor/process/example/events.onChar()")
 	//InsertRuneIntoDocument("Rune", m.Rune)
 	//script.Process(false)
 }
@@ -160,8 +161,6 @@ func onKey(m msg.MessageKey) {
 		foc := Focused
 
 		if glfw.Action(m.Action) == glfw.Release {
-			fmt.Println("release --------- ", m.Key)
-
 			switch glfw.Key(m.Key) {
 
 			case glfw.KeyEscape:
@@ -190,8 +189,6 @@ func onKey(m msg.MessageKey) {
 				fmt.Println("'Super' modifier key RELEASED")
 			}
 		} else { // glfw.Press   or   glfw.Repeat
-			fmt.Println("press --------- ", m.Key)
-
 			b := foc.TextBodies[0]
 
 			switch glfw.ModifierKey(m.Mod) {

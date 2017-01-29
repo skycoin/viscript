@@ -5,7 +5,7 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-func (self *State) ProcessInputEvents(msgType uint16, message []byte) []byte {
+func (self *State) UnpackInputEvents(msgType uint16, message []byte) []byte {
 
 	switch msgType {
 
@@ -148,17 +148,10 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 }
 
 func onFrameBufferSize(m msg.MessageFrameBufferSize) {
-	/*
-		fmt.Printf("onFrameBufferSize() - x, y: %d, %d\n", m.X, m.Y)
-		gfx.CurrAppWidth = int32(m.X)
-		gfx.CurrAppHeight = int32(m.Y)
-		gfx.SetSize()
-		cGfx.SetSize()
-		SetSize()
-	*/
 }
 
 func onChar(m msg.MessageOnCharacter) {
+	println("hypervisor/process/terminal/events.onChar(m msg.Message)")
 	//InsertRuneIntoDocument("Rune", m.Rune)
 	//script.Process(false)
 }
@@ -168,8 +161,6 @@ func onKey(m msg.MessageKey) {
 		foc := Focused
 
 		if glfw.Action(m.Action) == glfw.Release {
-			fmt.Println("release --------- ", m.Key)
-
 			switch glfw.Key(m.Key) {
 
 			case glfw.KeyEscape:
@@ -198,8 +189,6 @@ func onKey(m msg.MessageKey) {
 				fmt.Println("'Super' modifier key RELEASED")
 			}
 		} else { // glfw.Press   or   glfw.Repeat
-			fmt.Println("press --------- ", m.Key)
-
 			b := foc.TextBodies[0]
 
 			switch glfw.ModifierKey(m.Mod) {

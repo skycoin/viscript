@@ -52,13 +52,12 @@ func main() {
 	viewport.ViewportInit() //runtime.LockOSThread()
 	viewport.ViewportScreenInit()
 	viewport.ViewportInitInputEvents()
-
 	viewport.ViewportTerminalsInit() //start the terminal
 
 	fmt.Printf("Start Loop; \n")
 	for viewport.CloseWindow == false {
 		viewport.DispatchInputEvents(igl.InputEvents) //event channel
-		hypervisor.DispatchProcesEvents()             //viewport handles incoming process events
+		hypervisor.DispatchProcessEvents()            //viewport handles incoming process events
 		hypervisor.ProcessTick()                      //processes, handle incoming events
 		viewport.PollUiInputEvents()
 		viewport.Update() //in general
@@ -68,6 +67,5 @@ func main() {
 
 	fmt.Printf("Closing down viewport \n")
 	viewport.ViewportScreenTeardown()
-
 	hypervisor.HypervisorTeardown()
 }

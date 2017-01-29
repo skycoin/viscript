@@ -3,25 +3,24 @@ package hypervisor
 import (
 	example "github.com/corpusc/viscript/hypervisor/process/example"
 	"github.com/corpusc/viscript/msg"
-
-	"fmt"
 )
 
 /*
 	Process can
 	- receive messages from hypervisor
-	- can emite messages back to hyper visor
-	- have a tick method for processing incoming messages
+	- can emite message back to hypervisor
+	- have a tick method for handling incoming messages
 
 	Incoming messages from process to hypervisor come in anytime
 	- on input dispatch
-	Messages outgoing to hypervisor are processed in HandleDispatchProcesEvents()
+	Messages outgoing to hypervisor are processed in DispatchProcessEvents()
 	- we check each process channel for outgoing messages to the hypervisor
 	Each process has a tick() method
 	- tick method, input messages are processed, output messages created
 
 
 */
+
 var _ProcessList ProcessList
 
 type ProcessList struct {
@@ -29,16 +28,16 @@ type ProcessList struct {
 }
 
 func HypervisorInitProcessList() {
-	//fmt.Printf("HypervisorInitProcessList()\n")
+	println("process_list.HypervisorInitProcessList()")
 	_ProcessList.ProcessMap = make(map[msg.ProcessId]msg.ProcessInterface)
 }
 
 func HypervisorProcessListTeardown() {
-
+	println("process_list.HypervisorProcessListTeardown()")
 }
 
 func AddProcess(p msg.ProcessInterface) msg.ProcessId {
-	fmt.Printf("Hypervisor.AddProcess\n")
+	println("process_list.AddProcess()")
 
 	id := p.GetId()
 	//do check to make sure processId is not already in list
@@ -47,11 +46,13 @@ func AddProcess(p msg.ProcessInterface) msg.ProcessId {
 }
 
 func GetProcessEvents() {
-
+	println("process_list.GetProcessEvents()")
 }
 
 //run the process, creating new events for hypervisor
 func ProcessTick() {
+	//println("process_list.ProcessTick()")
+
 	for id, p := range _ProcessList.ProcessMap {
 		_ = id
 		p.Tick() //only do if incoming messages
@@ -59,7 +60,9 @@ func ProcessTick() {
 }
 
 //events from process to hypervisor
-func DispatchProcesEvents() {
+func DispatchProcessEvents() {
+	//println("process_list.DispatchProcessEvents()")
+
 	for id, p := range _ProcessList.ProcessMap {
 		var c chan []byte = p.GetOutgoingChannel() //channel
 		//p.Tick() //only do if incoming messages
@@ -67,18 +70,20 @@ func DispatchProcesEvents() {
 		if len(c) > 0 {
 			m := <-c //read events
 			//do events
-			ProcessEvent(m, id)
+			HandleEvent(m, id)
 		}
 	}
 }
 
 //an incoming message from a process
-func ProcessEvent(msg []byte, Id msg.ProcessId) {
+func HandleEvent(msg []byte, Id msg.ProcessId) {
+	println("process_list.HandleEvent()")
 	//process messages received by process
 }
 
 //Test by adding example Process
 func AddTestProcess() {
+	println("process_list.AddTestProcess()")
 	var p *example.Process = example.NewProcess()
 	var pi msg.ProcessInterface = msg.ProcessInterface(p)
 	AddProcess(pi)

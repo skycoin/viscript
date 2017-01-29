@@ -63,7 +63,7 @@ func DispatchInputEvents(ch chan []byte) []byte {
 
 	for len(ch) > 0 { //if channel has elements
 		v := <-ch //read from channel
-		message = ProcessInputEvents(v)
+		message = UnpackInputEvents(v)
 
 	}
 

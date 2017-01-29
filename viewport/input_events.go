@@ -1,23 +1,14 @@
 package viewport
 
 import (
-	//"bytes"
-	//"encoding/binary"
 	"fmt"
 	"github.com/corpusc/viscript/msg"
 	_ "strconv"
 )
 
-func init() {
-	//rune test
-}
-
 var DebugPrintInputEvents = false
 
-//this is where input events are
-
-func ProcessInputEvents(message []byte) []byte {
-
+func UnpackInputEvents(message []byte) []byte {
 	switch msg.GetType(message) {
 
 	case msg.TypeMousePos:

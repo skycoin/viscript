@@ -12,11 +12,6 @@ import (
 	"math"
 )
 
-func onChar(m msg.MessageOnCharacter) {
-	InsertRuneIntoDocument("Rune", m.Rune)
-	//script.Process(false)
-}
-
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(m msg.MessageMousePos) {
 	x := float32(m.X)

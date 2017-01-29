@@ -14,11 +14,10 @@ import (
 // so you will have to handle both left & right modifier keys via the "action" variable!
 
 func onKey(m msg.MessageKey) {
+	println("\nviewport/onKey.go.onKey()")
 	//foc := Focused
 
 	if msg.Action(m.Action) == msg.Release {
-		fmt.Println("\nrelease --------- ", m.Key)
-
 		switch m.Key {
 
 		case msg.KeyEscape:
@@ -48,8 +47,6 @@ func onKey(m msg.MessageKey) {
 			fmt.Println("'Super' modifier key RELEASED")
 		}
 	} else { // glfw.Press   or   glfw.Repeat
-		fmt.Println("\npress --------- ", m.Key)
-
 		/*
 			b := foc.TextBodies[0]
 
