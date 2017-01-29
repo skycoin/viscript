@@ -52,7 +52,6 @@ func main() {
 	viewport.ViewportInit() //runtime.LockOSThread()
 	viewport.ViewportScreenInit()
 	viewport.ViewportInitInputEvents()
-
 	viewport.ViewportTerminalsInit() //start the terminal
 
 	fmt.Printf("Start Loop; \n")
@@ -68,6 +67,5 @@ func main() {
 
 	fmt.Printf("Closing down viewport \n")
 	viewport.ViewportScreenTeardown()
-
 	hypervisor.HypervisorTeardown()
 }

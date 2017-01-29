@@ -686,10 +686,7 @@ we will have
 we have pseudo widgets and a lot of stuff flushed out ,but the module interfaces are not correct or simple enough or contained
 
 
-hypervisor may import terminal
-i am not sure i want terminal inside of hypervisor
-because it seems seperate
-"panel" is important concept
+
 
 https://upload.wikimedia.org/wikipedia/en/c/cd/Fmli_lu.PNG
 
@@ -705,3 +702,421 @@ how do you want to do this?
 
 we should have keyboard messages going into the terminal from hypervisor
 and have the process interface, sending messages for "set cursor" and "set character" to the terminal
+
+
+
+
+this is basicly a full operating system.
+and handles file system, networking and graphics/rendering, sound and keyboard input.
+an the hypervisor gives cross platform, uniform, abstracted interface to all those things.
+
+
+
+
+8888888888888888
+inputs are part of terminal objects and should be handled in the object that is receiving the inputs, so even inputs should not be in terminal.
+there will be a "process" interface attached to the terminal.
+who will handle input messages.
+and the process interface implementation will emit messages to hypervisor for setcursor and set character for terminal.
+8888888888888888
+
+
+
+look at process list.
+the process gets message in, through incoming channel.
+and process sends messages back to hypervisor to do stuff with terminal if it has an attached terminal.  see api.go.
+any state, except for window size, and cursor position and that, can be moved into the process.
+in the state variable.
+and terminal should only keep cursor position and array of characters.
+
+
+
+we will have multiple implementations of the process interface; do one that does one line input like bash and you hit enter and it goes to next line etc.
+
+
+
+
+in viscript.go
+do "defer teardown" or whatever.
+and make the while 1 loop, exit on write to the close channel.
+
+
+
+
+in the viscript.go
+have a method to check if app should close
+and if so, then let the loop finish in viscript.go
+and it calls the teardown methods.
+
+
+
+
+
+there are two ways to do this:
+have a process that covers whole screen and deal with process stack in hypervisor.
+or have just a terminal with one window, and have master process and have the sub terminals communicating back to the master process instead of the hypervisor.
+the viscript editor will be one type of process object interface implementation.
+the start button window and that will be another.
+and then we want a bash like terminal with just "print line" type API functionality.
+
+
+
+
+push as much state as you can into the process object.
+
+and terminal only has 
+
+> set cursor
+> set char
+> creation methods
+> its size, position, layer etc
+
+
+
+
+
+do you see what I did with process list?
+processes receive messages
+processes communicate back with messages
+888888888888888888888888888888888888888888888888888888888
+processes control the terminal via message api; processes get the inputs from a terminal object
+and almost all of the terminal state, has to be pushed into a process interface implementatoin; and the state is specific to a process
+etc its type and what it does
+while set character, get screen size, set cursor etc, is generic to the terminal
+
+
+
+
+these variables and all the input handlers will be moved into the process
+and is not part of terminal.
+the hypervisor just figures out what terminal is in focus, what process is associated with it and forwards along the messages (maybe with offsets for mouse so correct for window position etc)
+
+
+
+
+
+the "start button" program,
+will be another process implementation
+
+
+
+
+
+what does not work right now
+- terminal object does not accept length prefixed message for set char, set cursor, from process object
+- terminal does not have attached process object in process list, to relay input events to
+
+
+
+
+
+the app, gfx, these libraries that call out for rendering will be called insido the process implementation and will be imported from there; and will be boiled down to messages to drive terminal going over the messaging channel to hypervisor
+
+i made small example in process/example/api.go
+
+and those are "atomic" terminal operations, and then the gui elements will be drawn using compount operations (multiple atomic operations)
+
+
+
+
+anything inside of process, will not be allowed to import gl or glfw or any of this; and will only communicate with terminal over the event interface
+
+
+
+
+
+bash, new line, read command, print some stuff; allow scrolling for back log; that is simpliest thing and we need that
+
+
+
+
+each process has its own state struct
+and its own isolate state.
+process state can only be modified by inputing length prefixed messages to the process
+and the process responds with length prefixed messages.
+
+
+
+
+
+there is no reason a process needs a terminal, but i do not have any process instances right now that are not using the terminal interface to set gui.
+it is impossible to start a process without a terminal, because processes that take in user input and have termial, exist.
+becuase you need a process with a terminal, to run a process that does not have a terminal
+
+
+
+
+what is a bash thing:
+
+i mean, lines, and have line 1, line 2, line 3, then something that renders it to terminal and lets you scroll and which wraps the output to the termimal size; and have a max buffer size and maybe scroll.
+
+"what i know of a bash interface...... it has to be a visible box/rectangle on the screen where you can type.  right?"
+
+This is called a terminal instance, attached to a process.
+
+and the terminal has a "set char" and "set cursor" messsage type it uses as API between process and the terminal instance
+
+
+
+
+
+in our system we will have an example process, attached to a terminal.
+and the process will render the interface and we will type something and when we hit enter it will echo it.
+and will have scrollable buffer, that goes through the length prefixed message API and event channgel.
+
+it will
+- receive input events over the event channel
+- it will send setCursor and setCharacter (set character in terminal), messages to hypervisor, which will be forwarded to the attached terminal display.
+
+the process is what will receive the input events and the process is what will sent the commands to the terminal object
+
+
+
+
+
+
+you hit key, the hypervisor takes that key and determines which terminal is in focus.
+and then relays the key to the "process" for that terminal/window.
+
+then the process gets the key and does something. the process emits mesages to chang the GUI state. the messages go to the hypervisor. the hypervisor forwards the messages to the terminal if they are terminal messages
+
+
+
+
+
+
+the the stack of terminals has  method for draw()
+that will draw the hypervisor
+and hypervisor might keep track of which terminal is in focus
+a terminal is a rectangle in the window, drawn by hypervisor
+
+
+
+
+
+I would be happy if
+- terminals draw to screen
+- the processes can animate the terminals
+- the proecess user input handle is already implemented
+
+the process gets events in on the events in channel, you call tick and it processes them and events go out on the events out channel
+and the process is determinstic.
+go into /process/example/api.go
+
+that is function that writes terminal messages to the output event channel
+
+issues:
+2> the terminals are not associated to processes yet
+
+
+
+
+
+
+once you have terminal working and it responds to event channel and you can draw a single character etc
+then you can implement bash as a process implemntation instance
+right now, you are implementing the stuff you would nee to implement any process or application.
+
+
+
+
+
+
+viscript/process/example/api.go
+
+and multiple process implementations can use one library and just import the library; and will have library for atomic, and library for compound or widget like GUI stuff
+
+
+
+
+
+
+use ~ to toggle terminal 0?
+
+
+
+
+
+
+we have six applications that will be running on top of this
+and soon you can just focus on making it nice and bugs and etc
+and making it like a video game
+
+
+
+
+
+the hypervisor will process the commands for display and controlling display
+the hyper visor will send input messages to the process/task
+the process/task will send draw messages back to the hypervisor
+the hypervisor terminal object will receive the messages from hypervisor, and will have a draw method and will import the opengl
+the process/task will import a gui library, that wraps the operations through the length prefixed message channel
+
+
+
+
+
+
+I have to get contract, then have money from customer, then I have sixty days to get thing done
+
+
+
+
+
+needs:
+5> ability to resize, drag, move terminals around
+6> ability to cycle through infocus terminal with the ~ key
+once we have bash terminal setup
+then we do commands for
+list terminals
+list processes
+start process
+and we do reflection/introspection self tests
+so system self boot straps
+
+
+
+
+
+look at uplink
+and imagine the windows are bash terminals
+and you are clicking the buttons to open bash terminnals
+
+
+
+
+
+ hypervisor will look at the terminal "InFocus" and forward all the input to the process acsociated with that terminal
+
+
+
+
+
+
+ and we need bash done NOW
+ i have six applications i have to import into this interface
+ bash only have fmt and printf and new line and add character, etc
+and drawing them around the screen and opening and closing and minimizing them
+
+
+
+
+https://en.wikipedia.org/wiki/D-Bus
+ https://en.wikipedia.org/wiki/File:D-Feet.png
+
+
+
+
+
+window border is annoying
+inclusive window border is probably better than window border on whole thing
+make it cyber punk and 1-3 pixels
+light accent.
+interior of border has 1-3 pixels of special stuff on border interior pixels.
+and interior border means that if window is 256 pixels wide, the border stuff is drawn in pixel 0,1,2  and pixels 255,254,253 etc
+a gradient could be good, because would indicate visually which side of the line is "inside" and which side is "outside"
+interior borders are better than exterior borders, because the border does not fuck with the grid spacing.
+
+
+
+
+
+> but then how does it respond to resizing the OS window?
+
+That is good question./important question.
+
+We send a message/struct to the process controlling the terminal, that resized happens. Then the process will send a clear screen command and rerender the terminal buffer probably, with the new size
+
+
+
+
+
+
+https://en.wikipedia.org/wiki/File:Stdstreams-notitle.svg
+
+
+
+
+
+
+
+https://upload.wikimedia.org/wikipedia/en/3/3b/Norton_Utilities_6.01_UI.png
+this is user defined characters
+where application sets the character grid itself, that it will use to render
+and then can make gui type stuff, while actually being monospaced
+
+
+
+
+
+
+
+there will be terminal 0, which is terminal that is lowest in stack; that takes up whole screen
+and this is the "Desktop background" terminal
+where we will have the start menu and if i right click on it, will give me dropdown etc
+and this terminal always covers the whole screen
+
+we have a special, terminal or terminal 0, that is size of whole viewport and is behind the other terminals (the desktop background viewport)
+
+hold key like control and drag border of terminal to move it, or something
+
+
+
+
+
+
+
+
+when we have 1 working terminal, we can have commands like
+
+terminal_list - list all terminal ids
+terminal_move - move terminal by x,y
+terminal_new - createnew terminal
+terminal_close - close terminal by id
+terminal_focus - set focus to terminal by id
+
+and then will have command line to test the resize and movement stuff and opening/closing etc
+
+
+
+
+
+ there is a general app or process type for bash type commands like this
+but other types of processes are for other apps and not a general type of terminal
+
+
+
+
+
+
+
+dbus is partially implemented
+the terminal object is supposedt to be able to createa  pubsub channel
+and the process object can create a pubsub channel
+adn then subscribe to each other
+to relay key inputs from the terminal, to the process object
+and to relay commands back from the process to the terminal
+
+eventually the viewport will communicate to terminal over dbus but we dont need that now and we do not have dbus type server/client socket thing implemented for that
+
+we are supposed to have a resource registry, where all viewports, terminals, processes are given an id and we have ResourceId and ResourceType, but will leave it for now or ignore it and I am not sure its used for anything right now
+and it is part of dbus right now, but not sure that is best place
+dbus creates channels for communication between resources
+a resource has an in and a resource type
+so we can see that a particular channe has an id, that it is owned by a process with a particular ID and that it is to a terminal resource object, which has a particular id, etc and we can enumerate all of the resources and their types and the channels connecting them
+
+
+
+
+
+[1/28/2017 8:50:45 AM] chattanoo: looking it over.  what does "pubsub" mean?
+[1/28/2017 8:51:02 AM] HaltingState: it means publisher and subscriber
+[1/28/2017 8:51:09 AM] HaltingState: its not a one to one channel
+[1/28/2017 8:51:19 AM] HaltingState: but list of people subscribed
+[1/28/2017 8:51:34 AM] HaltingState: the terminal subscibes to process and the process subscribes to terminal
+[1/28/2017 8:51:42 AM] HaltingState: so technically only one subscriber in each direction for now
+
+each object will have a single channel for "in"
+and when publisher writes, the message will get written to all the in channels for subscribers
+dbus will eventually need a socket type
+where there is a server and you get a "connection" and its one to one, and bidirectional and like a socket; but we dont have or need that yet

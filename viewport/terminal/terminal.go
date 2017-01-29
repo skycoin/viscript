@@ -101,6 +101,10 @@ func (t *Terminal) SetGridSize() {
 	// 	t.Chars[i] = make([]uint32, t.GridSize.X, t.GridSize.X)
 }
 
+func (t *Terminal) Clear() {
+	//TODO
+}
+
 func (t *Terminal) validPos(X, Y uint32) bool {
 	if X < 0 || X >= uint32(t.GridSize.X) || Y < 0 || Y >= uint32(t.GridSize.Y) {
 		println("ATTEMPTED OUT OF BOUNDS CHARACTER PLACEMENT!")

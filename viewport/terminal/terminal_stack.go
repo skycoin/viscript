@@ -36,7 +36,7 @@ type TerminalStack struct {
 func (self *TerminalStack) Init() {
 	println("TerminalStack.Init()")
 	self.Terms = make(map[msg.TerminalId]*Terminal)
-	self.nextSpan = .8
+	self.nextSpan = .3
 	self.nextRect = app.Rectangle{
 		gl.DistanceFromOrigin,
 		gl.DistanceFromOrigin,
