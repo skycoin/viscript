@@ -5,7 +5,7 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-func (self *State) ProcessInputEvents(msgType uint16, message []byte) []byte {
+func (self *State) UnpackInputEvents(msgType uint16, message []byte) []byte {
 
 	switch msgType {
 

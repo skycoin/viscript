@@ -29,7 +29,7 @@ func (self *State) HandleMessages() {
 
 		switch msgTypeMask {
 		case msg.PrefixInput:
-			self.ProcessInputEvents(msgType, m)
+			self.UnpackInputEvents(msgType, m)
 		case msg.PrefixTerminal: //process to hypervisor messages
 			log.Panic("Error: Example process does not handle this type")
 		}

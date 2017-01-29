@@ -8,7 +8,7 @@ import (
 
 var DebugPrintInputEvents = false
 
-func ProcessInputEvents(message []byte) []byte {
+func UnpackInputEvents(message []byte) []byte {
 	switch msg.GetType(message) {
 
 	case msg.TypeMousePos:
