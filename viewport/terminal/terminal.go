@@ -15,6 +15,8 @@ const (
 type Terminal struct {
 	TerminalId      msg.TerminalId
 	AttachedProcess msg.ProcessId
+	OutChannelId    uint32 //id of pubsub channel
+	InChannel       chan []byte
 
 	//vars for character grid (of cells)
 	Chars    [NumRows][NumColumns]uint32
@@ -31,6 +33,7 @@ func (t *Terminal) Init() {
 	fmt.Printf("Terminal.Init()\n")
 
 	t.TerminalId = msg.RandTerminalId()
+	t.InChannel = make(chan []byte)
 	t.GridSize = app.Vec2I{NumColumns, NumRows}
 	t.Chars = [NumRows][NumColumns]uint32{}
 	t.makeRandomChars(20)
