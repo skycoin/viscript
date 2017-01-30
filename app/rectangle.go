@@ -27,7 +27,6 @@ func (r *Rectangle) Contains(x, y float32) bool {
 	if x > r.Left && x < r.Right && y > r.Bottom && y < r.Top {
 		return true
 	}
-
 	return false
 }
 

@@ -4,12 +4,11 @@ import (
 	"fmt"
 
 	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/msg"
-	"github.com/corpusc/viscript/viewport/gl"
-
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/hypervisor/dbus"
 	example "github.com/corpusc/viscript/hypervisor/process/example"
+	"github.com/corpusc/viscript/msg"
+	"github.com/corpusc/viscript/viewport/gl"
 )
 
 /*
@@ -20,7 +19,6 @@ import (
 	- change terminal in focus
 	- resize terminal (in pixels or chars)
 	- move terminal
-
 */
 
 type TerminalStack struct {
@@ -50,11 +48,13 @@ func (self *TerminalStack) AddTerminal() {
 	self.nextDepth += self.nextSpan / 10 // done first, cuz desktop is at 0
 
 	tid := msg.RandTerminalId() //terminal id
-	self.Terms[tid] = &Terminal{Depth: self.nextDepth, Bounds: &app.Rectangle{
-		self.nextRect.Top,
-		self.nextRect.Right,
-		self.nextRect.Bottom,
-		self.nextRect.Left}}
+	self.Terms[tid] = &Terminal{
+		Depth: self.nextDepth,
+		Bounds: &app.Rectangle{
+			self.nextRect.Top,
+			self.nextRect.Right,
+			self.nextRect.Bottom,
+			self.nextRect.Left}}
 	self.Terms[tid].Init()
 
 	self.nextRect.Top -= self.nextSpan
@@ -66,8 +66,10 @@ func (self *TerminalStack) AddTerminal() {
 	self.SetupTerminalDbus(tid)
 }
 
-func (self *TerminalStack) RemoveTerminal(id int) {
+func (self *TerminalStack) RemoveTerminal(id msg.TerminalId) {
 	println("TerminalStack.RemoveTerminal()")
+	// delete(self.Terms, id)
+	// TODO: what should happen here after deleting terminal from the stack?
 }
 
 func (self *TerminalStack) ResizeTerminal(id msg.TerminalId, x int, y int) {
