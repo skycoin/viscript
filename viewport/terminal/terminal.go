@@ -9,10 +9,9 @@ import (
 )
 
 const (
-	// NumColumns - of columns
+	// num == count/number of...
 	NumColumns = 64
-	// NumRows - Number of rows
-	NumRows = 32
+	NumRows    = 32
 )
 
 type Terminal struct {

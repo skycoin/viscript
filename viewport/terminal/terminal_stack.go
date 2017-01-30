@@ -35,12 +35,12 @@ type TerminalStack struct {
 func (self *TerminalStack) Init() {
 	println("TerminalStack.Init()")
 	self.Terms = make(map[msg.TerminalId]*Terminal)
-	self.nextSpan = .3
+	self.nextSpan = gl.CanvasExtents.Y / 3
 	self.nextRect = app.Rectangle{
-		gl.DistanceFromOrigin,
-		gl.DistanceFromOrigin,
-		-gl.DistanceFromOrigin,
-		-gl.DistanceFromOrigin}
+		gl.CanvasExtents.Y,
+		gl.CanvasExtents.X / 2,
+		-gl.CanvasExtents.Y / 2,
+		-gl.CanvasExtents.X}
 }
 
 func (self *TerminalStack) AddTerminal() {

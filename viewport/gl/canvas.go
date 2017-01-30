@@ -5,19 +5,21 @@ import (
 	"github.com/corpusc/viscript/app"
 )
 
-// dimensions (in pixel units)
-var InitAppWidth int = 800 // initial/startup size (when resizing, compare against this)
-var InitAppHeight int = 600
-var CurrAppWidth = int32(InitAppWidth) // current
-var CurrAppHeight = int32(InitAppHeight)
-var longerDimension = float32(InitAppWidth) / float32(InitAppHeight)
-var InitFrustum = &app.Rectangle{1, longerDimension, -1, -longerDimension}
-var PrevFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
-var CurrFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
-
 var (
 	// distance from the center to top & bottom edges of the canvas
 	DistanceFromOrigin float32 = 1
+
+	// dimensions (in pixel units)
+	InitAppWidth  int = 800 // initial/startup size (when resizing, compare against this)
+	InitAppHeight int = 600
+	CurrAppWidth      = int32(InitAppWidth) // current
+	CurrAppHeight     = int32(InitAppHeight)
+
+	// GL space floats
+	longerDimension = float32(InitAppWidth) / float32(InitAppHeight)
+	InitFrustum     = &app.Rectangle{1, longerDimension, -1, -longerDimension}
+	PrevFrustum     = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
+	CurrFrustum     = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
 )
 
 var (
@@ -37,12 +39,13 @@ var (
 )
 
 func init() {
-	println("canvas.init()")
+	println("(gl/canvas.go).init()")
 	// one-time setup
 	PrevColor = GrayDark
 	CurrColor = GrayDark
 
-	// FIXME: these are NO LONGER used as maximums, but more as guidelines for text size
+	// FIXME: these are NO LONGER used as maximums,
+	// but more as guidelines for text size?
 	MaxCharsX = 80
 	MaxCharsY = 25
 
@@ -69,7 +72,7 @@ func GetMenuSizedRect() *app.Rectangle {
 }
 
 func SetSize(x, y int32) {
-	println("canvas.SetSize()")
+	println("\n(gl/canvas.go).SetSize()")
 	*PrevFrustum = *CurrFrustum
 	CurrAppWidth = x
 	CurrAppHeight = y
