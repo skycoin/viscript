@@ -5,9 +5,8 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-func onChar(m msg.MessageOnCharacter) {
-	//InsertRuneIntoDocument("Rune", m.Rune)
-	//script.Process(false)
+func onChar(m msg.MessageChar) {
+	Terms.Focused.RelayCharToTask(m)
 }
 
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can detect a
@@ -17,15 +16,14 @@ func onChar(m msg.MessageOnCharacter) {
 // BUT for RELEASE, the "mod" variable will NOT tell you what key it is!
 // so you will have to handle both left & right modifier keys via the "action" variable!
 func onKey(m msg.MessageKey) {
-	println("\nviewport/onKey.go.onKey()")
+	println("\n(viewport/input_keyboard.go).onKey()")
 	//foc := Focused
 
 	if msg.Action(m.Action) == msg.Release {
 		switch m.Key {
 
 		case msg.KeyEscape:
-			fmt.Println("case msg.KeyEscape:")
-			fmt.Printf("CLOSE OPENGL WINDOW \n")
+			fmt.Println("CLOSE OPENGL WINDOW")
 			CloseWindow = true
 
 		case msg.KeyLeftShift:

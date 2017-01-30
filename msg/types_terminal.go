@@ -22,14 +22,14 @@ const (
 )
 
 type MessageSetChar struct {
-	TermId uint32 //id of the terminal
+	TermId uint32 //terminal
 	X      uint32
 	Y      uint32
-	Rune   uint32
+	Char   uint32
 }
 
 type MessageSetCursor struct {
-	TermId uint32 //id of the terminal
+	TermId uint32 //terminal
 	X      uint32
 	Y      uint32
 }

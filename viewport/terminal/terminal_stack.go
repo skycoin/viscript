@@ -22,8 +22,9 @@ import (
 */
 
 type TerminalStack struct {
-	Focused msg.TerminalId
-	Terms   map[msg.TerminalId]*Terminal
+	FocusedId msg.TerminalId
+	Focused   *Terminal
+	Terms     map[msg.TerminalId]*Terminal
 
 	// private
 	nextRect  app.Rectangle // for next/new terminal spawn
@@ -56,6 +57,8 @@ func (self *TerminalStack) AddTerminal() {
 			self.nextRect.Bottom,
 			self.nextRect.Left}}
 	self.Terms[tid].Init()
+	self.FocusedId = tid
+	self.Focused = self.Terms[tid]
 
 	self.nextRect.Top -= self.nextSpan
 	self.nextRect.Right += self.nextSpan

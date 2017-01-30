@@ -47,7 +47,7 @@ func (self *State) UnpackInputEvents(msgType uint16, message []byte) []byte {
 		onMouseButton(msgBtn)
 
 	case msg.TypeChar:
-		var msgChar msg.MessageOnCharacter
+		var msgChar msg.MessageChar
 		msg.MustDeserialize(message, &msgChar)
 
 		if self.DebugPrintInputEvents {
@@ -150,9 +150,9 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 func onFrameBufferSize(m msg.MessageFrameBufferSize) {
 }
 
-func onChar(m msg.MessageOnCharacter) {
+func onChar(m msg.MessageChar) {
 	println("hypervisor/process/terminal/events.onChar(m msg.Message)")
-	//InsertRuneIntoDocument("Rune", m.Rune)
+	//InsertRuneIntoDocument("Rune", m.Char)
 	//script.Process(false)
 }
 

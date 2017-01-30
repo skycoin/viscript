@@ -45,8 +45,8 @@ type MessageMouseButton struct {
 	Mod    uint8
 }
 
-type MessageOnCharacter struct {
-	Rune uint32
+type MessageChar struct {
+	Char uint32
 }
 
 type MessageKey struct {

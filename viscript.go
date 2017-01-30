@@ -1,6 +1,11 @@
 /*
 
-------- TODO: -------
+------- NEWER TODO: -------
+
+* collapse switch..cases in all "events.go"
+
+
+------- OLDER TODO: -------
 
 * KEY-BASED NAVIGATION
 	* CTRL-HOME/END - PGUP/DN
@@ -24,12 +29,6 @@
 		because this requires scaling the text.  and keeping the aspect ratio means ~40 (max)
 		would alter the width of the scrollbar
 
-*/
-
-/*
-	- Should we have hypervisor
-	- should hypervisor have process list
-	- should we have a dbus implementation in hypervisor
 */
 
 package main
