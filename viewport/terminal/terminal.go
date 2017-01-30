@@ -102,7 +102,11 @@ func (t *Terminal) SetGridSize() {
 }
 
 func (t *Terminal) Clear() {
-	//TODO
+	for y := 0; y < t.GridSize.Y; y++ {
+		for x := 0; x < t.GridSize.X; x++ {
+			Chars[y][x] = 0
+		}
+	}
 }
 
 func (t *Terminal) validPos(X, Y uint32) bool {
