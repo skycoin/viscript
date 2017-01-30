@@ -4,17 +4,7 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-/*
-type ProcessInterface interface {
-	GetId() ProcessId
-	GetIncomingChannel() *chan []byte //channel for incoming messages
-	GetOutgoingChannel() *chan []byte //channel for outgoing messages
-	Tick()                            //process the messages and emit messages
-}
-*/
-
-//Example Process
-//implements process interface
+// Process - Example process
 type Process struct {
 	Id msg.ProcessId
 
@@ -24,6 +14,7 @@ type Process struct {
 	State State
 }
 
+// NewProcess - Constrcuts and returns a new Process struct object
 func NewProcess() *Process {
 	var p Process
 
@@ -37,31 +28,34 @@ func NewProcess() *Process {
 	return &p
 }
 
+// GetProcessInterface - Returns process's msg.ProcessInterface
 func (self *Process) GetProcessInterface() msg.ProcessInterface {
-	var m msg.ProcessInterface
-	m = msg.ProcessInterface(self)
-	return m
+	return msg.ProcessInterface(self)
 }
 
+// DeleteProcess - Deletes the process
 func (self *Process) DeleteProcess() {
 
 }
 
-//implement the interface
+// Implement ProcessInterface
 
+// GetId - Returns process's sequential msg.ProcessId
 func (self *Process) GetId() msg.ProcessId {
 	return self.Id
 }
 
+// GetIncomingChannel - Returns process's incoming channel
 func (self *Process) GetIncomingChannel() chan []byte {
 	return self.MessageIn
 }
 
+// GetOutgoingChannel - Returns process's outgoing channel
 func (self *Process) GetOutgoingChannel() chan []byte {
 	return self.MessageOut
 }
 
-// do business logic
+// Tick - Business logic
 func (self *Process) Tick() {
 	self.State.HandleMessages()
 }
