@@ -26,7 +26,9 @@ func (self *TerminalStack) Draw() {
 
 				if x == int(value.Curs.X) && y == int(value.Curs.Y) {
 					// draw cursor
-					gl.DrawQuad(gl.Pic_GradientBorder, gl.Curs.GetAnimationModifiedRect(*cr), value.Depth)
+					gl.DrawQuad(
+						gl.Pic_GradientBorder,
+						gl.Curs.GetAnimationModifiedRect(*cr), value.Depth)
 				}
 
 				cr.Top -= value.SpanY()

@@ -3,4 +3,6 @@
 .idea/
 main
 viscript
-
+/.vscode
+.DS_Store
+debug

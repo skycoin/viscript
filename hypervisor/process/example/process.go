@@ -27,7 +27,7 @@ type Process struct {
 func NewProcess() *Process {
 	var p Process
 
-	p.Id = msg.RandProcessId()
+	p.Id = msg.NextProcessId()
 
 	p.MessageIn = make(chan []byte)
 	p.MessageOut = make(chan []byte)

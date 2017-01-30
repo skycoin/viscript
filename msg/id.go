@@ -4,18 +4,20 @@ import (
 	"math/rand"
 )
 
-//HyperVisor: processId
+//ProcessId - HyperVisor: processId
 type ProcessId uint64
 
-var ProcessIdGlobal ProcessId = 1 //sequential
+//TerminalId - Terminal: TerminalId
+type TerminalId uint64
 
-func RandProcessId() ProcessId {
+//ProcessIdGlobal - Global sequential process id
+var ProcessIdGlobal ProcessId = 1
+
+func NextProcessId() ProcessId {
 	ProcessIdGlobal += 1
 	return ProcessIdGlobal
 	//return (ProccesId)(rand.Int63())
 }
-
-type TerminalId uint64
 
 func RandTerminalId() TerminalId {
 	return (TerminalId)(rand.Int63())

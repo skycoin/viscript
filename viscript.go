@@ -36,10 +36,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/viewport"
-	igl "github.com/corpusc/viscript/viewport/gl" //eliminate
 
 	"github.com/corpusc/viscript/hypervisor"
+	"github.com/corpusc/viscript/viewport"
+	igl "github.com/corpusc/viscript/viewport/gl" //eliminate
 )
 
 func main() {

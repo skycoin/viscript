@@ -2,14 +2,17 @@ package terminal
 
 import (
 	"fmt"
+	"math/rand"
+
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/msg"
-	"math/rand"
 )
 
 const (
+	// NumColumns - of columns
 	NumColumns = 64
-	NumRows    = 32
+	// NumRows - Number of rows
+	NumRows = 32
 )
 
 type Terminal struct {
@@ -104,7 +107,7 @@ func (t *Terminal) SetGridSize() {
 func (t *Terminal) Clear() {
 	for y := 0; y < t.GridSize.Y; y++ {
 		for x := 0; x < t.GridSize.X; x++ {
-			Chars[y][x] = 0
+			t.Chars[y][x] = 0
 		}
 	}
 }
@@ -113,7 +116,6 @@ func (t *Terminal) validPos(X, Y uint32) bool {
 	if X < 0 || X >= uint32(t.GridSize.X) || Y < 0 || Y >= uint32(t.GridSize.Y) {
 		println("ATTEMPTED OUT OF BOUNDS CHARACTER PLACEMENT!")
 		return false
-	} else {
-		return true
 	}
+	return true
 }
