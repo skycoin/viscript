@@ -1,11 +1,38 @@
 package viewport
 
 import (
-	//"fmt"
-	//"github.com/corpusc/viscript/app"
-	//"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"
 )
+
+// triggered both by moving **AND*** by pressing buttons
+func onMouseCursorPos(m msg.MessageMousePos) {
+	/*
+		x := float32(m.X)
+		y := float32(m.Y)
+
+		mouse.UpdatePosition(
+			app.Vec2F{x, y},
+			gl.CanvasExtents,
+			gl.PixelSize) // state update
+
+		// rendering update
+		if gl.GlfwWindow.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
+			ScrollTermThatHasMousePointer(mouse.PixelDelta.X, mouse.PixelDelta.Y)
+		}
+	*/
+}
+
+func onMouseScroll(m msg.MessageMouseScroll) {
+	/*
+		var delta float32 = 30
+
+		if eitherControlKeyHeld() { // horizontal ability from 1D scrolling
+			ScrollTermThatHasMousePointer(float32(m.Y)*-delta, 0)
+		} else { // can handle both x & y for 2D scrolling
+			ScrollTermThatHasMousePointer(float32(m.X)*delta, float32(m.Y)*-delta)
+		}
+	*/
+}
 
 // apparently every time this is fired, a mouse position event is ALSO fired
 func onMouseButton(m msg.MessageMouseButton) {

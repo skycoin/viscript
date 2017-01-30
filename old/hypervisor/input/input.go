@@ -87,19 +87,3 @@ func movedCursorSoUpdateDependents() {
 		foc.Selection.EndY = math.MaxUint32
 	}
 }
-
-func getSlice(wBuf *bytes.Buffer, err error) (data []byte) {
-	data = make([]byte, 0)
-
-	if err != nil {
-		fmt.Println("binary.Write failed:", err)
-	} else {
-		b := wBuf.Bytes()
-
-		for i := 0; i < wBuf.Len(); i++ {
-			data = append(data, b[i])
-		}
-	}
-
-	return
-}

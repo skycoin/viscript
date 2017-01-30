@@ -3,8 +3,12 @@ package viewport
 import (
 	"fmt"
 	"github.com/corpusc/viscript/msg"
-	//"github.com/corpusc/viscript/script"
 )
+
+func onChar(m msg.MessageOnCharacter) {
+	//InsertRuneIntoDocument("Rune", m.Rune)
+	//script.Process(false)
+}
 
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can detect a
 // shift/alt/ctrl/super key through the "mod" variable,
@@ -12,7 +16,6 @@ import (
 // regardless of left/right key used.
 // BUT for RELEASE, the "mod" variable will NOT tell you what key it is!
 // so you will have to handle both left & right modifier keys via the "action" variable!
-
 func onKey(m msg.MessageKey) {
 	println("\nviewport/onKey.go.onKey()")
 	//foc := Focused
@@ -179,3 +182,50 @@ func onKey(m msg.MessageKey) {
 // 		}
 // 	}
 // }
+
+// only key/char events need this autoscrolling (to keep cursor visible).
+// because mouse can only click visible spots
+func movedCursorSoUpdateDependents() {
+	/*
+		foc := Focused
+
+		// autoscroll to keep cursor visible
+		ls := float32(foc.CursX) * gl.CharWid // left side (of cursor, in virtual space)
+		rs := ls + gl.CharWid                 // right side ^
+
+		if ls < foc.BarHori.ScrollDelta {
+			foc.BarHori.ScrollDelta = ls
+		}
+
+		if rs > foc.BarHori.ScrollDelta+foc.Content.Width() {
+			foc.BarHori.ScrollDelta = rs - foc.Content.Width()
+		}
+
+		// --- Selection Marking ---
+		//
+		// when SM is made functional,
+		// we should probably detect whether cursor
+		// position should update Start_ or End_ at this point.
+		// rather than always making that the "end".
+		// i doubt marking forwards or backwards will ever alter what is
+		// done with the selection
+
+		if foc.Selection.CurrentlySelecting {
+			foc.Selection.EndX = foc.CursX
+			foc.Selection.EndY = foc.CursY
+		} else { // moving cursor without shift gets rid of selection
+			foc.Selection.StartX = math.MaxUint32
+			foc.Selection.StartY = math.MaxUint32
+			foc.Selection.EndX = math.MaxUint32
+			foc.Selection.EndY = math.MaxUint32
+		}
+	*/
+}
+
+func eitherControlKeyHeld() bool { // FIXME: bake into msg when serialized (or use bundled Mod field for 1s that have it)
+	// if gl.GlfwWindow.GetKey(glfw.KeyLeftControl) == glfw.Press || gl.GlfwWindow.GetKey(glfw.KeyRightControl) == glfw.Press {
+	// 	return true
+	// } else {
+	/***********/ return false
+	// }
+}
