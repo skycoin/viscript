@@ -39,22 +39,18 @@ import (
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/viewport"
 	igl "github.com/corpusc/viscript/viewport/gl" //eliminate
-	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
 func main() {
-	viewport.DebugPrintInputEvents = true //print input events
-
 	fmt.Printf("Start\n")
 
 	hypervisor.HypervisorInit()
 
-	viewport.ViewportInit() //runtime.LockOSThread()
+	viewport.DebugPrintInputEvents = true //print input events
+	viewport.ViewportInit()               //runtime.LockOSThread()
 	viewport.ViewportScreenInit()
-	viewport.ViewportInitInputEvents()
+	viewport.InitEvents()
 	viewport.ViewportTerminalsInit() //start the terminal
-
-	igl.GlfwWindow.SetCloseCallback(onWindowClose)
 
 	fmt.Printf("Start Loop; \n")
 	for viewport.CloseWindow == false {
@@ -70,8 +66,4 @@ func main() {
 	fmt.Printf("Closing down viewport \n")
 	viewport.ViewportScreenTeardown()
 	hypervisor.HypervisorTeardown()
-}
-
-func onWindowClose(w *glfw.Window) {
-	viewport.CloseWindow = true
 }

@@ -16,8 +16,12 @@ func PollEvents() {
 }
 
 func InitInputEvents(w *glfw.Window) {
+	//ui
+	w.SetCloseCallback(onClose)
+	//keyboard
 	w.SetCharCallback(onChar)
 	w.SetKeyCallback(onKey)
+	//mouse
 	w.SetMouseButtonCallback(onMouseButton)
 	w.SetScrollCallback(onMouseScroll)
 	w.SetCursorPosCallback(onMouseCursorPos)
@@ -26,6 +30,11 @@ func InitInputEvents(w *glfw.Window) {
 func SerializeAndDispatch(msgType uint16, message interface{}) {
 	// Send byte slice to the InputEvents chan
 	InputEvents <- msg.Serialize(msgType, message)
+}
+
+func onClose(w *glfw.Window) {
+	m := msg.MessageKey{Key: msg.KeyEscape}
+	SerializeAndDispatch(msg.TypeKey, m)
 }
 
 // apparently every time this is fired, a mouse position event is ALSO fired
