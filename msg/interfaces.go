@@ -1,6 +1,6 @@
 package msg
 
-// ProcessInterface - Process interface that Process should implement
+//Process should implement
 type ProcessInterface interface {
 	GetId() ProcessId
 	GetIncomingChannel() chan []byte //channel for incoming messages

@@ -4,7 +4,7 @@ const Name = "V I S C R I P T"
 const UvSpan = float32(1.0) / 16 // span of a tile/cell in uv space
 
 // params: float value, negativemost, & positivemost bounds
-func Clamp(f float32, negBoundary, posBoundary float32) float32 {
+func Clamp(f, negBoundary, posBoundary float32) float32 {
 	if f < negBoundary {
 		f = negBoundary
 	}
