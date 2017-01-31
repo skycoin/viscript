@@ -10,20 +10,20 @@ import (
 )
 
 func TestRuneMsgFlow(t *testing.T) {
-	var m msg.MessageOnCharacter
-	m.Rune = uint32(107)
+	var m msg.MessageChar
+	m.Char = uint32(107)
 	b := msg.Serialize(msg.TypeChar, m)
 
 	message := flowTest(b)
 
-	var msgChar msg.MessageOnCharacter
+	var msgChar msg.MessageChar
 	msg.MustDeserialize(message, &msgChar)
 
-	runePrint := hypervisor.InsertRuneIntoDocument("Rune", msgChar.Rune)
+	runePrint := hypervisor.InsertRuneIntoDocument("Rune", msgChar.Char)
 
 	fmt.Printf("\n", runePrint)
 
-	if msgChar.Rune != m.Rune {
+	if msgChar.Char != m.Char {
 		t.Error("Test rune msg flow not passed\n")
 	} else {
 		fmt.Println("rune test msg flow passed\n")

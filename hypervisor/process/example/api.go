@@ -6,12 +6,12 @@ import (
 
 //example of a gui API and calling out
 //sending messages back to hypervisor to set terminal
-func SetChar(out chan []byte, x uint32, y uint32, Rune uint32) {
+func SetChar(out chan []byte, x uint32, y uint32, char uint32) {
 	var m msg.MessageSetChar
 	m.TermId = 0
 	m.X = x
 	m.Y = y
-	m.Rune = Rune
+	m.Char = char
 	//write event to out channel
 	b := msg.Serialize(msg.TypeSetChar, m) //serialize as byte string
 	out <- b                               //write to output channel

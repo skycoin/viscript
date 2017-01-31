@@ -2,6 +2,7 @@ package viewport
 
 import (
 	"fmt"
+
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/viewport/terminal"
 	//"github.com/corpusc/viscript/script"
@@ -64,7 +65,6 @@ func DispatchInputEvents(ch chan []byte) []byte {
 	for len(ch) > 0 { //if channel has elements
 		v := <-ch //read from channel
 		message = UnpackInputEvents(v)
-
 	}
 
 	return message

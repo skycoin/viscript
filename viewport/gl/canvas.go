@@ -5,19 +5,24 @@ import (
 	"github.com/corpusc/viscript/app"
 )
 
-// dimensions (in pixel units)
-var InitAppWidth int = 800 // initial/startup size (when resizing, compare against this)
-var InitAppHeight int = 600
-var CurrAppWidth = int32(InitAppWidth) // current
-var CurrAppHeight = int32(InitAppHeight)
-var longerDimension = float32(InitAppWidth) / float32(InitAppHeight)
-var InitFrustum = &app.Rectangle{1, longerDimension, -1, -longerDimension}
-var PrevFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
-var CurrFrustum = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
-
 var (
 	// distance from the center to top & bottom edges of the canvas
 	DistanceFromOrigin float32 = 1
+
+	// dimensions (in pixel units)
+	InitAppWidth  int = 800 // initial/startup size (when resizing, compare against this)
+	InitAppHeight int = 600
+	CurrAppWidth      = int32(InitAppWidth) // current
+	CurrAppHeight     = int32(InitAppHeight)
+
+	// GL space floats
+	longerDimension = float32(InitAppWidth) / float32(InitAppHeight)
+	InitFrustum     = &app.Rectangle{1, longerDimension, -1, -longerDimension}
+	PrevFrustum     = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
+	CurrFrustum     = &app.Rectangle{InitFrustum.Top, InitFrustum.Right, InitFrustum.Bottom, InitFrustum.Left}
+
+	// to give us proportions similar to a text mode command prompt screen
+	NumChars = &app.Vec2I{80, 25}
 )
 
 var (
@@ -27,32 +32,25 @@ var (
 	CharHei         float32
 	CharWidInPixels int
 	CharHeiInPixels int
-	// FIXME: below is no longer a maximum of what fits on a max-sized panel (taking up the whole app window) anymore.
-	// 		but is still used as a guide for sizes
-	MaxCharsX int // this is used to give us proportions similar to a 80x25 text console screen
-	MaxCharsY int
+
 	// current position renderer draws to
 	CurrX float32
 	CurrY float32
 )
 
 func init() {
-	println("canvas.init()")
+	println("(gl/canvas.go).init()")
 	// one-time setup
 	PrevColor = GrayDark
 	CurrColor = GrayDark
 
-	// FIXME: these are NO LONGER used as maximums, but more as guidelines for text size
-	MaxCharsX = 80
-	MaxCharsY = 25
-
 	// things that are resized later
 	CanvasExtents.X = DistanceFromOrigin * longerDimension
 	CanvasExtents.Y = DistanceFromOrigin
-	CharWid = float32(CanvasExtents.X*2) / float32(MaxCharsX)
-	CharHei = float32(CanvasExtents.Y*2) / float32(MaxCharsY)
-	CharWidInPixels = int(float32(CurrAppWidth) / float32(MaxCharsX))
-	CharHeiInPixels = int(float32(CurrAppHeight) / float32(MaxCharsY))
+	CharWid = float32(CanvasExtents.X*2) / float32(NumChars.X)
+	CharHei = float32(CanvasExtents.Y*2) / float32(NumChars.Y)
+	CharWidInPixels = int(float32(CurrAppWidth) / float32(NumChars.X))
+	CharHeiInPixels = int(float32(CurrAppHeight) / float32(NumChars.Y))
 	PixelSize.X = CanvasExtents.X * 2 / float32(CurrAppWidth)
 	PixelSize.Y = CanvasExtents.Y * 2 / float32(CurrAppHeight)
 
@@ -69,7 +67,7 @@ func GetMenuSizedRect() *app.Rectangle {
 }
 
 func SetSize(x, y int32) {
-	println("canvas.SetSize()")
+	println("\n(gl/canvas.go).SetSize()")
 	*PrevFrustum = *CurrFrustum
 	CurrAppWidth = x
 	CurrAppHeight = y

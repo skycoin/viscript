@@ -1,13 +1,12 @@
 package msg
 
 import (
-	"github.com/skycoin/skycoin/src/cipher/encoder"
-	"log"
-
-	"fmt"
-
 	"bytes"
 	"encoding/binary"
+	"fmt"
+	"log"
+
+	"github.com/skycoin/skycoin/src/cipher/encoder"
 )
 
 func init() {
@@ -24,7 +23,7 @@ func init() {
 
 	x2 := Serialize(0x0051, m2)
 
-	for i, _ := range x1 {
+	for i := range x1 {
 		if x1[i] != x2[i] {
 			log.Panicf("serialization test failed: \n %x, \n %x \n", x1, x2)
 		}
@@ -47,7 +46,7 @@ func MustDeserialize(msg []byte, obj interface{}) {
 
 func Serialize(prefix uint16, obj interface{}) []byte {
 	b := encoder.Serialize(obj)
-	var b1 []byte = make([]byte, 2)
+	b1 := make([]byte, 2)
 	b1[0] = (uint8)(prefix & 0x00ff)
 	b1[1] = (uint8)((prefix & 0xff00) >> 8)
 	b2 := append(b1, b...)

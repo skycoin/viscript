@@ -2,12 +2,14 @@ package terminal
 
 import (
 	"fmt"
+	"math/rand"
+
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/msg"
-	"math/rand"
 )
 
 const (
+	// num == count/number of...
 	NumColumns = 64
 	NumRows    = 32
 )
@@ -40,12 +42,74 @@ func (t *Terminal) Init() {
 	t.SetStringAt(37, 2, "this is text made by SetString()")
 }
 
-func (t *Terminal) makeRandomChars(count int) {
-	for i := 0; i < count; i++ {
-		t.SetCharacterAt(
-			uint32(rand.Int31n(NumColumns)),
-			uint32(rand.Int31n(NumRows)),
-			uint32(rand.Int31n(128)))
+func (t *Terminal) Clear() {
+	for y := 0; y < t.GridSize.Y; y++ {
+		for x := 0; x < t.GridSize.X; x++ {
+			t.Chars[y][x] = 0
+		}
+	}
+}
+
+func (t *Terminal) RelayKeyToTask(m msg.MessageKey) {
+}
+
+func (t *Terminal) RelayCharToTask(m msg.MessageChar) {
+	//TODO: send this message to AttachedProcess,
+	//and have AttachedProcess send it back here again?
+	// that's what Brandon said....
+	//
+
+	/*
+		Benjamin asks:
+
+		"i'm not clear on the divisions between the terminal folders.
+		the one under "process" &
+		the one under "viewport".
+		you say you want all state in the process?
+
+		and I assume the terminal folder in "viewport" is supposed
+		to be just for graphics?
+
+		but yet all the graphics are deeply driven by the state.
+		we really need to draw from the place that holds the
+		grid of characters/colors/cursors, etc."
+	*/
+
+	t.Chars[t.Curs.Y][t.Curs.X] = m.Char
+	t.MoveRight()
+}
+
+func (t *Terminal) MoveLeft() {
+	t.Curs.X--
+
+	if t.Curs.X < 0 {
+		t.Curs.X = uint32(t.GridSize.X) - 1
+		t.MoveUp()
+	}
+}
+
+func (t *Terminal) MoveRight() {
+	t.Curs.X++
+
+	if t.Curs.X >= uint32(t.GridSize.X) {
+		t.Curs.X = 0
+		t.MoveDown()
+	}
+}
+
+func (t *Terminal) MoveUp() {
+	t.Curs.Y--
+
+	if t.Curs.Y < 0 {
+		t.Curs.Y = uint32(t.GridSize.Y) - 1
+	}
+}
+
+func (t *Terminal) MoveDown() {
+	t.Curs.Y++
+
+	if t.Curs.Y >= uint32(t.GridSize.Y) {
+		t.Curs.Y = 0
 	}
 }
 
@@ -104,15 +168,20 @@ func (t *Terminal) SetGridSize() {
 	// 	t.Chars[i] = make([]uint32, t.GridSize.X, t.GridSize.X)
 }
 
-func (t *Terminal) Clear() {
-	//TODO
+// private
+func (t *Terminal) makeRandomChars(count int) {
+	for i := 0; i < count; i++ {
+		t.SetCharacterAt(
+			uint32(rand.Int31n(NumColumns)),
+			uint32(rand.Int31n(NumRows)),
+			uint32(rand.Int31n(128)))
+	}
 }
 
 func (t *Terminal) validPos(X, Y uint32) bool {
 	if X < 0 || X >= uint32(t.GridSize.X) || Y < 0 || Y >= uint32(t.GridSize.Y) {
 		println("ATTEMPTED OUT OF BOUNDS CHARACTER PLACEMENT!")
 		return false
-	} else {
-		return true
 	}
+	return true
 }

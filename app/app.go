@@ -4,10 +4,11 @@ const Name = "V I S C R I P T"
 const UvSpan = float32(1.0) / 16 // span of a tile/cell in uv space
 
 // params: float value, negativemost, & positivemost bounds
-func Clamp(f, negBoundary, posBoundary float32) float32 {
+func Clamp(f float32, negBoundary, posBoundary float32) float32 {
 	if f < negBoundary {
 		f = negBoundary
 	}
+
 	if f > posBoundary {
 		f = posBoundary
 	}
@@ -27,17 +28,18 @@ func ClampLeftAndRightOf(r *Rectangle, negBoundary, posBoundary float32) *Rectan
 	return r
 }
 
-type Vec2I struct {
-	X int
-	Y int
+// WARNING: given arguments must be in range
+func Insert(slice []string, index int, value string) []string {
+	slice = slice[0 : len(slice)+1]      // grow the slice by one element
+	copy(slice[index+1:], slice[index:]) // move the upper part of the slice out of the way and open a hole
+	slice[index] = value
+	return slice
 }
 
-type Vec2UI32 struct {
-	X uint32
-	Y uint32
-}
-
-type Vec2F struct {
-	X float32
-	Y float32
+// i believe JUSTIN created this, when he attempted to implement autoscroll
+// ("similar to insert method, instead moves current slice element and appends to one above")
+func Remove(slice []string, index int, value string) []string {
+	slice = append(slice[:index], slice[index+1:]...)
+	slice[index-1] = slice[index-1] + value
+	return slice
 }

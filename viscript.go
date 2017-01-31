@@ -1,6 +1,11 @@
 /*
 
-------- TODO: -------
+------- NEWER TODO: -------
+
+* collapse switch..cases in all "events.go"
+
+
+------- OLDER TODO: -------
 
 * KEY-BASED NAVIGATION
 	* CTRL-HOME/END - PGUP/DN
@@ -26,20 +31,14 @@
 
 */
 
-/*
-	- Should we have hypervisor
-	- should hypervisor have process list
-	- should we have a dbus implementation in hypervisor
-*/
-
 package main
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/viewport"
-	igl "github.com/corpusc/viscript/viewport/gl" //eliminate
 
 	"github.com/corpusc/viscript/hypervisor"
+	"github.com/corpusc/viscript/viewport"
+	igl "github.com/corpusc/viscript/viewport/gl" //eliminate
 )
 
 func main() {

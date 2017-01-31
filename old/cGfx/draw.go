@@ -22,6 +22,7 @@ func DrawMenu() {
 func GoToTopEdge(r *app.PicRectangle, scrollDelta float32) {
 	CurrY = r.Top - /*t.BarVert.S*/ scrollDelta
 }
+
 func GoToLeftEdge(r *app.PicRectangle, scrollDelta float32) float32 {
 	CurrX = r.Left - /*t.BarHori.S*/ scrollDelta
 	return CurrX

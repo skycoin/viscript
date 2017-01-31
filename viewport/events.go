@@ -49,7 +49,7 @@ func UnpackInputEvents(message []byte) []byte {
 		onMouseButton(msgBtn)
 
 	case msg.TypeChar:
-		var msgChar msg.MessageOnCharacter
+		var msgChar msg.MessageChar
 		msg.MustDeserialize(message, &msgChar)
 
 		if DebugPrintInputEvents {
