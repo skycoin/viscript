@@ -2,6 +2,7 @@ package gl
 
 import (
 	"fmt"
+
 	"github.com/corpusc/viscript/msg"
 	//"github.com/corpusc/viscript/script"
 	"github.com/go-gl/glfw/v3.2/glfw"
@@ -22,6 +23,11 @@ func InitInputEvents(w *glfw.Window) {
 	w.SetCursorPosCallback(onMouseCursorPos)
 }
 
+func SerializeAndDispatch(msgType uint16, message interface{}) {
+	// Send byte slice to the InputEvents chan
+	InputEvents <- msg.Serialize(msgType, message)
+}
+
 // apparently every time this is fired, a mouse position event is ALSO fired
 func onMouseButton(
 	w *glfw.Window,
@@ -34,10 +40,8 @@ func onMouseButton(
 	m.Button = uint8(bt)
 	m.Action = uint8(action)
 	m.Mod = uint8(mod)
-	//DispatchEvent(msg.TypeMouseButton, m)
-	b := msg.Serialize(msg.TypeMouseButton, m)
-	InputEvents <- b
 
+	SerializeAndDispatch(msg.TypeMouseButton, m)
 }
 
 // triggered both by moving **AND*** by pressing buttons
@@ -45,25 +49,23 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	var m msg.MessageMousePos
 	m.X = x
 	m.Y = y
-	//DispatchEvent(msg.TypeMousePos, m)
-	b := msg.Serialize(msg.TypeMousePos, m)
-	InputEvents <- b
+
+	SerializeAndDispatch(msg.TypeMousePos, m)
 }
 
 func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 	var m msg.MessageMouseScroll
 	m.X = xOff
 	m.Y = yOff
-	//DispatchEvent(msg.TypeMouseScroll, m)
-	b := msg.Serialize(msg.TypeMouseScroll, m)
-	InputEvents <- b
+
+	SerializeAndDispatch(msg.TypeMouseScroll, m)
 }
 
 func onChar(w *glfw.Window, char rune) {
 	var m msg.MessageChar
 	m.Char = uint32(char)
-	b := msg.Serialize(msg.TypeChar, m)
-	InputEvents <- b
+
+	SerializeAndDispatch(msg.TypeChar, m)
 }
 
 func onKey(
@@ -83,7 +85,5 @@ func onKey(
 		fmt.Printf("ERROR KEY SERIALIZATION FUCKUP: key= %d, key= %d \n", key, m.Key)
 	}
 
-	//DispatchEvent(msg.TypeKey, m)
-	b := msg.Serialize(msg.TypeKey, m)
-	InputEvents <- b
+	SerializeAndDispatch(msg.TypeKey, m)
 }
