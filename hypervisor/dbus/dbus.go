@@ -1,27 +1,30 @@
 package dbus
 
-type DbusInstance struct {
-	PubsubChannels map[ChannelId]PubsubChannel
-	Resources      []ResourceMeta
-}
+/*
+- Add pubsub channel type
 
-func (self *DbusInstance) Init() {
-	println("(dbus/instance.go).Init()")
-	self.PubsubChannels = make(map[ChannelId]PubsubChannel)
-	self.Resources = make([]ResourceMeta, 0)
-}
+- Add server/client type
+-- allow process to request server and get a socket
 
-//register that a resource exists
-func (self *DbusInstance) ResourceRegister(ResourceId ResourceId, ResourceType ResourceType) {
-	println("(dbus/instance.go).ResourceRegister()")
-	x := ResourceMeta{}
-	x.Id = ResourceId
-	x.Type = ResourceType
+	Channel Type: PubSub
+	- pub sub
+	- one publisher, many subscribers
 
-	self.Resources = append(self.Resources, x)
-}
+	Channel Type: Socket
+	- have server/daemon
+	- allow new bidirectional socket via setup
 
-//remove resource from list
-func (self *DbusInstance) ResourceUnregister(ResourceID ResourceId, ResourceType ResourceType) {
-	println("(dbus/instance.go).ResourceUnregister()")
+*/
+
+/*
+	ID generation (should eventually be per dbus instance)
+*/
+var ChannelIdGlobal ChannelId = 2 //sequential
+
+func GetChannelId() ChannelId {
+	print("(dbus/dbus.go).GetChannelId(): ")
+	ChannelIdGlobal += 1
+	println(ChannelIdGlobal)
+	return ChannelIdGlobal
+	//return (ProccesId)(rand.Int63())
 }
