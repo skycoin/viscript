@@ -5,7 +5,7 @@ import (
 	"math/rand"
 
 	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/hypervisor"
+	//"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 )
 
