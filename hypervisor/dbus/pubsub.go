@@ -19,6 +19,7 @@ type PubsubSubscriber struct {
 }
 
 func (self *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType ResourceType, ResourceIdentifier string) ChannelId {
+	println("(dbus/pubsub.go).CreatePubsubChannel()")
 	n := PubsubChannel{}
 	n.ChannelId = RandChannelId()
 	n.OwnerType = OwnerType
@@ -30,9 +31,8 @@ func (self *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType Resour
 
 //where do we get the channel id from
 func (self *DbusInstance) AddPubsubChannelSubscriber(ChannelId ChannelId, ResourceId ResourceId, ResourceType ResourceType, channelIn chan []byte) {
-
-	pc := self.PubsubChannels[ChannelId] //pubsub channel
-
+	println("(dbus/pubsub.go).AddPubsubChannelSubscriber()")
+	pc := self.PubsubChannels[ChannelId]
 	x := PubsubSubscriber{}
 	x.SubscriberId = ResourceId
 	x.SubscriberType = ResourceType
@@ -42,6 +42,7 @@ func (self *DbusInstance) AddPubsubChannelSubscriber(ChannelId ChannelId, Resour
 }
 
 func (self *DbusInstance) PushPubsubChannel(ChannelId ChannelId, msg []byte) {
+	println("(dbus/pubsub.go).PushPubsubChannel()")
 	//get pubsub channel
 	pubsub := self.PubsubChannels[ChannelId]
 
