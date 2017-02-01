@@ -1,23 +1,5 @@
 package dbus
 
-import ()
-
-type PubsubChannel struct {
-	ChannelId          ChannelId    //id of this channel
-	Owner              ResourceId   //who created channel
-	OwnerType          ResourceType //type of channel
-	ResourceIdentifier string
-
-	Subscribers []PubsubSubscriber
-}
-
-type PubsubSubscriber struct {
-	SubscriberId   ResourceId   //who created channel
-	SubscriberType ResourceType //type of channel
-
-	Channel chan []byte //is there even a reason to pass by pointer
-}
-
 func (self *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType ResourceType, ResourceIdentifier string) ChannelId {
 	println("(dbus/pubsub.go).CreatePubsubChannel()")
 	n := PubsubChannel{}

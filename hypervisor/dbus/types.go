@@ -1,7 +1,5 @@
 package dbus
 
-import ()
-
 //resources
 const (
 	ResourceTypeChannel  = 1
@@ -19,8 +17,8 @@ const (
 Should these be moved to msg?
 */
 type ChannelId uint32
-type ResourceType uint32
 type ResourceId uint32
+type ResourceType uint32
 
 /*
 	Do we do resource tracking in dbus?
@@ -28,4 +26,20 @@ type ResourceId uint32
 type ResourceMeta struct {
 	Id   ResourceId
 	Type ResourceType
+}
+
+type PubsubChannel struct {
+	ChannelId          ChannelId
+	Owner              ResourceId   //who created channel
+	OwnerType          ResourceType //type of channel
+	ResourceIdentifier string
+
+	Subscribers []PubsubSubscriber
+}
+
+type PubsubSubscriber struct {
+	SubscriberId   ResourceId   //who created channel
+	SubscriberType ResourceType //type of channel
+
+	Channel chan []byte //is there even a reason to pass by pointer
 }
