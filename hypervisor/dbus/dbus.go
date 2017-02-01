@@ -18,27 +18,18 @@ package dbus
 
 type DbusInstance struct {
 	PubsubChannels map[ChannelId]PubsubChannel
-
-	Resources []ResourceMeta
+	Resources      []ResourceMeta
 }
 
 func (self *DbusInstance) Init() {
+	println("(dbus/dbus.go).Init()")
 	self.PubsubChannels = make(map[ChannelId]PubsubChannel)
 	self.Resources = make([]ResourceMeta, 0)
 }
 
-/*
-	Do we do resource tracknig in dbus?
-
-*/
-type ResourceMeta struct {
-	Id   ResourceId
-	Type ResourceType
-}
-
 //register that a resource exists
 func (self *DbusInstance) ResourceRegister(ResourceId ResourceId, ResourceType ResourceType) {
-
+	println("(dbus/dbus.go).ResourceRegister()")
 	x := ResourceMeta{}
 	x.Id = ResourceId
 	x.Type = ResourceType
@@ -48,5 +39,5 @@ func (self *DbusInstance) ResourceRegister(ResourceId ResourceId, ResourceType R
 
 //remove resource from list
 func (self *DbusInstance) ResourceUnregister(ResourceID ResourceId, ResourceType ResourceType) {
-
+	println("(dbus/dbus.go).ResourceUnregister()")
 }

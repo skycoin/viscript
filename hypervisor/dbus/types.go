@@ -2,17 +2,7 @@ package dbus
 
 import ()
 
-/*
-Should these be moved to msg?
-*/
-
-type ChannelId uint32
-
-type ResourceType uint32
-
-type ResourceId uint32
-
-//resource types
+//resources
 const (
 	ResourceTypeChannel  = 1
 	ResourceTypeViewport = 2 //do viewports need to be listed as a resource?
@@ -25,16 +15,17 @@ const (
 	ChannelTypePubsub = 1
 )
 
-//ID generation
+/*
+Should these be moved to msg?
+*/
+type ChannelId uint32
+type ResourceType uint32
+type ResourceId uint32
 
 /*
-	Id gen should eventually be per dbus instance
+	Do we do resource tracking in dbus?
 */
-
-var ChannelIdGlobal ChannelId = 2 //sequential
-
-func RandChannelId() ChannelId {
-	ChannelIdGlobal += 1
-	return ChannelIdGlobal
-	//return (ProccesId)(rand.Int63())
+type ResourceMeta struct {
+	Id   ResourceId
+	Type ResourceType
 }
