@@ -48,8 +48,8 @@ func ViewportScreenInit() {
 	igl.InitRenderer()
 }
 
-func ViewportInitInputEvents() {
-	fmt.Printf("Viewport: init InitInputEvents \n")
+func InitEvents() {
+	fmt.Printf("Viewport: init events \n")
 	igl.InitInputEvents(igl.GlfwWindow)
 	igl.InitMiscEvents(igl.GlfwWindow)
 }

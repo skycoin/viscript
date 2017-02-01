@@ -42,15 +42,14 @@ import (
 )
 
 func main() {
-	viewport.DebugPrintInputEvents = true //print input events
-
 	fmt.Printf("Start\n")
 
 	hypervisor.HypervisorInit()
 
-	viewport.ViewportInit() //runtime.LockOSThread()
+	viewport.DebugPrintInputEvents = true //print input events
+	viewport.ViewportInit()               //runtime.LockOSThread()
 	viewport.ViewportScreenInit()
-	viewport.ViewportInitInputEvents()
+	viewport.InitEvents()
 	viewport.ViewportTerminalsInit() //start the terminal
 
 	fmt.Printf("Start Loop; \n")
