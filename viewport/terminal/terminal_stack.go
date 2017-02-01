@@ -6,7 +6,7 @@ import (
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/hypervisor/dbus"
-	example "github.com/corpusc/viscript/hypervisor/process/example"
+	termTask "github.com/corpusc/viscript/hypervisor/process/terminal"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/viewport/gl"
 )
@@ -90,7 +90,7 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 	//self.Terms[rand].AttachedProcess
 
 	//create process
-	var p *example.Process = example.NewProcess()
+	var p *termTask.Process = termTask.NewProcess()
 	var pi msg.ProcessInterface = msg.ProcessInterface(p)
 	ProcessId := hypervisor.AddProcess(pi)
 
@@ -115,10 +115,8 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 	var c chan []byte //needs incoming channel
 	c = make(chan []byte)
 
-	//subscribe process to the terminal id
-	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(tcid, dbus.ResourceId(ProcessId), dbus.ResourceTypeProcess, c)
-
 	//subscribe process to the process id
-	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(pcid, dbus.ResourceId(TerminalId), dbus.ResourceTypeTerminal, c)
-
+	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(pcid, dbus.ResourceId(ProcessId), dbus.ResourceTypeProcess, c)
+	//subscribe process to the terminal id
+	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(tcid, dbus.ResourceId(TerminalId), dbus.ResourceTypeTerminal, c)
 }

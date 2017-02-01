@@ -3,7 +3,7 @@ package dbus
 func (self *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType ResourceType, ResourceIdentifier string) ChannelId {
 	println("(dbus/pubsub.go).CreatePubsubChannel()")
 	n := PubsubChannel{}
-	n.ChannelId = RandChannelId()
+	n.ChannelId = GetChannelId()
 	n.OwnerType = OwnerType
 	n.ResourceIdentifier = ResourceIdentifier
 	n.Subscribers = make([]PubsubSubscriber, 0)
