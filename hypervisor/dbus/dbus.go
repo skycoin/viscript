@@ -16,6 +16,33 @@ package dbus
 
 */
 
+/*
+	Todo:
+	- dbus channel manager (process library)
+	- abstract resource IDs
+	- allow process to import the channel manager
+	-- process will receive an unnumbered channel object for internal usage
+	- channel manager will automatically route to the channel ID
+*/
+
+/*
+	- dbus server
+	- dbus client
+	-- local client
+	-- remote client (over network)
+	-- master / root, resource directory
+*/
+
+/*
+
+	dbus file system daemon
+	- file system over dbus
+	- fuse etc
+
+	dbus networking daemon
+	- networking over dbus
+*/
+
 type DbusInstance struct {
 	PubsubChannels map[ChannelId]PubsubChannel
 
