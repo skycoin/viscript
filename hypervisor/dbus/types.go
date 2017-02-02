@@ -1,18 +1,6 @@
 package dbus
 
-import ()
-
-/*
-Should these be moved to msg?
-*/
-
-type ChannelId uint32
-
-type ResourceType uint32
-
-type ResourceId uint32
-
-//resource types
+//resources
 const (
 	ResourceTypeChannel  = 1
 	ResourceTypeViewport = 2 //do viewports need to be listed as a resource?
@@ -25,16 +13,33 @@ const (
 	ChannelTypePubsub = 1
 )
 
-//ID generation
+/*
+Should these be moved to msg?
+*/
+type ChannelId uint32
+type ResourceId uint32
+type ResourceType uint32
 
 /*
-	Id gen should eventually be per dbus instance
+	Do we do resource tracking in dbus?
 */
+type ResourceMeta struct {
+	Id   ResourceId
+	Type ResourceType
+}
 
-var ChannelIdGlobal ChannelId = 2 //sequential
+type PubsubChannel struct {
+	ChannelId          ChannelId
+	Owner              ResourceId   //who created channel
+	OwnerType          ResourceType //type of channel
+	ResourceIdentifier string
 
-func RandChannelId() ChannelId {
-	ChannelIdGlobal += 1
-	return ChannelIdGlobal
-	//return (ProccesId)(rand.Int63())
+	Subscribers []PubsubSubscriber
+}
+
+type PubsubSubscriber struct {
+	SubscriberId   ResourceId   //who created channel
+	SubscriberType ResourceType //type of channel
+
+	Channel chan []byte //is there even a reason to pass by pointer
 }

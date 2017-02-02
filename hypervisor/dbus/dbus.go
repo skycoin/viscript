@@ -16,6 +16,7 @@ package dbus
 
 */
 
+<<<<<<< HEAD
 /*
 	Todo:
 	- dbus channel manager (process library)
@@ -54,26 +55,17 @@ func (self *DbusInstance) Init() {
 	self.Resources = make([]ResourceMeta, 0)
 }
 
+=======
+>>>>>>> 53130d527d20d4d8b8815534ae06b7414c85f461
 /*
-	Do we do resource tracknig in dbus?
-
+	ID generation (should eventually be per dbus instance)
 */
-type ResourceMeta struct {
-	Id   ResourceId
-	Type ResourceType
-}
+var ChannelIdGlobal ChannelId = 2 //sequential
 
-//register that a resource exists
-func (self *DbusInstance) ResourceRegister(ResourceId ResourceId, ResourceType ResourceType) {
-
-	x := ResourceMeta{}
-	x.Id = ResourceId
-	x.Type = ResourceType
-
-	self.Resources = append(self.Resources, x)
-}
-
-//remove resource from list
-func (self *DbusInstance) ResourceUnregister(ResourceID ResourceId, ResourceType ResourceType) {
-
+func GetChannelId() ChannelId {
+	print("(dbus/dbus.go).GetChannelId(): ")
+	ChannelIdGlobal += 1
+	println(ChannelIdGlobal)
+	return ChannelIdGlobal
+	//return (ProccesId)(rand.Int63())
 }

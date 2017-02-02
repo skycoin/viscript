@@ -38,21 +38,21 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 func onMouseButton(m msg.MessageMouseButton) {
 	convertClickToTextCursorPosition(m.Button, m.Action)
 
-	// if glfw.Action(m.Action) == glfw.Press {
-	// 	switch glfw.MouseButton(m.Button) {
-	// 	case glfw.MouseButtonLeft:
-	// 		// respond to clicks in ui rectangles
-	// 		if mouse.CursorIsInside(ui.MainMenu.Rect) {
-	// 			respondToAnyMenuButtonClicks()
-	// 		} else { // respond to any panel clicks outside of menu
-	// 			for _, t := range Terms {
-	// 				if t.ContainsMouseCursor() {
-	// 					t.RespondToMouseClick()
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
+	if msg.Action(m.Action) == msg.Press {
+		// switch glfw.MouseButton(m.Button) {
+		// case glfw.MouseButtonLeft:
+		// 	// respond to clicks in ui rectangles
+		// 	if mouse.CursorIsInside(ui.MainMenu.Rect) {
+		// 		respondToAnyMenuButtonClicks()
+		// 	} else { // respond to any panel clicks outside of menu
+		// 		for _, t := range Terms {
+		// 			if t.ContainsMouseCursor() {
+		// 				t.RespondToMouseClick()
+		// 			}
+		// 		}
+		// 	}
+		// }
+	}
 }
 
 func convertClickToTextCursorPosition(button, action uint8) {

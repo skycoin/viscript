@@ -3,6 +3,8 @@
 ------- NEWER TODO: -------
 
 * collapse switch..cases in all "events.go"
+* have the *relay* funcs in terminal send/receive related messages
+	to/from AttachedProcess
 
 
 ------- OLDER TODO: -------

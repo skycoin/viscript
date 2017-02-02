@@ -5,6 +5,7 @@ import (
 	"math/rand"
 
 	"github.com/corpusc/viscript/app"
+	//"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -54,10 +55,10 @@ func (t *Terminal) RelayKeyToTask(m msg.MessageKey) {
 }
 
 func (t *Terminal) RelayCharToTask(m msg.MessageChar) {
+	//hypervisor.ProcessList.ProcessMap[t.AttachedProcess].GetIncomingChannel() <- m
+
 	//TODO: send this message to AttachedProcess,
-	//and have AttachedProcess send it back here again?
-	// that's what Brandon said....
-	//
+	//and have AttachedProcess send it back here again
 
 	/*
 		Benjamin asks:
