@@ -16,7 +16,8 @@ package dbus
 
 */
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
+
 /*
 	Todo:
 	- dbus channel manager (process library)
@@ -55,8 +56,9 @@ func (self *DbusInstance) Init() {
 	self.Resources = make([]ResourceMeta, 0)
 }
 
-=======
->>>>>>> 53130d527d20d4d8b8815534ae06b7414c85f461
+//=======
+//>>>>>>> 53130d527d20d4d8b8815534ae06b7414c85f461
+
 /*
 	ID generation (should eventually be per dbus instance)
 */
