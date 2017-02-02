@@ -56,7 +56,7 @@ func onMouseButton(m msg.MessageMouseButton) {
 		rand.Seed(time.Now().Unix())
 		randKey := keys[rand.Intn(len(Terms.Terms))]
 
-		println("Random Term:", randKey)
+		println("\nRandom Term Key from terminal stack:", randKey)
 
 		for terminalKeyId, eachTerminal := range Terms.Terms {
 			fmt.Println("\n")
@@ -84,7 +84,7 @@ func onMouseButton(m msg.MessageMouseButton) {
 
 		// TODO
 		Terms.DrawOrder = keys
-
+		println("\nNew Keys")
 		for k := range keys {
 			print(keys[k])
 			print(" ")
