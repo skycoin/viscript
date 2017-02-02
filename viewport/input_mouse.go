@@ -1,11 +1,19 @@
 package viewport
 
 import (
+	"fmt"
+	"math/rand"
+
+	"time"
+
 	"github.com/corpusc/viscript/msg"
 )
 
+var lastMousePos msg.MessageMousePos = msg.MessageMousePos{0, 0}
+
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(m msg.MessageMousePos) {
+	lastMousePos = m
 	/*
 		x := float32(m.X)
 		y := float32(m.Y)
@@ -36,23 +44,69 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 
 // apparently every time this is fired, a mouse position event is ALSO fired
 func onMouseButton(m msg.MessageMouseButton) {
-	convertClickToTextCursorPosition(m.Button, m.Action)
-
+	// convertClickToTextCursorPosition(m.Button, m.Action)
 	if msg.Action(m.Action) == msg.Press {
-		// switch glfw.MouseButton(m.Button) {
-		// case glfw.MouseButtonLeft:
-		// 	// respond to clicks in ui rectangles
-		// 	if mouse.CursorIsInside(ui.MainMenu.Rect) {
-		// 		respondToAnyMenuButtonClicks()
-		// 	} else { // respond to any panel clicks outside of menu
-		// 		for _, t := range Terms {
-		// 			if t.ContainsMouseCursor() {
-		// 				t.RespondToMouseClick()
-		// 			}
-		// 		}
-		// 	}
-		// }
+
+		keys := make([]msg.TerminalId, 0, len(Terms.Terms))
+
+		for k, _ := range Terms.Terms {
+			keys = append(keys, k)
+		}
+
+		rand.Seed(time.Now().Unix())
+		randKey := keys[rand.Intn(len(Terms.Terms))]
+
+		println("Random Term:", randKey)
+
+		for terminalKeyId, eachTerminal := range Terms.Terms {
+			fmt.Println("\n")
+			fmt.Println("TerminalId In Stack:", terminalKeyId, "Terminal ID:", eachTerminal.TerminalId)
+			fmt.Println("Mouse X:", lastMousePos.X, "Mouse Y:", lastMousePos.Y)
+			eachTerminal.Bounds.Print()
+			// if eachTerminal.Bounds.Contains(float32(lastMousePos.X), float32(lastMousePos.Y)) {
+			// 	fmt.Println("Cursor is indside", terminalKeyId)
+			// 	// Terms.FocusedId = terminalKeyId
+			// 	// Terms.Focused = eachTerminal
+
+			// }
+		}
+
+		keys = nil
+		keys = make([]msg.TerminalId, 0, len(Terms.Terms))
+
+		for k, _ := range Terms.Terms {
+			if k != randKey {
+				keys = append(keys, k)
+			}
+		}
+
+		keys = append(keys, randKey)
+
+		// TODO
+		Terms.DrawOrder = keys
+
+		for k := range keys {
+			print(keys[k])
+			print(" ")
+		}
+
 	}
+
+	// TODO contains doesn't work because of normalized Top, Left, Bottom, Right and pixel coodinate comparison
+
+	// switch glfw.MouseButton(m.Button) {
+	// case glfw.MouseButtonLeft:
+	// 	// respond to clicks in ui rectangles
+	// 	if mouse.CursorIsInside(ui.MainMenu.Rect) {
+	// 		respondToAnyMenuButtonClicks()
+	// 	} else { // respond to any panel clicks outside of menu
+	// 		for _, t := range Terms {
+	// 			if t.ContainsMouseCursor() {
+	// 				t.RespondToMouseClick()
+	// 			}
+	// 		}
+	// 	}
+	// }
 }
 
 func convertClickToTextCursorPosition(button, action uint8) {

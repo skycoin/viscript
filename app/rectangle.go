@@ -1,5 +1,7 @@
 package app
 
+import "fmt"
+
 type Rectangle struct {
 	Top    float32
 	Right  float32
@@ -28,6 +30,14 @@ func (r *Rectangle) Contains(x, y float32) bool {
 		return true
 	}
 	return false
+}
+
+func (r *Rectangle) Print() {
+	fmt.Println(
+		"Left:", r.Left,
+		"Right:", r.Right,
+		"Top:", r.Top,
+		"Bottom:", r.Bottom)
 }
 
 // ----------------------------------

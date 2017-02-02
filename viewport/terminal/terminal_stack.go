@@ -25,6 +25,7 @@ type TerminalStack struct {
 	FocusedId msg.TerminalId
 	Focused   *Terminal
 	Terms     map[msg.TerminalId]*Terminal
+	DrawOrder []msg.TerminalId
 
 	// private
 	nextRect  app.Rectangle // for next/new terminal spawn
@@ -36,6 +37,7 @@ func (self *TerminalStack) Init() {
 	println("TerminalStack.Init()")
 	self.Terms = make(map[msg.TerminalId]*Terminal)
 	self.nextSpan = gl.CanvasExtents.Y / 3
+	self.DrawOrder = make([]msg.TerminalId, 0)
 	self.nextRect = app.Rectangle{
 		gl.CanvasExtents.Y,
 		gl.CanvasExtents.X / 2,
@@ -56,6 +58,7 @@ func (self *TerminalStack) AddTerminal() {
 			self.nextRect.Right,
 			self.nextRect.Bottom,
 			self.nextRect.Left}}
+	self.DrawOrder = append(self.DrawOrder, tid)
 	self.Terms[tid].Init()
 	self.FocusedId = tid
 	self.Focused = self.Terms[tid]
