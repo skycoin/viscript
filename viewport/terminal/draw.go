@@ -8,38 +8,40 @@ import (
 func (self *TerminalStack) Draw() {
 	//println("TerminalStack.Draw()")
 
-	for _, value := range self.Terms {
-		//println("drawing terminal --- Key (TermId):", key, "Value:", value)
-		gl.DrawQuad(gl.Pic_GradientBorder, value.Bounds, value.Depth)
+	for _, value := range self.DrawOrder {
+		term := self.Terms[value]
+		// println("Drawing: ", term.TerminalId)
+		//println("drawing terminal --- Key (TermId):", key, "term:", term)
+		gl.DrawQuad(gl.Pic_GradientBorder, term.Bounds, term.Depth)
 
 		cr := &app.Rectangle{
-			value.Bounds.Top,
-			value.Bounds.Left + value.SpanX(),
-			value.Bounds.Top - value.SpanY(),
-			value.Bounds.Left} //current rectangle
+			term.Bounds.Top,
+			term.Bounds.Left + term.SpanX(),
+			term.Bounds.Top - term.SpanY(),
+			term.Bounds.Left} //current rectangle
 
-		for x := 0; x < value.GridSize.X; x++ {
-			for y := 0; y < value.GridSize.Y; y++ {
-				if value.Chars[y][x] != 0 {
-					gl.DrawCharAtRect(rune(value.Chars[y][x]), cr, value.Depth)
+		for x := 0; x < term.GridSize.X; x++ {
+			for y := 0; y < term.GridSize.Y; y++ {
+				if term.Chars[y][x] != 0 {
+					gl.DrawCharAtRect(rune(term.Chars[y][x]), cr, term.Depth)
 				}
 
-				if x == int(value.Curs.X) && y == int(value.Curs.Y) {
+				if x == int(term.Curs.X) && y == int(term.Curs.Y) {
 					// draw cursor
 					gl.DrawQuad(
 						gl.Pic_GradientBorder,
-						gl.Curs.GetAnimationModifiedRect(*cr), value.Depth)
+						gl.Curs.GetAnimationModifiedRect(*cr), term.Depth*2)
 				}
 
-				cr.Top -= value.SpanY()
-				cr.Bottom -= value.SpanY()
+				cr.Top -= term.SpanY()
+				cr.Bottom -= term.SpanY()
 			}
 
-			cr.Top = value.Bounds.Top
-			cr.Bottom = value.Bounds.Top - value.SpanY()
+			cr.Top = term.Bounds.Top
+			cr.Bottom = term.Bounds.Top - term.SpanY()
 
-			cr.Left += value.SpanX()
-			cr.Right += value.SpanX()
+			cr.Left += term.SpanX()
+			cr.Right += term.SpanX()
 		}
 	}
 }
