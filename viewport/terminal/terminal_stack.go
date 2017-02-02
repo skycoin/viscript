@@ -115,23 +115,23 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 	//var c chan []byte //needs incoming channel
 	//c = make(chan []byte)
 
-<<<<<<< HEAD
-	//subscribe process to the terminal id
-	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
-		tcid, dbus.ResourceId(ProcessId),
-		dbus.ResourceTypeProcess,
-		self.Terms[TerminalId].InChannel)
+	/*
+		   	//subscribe process to the terminal id
+		   	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
+		   		tcid, dbus.ResourceId(ProcessId),
+		   		dbus.ResourceTypeProcess,
+		   		self.Terms[TerminalId].InChannel)
 
-	//subscribe process to the process id
-	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
-		pcid, dbus.ResourceId(TerminalId),
-		dbus.ResourceTypeTerminal,
-		pi.GetIncomingChannel())
+		   	//subscribe process to the process id
+		   	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
+		   		pcid, dbus.ResourceId(TerminalId),
+		   		dbus.ResourceTypeTerminal,
+		   		pi.GetIncomingChannel())
 
-=======
-	//subscribe process to the process id
-	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(pcid, dbus.ResourceId(ProcessId), dbus.ResourceTypeProcess, c)
-	//subscribe process to the terminal id
-	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(tcid, dbus.ResourceId(TerminalId), dbus.ResourceTypeTerminal, c)
->>>>>>> 53130d527d20d4d8b8815534ae06b7414c85f461
+			//subscribe process to the process id
+			hypervisor.DbusGlobal.AddPubsubChannelSubscriber(pcid, dbus.ResourceId(ProcessId), dbus.ResourceTypeProcess, c)
+			//subscribe process to the terminal id
+			hypervisor.DbusGlobal.AddPubsubChannelSubscriber(tcid, dbus.ResourceId(TerminalId), dbus.ResourceTypeTerminal, c)
+	*/
+
 }

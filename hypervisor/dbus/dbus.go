@@ -45,6 +45,7 @@ package dbus
 	- networking over dbus
 */
 
+/*
 type DbusInstance struct {
 	PubsubChannels map[ChannelId]PubsubChannel
 
@@ -55,6 +56,7 @@ func (self *DbusInstance) Init() {
 	self.PubsubChannels = make(map[ChannelId]PubsubChannel)
 	self.Resources = make([]ResourceMeta, 0)
 }
+*/
 
 //=======
 //>>>>>>> 53130d527d20d4d8b8815534ae06b7414c85f461
