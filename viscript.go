@@ -5,7 +5,7 @@
 * collapse switch..cases in all "events.go"
 * have the *relay* funcs in terminal send/receive related messages
 	to/from AttachedProcess
-
+* restore 9 slicing, for thin borders around terminals
 
 ------- OLDER TODO: -------
 

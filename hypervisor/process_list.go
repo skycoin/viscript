@@ -21,7 +21,7 @@ import (
 
 */
 
-var _ProcessList ProcessList
+var ProcessListGlobal ProcessList
 
 type ProcessList struct {
 	ProcessMap map[msg.ProcessId]msg.ProcessInterface //process id to interface
@@ -29,7 +29,7 @@ type ProcessList struct {
 
 func HypervisorInitProcessList() {
 	println("process_list.HypervisorInitProcessList()")
-	_ProcessList.ProcessMap = make(map[msg.ProcessId]msg.ProcessInterface)
+	ProcessListGlobal.ProcessMap = make(map[msg.ProcessId]msg.ProcessInterface)
 }
 
 func HypervisorProcessListTeardown() {
@@ -41,7 +41,7 @@ func AddProcess(p msg.ProcessInterface) msg.ProcessId {
 
 	id := p.GetId()
 	//do check to make sure processId is not already in list
-	_ProcessList.ProcessMap[id] = p
+	ProcessListGlobal.ProcessMap[id] = p
 	return id
 }
 
@@ -53,7 +53,7 @@ func GetProcessEvents() {
 func ProcessTick() {
 	//println("process_list.ProcessTick()")
 
-	for id, p := range _ProcessList.ProcessMap {
+	for id, p := range ProcessListGlobal.ProcessMap {
 		_ = id
 		p.Tick() //only do if incoming messages
 	}
@@ -63,7 +63,7 @@ func ProcessTick() {
 func DispatchProcessEvents() {
 	//println("process_list.DispatchProcessEvents()")
 
-	for id, p := range _ProcessList.ProcessMap {
+	for id, p := range ProcessListGlobal.ProcessMap {
 		var c chan []byte = p.GetOutgoingChannel() //channel
 		//p.Tick() //only do if incoming messages
 

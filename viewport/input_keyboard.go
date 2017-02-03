@@ -6,7 +6,7 @@ import (
 )
 
 func onChar(m msg.MessageChar) {
-	Terms.Focused.RelayCharToTask(m)
+	Terms.Focused.PutCharacter(m) // TEMPORARY hack
 }
 
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can detect a

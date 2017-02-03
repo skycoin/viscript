@@ -51,32 +51,16 @@ func (t *Terminal) Clear() {
 	}
 }
 
-func (t *Terminal) RelayKeyToTask(m msg.MessageKey) {
-}
-
-func (t *Terminal) RelayCharToTask(m msg.MessageChar) {
-	//hypervisor._ProcessList.ProcessMap[t.AttachedProcess].GetIncomingChannel() // <- m
+func (t *Terminal) RelayToTask(message []byte) {
+	println("(viewport/terminal/terminal.go).RelayToTask(message []byte)")
+	println("FIX THIS: hypervisor.ProcessListGlobal.ProcessMap[t.AttachedProcess].GetIncomingChannel() <- message")
 
 	//TODO: send this message to AttachedProcess,
-	//and have AttachedProcess send it back here again
+	//and have AttachedProcess send SetChar*/SetCursor/etc. back here
+}
 
-	/*
-		Benjamin asks:
-
-		"i'm not clear on the divisions between the terminal folders.
-		the one under "process" &
-		the one under "viewport".
-		you say you want all state in the process?
-
-		and I assume the terminal folder in "viewport" is supposed
-		to be just for graphics?
-
-		but yet all the graphics are deeply driven by the state.
-		we really need to draw from the place that holds the
-		grid of characters/colors/cursors, etc."
-	*/
-
-	t.Chars[t.Curs.Y][t.Curs.X] = m.Char
+func (t *Terminal) PutCharacter(m msg.MessageChar) {
+	t.SetCharacter(m.Char)
 	t.MoveRight()
 }
 
