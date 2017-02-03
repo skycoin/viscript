@@ -14,6 +14,10 @@ func (self *TerminalStack) Draw() {
 
 		if value == self.Focused {
 			z = 10
+
+			gl.SetColor(gl.White)
+		} else {
+			gl.SetColor(gl.Gray)
 		}
 
 		gl.DrawQuad(gl.Pic_GradientBorder, value.Bounds, z)
