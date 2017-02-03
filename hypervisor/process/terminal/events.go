@@ -118,24 +118,11 @@ func showFloat64(s string, f float64) float64 {
 
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(m msg.MessageMousePos) {
-	/*
-		x := float32(m.X)
-		y := float32(m.Y)
-
-		mouse.UpdatePosition(
-			app.Vec2F{x, y},
-			gfx.CanvasExtents,
-			gfx.PixelSize) // state update
-
-		// rendering update
-		//if LMB held
-		gl.GlfwWindow.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-			ScrollTermThatHasMousePointer(mouse.PixelDelta.X, mouse.PixelDelta.Y)
-		}
-	*/
+	println("hypervisor/process/terminal/events.onMouseCursorPos(m msg.Message)")
 }
 
 func onMouseScroll(m msg.MessageMouseScroll) {
+	println("hypervisor/process/terminal/events.onMouseScroll(m msg.Message)")
 	/*
 		var delta float32 = 30
 
@@ -148,6 +135,7 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 }
 
 func onFrameBufferSize(m msg.MessageFrameBufferSize) {
+	println("hypervisor/process/terminal/events.onFrameBufferSize(m msg.Message)")
 }
 
 func onChar(m msg.MessageChar) {
@@ -157,165 +145,9 @@ func onChar(m msg.MessageChar) {
 }
 
 func onKey(m msg.MessageKey) {
-	/*
-		foc := Focused
-
-		if glfw.Action(m.Action) == glfw.Release {
-			switch glfw.Key(m.Key) {
-
-			case glfw.KeyEscape:
-				fmt.Println("case glfw.KeyEscape:")
-				gl.GlfwWindow.SetShouldClose(true)
-				CloseWindow <- 1
-				HypervisorScreenTeardown()
-
-			case glfw.KeyLeftShift:
-				fallthrough
-			case glfw.KeyRightShift:
-				fmt.Println("Done selecting")
-				foc.Selection.CurrentlySelecting = false // TODO?  possibly flip around if selectionStart comes after selectionEnd in the page flow?
-
-			case glfw.KeyLeftControl:
-				fallthrough
-			case glfw.KeyRightControl:
-				fmt.Println("Control RELEASED")
-			case glfw.KeyLeftAlt:
-				fallthrough
-			case glfw.KeyRightAlt:
-				fmt.Println("Alt RELEASED")
-			case glfw.KeyLeftSuper:
-				fallthrough
-			case glfw.KeyRightSuper:
-				fmt.Println("'Super' modifier key RELEASED")
-			}
-		} else { // glfw.Press   or   glfw.Repeat
-			b := foc.TextBodies[0]
-
-			switch glfw.ModifierKey(m.Mod) {
-			case glfw.ModShift:
-				fmt.Println("Started selecting")
-				foc.Selection.CurrentlySelecting = true
-				foc.Selection.StartX = foc.CursX
-				foc.Selection.StartY = foc.CursY
-			case glfw.ModAlt:
-				fmt.Println("glfw.ModAlt")
-			case glfw.ModControl:
-				fmt.Println("glfw.ModControl")
-			}
-
-			switch glfw.Key(m.Key) {
-			case glfw.KeyEnter:
-				startOfLine := b[foc.CursY][:foc.CursX]
-				restOfLine := b[foc.CursY][foc.CursX:len(b[foc.CursY])]
-				b[foc.CursY] = startOfLine
-				b = insert(b, foc.CursY+1, restOfLine)
-
-				foc.CursX = 0
-				foc.CursY++
-				foc.TextBodies[0] = b
-
-				if foc.CursY >= len(b) {
-					foc.CursY = len(b) - 1
-				}
-			case glfw.KeyHome:
-				if eitherControlKeyHeld() {
-					foc.CursY = 0
-				}
-
-				foc.CursX = 0
-				movedCursorSoUpdateDependents()
-			case glfw.KeyEnd:
-				if eitherControlKeyHeld() {
-					foc.CursY = len(b) - 1
-				}
-
-				foc.CursX = len(b[foc.CursY])
-				movedCursorSoUpdateDependents()
-			case glfw.KeyUp:
-				if foc.CursY > 0 {
-					foc.CursY--
-
-					if foc.CursX > len(b[foc.CursY]) {
-						foc.CursX = len(b[foc.CursY])
-					}
-				}
-
-				movedCursorSoUpdateDependents()
-			case glfw.KeyDown:
-				if foc.CursY < len(b)-1 {
-					foc.CursY++
-
-					if foc.CursX > len(b[foc.CursY]) {
-						foc.CursX = len(b[foc.CursY])
-					}
-				}
-
-				movedCursorSoUpdateDependents()
-			case glfw.KeyLeft:
-				if foc.CursX == 0 {
-					if foc.CursY > 0 {
-						foc.CursY--
-						foc.CursX = len(b[foc.CursY])
-					}
-				} else {
-					if glfw.ModifierKey(m.Mod) == glfw.ModControl {
-						foc.CursX = getWordSkipPos(foc.CursX, -1)
-					} else {
-						foc.CursX--
-					}
-				}
-
-				movedCursorSoUpdateDependents()
-			case glfw.KeyRight:
-				if foc.CursX < len(b[foc.CursY]) {
-					if glfw.ModifierKey(m.Mod) == glfw.ModControl {
-						foc.CursX = getWordSkipPos(foc.CursX, 1)
-					} else {
-						foc.CursX++
-					}
-				}
-
-				movedCursorSoUpdateDependents()
-			case glfw.KeyBackspace:
-				if foc.CursX == 0 {
-					b = remove(b, foc.CursY, b[foc.CursY])
-					foc.TextBodies[0] = b
-					foc.CursY--
-					foc.CursX = len(b[foc.CursY])
-
-				} else {
-					foc.RemoveCharacter(false)
-				}
-
-			case glfw.KeyDelete:
-				foc.RemoveCharacter(true)
-				fmt.Println("Key Deleted")
-
-			}
-
-			//script.Process(false)
-		}
-	*/
+	println("hypervisor/process/terminal/events.onKey(m msg.Message)")
 }
 
 func onMouseButton(m msg.MessageMouseButton) {
-	/*
-		convertClickToTextCursorPosition(m.Button, m.Action)
-
-		if glfw.Action(m.Action) == glfw.Press {
-			switch glfw.MouseButton(m.Button) {
-			case glfw.MouseButtonLeft:
-				// respond to clicks in ui rectangles
-				if mouse.CursorIsInside(ui.MainMenu.Rect) {
-					respondToAnyMenuButtonClicks()
-				} else { // respond to any panel clicks outside of menu
-					for _, t := range Terms {
-						if t.ContainsMouseCursor() {
-							t.RespondToMouseClick()
-						}
-					}
-				}
-			}
-		}
-	*/
+	println("hypervisor/process/terminal/events.onMouseButton(m msg.Message)")
 }

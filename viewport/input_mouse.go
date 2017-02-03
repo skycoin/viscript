@@ -11,7 +11,9 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 	mouse.UpdatePosition(app.Vec2F{float32(m.X), float32(m.Y)}) // state update
 
 	if mouse.HoldingLeftButton {
-		//ScrollTermThatHasMousePointer(mouse.PixelDelta.X, mouse.PixelDelta.Y)
+		println("TODO: implement 'ScrollFocusedTerm()'")
+		//old logic is in ScrollTermThatHasMousePointer(mouse.PixelDelta.X, mouse.PixelDelta.Y),
+		//which was a janky way to do it
 	}
 }
 
@@ -32,19 +34,26 @@ func onMouseButton(m msg.MessageMouseButton) {
 	convertClickToTextCursorPosition(m.Button, m.Action)
 
 	if msg.Action(m.Action) == msg.Press {
-		// switch glfw.MouseButton(m.Button) {
-		// case glfw.MouseButtonLeft:
-		// 	// respond to clicks in ui rectangles
-		// 	if mouse.CursorIsInside(ui.MainMenu.Rect) {
-		// 		respondToAnyMenuButtonClicks()
-		// 	} else { // respond to any panel clicks outside of menu
-		// 		for _, t := range Terms {
-		// 			if t.ContainsMouseCursor() {
-		// 				t.RespondToMouseClick()
-		// 			}
-		// 		}
-		// 	}
-		// }
+		switch msg.MouseButton(m.Button) {
+		case msg.MouseButtonLeft:
+			mouse.HoldingLeftButton = true
+
+			// // detect clicks in rects
+			// if mouse.CursorIsInside(ui.MainMenu.Rect) {
+			// 	respondToAnyMenuButtonClicks()
+			// } else { // respond to any panel clicks outside of menu
+			for id, t := range Terms.Terms {
+				if t.ContainsMouseCursor() {
+					t.RespondToMouseClick()
+				}
+			}
+			// }
+		}
+	} else if msg.Action(m.Action) == msg.Release {
+		switch msg.MouseButton(m.Button) {
+		case msg.MouseButtonLeft:
+			mouse.HoldingLeftButton = false
+		}
 	}
 }
 

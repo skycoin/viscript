@@ -55,7 +55,7 @@ func (t *Terminal) RelayKeyToTask(m msg.MessageKey) {
 }
 
 func (t *Terminal) RelayCharToTask(m msg.MessageChar) {
-	//hypervisor.ProcessList.ProcessMap[t.AttachedProcess].GetIncomingChannel() <- m
+	//hypervisor._ProcessList.ProcessMap[t.AttachedProcess].GetIncomingChannel() // <- m
 
 	//TODO: send this message to AttachedProcess,
 	//and have AttachedProcess send it back here again
