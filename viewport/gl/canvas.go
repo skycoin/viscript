@@ -3,6 +3,7 @@ package gl
 
 import (
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/hypervisor/input/mouse"
 )
 
 var (
@@ -56,6 +57,7 @@ func init() {
 
 	// MORE one-time setup
 	MainMenu.SetSize(GetMenuSizedRect())
+	mouse.Init(CanvasExtents, PixelSize)
 }
 
 func GetMenuSizedRect() *app.Rectangle {

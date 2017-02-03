@@ -5,12 +5,22 @@ import (
 	"github.com/corpusc/viscript/app"
 )
 
-var GlX float32 // current mouse position in OpenGL space
-var GlY float32
-var PixelDelta app.Vec2F
+var (
+	GlX               float32 // current mouse position in OpenGL space
+	GlY               float32
+	PixelDelta        app.Vec2F
+	HoldingLeftButton bool
 
-// private
-var prevPixelPos app.Vec2F
+	// private
+	pixelSize_    app.Vec2F
+	prevPixelPos  app.Vec2F
+	canvasExtents app.Vec2F
+)
+
+func Init(extents, pixelSize app.Vec2F) {
+	canvasExtents = extents
+	pixelSize_ = pixelSize
+}
 
 func CursorIsInside(r *app.Rectangle) bool {
 	if GlY < r.Top && GlY > r.Bottom {
@@ -22,9 +32,9 @@ func CursorIsInside(r *app.Rectangle) bool {
 	return false
 }
 
-func UpdatePosition(pos, extents, pixelSize app.Vec2F) {
-	GlX = -extents.X + pos.X*pixelSize.X
-	GlY = extents.Y - pos.Y*pixelSize.Y
+func UpdatePosition(pos app.Vec2F) {
+	GlX = -canvasExtents.X + pos.X*pixelSize_.X
+	GlY = canvasExtents.Y - pos.Y*pixelSize_.Y
 	PixelDelta.X = pos.X - prevPixelPos.X
 	PixelDelta.Y = pos.Y - prevPixelPos.Y
 	prevPixelPos.X = pos.X

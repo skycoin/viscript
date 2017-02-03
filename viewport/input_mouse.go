@@ -8,13 +8,7 @@ import (
 
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(m msg.MessageMousePos) {
-	x := float32(m.X)
-	y := float32(m.Y)
-
-	mouse.UpdatePosition(
-		app.Vec2F{x, y},
-		gl.CanvasExtents,
-		gl.PixelSize) // state update
+	mouse.UpdatePosition(app.Vec2F{float32(m.X), float32(m.Y)}) // state update
 
 	if mouse.HoldingLeftButton {
 		//ScrollTermThatHasMousePointer(mouse.PixelDelta.X, mouse.PixelDelta.Y)
