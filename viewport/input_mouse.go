@@ -42,11 +42,7 @@ func onMouseButton(m msg.MessageMouseButton) {
 			// if mouse.CursorIsInside(ui.MainMenu.Rect) {
 			// 	respondToAnyMenuButtonClicks()
 			// } else { // respond to any panel clicks outside of menu
-			for id, t := range Terms.Terms {
-				if t.ContainsMouseCursor() {
-					t.RespondToMouseClick()
-				}
-			}
+			FocusOnTopmostRectThatContainsPointer()
 			// }
 		}
 	} else if msg.Action(m.Action) == msg.Release {
@@ -54,6 +50,25 @@ func onMouseButton(m msg.MessageMouseButton) {
 		case msg.MouseButtonLeft:
 			mouse.HoldingLeftButton = false
 		}
+	}
+}
+
+func FocusOnTopmostRectThatContainsPointer() {
+	var topmostZ float32
+	var topmostId msg.TerminalId
+
+	for id, t := range Terms.Terms {
+		if mouse.CursorIsInside(t.Bounds) {
+			if topmostZ < t.Depth {
+				topmostZ = t.Depth
+				topmostId = id
+			}
+		}
+	}
+
+	if topmostZ > 0 {
+		Terms.FocusedId = topmostId
+		Terms.Focused = Terms.Terms[topmostId]
 	}
 }
 

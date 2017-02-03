@@ -112,17 +112,13 @@ func (t *Terminal) changeColorIfCodeAt(x, y, ncId int, nc *cGfx.ColorSpot) (int,
 }
 
 func (t *Terminal) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float32) {
-	if t.ContainsMouseCursor() {
+	if mouse.CursorIsInside(t.Whole) {
 		// position increments in gl space
 		xInc := mousePixelDeltaX * cGfx.PixelSize.X
 		yInc := mousePixelDeltaY * cGfx.PixelSize.Y
 		t.BarHori.Scroll(xInc)
 		t.BarVert.Scroll(yInc)
 	}
-}
-
-func (t *Terminal) ContainsMouseCursor() bool {
-	return mouse.CursorIsInside(t.Whole)
 }
 
 func (t *Terminal) RemoveCharacter(fromUnderCursor bool) {
