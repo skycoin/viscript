@@ -1,25 +1,24 @@
 package viewport
 
 import (
+	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"
 )
 
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(m msg.MessageMousePos) {
-	/*
-		x := float32(m.X)
-		y := float32(m.Y)
+	x := float32(m.X)
+	y := float32(m.Y)
 
-		mouse.UpdatePosition(
-			app.Vec2F{x, y},
-			gl.CanvasExtents,
-			gl.PixelSize) // state update
+	mouse.UpdatePosition(
+		app.Vec2F{x, y},
+		gl.CanvasExtents,
+		gl.PixelSize) // state update
 
-		// rendering update
-		if gl.GlfwWindow.GetMouseButton(glfw.MouseButtonLeft) == glfw.Press {
-			ScrollTermThatHasMousePointer(mouse.PixelDelta.X, mouse.PixelDelta.Y)
-		}
-	*/
+	if mouse.HoldingLeftButton {
+		//ScrollTermThatHasMousePointer(mouse.PixelDelta.X, mouse.PixelDelta.Y)
+	}
 }
 
 func onMouseScroll(m msg.MessageMouseScroll) {

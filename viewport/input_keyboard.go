@@ -219,11 +219,3 @@ func movedCursorSoUpdateDependents() {
 		}
 	*/
 }
-
-func eitherControlKeyHeld() bool { // FIXME: bake into msg when serialized (or use bundled Mod field for 1s that have it)
-	// if gl.GlfwWindow.GetKey(glfw.KeyLeftControl) == glfw.Press || gl.GlfwWindow.GetKey(glfw.KeyRightControl) == glfw.Press {
-	// 	return true
-	// } else {
-	/***********/ return false
-	// }
-}

@@ -22,9 +22,9 @@ func CursorIsInside(r *app.Rectangle) bool {
 	return false
 }
 
-func UpdatePosition(pos, extents, pixSize app.Vec2F) {
-	GlX = -extents.X + pos.X*pixSize.X
-	GlY = extents.Y - pos.Y*pixSize.Y
+func UpdatePosition(pos, extents, pixelSize app.Vec2F) {
+	GlX = -extents.X + pos.X*pixelSize.X
+	GlY = extents.Y - pos.Y*pixelSize.Y
 	PixelDelta.X = pos.X - prevPixelPos.X
 	PixelDelta.Y = pos.Y - prevPixelPos.Y
 	prevPixelPos.X = pos.X
