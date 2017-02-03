@@ -17,7 +17,7 @@ var (
 	canvasExtents app.Vec2F
 )
 
-func Init(extents, pixelSize app.Vec2F) {
+func SetSizes(extents, pixelSize app.Vec2F) {
 	canvasExtents = extents
 	pixelSize_ = pixelSize
 }

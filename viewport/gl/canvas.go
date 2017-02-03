@@ -57,7 +57,7 @@ func init() {
 
 	// MORE one-time setup
 	MainMenu.SetSize(GetMenuSizedRect())
-	mouse.Init(CanvasExtents, PixelSize)
+	mouse.SetSizes(CanvasExtents, PixelSize)
 }
 
 func GetMenuSizedRect() *app.Rectangle {
@@ -84,4 +84,5 @@ func SetSize(x, y int32) {
 
 	// things that weren't initialized in this func
 	MainMenu.SetSize(GetMenuSizedRect())
+	mouse.SetSizes(CanvasExtents, PixelSize)
 }
