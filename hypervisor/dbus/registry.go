@@ -24,4 +24,9 @@ func (self *DbusInstance) ResourceRegister(ResourceId ResourceId, ResourceType R
 //remove resource from list
 func (self *DbusInstance) ResourceUnregister(ResourceID ResourceId, ResourceType ResourceType) {
 	println("(dbus/instance.go).ResourceUnregister()")
+	for i, resourceMeta := range self.Resources {
+		if resourceMeta.Id == ResourceID {
+			self.Resources = append(self.Resources[:i], self.Resources[i+1:]...)
+		}
+	}
 }
