@@ -11,11 +11,6 @@ func (self *DbusInstance) Init() {
 	self.Resources = make([]ResourceMeta, 0)
 }
 
-func (self *DbusInstance) AddPubSubChannel(channelId ChannelId, pubSubChannel PubsubChannel) {
-	println("(dbus/registry.go).AddPubSubChannel()")
-	self.PubsubChannels[channelId] = pubSubChannel
-}
-
 //register that a resource exists
 func (self *DbusInstance) ResourceRegister(ResourceId ResourceId, ResourceType ResourceType) {
 	println("(dbus/registry.go).ResourceRegister()")
