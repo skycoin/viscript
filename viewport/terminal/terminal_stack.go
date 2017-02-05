@@ -85,9 +85,6 @@ func (self *TerminalStack) MoveTerminal(id msg.TerminalId, xoff int, yoff int) {
 
 func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 	println("TerminalStack.SetupTerminalDbus()")
-	//create process
-
-	//self.Terms[rand].AttachedProcess
 
 	//create process
 	var p *termTask.Process = termTask.NewProcess()

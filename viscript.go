@@ -2,6 +2,7 @@
 
 ------- NEWER TODO: -------
 
+* put console feedback into focused terminal
 * collapse switch..cases in all "events.go"
 * have the *relay* funcs in terminal send/receive related messages
 	to/from AttachedProcess

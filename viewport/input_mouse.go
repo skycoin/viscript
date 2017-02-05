@@ -11,34 +11,9 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 	mouse.UpdatePosition(app.Vec2F{float32(m.X), float32(m.Y)}) // state update
 
 	if mouse.HoldingLeftButton {
-		println("TODO: implement 'ScrollFocusedTerm()'")
+		println("TODO EVENTUALLY: implement something like 'ScrollFocusedTerm()'")
 		//old logic is in ScrollTermThatHasMousePointer(mouse.PixelDelta.X, mouse.PixelDelta.Y),
 		//which was a janky way to do it
-
-		// taken from ScrollIfMouseOver looks like an old implementation
-		// of terminal had BarHori and BarVert it doesn't appear like that
-		// now. Should we add bars or no? also here's kind of an abstract logic
-		// logic taken from old scrollablepanel and divided in two if user can
-		// scroll in any terminal under the cursor and if user can scroll only
-		// the one that is currently focused.
-		//
-		// If scroll only focused parts of the
-		// for _, t := range Terms.Terms {
-		// 	if mouse.CursorIsInside(t.Bounds) {
-		// 		xInc := mouse.GetScrollDeltaX()
-		// 		yInc := mouse.GetScrollDeltaY()
-		// 		t.BarHori.Scroll(xInc)
-		// 		t.BarVert.Scroll(yInc)
-		// 	}
-		// }
-		//
-		// If scroll only focused
-		// if mouse.CursorIsInside(Terms.Focused.Bounds){
-		// 	xInc := mouse.GetScrollDeltaX()
-		// 	yInc := mouse.GetScrollDeltaY()
-		// 	Terms.Focused.BarHori.Scroll(xInc)
-		// 	Terms.Focused.BarVert.Scroll(yInc)
-		// }
 	}
 }
 
