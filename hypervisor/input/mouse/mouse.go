@@ -40,3 +40,11 @@ func UpdatePosition(pos app.Vec2F) {
 	prevPixelPos.X = pos.X
 	prevPixelPos.Y = pos.Y
 }
+
+func GetScrollDeltaX() float32 {
+	return PixelDelta.X * pixelSize_.X
+}
+
+func GetScrollDeltaY() float32 {
+	return PixelDelta.Y * pixelSize_.Y
+}

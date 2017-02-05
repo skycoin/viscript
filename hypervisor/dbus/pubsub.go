@@ -4,9 +4,13 @@ func (self *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType Resour
 	println("(dbus/pubsub.go).CreatePubsubChannel()")
 	n := PubsubChannel{}
 	n.ChannelId = GetChannelId()
+	n.Owner = Owner
 	n.OwnerType = OwnerType
 	n.ResourceIdentifier = ResourceIdentifier
 	n.Subscribers = make([]PubsubSubscriber, 0)
+
+	self.AddPubSubChannel(n.ChannelId, n)
+	self.ResourceRegister(n.Owner, n.OwnerType)
 
 	return n.ChannelId
 }
