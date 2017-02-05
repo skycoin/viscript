@@ -18,12 +18,13 @@ func (self *State) Init(proc *Process) {
 }
 
 func (self *State) HandleMessages() {
-	println("(process/terminal/state.go).HandleMessages()")
+	//println("(process/terminal/state.go).HandleMessages()")
 	var c chan []byte = self.proc.MessageIn
 	var msgType uint16
 	var msgTypeMask uint16
 
 	for len(c) > 0 {
+		println("(process/terminal/state.go).HandleMessages() - ...ONE ITERATION OF CHANNEL")
 		m := <-c // read from channel
 		//route the message
 		msgType = msg.GetType(m)
@@ -33,7 +34,7 @@ func (self *State) HandleMessages() {
 		case msg.PrefixInput:
 			self.UnpackInputEvents(msgType, m)
 		case msg.PrefixTerminal: //process to hypervisor messages
-			log.Panic("Error: Example process does not handle this type")
+			self.UnpackInputEvents(msgType, m)
 		}
 	}
 }

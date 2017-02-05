@@ -46,7 +46,7 @@ import (
 func main() {
 	fmt.Printf("Start\n")
 
-	hypervisor.HypervisorInit()
+	hypervisor.Init()
 
 	viewport.DebugPrintInputEvents = true //print input events
 	viewport.ViewportInit()               //runtime.LockOSThread()

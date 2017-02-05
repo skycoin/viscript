@@ -38,14 +38,15 @@ types of messages
 Can objects create multiple channels?
 */
 
-func HypervisorInit() {
-	println("hypervisor.go --- HypervisorInit()")
+func Init() {
+	println("(hypervisor.go).Init()")
 	HypervisorInitProcessList()
 	DbusInit()
 	AddTestProcess()
 }
 
 func HypervisorTeardown() {
+	println("(hypervisor.go).HypervisorTeardown()")
 	HypervisorProcessListTeardown()
 	DbusTeardown()
 }

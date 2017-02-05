@@ -23,7 +23,7 @@ func NewProcess() *Process {
 	p.MessageIn = make(chan []byte)
 	p.MessageOut = make(chan []byte)
 
-	p.State.InitState(&p)
+	p.State.Init(&p)
 
 	return &p
 }
@@ -51,12 +51,12 @@ func (self *Process) GetIncomingChannel() chan []byte {
 }
 
 func (self *Process) GetOutgoingChannel() chan []byte {
-	println("(process/terminal/process.go).GetOutgoingChannel()")
+	//println("(process/terminal/process.go).GetOutgoingChannel()")
 	return self.MessageOut
 }
 
 //Business logic
 func (self *Process) Tick() {
-	println("(process/terminal/process.go).Tick()")
+	//println("(process/terminal/process.go).Tick()")
 	self.State.HandleMessages()
 }

@@ -18,7 +18,7 @@ func (self *State) Init(proc *Process) {
 }
 
 func (self *State) HandleMessages() {
-	println("(process/example/state.go).HandleMessages()")
+	//println("(process/example/state.go).HandleMessages()")
 	var c chan []byte = self.proc.MessageIn
 	var msgType uint16
 	var msgTypeMask uint16
