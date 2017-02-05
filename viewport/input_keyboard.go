@@ -7,7 +7,7 @@ import (
 
 func onChar(m msg.MessageChar) {
 	if DebugPrintInputEvents {
-		fmt.Print("TypeChar")
+		fmt.Printf("\n\nTypeChar: %s\n", string(m.Char))
 	}
 
 	Terms.Focused.PutCharacter(m) // TEMPORARY hack
@@ -26,6 +26,7 @@ func onKey(m msg.MessageKey) {
 		showUInt32("Scan", m.Scan)
 		showUInt8("Action", m.Action)
 		showUInt8("Mod", m.Mod)
+		println()
 	}
 
 	if msg.Action(m.Action) == msg.Release {

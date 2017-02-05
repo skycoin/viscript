@@ -46,11 +46,7 @@ func UnpackInputEvents(message []byte) []byte {
 		msg.MustDeserialize(message, &m)
 		onFrameBufferSize(m)
 	default:
-		fmt.Println("UNKNOWN MESSAGE TYPE!")
-	}
-
-	if DebugPrintInputEvents {
-		fmt.Println()
+		fmt.Println("********** UNKNOWN MESSAGE TYPE! ************")
 	}
 
 	return message

@@ -13,6 +13,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 		fmt.Print("TypeMousePos")
 		showFloat64("X", m.X)
 		showFloat64("Y", m.Y)
+		println()
 	}
 
 	mouse.UpdatePosition(app.Vec2F{float32(m.X), float32(m.Y)}) // state update
@@ -30,6 +31,7 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 		showFloat64("X Offset", m.X)
 		showFloat64("Y Offset", m.Y)
 		showBool("HoldingControl", m.HoldingControl)
+		println()
 	}
 }
 
@@ -40,6 +42,7 @@ func onMouseButton(m msg.MessageMouseButton) {
 		showUInt8("Button", m.Button)
 		showUInt8("Action", m.Action)
 		showUInt8("Mod", m.Mod)
+		println()
 	}
 
 	convertClickToTextCursorPosition(m.Button, m.Action)
@@ -53,7 +56,7 @@ func onMouseButton(m msg.MessageMouseButton) {
 			// if mouse.CursorIsInside(ui.MainMenu.Rect) {
 			// 	respondToAnyMenuButtonClicks()
 			// } else { // respond to any panel clicks outside of menu
-			FocusOnTopmostRectThatContainsPointer()
+			focusOnTopmostRectThatContainsPointer()
 			// }
 		}
 	} else if msg.Action(m.Action) == msg.Release {
@@ -64,7 +67,7 @@ func onMouseButton(m msg.MessageMouseButton) {
 	}
 }
 
-func FocusOnTopmostRectThatContainsPointer() {
+func focusOnTopmostRectThatContainsPointer() {
 	var topmostZ float32
 	var topmostId msg.TerminalId
 
@@ -142,7 +145,7 @@ func respondToAnyMenuButtonClicks() {
 
 // the rest of these funcs are almost identical, just top 2 vars customized (and string format)
 func showBool(s string, x bool) {
-	fmt.Printf("   [%s: %b]", s, x)
+	fmt.Printf("   [%s: %t]", s, x)
 }
 
 func showUInt8(s string, x uint8) {
