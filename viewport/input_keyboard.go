@@ -6,6 +6,10 @@ import (
 )
 
 func onChar(m msg.MessageChar) {
+	if DebugPrintInputEvents {
+		fmt.Print("TypeChar")
+	}
+
 	Terms.Focused.PutCharacter(m) // TEMPORARY hack
 }
 
@@ -16,8 +20,13 @@ func onChar(m msg.MessageChar) {
 // BUT for RELEASE, the "mod" variable will NOT tell you what key it is!
 // so you will have to handle both left & right modifier keys via the "action" variable!
 func onKey(m msg.MessageKey) {
-	println("\n(viewport/input_keyboard.go).onKey()")
-	//foc := Focused
+	if DebugPrintInputEvents {
+		fmt.Print("TypeKey")
+		showUInt32("Key", m.Key)
+		showUInt32("Scan", m.Scan)
+		showUInt8("Action", m.Action)
+		showUInt8("Mod", m.Mod)
+	}
 
 	if msg.Action(m.Action) == msg.Release {
 		switch m.Key {
@@ -48,6 +57,8 @@ func onKey(m msg.MessageKey) {
 			fmt.Println("'Super' modifier key RELEASED")
 		}
 	} else { // glfw.Press   or   glfw.Repeat
+		//foc := Focused
+
 		/*
 			b := foc.TextBodies[0]
 

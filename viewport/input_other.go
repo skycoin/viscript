@@ -6,11 +6,11 @@ import (
 )
 
 func onFrameBufferSize(m msg.MessageFrameBufferSize) {
-	gl.SetSize(int32(m.X), int32(m.Y))
-
 	if DebugPrintInputEvents {
 		print("TypeFrameBufferSize")
 		showUInt32("X", m.X)
 		showUInt32("Y", m.Y)
 	}
+
+	gl.SetSize(int32(m.X), int32(m.Y))
 }

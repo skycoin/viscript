@@ -50,23 +50,6 @@ func (self *State) UnpackInputEvents(msgType uint16, message []byte) []byte {
 	return message
 }
 
-func showUInt8(s string, x uint8) {
-	fmt.Printf("   [%s: %d]", s, x)
-}
-
-// the rest of these funcs are almost identical, just top 2 vars customized (and string format)
-func showSInt32(s string, x int32) {
-	fmt.Printf("   [%s: %d]", s, x)
-}
-
-func showUInt32(s string, x uint32) {
-	fmt.Printf("   [%s: %d]", s, x)
-}
-
-func showFloat64(s string, f float64) {
-	fmt.Printf("   [%s: %.1f]", s, f)
-}
-
 //
 //EVENT HANDLERS
 //
