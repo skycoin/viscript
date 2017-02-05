@@ -11,12 +11,14 @@ type State struct {
 	DebugPrintInputEvents bool
 }
 
-func (self *State) InitState(proc *Process) {
+func (self *State) Init(proc *Process) {
+	println("(process/example/state.go).Init()")
 	self.proc = proc
 	self.DebugPrintInputEvents = false
 }
 
 func (self *State) HandleMessages() {
+	println("(process/example/state.go).HandleMessages()")
 	var c chan []byte = self.proc.MessageIn
 	var msgType uint16
 	var msgTypeMask uint16

@@ -6,6 +6,7 @@ import (
 )
 
 func (self *State) UnpackInputEvents(msgType uint16, message []byte) []byte {
+	println("hypervisor/process/example/events.UnpackInputEvents()")
 
 	switch msgType {
 
