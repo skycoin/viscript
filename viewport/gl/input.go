@@ -1,10 +1,7 @@
 package gl
 
 import (
-	"fmt"
-
 	"github.com/corpusc/viscript/msg"
-	//"github.com/corpusc/viscript/script"
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
@@ -28,13 +25,14 @@ func InitInputEvents(w *glfw.Window) {
 }
 
 func SerializeAndDispatch(msgType uint16, message interface{}) {
-	// Send byte slice to the InputEvents chan
+	// Send byte slice to channel
 	InputEvents <- msg.Serialize(msgType, message)
 }
 
 func onClose(w *glfw.Window) {
-	m := msg.MessageKey{Key: msg.KeyEscape}
-	SerializeAndDispatch(msg.TypeKey, m)
+	SerializeAndDispatch(
+		msg.TypeKey,
+		msg.MessageKey{Key: msg.KeyEscape})
 }
 
 // apparently every time this is fired, a mouse position event is ALSO fired
@@ -44,37 +42,28 @@ func onMouseButton(
 	action glfw.Action,
 	mod glfw.ModifierKey) {
 
-	//MessageMouseButton
-	var m msg.MessageMouseButton
-	m.Button = uint8(bt)
-	m.Action = uint8(action)
-	m.Mod = uint8(mod)
-
-	SerializeAndDispatch(msg.TypeMouseButton, m)
+	SerializeAndDispatch(
+		msg.TypeMouseButton,
+		msg.MessageMouseButton{uint8(bt), uint8(action), uint8(mod)})
 }
 
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
-	var m msg.MessageMousePos
-	m.X = x
-	m.Y = y
-
-	SerializeAndDispatch(msg.TypeMousePos, m)
+	SerializeAndDispatch(
+		msg.TypeMousePos,
+		msg.MessageMousePos{x, y})
 }
 
 func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
-	var m msg.MessageMouseScroll
-	m.X = xOff
-	m.Y = yOff
-
-	SerializeAndDispatch(msg.TypeMouseScroll, m)
+	SerializeAndDispatch(
+		msg.TypeMouseScroll,
+		msg.MessageMouseScroll{xOff, yOff})
 }
 
 func onChar(w *glfw.Window, char rune) {
-	var m msg.MessageChar
-	m.Char = uint32(char)
-
-	SerializeAndDispatch(msg.TypeChar, m)
+	SerializeAndDispatch(
+		msg.TypeChar,
+		msg.MessageChar{uint32(char)})
 }
 
 func onKey(
@@ -84,15 +73,7 @@ func onKey(
 	action glfw.Action,
 	mod glfw.ModifierKey) {
 
-	var m msg.MessageKey
-	m.Key = uint32(key)
-	m.Scan = uint32(scancode)
-	m.Action = uint8(action)
-	m.Mod = uint8(mod)
-
-	if key != glfw.Key(m.Key) {
-		fmt.Printf("ERROR KEY SERIALIZATION FUCKUP: key= %d, key= %d \n", key, m.Key)
-	}
-
-	SerializeAndDispatch(msg.TypeKey, m)
+	SerializeAndDispatch(
+		msg.TypeKey,
+		msg.MessageKey{uint32(key), uint32(scancode), uint8(action), uint8(mod)})
 }

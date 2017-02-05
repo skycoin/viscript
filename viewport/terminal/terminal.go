@@ -27,7 +27,7 @@ type Terminal struct {
 	GridSize app.Vec2I    //number of characters
 
 	//vars for GL space / float
-	//(mouse pos events are the only things that use pixels)
+	//(mouse pos events, and resize event resolutions are the only things that use pixels)
 	Bounds *app.Rectangle
 	Depth  float32 //0 for lowest
 }
@@ -54,6 +54,9 @@ func (t *Terminal) Clear() {
 func (t *Terminal) RelayToTask(message []byte) {
 	println("(viewport/terminal/terminal.go).RelayToTask(message []byte)")
 	println("FIX THIS: hypervisor.ProcessListGlobal.ProcessMap[t.AttachedProcess].GetIncomingChannel() <- message")
+
+	//ch := hypervisor.ProcessListGlobal.ProcessMap[t.AttachedProcess].GetIncomingChannel()
+	// ch <- message // <------- locks up
 
 	//TODO: send this message to AttachedProcess,
 	//and have AttachedProcess send SetChar*/SetCursor/etc. back here

@@ -78,7 +78,7 @@ func DispatchProcessEvents() {
 //an incoming message from a process
 func HandleEvent(msg []byte, Id msg.ProcessId) {
 	println("process_list.HandleEvent()")
-	//process messages received by process
+	//handle messages received by process
 }
 
 //Test by adding example Process
