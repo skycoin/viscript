@@ -1,6 +1,7 @@
 package viewport
 
 import (
+	"fmt"
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"
@@ -18,15 +19,12 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 }
 
 func onMouseScroll(m msg.MessageMouseScroll) {
-	/*
-		var delta float32 = 30
-
-		if eitherControlKeyHeld() { // horizontal ability from 1D scrolling
-			ScrollTermThatHasMousePointer(float32(m.Y)*-delta, 0)
-		} else { // can handle both x & y for 2D scrolling
-			ScrollTermThatHasMousePointer(float32(m.X)*delta, float32(m.Y)*-delta)
-		}
-	*/
+	if DebugPrintInputEvents {
+		print("TypeMouseScroll")
+		showFloat64("X Offset", m.X)
+		showFloat64("Y Offset", m.Y)
+		showBool("HoldingControl", m.HoldingControl)
+	}
 }
 
 // apparently every time this is fired, a mouse position event is ALSO fired
@@ -127,4 +125,25 @@ func respondToAnyMenuButtonClicks() {
 	// 		app.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
 	// 	}
 	// }
+}
+
+// the rest of these funcs are almost identical, just top 2 vars customized (and string format)
+func showBool(s string, x bool) {
+	fmt.Printf("   [%s: %b]", s, x)
+}
+
+func showUInt8(s string, x uint8) {
+	fmt.Printf("   [%s: %d]", s, x)
+}
+
+func showSInt32(s string, x int32) {
+	fmt.Printf("   [%s: %d]", s, x)
+}
+
+func showUInt32(s string, x uint32) {
+	fmt.Printf("   [%s: %d]", s, x)
+}
+
+func showFloat64(s string, f float64) {
+	fmt.Printf("   [%s: %.1f]", s, f)
 }

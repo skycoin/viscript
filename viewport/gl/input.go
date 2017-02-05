@@ -57,7 +57,7 @@ func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 	SerializeAndDispatch(
 		msg.TypeMouseScroll,
-		msg.MessageMouseScroll{xOff, yOff})
+		msg.MessageMouseScroll{xOff, yOff, eitherControlKeyHeld(w)})
 }
 
 func onChar(w *glfw.Window, char rune) {
@@ -76,4 +76,12 @@ func onKey(
 	SerializeAndDispatch(
 		msg.TypeKey,
 		msg.MessageKey{uint32(key), uint32(scancode), uint8(action), uint8(mod)})
+}
+
+func eitherControlKeyHeld(w *glfw.Window) bool {
+	if w.GetKey(glfw.KeyLeftControl) == glfw.Press || w.GetKey(glfw.KeyRightControl) == glfw.Press {
+		return true
+	}
+
+	return false
 }

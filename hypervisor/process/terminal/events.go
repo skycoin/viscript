@@ -123,15 +123,6 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 
 func onMouseScroll(m msg.MessageMouseScroll) {
 	println("hypervisor/process/terminal/events.onMouseScroll(m msg.Message)")
-	/*
-		var delta float32 = 30
-
-		if eitherControlKeyHeld() { // horizontal ability from 1D scrolling
-			ScrollTermThatHasMousePointer(float32(m.Y)*-delta, 0)
-		} else { // can handle both x & y for 2D scrolling
-			ScrollTermThatHasMousePointer(float32(m.X)*delta, float32(m.Y)*-delta)
-		}
-	*/
 }
 
 func onFrameBufferSize(m msg.MessageFrameBufferSize) {

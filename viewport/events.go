@@ -24,16 +24,9 @@ func UnpackInputEvents(message []byte) []byte {
 		onMouseCursorPos(msgMousePos)
 
 	case msg.TypeMouseScroll:
-		var msgScroll msg.MessageMouseScroll
-		msg.MustDeserialize(message, &msgScroll)
-
-		if DebugPrintInputEvents {
-			fmt.Print("TypeMouseScroll")
-			showFloat64("X Offset", msgScroll.X)
-			showFloat64("Y Offset", msgScroll.Y)
-		}
-
-		onMouseScroll(msgScroll)
+		var m msg.MessageMouseScroll
+		msg.MustDeserialize(message, &m)
+		onMouseScroll(m)
 
 	case msg.TypeMouseButton:
 		var msgBtn msg.MessageMouseButton
@@ -95,23 +88,4 @@ func UnpackInputEvents(message []byte) []byte {
 	}
 
 	return message
-}
-
-func showUInt8(s string, x uint8) uint8 {
-	fmt.Printf("   [%s: %d]", s, x)
-	return x
-}
-
-// the rest of these funcs are almost identical, just top 2 vars customized (and string format)
-func showSInt32(s string, x int32) {
-	fmt.Printf("   [%s: %d]", s, x)
-}
-
-func showUInt32(s string, x uint32) {
-	fmt.Printf("   [%s: %d]", s, x)
-}
-
-func showFloat64(s string, f float64) float64 {
-	fmt.Printf("   [%s: %.1f]", s, f)
-	return f
 }
