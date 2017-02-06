@@ -17,8 +17,6 @@ import (
 	- we check each process channel for outgoing messages to the hypervisor
 	Each process has a tick() method
 	- tick method, input messages are processed, output messages created
-
-
 */
 
 var ProcessListGlobal ProcessList

@@ -7,11 +7,11 @@ import (
 var DbusGlobal dbus.DbusInstance
 
 func DbusInit() {
-	println("(hypervisor/dbus.go).DbusInit")
+	println("(hypervisor/dbus.go).DbusInit()")
 	DbusGlobal.Init()
 }
 
 func DbusTeardown() {
-	println("(hypervisor/dbus.go).DbusInit ---- TODO still!")
+	println("(hypervisor/dbus.go).DbusTeardown() ---- TODO still!")
 	//TODO
 }
