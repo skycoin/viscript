@@ -17,9 +17,15 @@ const PrefixTerminal uint16 = 0x02 // terminal message prefix
 
 // Process to Hypervisor, input event
 const (
-	TypeSetChar   = 1 + PrefixTerminal
-	TypeSetCursor = 2 + PrefixTerminal
+	TypePutChar   = 1 + PrefixTerminal
+	TypeSetChar   = 2 + PrefixTerminal
+	TypeSetCursor = 3 + PrefixTerminal
 )
+
+type MessagePutChar struct {
+	TermId uint32 //terminal
+	Char   uint32
+}
 
 type MessageSetChar struct {
 	TermId uint32 //terminal

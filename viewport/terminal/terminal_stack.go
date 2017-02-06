@@ -75,6 +75,14 @@ func (self *TerminalStack) RemoveTerminal(id msg.TerminalId) {
 	// TODO: what should happen here after deleting terminal from the stack?
 }
 
+func (self *TerminalStack) Update() {
+	//println("TerminalStack.Update()")
+
+	for _, term := range self.Terms {
+		term.Update()
+	}
+}
+
 func (self *TerminalStack) ResizeTerminal(id msg.TerminalId, x int, y int) {
 	println("TerminalStack.ResizeTerminal()")
 }

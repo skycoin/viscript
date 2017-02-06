@@ -72,6 +72,7 @@ func DispatchInputEvents(ch chan []byte) []byte {
 
 func Update() {
 	igl.Curs.Update()
+	Terms.Update()
 }
 
 func UpdateDrawBuffer() {

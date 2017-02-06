@@ -5,6 +5,17 @@ import (
 )
 
 //example of a gui API and calling out
+func PutChar(out chan []byte, char uint32) {
+	println("(process/terminal/api.go).PutChar()")
+	var m msg.MessagePutChar
+	m.TermId = 0
+	m.Char = char
+	//write event to out channel
+	b := msg.Serialize(msg.TypePutChar, m) //serialize as byte string
+	out <- b                               //write to output channel
+}
+
+//example of a gui API and calling out
 //sending messages back to hypervisor to set terminal
 func SetChar(out chan []byte, x uint32, y uint32, char uint32) {
 	println("(process/terminal/api.go).SetChar()")

@@ -36,11 +36,17 @@ func (t *Terminal) Init() {
 	fmt.Printf("Terminal.Init()\n")
 
 	t.TerminalId = msg.RandTerminalId()
-	t.InChannel = make(chan []byte)
+	t.InChannel = make(chan []byte, msg.ChannelCapacity)
 	t.GridSize = app.Vec2I{NumColumns, NumRows}
 	t.Chars = [NumRows][NumColumns]uint32{}
 	t.makeRandomChars(20)
 	t.SetStringAt(37, 2, "this is text made by SetString()")
+}
+
+func (t *Terminal) Update() {
+	for len(t.InChannel) > 0 {
+		println("ho ho ho hoHOHOHOHOHOHOHO")
+	}
 }
 
 func (t *Terminal) Clear() {

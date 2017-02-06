@@ -16,8 +16,6 @@ package dbus
 
 */
 
-//<<<<<<< HEAD
-
 /*
 	Todo:
 	- dbus channel manager (process library)
@@ -36,7 +34,6 @@ package dbus
 */
 
 /*
-
 	dbus file system daemon
 	- file system over dbus
 	- fuse etc
@@ -44,22 +41,6 @@ package dbus
 	dbus networking daemon
 	- networking over dbus
 */
-
-/*
-type DbusInstance struct {
-	PubsubChannels map[ChannelId]PubsubChannel
-
-	Resources []ResourceMeta
-}
-
-func (self *DbusInstance) Init() {
-	self.PubsubChannels = make(map[ChannelId]PubsubChannel)
-	self.Resources = make([]ResourceMeta, 0)
-}
-*/
-
-//=======
-//>>>>>>> 53130d527d20d4d8b8815534ae06b7414c85f461
 
 /*
 	ID generation (should eventually be per dbus instance)

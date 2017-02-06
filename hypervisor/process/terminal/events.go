@@ -28,7 +28,7 @@ func (self *State) UnpackInputEvents(msgType uint16, message []byte) []byte {
 	case msg.TypeChar:
 		var m msg.MessageChar
 		msg.MustDeserialize(message, &m)
-		onChar(m)
+		self.onChar(m)
 
 	case msg.TypeKey:
 		var m msg.MessageKey
@@ -57,25 +57,26 @@ func (self *State) UnpackInputEvents(msgType uint16, message []byte) []byte {
 
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(m msg.MessageMousePos) {
-	println("hypervisor/process/terminal/events.onMouseCursorPos(m msg.Message)")
+	println("hypervisor/process/terminal/events.onMouseCursorPos()")
 }
 
 func onMouseScroll(m msg.MessageMouseScroll) {
-	println("hypervisor/process/terminal/events.onMouseScroll(m msg.Message)")
+	println("hypervisor/process/terminal/events.onMouseScroll()")
 }
 
 func onFrameBufferSize(m msg.MessageFrameBufferSize) {
-	println("hypervisor/process/terminal/events.onFrameBufferSize(m msg.Message)")
+	println("hypervisor/process/terminal/events.onFrameBufferSize()")
 }
 
-func onChar(m msg.MessageChar) {
-	println("hypervisor/process/terminal/events.onChar(m msg.Message)")
+func (self *State) onChar(m msg.MessageChar) {
+	println("hypervisor/process/terminal/events.onChar()")
+	PutChar(self.proc.MessageOut, m.Char)
 }
 
 func onKey(m msg.MessageKey) {
-	println("hypervisor/process/terminal/events.onKey(m msg.Message)")
+	println("hypervisor/process/terminal/events.onKey()")
 }
 
 func onMouseButton(m msg.MessageMouseButton) {
-	println("hypervisor/process/terminal/events.onMouseButton(m msg.Message)")
+	println("hypervisor/process/terminal/events.onMouseButton()")
 }
