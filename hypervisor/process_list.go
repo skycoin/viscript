@@ -32,6 +32,7 @@ func HypervisorInitProcessList() {
 
 func HypervisorProcessListTeardown() {
 	println("process_list.HypervisorProcessListTeardown()")
+	ProcessListGlobal.ProcessMap = nil
 }
 
 func AddProcess(p msg.ProcessInterface) msg.ProcessId {

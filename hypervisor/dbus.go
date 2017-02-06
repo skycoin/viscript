@@ -12,6 +12,7 @@ func DbusInit() {
 }
 
 func DbusTeardown() {
-	println("(hypervisor/dbus.go).DbusTeardown() ---- TODO still!")
-	//TODO
+	println("(hypervisor/dbus.go).DbusTeardown() ---- TO DOne?")
+	DbusGlobal.PubsubChannels = nil
+	DbusGlobal.Resources = nil
 }
