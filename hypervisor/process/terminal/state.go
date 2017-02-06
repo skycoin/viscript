@@ -2,7 +2,7 @@ package process
 
 import (
 	"github.com/corpusc/viscript/msg"
-	"log"
+	//"log"
 )
 
 //put all your process state here

@@ -4,6 +4,21 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
+//non-instanced
+func NewProcess() *Process {
+	println("(process/example/process.go).NewProcess()")
+	var p Process
+
+	p.Id = msg.NextProcessId()
+
+	p.MessageIn = make(chan []byte, msg.ChannelCapacity)
+	p.MessageOut = make(chan []byte, msg.ChannelCapacity)
+
+	p.State.Init(&p)
+
+	return &p
+}
+
 //Example process
 type Process struct {
 	Id msg.ProcessId
@@ -12,20 +27,6 @@ type Process struct {
 	MessageOut chan []byte
 
 	State State
-}
-
-func NewProcess() *Process {
-	println("(process/example/process.go).NewProcess()")
-	var p Process
-
-	p.Id = msg.NextProcessId()
-
-	p.MessageIn = make(chan []byte)
-	p.MessageOut = make(chan []byte)
-
-	p.State.Init(&p)
-
-	return &p
 }
 
 func (self *Process) GetProcessInterface() msg.ProcessInterface {

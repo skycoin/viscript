@@ -5,7 +5,7 @@ import (
 	"math/rand"
 
 	"github.com/corpusc/viscript/app"
-	//"github.com/corpusc/viscript/hypervisor"
+	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -53,13 +53,11 @@ func (t *Terminal) Clear() {
 
 func (t *Terminal) RelayToTask(message []byte) {
 	println("(viewport/terminal/terminal.go).RelayToTask(message []byte)")
-	println("FIX THIS: hypervisor.ProcessListGlobal.ProcessMap[t.AttachedProcess].GetIncomingChannel() <- message")
 
-	//ch := hypervisor.ProcessListGlobal.ProcessMap[t.AttachedProcess].GetIncomingChannel()
-	// ch <- message // <------- locks up
+	ch := hypervisor.ProcessListGlobal.ProcessMap[t.AttachedProcess].GetIncomingChannel()
+	ch <- message
 
-	//TODO: send this message to AttachedProcess,
-	//and have AttachedProcess send SetChar*/SetCursor/etc. back here
+	//TODO: have AttachedProcess send SetChar*/SetCursor/etc. back here
 }
 
 func (t *Terminal) PutCharacter(m msg.MessageChar) {
