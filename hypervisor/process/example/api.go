@@ -1,8 +1,18 @@
 package process
 
 import (
+	"fmt"
 	"github.com/corpusc/viscript/msg"
 )
+
+func Printfc(out chan []byte, format string, vars ...interface{}) {
+	println("(process/example/api.go).Printfc()")
+
+	b := fmt.Sprintf(format, vars)
+	for _, v := range b {
+		PutChar(out, uint32(v))
+	}
+}
 
 func PutChar(out chan []byte, char uint32) {
 	println("(process/example/api.go).PutChar()")

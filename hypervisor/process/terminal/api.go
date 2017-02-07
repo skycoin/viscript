@@ -4,7 +4,6 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-//example of a gui API and calling out
 func PutChar(out chan []byte, char uint32) {
 	println("(process/terminal/api.go).PutChar()")
 
@@ -14,7 +13,6 @@ func PutChar(out chan []byte, char uint32) {
 		msg.MessagePutChar{TermId: 0, Char: char})
 }
 
-//example of a gui API and calling out
 //sending messages back to hypervisor to set terminal
 func SetChar(out chan []byte, x uint32, y uint32, char uint32) {
 	println("(process/terminal/api.go).SetChar()")
@@ -25,7 +23,6 @@ func SetChar(out chan []byte, x uint32, y uint32, char uint32) {
 		msg.MessageSetChar{TermId: 0, X: x, Y: y, Char: char})
 }
 
-//example of a gui API and calling out
 //sending messages back to hypervisor to set terminal
 func SetCursor(out chan []byte, x uint32, y uint32) {
 	println("(process/terminal/api.go).SetCursor()")
