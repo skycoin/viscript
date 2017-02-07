@@ -36,7 +36,10 @@ func (self *Process) GetProcessInterface() msg.ProcessInterface {
 
 func (self *Process) DeleteProcess() {
 	println("(process/example/process.go).DeleteProcess()")
-	// TODO
+	close(self.MessageIn)
+	close(self.MessageOut)
+	self.State.proc = nil
+	self = nil
 }
 
 // Implement ProcessInterface

@@ -10,6 +10,8 @@ func InitMiscEvents(w *glfw.Window) {
 }
 
 func onFrameBufferSize(w *glfw.Window, width, height int) {
-	m := msg.MessageFrameBufferSize{uint32(width), uint32(height)}
-	InputEvents <- msg.Serialize(msg.TypeFrameBufferSize, m)
+	msg.SerializeAndDispatch(
+		InputEvents,
+		msg.TypeFrameBufferSize,
+		msg.MessageFrameBufferSize{X: uint32(width), Y: uint32(height)})
 }

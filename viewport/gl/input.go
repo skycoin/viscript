@@ -24,13 +24,9 @@ func InitInputEvents(w *glfw.Window) {
 	w.SetCursorPosCallback(onMouseCursorPos)
 }
 
-func SerializeAndDispatch(msgType uint16, message interface{}) {
-	// Send byte slice to channel
-	InputEvents <- msg.Serialize(msgType, message)
-}
-
 func onClose(w *glfw.Window) {
-	SerializeAndDispatch(
+	msg.SerializeAndDispatch(
+		InputEvents,
 		msg.TypeKey,
 		msg.MessageKey{Key: msg.KeyEscape})
 }
@@ -42,26 +38,30 @@ func onMouseButton(
 	action glfw.Action,
 	mod glfw.ModifierKey) {
 
-	SerializeAndDispatch(
+	msg.SerializeAndDispatch(
+		InputEvents,
 		msg.TypeMouseButton,
 		msg.MessageMouseButton{uint8(bt), uint8(action), uint8(mod)})
 }
 
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
-	SerializeAndDispatch(
+	msg.SerializeAndDispatch(
+		InputEvents,
 		msg.TypeMousePos,
 		msg.MessageMousePos{x, y})
 }
 
 func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
-	SerializeAndDispatch(
+	msg.SerializeAndDispatch(
+		InputEvents,
 		msg.TypeMouseScroll,
 		msg.MessageMouseScroll{xOff, yOff, eitherControlKeyHeld(w)})
 }
 
 func onChar(w *glfw.Window, char rune) {
-	SerializeAndDispatch(
+	msg.SerializeAndDispatch(
+		InputEvents,
 		msg.TypeChar,
 		msg.MessageChar{uint32(char)})
 }
@@ -73,7 +73,8 @@ func onKey(
 	action glfw.Action,
 	mod glfw.ModifierKey) {
 
-	SerializeAndDispatch(
+	msg.SerializeAndDispatch(
+		InputEvents,
 		msg.TypeKey,
 		msg.MessageKey{uint32(key), uint32(scancode), uint8(action), uint8(mod)})
 }

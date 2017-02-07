@@ -38,6 +38,3 @@ func (self *State) HandleMessages() {
 		}
 	}
 }
-
-//p.MessageIn = make(chan []byte)
-//p.MessageOut = make(chan []byte)
