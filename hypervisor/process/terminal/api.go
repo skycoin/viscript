@@ -7,37 +7,31 @@ import (
 //example of a gui API and calling out
 func PutChar(out chan []byte, char uint32) {
 	println("(process/terminal/api.go).PutChar()")
-	var m msg.MessagePutChar
-	m.TermId = 0
-	m.Char = char
-	//write event to out channel
-	b := msg.Serialize(msg.TypePutChar, m) //serialize as byte string
-	out <- b                               //write to output channel
+
+	msg.SerializeAndDispatch(
+		out,
+		msg.TypePutChar,
+		msg.MessagePutChar{TermId: 0, Char: char})
 }
 
 //example of a gui API and calling out
 //sending messages back to hypervisor to set terminal
 func SetChar(out chan []byte, x uint32, y uint32, char uint32) {
 	println("(process/terminal/api.go).SetChar()")
-	var m msg.MessageSetChar
-	m.TermId = 0
-	m.X = x
-	m.Y = y
-	m.Char = char
-	//write event to out channel
-	b := msg.Serialize(msg.TypeSetChar, m) //serialize as byte string
-	out <- b                               //write to output channel
+
+	msg.SerializeAndDispatch(
+		out,
+		msg.TypeSetChar,
+		msg.MessageSetChar{TermId: 0, X: x, Y: y, Char: char})
 }
 
 //example of a gui API and calling out
 //sending messages back to hypervisor to set terminal
 func SetCursor(out chan []byte, x uint32, y uint32) {
 	println("(process/terminal/api.go).SetCursor()")
-	var m msg.MessageSetCursor
-	m.TermId = 0
-	m.X = x
-	m.Y = y
-	//write event to out channel
-	b := msg.Serialize(msg.TypeSetCursor, m) //serialize as byte string
-	out <- b                                 //write to output channel
+
+	msg.SerializeAndDispatch(
+		out,
+		msg.TypeSetCursor,
+		msg.MessageSetCursor{TermId: 0, X: x, Y: y})
 }
