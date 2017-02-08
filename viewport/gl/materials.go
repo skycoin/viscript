@@ -4,7 +4,7 @@ import (
 	"github.com/corpusc/viscript/app"
 )
 
-// pics (tile positions in atlas)
+// pics (cell/tile positions in atlas)
 var Pic_ArrowUp = app.Vec2I{8, 1}
 var Pic_GradientBorder = app.Vec2I{11, 13}
 var Pic_PixelCheckerboard = app.Vec2I{2, 11}
