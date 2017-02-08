@@ -176,11 +176,12 @@ var numOOB int // number of out of bound characters
 func (t *Terminal) validPos(X, Y uint32) bool {
 	if X < 0 || X >= uint32(t.GridSize.X) ||
 		Y < 0 || Y >= uint32(t.GridSize.Y) {
-		if numOOB < 1 {
+		numOOB++
+
+		if numOOB == 1 {
 			println("****** ATTEMPTED OUT OF BOUNDS CHARACTER PLACEMENT! ******")
 		}
 
-		numOOB++
 		return false
 	}
 

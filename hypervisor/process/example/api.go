@@ -1,44 +1,19 @@
 package process
 
 import (
-	"fmt"
-	"github.com/corpusc/viscript/msg"
+//"fmt"
+//"github.com/corpusc/viscript/msg"
 )
 
-func Printfc(out chan []byte, format string, vars ...interface{}) {
-	println("(process/example/api.go).Printfc()")
-
-	b := fmt.Sprintf(format, vars)
-	for _, v := range b {
-		PutChar(out, uint32(v))
-	}
-}
-
-func PutChar(out chan []byte, char uint32) {
-	println("(process/example/api.go).PutChar()")
-
-	msg.SerializeAndDispatch(
-		out,
-		msg.TypePutChar,
-		msg.MessagePutChar{TermId: 0, Char: char})
-}
+// each type of process will have it's own API (set of funcs)
+// for NOW we are only working on a process to attach to a Terminal struct
 
 //sending messages back to hypervisor to set terminal
-func SetChar(out chan []byte, x uint32, y uint32, char uint32) {
-	println("(process/example/api.go).SetChar()")
+// func SetCursor(out chan []byte, x uint32, y uint32) {
+// 	println("(process/example/api.go).SetCursor()")
 
-	msg.SerializeAndDispatch(
-		out,
-		msg.TypeSetChar,
-		msg.MessageSetChar{TermId: 0, X: x, Y: y, Char: char})
-}
-
-//sending messages back to hypervisor to set terminal
-func SetCursor(out chan []byte, x uint32, y uint32) {
-	println("(process/example/api.go).SetCursor()")
-
-	msg.SerializeAndDispatch(
-		out,
-		msg.TypeSetCursor,
-		msg.MessageSetCursor{TermId: 0, X: x, Y: y})
-}
+// 	msg.SerializeAndDispatch(
+// 		out,
+// 		msg.TypeSetCursor,
+// 		msg.MessageSetCursor{TermId: 0, X: x, Y: y})
+// }

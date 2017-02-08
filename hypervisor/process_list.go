@@ -39,13 +39,14 @@ func AddProcess(p msg.ProcessInterface) msg.ProcessId {
 	println("process_list.AddProcess()")
 
 	id := p.GetId()
-	//do check to make sure processId is not already in list
+	//TODO: check to make sure processId is not already in list
 	ProcessListGlobal.ProcessMap[id] = p
 	return id
 }
 
 func GetProcessEvents() {
 	println("process_list.GetProcessEvents()")
+	//TODO
 }
 
 //run the process, creating new events for hypervisor
@@ -62,22 +63,18 @@ func ProcessTick() {
 func DispatchProcessEvents() {
 	//println("process_list.DispatchProcessEvents()")
 
-	for id, p := range ProcessListGlobal.ProcessMap {
-		var c chan []byte = p.GetOutgoingChannel() //channel
-		//p.Tick() //only do if incoming messages
+	for id, task := range ProcessListGlobal.ProcessMap {
+		c := task.GetOutgoingChannel()
 
-		if len(c) > 0 {
-			m := <-c //read events
-			//do events
+		for len(c) > 0 {
+			m := <-c //read event
 			HandleEvent(m, id)
 		}
 	}
 }
 
-//an incoming message from a process
 func HandleEvent(msg []byte, Id msg.ProcessId) {
-	println("process_list.HandleEvent()")
-	//handle messages received by process
+	println("process_list.HandleEvent()               ---------------- TODO !!!!!!!!!!!")
 }
 
 //Test by adding example Process
