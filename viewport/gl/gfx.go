@@ -1,15 +1,6 @@
 package gl
 
 import (
-	/* OTHER packages imported into this package:
-	             (including recursion)
-
-	* "time" (cursors.go)
-	* "math"
-	* "viscript/ui"
-
-	*/
-
 	"github.com/corpusc/viscript/app"
 )
 
@@ -41,6 +32,3 @@ var Tan = []float32{0.55, 0.47, 0.37, 1}
 var Violet = []float32{0.4, 0.2, 1, 1}
 var White = []float32{1, 1, 1, 1}
 var Yellow = []float32{1, 1, 0, 1}
-
-var PrevColor []float32 // previous
-var CurrColor []float32

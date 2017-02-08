@@ -5,19 +5,18 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
+var PrevColor []float32 // previous
+var CurrColor []float32
+
 var desktop *app.Rectangle = &app.Rectangle{
 	CanvasExtents.Y,
 	CanvasExtents.X,
 	-CanvasExtents.Y,
 	-CanvasExtents.X}
 
-func init() {
-	println("gl.init() - draw.go")
-}
-
 func SetColor(newColor []float32) {
-	//PrevColor = CurrColor
-	//CurrColor = newColor
+	PrevColor = CurrColor
+	CurrColor = newColor
 	gl.Materialfv(gl.FRONT, gl.AMBIENT_AND_DIFFUSE, &newColor[0])
 }
 

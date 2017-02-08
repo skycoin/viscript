@@ -1120,3 +1120,50 @@ each object will have a single channel for "in"
 and when publisher writes, the message will get written to all the in channels for subscribers
 dbus will eventually need a socket type
 where there is a server and you get a "connection" and its one to one, and bidirectional and like a socket; but we dont have or need that yet
+
+
+
+
+
+
+
+-------------------------------WECHAT transition---------------------------------
+
+if the terminal publishes messsage to its pubsub channel (it is out channel), 
+that message gets written to the subscribers (the process) instantly
+
+
+
+
+wrapper for printf type
+
+there will be a library terminal imports
+for scrolling, the terminal object might have to keep a copy of the stuff to scroll
+and update the terminal state etc
+
+the process has a document object model, then you scroll through it and the
+terminal sends messages about how to render it, etc
+
+process is implemented as an interface because we might have several types of processes
+or implementations.
+
+for instance, a bash type printf driven process.  Then have another process 
+implementation that has gui with widgets etc
+
+
+
+we will have a background terminal, that takes up whole screen and is behind all 
+terminals.  this is our "virtual desktop"
+
+Then we will have a widget library, for drawing buttons
+
+Then we will add a start button, that you can click and have popup menu, of applications
+and clicking on the application will launch a terminal window with the app.
+
+this is a package imported only by terminal.  and which will not import anything
+
+by terminal
+
+i don't know if anything in the ui package is used or imported
+
+but this is separate
