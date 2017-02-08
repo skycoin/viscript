@@ -5,20 +5,20 @@ import (
 	"time"
 )
 
-var Curs Cursors = Cursors{NextFrame: time.Now()}
+var Curs Cursors = Cursors{nextFrame: time.Now()}
 
 type Cursors struct {
-	NextFrame time.Time
 	// private
+	nextFrame      time.Time
 	shrinking      bool
 	shrinkFraction float32
 }
 
-func (c *Cursors) Update() {
+func (c *Cursors) Tick() {
 	var speedFactor float32 = 0.06
 
-	if c.NextFrame.Before(time.Now()) {
-		c.NextFrame = time.Now().Add(time.Millisecond * 16) // 170 for simple on/off blinking
+	if c.nextFrame.Before(time.Now()) {
+		c.nextFrame = time.Now().Add(time.Millisecond * 16) // 170 was for simple on/off blinking
 
 		if c.shrinking {
 			c.shrinkFraction -= speedFactor
@@ -36,7 +36,7 @@ func (c *Cursors) Update() {
 	}
 }
 
-func (c *Cursors) GetAnimationModifiedRect(r app.Rectangle) *app.Rectangle {
+func (c *Cursors) GetCurrentFrame(r app.Rectangle) *app.Rectangle {
 	if c.shrinking {
 		r.Bottom = r.Top - c.shrinkFraction*r.Height()
 		r.Left = r.Right - c.shrinkFraction*r.Width()

@@ -70,9 +70,9 @@ func DispatchInputEvents(ch chan []byte) []byte {
 	return message
 }
 
-func Update() {
-	igl.Curs.Update()
-	Terms.Update()
+func Tick() {
+	igl.Curs.Tick()
+	Terms.Tick()
 }
 
 func UpdateDrawBuffer() {

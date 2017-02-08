@@ -38,7 +38,7 @@ func (self *TerminalStack) Draw() {
 					// draw cursor
 					gl.DrawQuad(
 						gl.Pic_GradientBorder,
-						gl.Curs.GetAnimationModifiedRect(*cr), z)
+						gl.Curs.GetCurrentFrame(*cr), z)
 				}
 
 				cr.Top -= value.SpanY()

@@ -13,5 +13,5 @@ func onFrameBufferSize(w *glfw.Window, width, height int) {
 	msg.SerializeAndDispatch(
 		InputEvents,
 		msg.TypeFrameBufferSize,
-		msg.MessageFrameBufferSize{X: uint32(width), Y: uint32(height)})
+		msg.MessageFrameBufferSize{uint32(width), uint32(height)})
 }

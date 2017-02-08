@@ -60,7 +60,7 @@ func main() {
 		hypervisor.DispatchProcessEvents()            //viewport handles incoming process events
 		hypervisor.ProcessTick()                      //processes, handle incoming events
 		viewport.PollUiInputEvents()
-		viewport.Update() //in general
+		viewport.Tick()
 		viewport.UpdateDrawBuffer()
 		viewport.SwapDrawBuffer() //with new frame
 	}

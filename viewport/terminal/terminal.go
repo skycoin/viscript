@@ -43,9 +43,9 @@ func (t *Terminal) Init() {
 	t.SetStringAt(37, 2, "this is text made by SetString()")
 }
 
-func (t *Terminal) Update() {
+func (t *Terminal) Tick() {
 	for len(t.InChannel) > 0 {
-		println("ho ho ho hoHOHOHOHOHOHOHO")
+		println("1 iteration of t.InChannel")
 	}
 }
 

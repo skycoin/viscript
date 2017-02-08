@@ -18,13 +18,13 @@ func (self *State) Init(proc *Process) {
 }
 
 func (self *State) HandleMessages() {
-	// println("(process/example/state.go).HandlexMessages()")
+	//println("(process/example/state.go).HandleMessages()")
 	var c chan []byte = self.proc.MessageIn
 	var msgType uint16
 	var msgTypeMask uint16
 
 	for len(c) > 0 {
-		m := <-c // read from channel
+		m := <-c //read from channel
 		//route the message
 		msgType = msg.GetType(m)
 		msgTypeMask = msgType & 0xff00

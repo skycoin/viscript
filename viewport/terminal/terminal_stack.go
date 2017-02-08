@@ -75,11 +75,11 @@ func (self *TerminalStack) RemoveTerminal(id msg.TerminalId) {
 	// TODO: what should happen here after deleting terminal from the stack?
 }
 
-func (self *TerminalStack) Update() {
-	//println("TerminalStack.Update()")
+func (self *TerminalStack) Tick() {
+	//println("TerminalStack.Tick()")
 
 	for _, term := range self.Terms {
-		term.Update()
+		term.Tick()
 	}
 }
 
