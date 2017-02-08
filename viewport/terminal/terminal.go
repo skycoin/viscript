@@ -21,12 +21,12 @@ type Terminal struct {
 	OutChannelId    uint32 //id of pubsub channel
 	InChannel       chan []byte
 
-	//vars for character grid (of cells)
-	Chars    [NumRows][NumColumns]uint32
+	//int / character grid space
 	Curs     app.Vec2UI32 //current cursor/insert pos
 	GridSize app.Vec2I    //number of characters
+	Chars    [NumRows][NumColumns]uint32
 
-	//vars for GL space / float
+	//float32 / GL space
 	//(mouse pos events, and resize event resolutions are the only things that use pixels)
 	Bounds *app.Rectangle
 	Depth  float32 //0 for lowest

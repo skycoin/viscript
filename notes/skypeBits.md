@@ -1167,3 +1167,17 @@ by terminal
 i don't know if anything in the ui package is used or imported
 
 but this is separate
+
+
+
+
+the process instance is self contained and not allow to import objects like terminals; 
+it only communicates over the channel where messages come in and messages leave on the channel.
+
+api should be a module imported by process instance.  because multiple process
+implementations will use same library
+
+one library will be for text based putChar, etc and eventually will have graphics/widget library
+
+the sprintf function would write a series of commands to the command channel (out channel?)
+

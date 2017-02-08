@@ -8,7 +8,7 @@ import (
 var MainMenu = Menu{}
 
 func init() {
-	fmt.Println("ui.init() in menu.go")
+	fmt.Println("(viewport/gl/menu.go).init()")
 }
 
 type Menu struct {
