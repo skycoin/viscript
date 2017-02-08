@@ -20,7 +20,7 @@ func PutChar(out chan []byte, char uint32) {
 	msg.SerializeAndDispatch(
 		out,
 		msg.TypePutChar,
-		msg.MessagePutChar{TermId: 0, Char: char})
+		msg.MessagePutChar{0, char})
 }
 
 //sending messages back to hypervisor to set terminal

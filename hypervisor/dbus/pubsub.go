@@ -2,6 +2,7 @@ package dbus
 
 func (self *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType ResourceType, ResourceIdentifier string) ChannelId {
 	println("(dbus/pubsub.go).CreatePubsubChannel()")
+
 	n := PubsubChannel{}
 	n.ChannelId = GetChannelId()
 	n.Owner = Owner
@@ -10,14 +11,10 @@ func (self *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType Resour
 	n.Subscribers = make([]PubsubSubscriber, 0)
 
 	self.AddPubSubChannel(n.ChannelId, n)
+	self.PubsubChannels[n.ChannelId] = n
 	self.ResourceRegister(n.Owner, n.OwnerType)
 
 	return n.ChannelId
-}
-
-func (self *DbusInstance) AddPubSubChannel(channelId ChannelId, pubSubChannel PubsubChannel) {
-	println("(dbus/pubsub.go).AddPubSubChannel()")
-	self.PubsubChannels[channelId] = pubSubChannel
 }
 
 //where do we get the channel id from
