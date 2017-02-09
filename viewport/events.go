@@ -16,15 +16,21 @@ func UnpackInputEvents(message []byte) []byte {
 		msg.MustDeserialize(message, &m)
 		onMouseCursorPos(m)
 
+		// Terms.Focused.RelayToTask(message)
+
 	case msg.TypeMouseScroll:
 		var m msg.MessageMouseScroll
 		msg.MustDeserialize(message, &m)
 		onMouseScroll(m)
 
+		// Terms.Focused.RelayToTask(message)
+
 	case msg.TypeMouseButton:
 		var m msg.MessageMouseButton
 		msg.MustDeserialize(message, &m)
 		onMouseButton(m)
+
+		// Terms.Focused.RelayToTask(message)
 
 	case msg.TypeChar:
 		var m msg.MessageChar

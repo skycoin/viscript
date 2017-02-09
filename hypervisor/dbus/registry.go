@@ -1,13 +1,13 @@
 package dbus
 
 type DbusInstance struct {
-	PubsubChannels map[ChannelId]PubsubChannel
+	PubsubChannels map[ChannelId]*PubsubChannel
 	Resources      []ResourceMeta
 }
 
 func (self *DbusInstance) Init() {
 	println("(dbus/registry.go).Init()")
-	self.PubsubChannels = make(map[ChannelId]PubsubChannel)
+	self.PubsubChannels = make(map[ChannelId]*PubsubChannel)
 	self.Resources = make([]ResourceMeta, 0)
 }
 

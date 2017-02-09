@@ -6,6 +6,7 @@ import (
 
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor"
+	"github.com/corpusc/viscript/hypervisor/dbus"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -18,7 +19,7 @@ const (
 type Terminal struct {
 	TerminalId      msg.TerminalId
 	AttachedProcess msg.ProcessId
-	OutChannelId    uint32 //id of pubsub channel
+	OutChannelId    dbus.ChannelId //id of pubsub channel
 	InChannel       chan []byte
 
 	//int / character grid space
@@ -60,8 +61,11 @@ func (t *Terminal) Clear() {
 func (t *Terminal) RelayToTask(message []byte) {
 	println("(viewport/terminal/terminal.go).RelayToTask(message []byte)")
 
-	ch := hypervisor.ProcessListGlobal.ProcessMap[t.AttachedProcess].GetIncomingChannel()
-	ch <- message
+	// fmt.Printf("\nPubSub Channel After Adding Terminal\n %+v\n",
+	// hypervisor.DbusGlobal.PubsubChannels)
+	// fmt.Printf("\nPubSub Channel After Adding Terminal\n %+v\n",
+
+	hypervisor.DbusGlobal.PublishTo(t.OutChannelId, message)
 
 	//TODO: have AttachedProcess send SetChar*/SetCursor/etc. back here
 }
@@ -127,7 +131,7 @@ func (t *Terminal) SetCharacterAt(X uint32, Y uint32, Char uint32) {
 	//fmt.Printf("Terminal.SetCharacterAt()\n")
 
 	numOOB = 0
-	if t.validPos(X, Y) {
+	if t.posIsValid(X, Y) {
 		t.Chars[Y][X] = Char
 	}
 }
@@ -142,7 +146,7 @@ func (t *Terminal) SetStringAt(X uint32, Y uint32, S string) {
 
 	numOOB = 0
 	for x, c := range S {
-		if t.validPos(X+uint32(x), Y) {
+		if t.posIsValid(X+uint32(x), Y) {
 			t.Chars[Y][X+uint32(x)] = uint32(c)
 		}
 	}
@@ -173,7 +177,7 @@ func (t *Terminal) makeRandomChars(count int) {
 }
 
 var numOOB int // number of out of bound characters
-func (t *Terminal) validPos(X, Y uint32) bool {
+func (t *Terminal) posIsValid(X, Y uint32) bool {
 	if X < 0 || X >= uint32(t.GridSize.X) ||
 		Y < 0 || Y >= uint32(t.GridSize.Y) {
 		numOOB++
