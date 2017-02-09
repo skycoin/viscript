@@ -10,7 +10,7 @@ func (self *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType Resour
 	n.ResourceIdentifier = ResourceIdentifier
 	n.Subscribers = make([]PubsubSubscriber, 0)
 
-	self.PubsubChannels[n.ChannelId] = n
+	self.PubsubChannels[n.ChannelId] = &n
 	self.ResourceRegister(n.Owner, n.OwnerType)
 
 	return n.ChannelId
@@ -26,27 +26,32 @@ func (self *DbusInstance) AddPubsubChannelSubscriber(chanId ChannelId, ResourceI
 	ns.Channel = channelIn
 
 	pc.Subscribers = append(pc.Subscribers, ns)
+	// fmt.Printf("\nPubSub Channel After adding Subscriber: \n%+v\n", pc)
 }
 
 func (self *DbusInstance) PublishTo(chanId ChannelId, msg []byte) {
-	println("(dbus/pubsub.go).PublishTo()")
-	chann := self.PubsubChannels[chanId]
+	println("(dbus/pubsub.go).PublishTo() - TODO: NOT IMPLEMENTED CORRECTLY")
+	// chann := self.PubsubChannels[chanId]
+	// fmt.Printf("%+v\n", chann.Subscribers)
 
 	println("---length before prefixing chan id:", len(msg))
-	self.prefixMessageWithChanId(chanId, msg)
+	self.prefixMessageWithChanId(chanId, &msg)
 	println("---length AFTER  prefixing chan id:", len(msg))
 
+	// TODO: If you uncomment this terminal.go Tick method is called too many
+	// times and 1 iteration of t.InChannel is printed but then it freezes
+	// kind of going in an infinite loop.
 	//fix non-determinism?
-	for _, sub := range chann.Subscribers {
-		sub.Channel <- msg
-	}
+	// for _, sub := range chann.Subscribers {
+	// 	sub.Channel <- msg
+	// }
 }
 
-func (self *DbusInstance) prefixMessageWithChanId(id ChannelId, msg []byte) {
+func (self *DbusInstance) prefixMessageWithChanId(id ChannelId, msg *[]byte) {
 	prefix := make([]byte, 4)
 	prefix[0] = (uint8)((id & 0x000000ff) >> 0)
 	prefix[1] = (uint8)((id & 0x0000ff00) >> 8)
 	prefix[2] = (uint8)((id & 0x00ff0000) >> 16)
 	prefix[3] = (uint8)((id & 0xff000000) >> 24)
-	msg = append(prefix, msg...)
+	(*msg) = append(prefix, *msg...)
 }

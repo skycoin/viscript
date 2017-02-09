@@ -2,6 +2,7 @@ package process
 
 import (
 	"fmt"
+	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -31,6 +32,7 @@ func (self *State) UnpackInputEvents(msgType uint16, message []byte) []byte {
 		onChar(m)
 		//hypervisor.DbusGlobal.PublishTo(self.proc.MessageOut, message)
 		// TODO...messageout needs to be set in SetupTerminalDbus()?
+		hypervisor.DbusGlobal.PublishTo(self.proc.PubSubChannelId, message)
 
 	case msg.TypeKey:
 		var m msg.MessageKey

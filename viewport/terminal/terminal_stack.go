@@ -114,6 +114,8 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 		dbus.ResourceId(ProcessId), //owner id
 		dbus.ResourceTypeProcess,   //owner type
 		rid2)
+	self.Terms[TerminalId].OutChannelId = tcid
+	p.PubSubChannelId = pcid
 
 	//subscribe process to the terminal id
 	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
@@ -122,12 +124,18 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 		dbus.ResourceTypeProcess,
 		self.Terms[TerminalId].InChannel) // (a 2nd call had: p.GetIncomingChannel() as last parameter)
 
+	fmt.Printf("\nPubSub Channel After Adding Terminal\n %+v\n",
+		hypervisor.DbusGlobal.PubsubChannels[tcid])
+
 	//subscribe terminal to the process id
 	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
 		pcid,
 		dbus.ResourceId(TerminalId),
 		dbus.ResourceTypeTerminal,
 		pi.GetIncomingChannel()) // (a 2nd call had: self.Terms[TerminalId].InChannel) as last parameter)
+
+	fmt.Printf("\nPubSub Channel After Adding Terminal\n %+v\n",
+		hypervisor.DbusGlobal.PubsubChannels[pcid])
 
 	/* we don't need this 2nd pair of add sub calls?
 	//subscribe process to the terminal id
