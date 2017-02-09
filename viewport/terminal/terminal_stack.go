@@ -101,20 +101,21 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 
 	self.Terms[TerminalId].AttachedProcess = ProcessId
 
-	//terminal dbus, terminal channel id
+	//terminal dbus
 	rid1 := fmt.Sprintf("dbus.pubsub.terminal-%d", int(TerminalId)) //ResourceIdentifier
-	tcid := hypervisor.DbusGlobal.CreatePubsubChannel(
+	tcid := hypervisor.DbusGlobal.CreatePubsubChannel(              //terminal channel id
 		dbus.ResourceId(TerminalId), //owner id
 		dbus.ResourceTypeTerminal,   //owner type
 		rid1)
 
-	//process dbus, process channel id
+	//process dbus
 	rid2 := fmt.Sprintf("dbus.pubsub.process-%d", int(ProcessId)) //ResourceIdentifier
-	pcid := hypervisor.DbusGlobal.CreatePubsubChannel(
+	pcid := hypervisor.DbusGlobal.CreatePubsubChannel(            //process channel id
 		dbus.ResourceId(ProcessId), //owner id
 		dbus.ResourceTypeProcess,   //owner type
 		rid2)
 	self.Terms[TerminalId].OutChannelId = tcid
+
 	p.PubSubChannelId = pcid
 
 	//subscribe process to the terminal id
@@ -136,20 +137,4 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 
 	fmt.Printf("\nPubSub Channel After Adding Terminal\n %+v\n",
 		hypervisor.DbusGlobal.PubsubChannels[pcid])
-
-	/* we don't need this 2nd pair of add sub calls?
-	//subscribe process to the terminal id
-	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
-		tcid,
-		dbus.ResourceId(ProcessId),
-		dbus.ResourceTypeProcess,
-		self.Terms[TerminalId].InChannel)
-
-	//subscribe terminal to the process id
-	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
-		pcid,
-		dbus.ResourceId(TerminalId),
-		dbus.ResourceTypeTerminal,
-		pi.GetIncomingChannel())
-	*/
 }

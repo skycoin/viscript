@@ -1181,3 +1181,21 @@ one library will be for text based putChar, etc and eventually will have graphic
 
 the sprintf function would write a series of commands to the command channel (out channel?)
 
+
+
+
+
+does terminal write input messages to its out channel?  and does process read those input 
+messages?  and can process write messages to its out channel via dbus?
+
+it should only communicate through dbus
+you write to dbus and dbus writes to channel
+
+
+terminal must not import process and vice versa
+
+
+
+
+
+[PublishTo()] also appends prefix of 32 bit, to tell app id of channel.
