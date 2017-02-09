@@ -28,7 +28,9 @@ func (self *State) UnpackInputEvents(msgType uint16, message []byte) []byte {
 	case msg.TypeChar:
 		var m msg.MessageChar
 		msg.MustDeserialize(message, &m)
-		self.onChar(m)
+		onChar(m)
+		//hypervisor.DbusGlobal.PublishTo(self.proc.MessageOut, message)
+		// TODO...messageout needs to be set in SetupTerminalDbus()?
 
 	case msg.TypeKey:
 		var m msg.MessageKey
@@ -68,9 +70,8 @@ func onFrameBufferSize(m msg.MessageFrameBufferSize) {
 	println("hypervisor/process/terminal/events.onFrameBufferSize()")
 }
 
-func (self *State) onChar(m msg.MessageChar) {
+func onChar(m msg.MessageChar) {
 	println("hypervisor/process/terminal/events.onChar()")
-	PutChar(self.proc.MessageOut, m.Char)
 }
 
 func onKey(m msg.MessageKey) {

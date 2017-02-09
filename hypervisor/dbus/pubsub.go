@@ -10,14 +10,13 @@ func (self *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType Resour
 	n.ResourceIdentifier = ResourceIdentifier
 	n.Subscribers = make([]PubsubSubscriber, 0)
 
-	self.AddPubSubChannel(n.ChannelId, n)
 	self.PubsubChannels[n.ChannelId] = n
 	self.ResourceRegister(n.Owner, n.OwnerType)
 
 	return n.ChannelId
 }
 
-//where do we get the channel id from
+//where do we get the channel id from?
 func (self *DbusInstance) AddPubsubChannelSubscriber(chanId ChannelId, ResourceId ResourceId, ResourceType ResourceType, channelIn chan []byte) {
 	println("(dbus/pubsub.go).AddPubsubChannelSubscriber()")
 	pc := self.PubsubChannels[chanId] // pubsub channel
@@ -29,17 +28,17 @@ func (self *DbusInstance) AddPubsubChannelSubscriber(chanId ChannelId, ResourceI
 	pc.Subscribers = append(pc.Subscribers, ns)
 }
 
-func (self *DbusInstance) PushPubsubChannel(chanId ChannelId, msg []byte) {
-	println("(dbus/pubsub.go).PushPubsubChannel()")
+func (self *DbusInstance) PublishTo(chanId ChannelId, msg []byte) {
+	println("(dbus/pubsub.go).PublishTo()")
 	chann := self.PubsubChannels[chanId]
 
-	println("length before prefixing:", len(msg))
+	println("---length before prefixing chan id:", len(msg))
 	self.prefixMessageWithChanId(chanId, msg)
-	println("length AFTER prefixing:", len(msg))
+	println("---length AFTER  prefixing chan id:", len(msg))
 
-	//non-determinism?
+	//fix non-determinism?
 	for _, sub := range chann.Subscribers {
-		sub.Channel <- msg //write the message immediately
+		sub.Channel <- msg
 	}
 }
 
