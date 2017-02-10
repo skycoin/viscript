@@ -1,6 +1,7 @@
 package process
 
 import (
+	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 	//"log"
 )
@@ -31,10 +32,19 @@ func (self *State) HandleMessages() {
 		msgTypeMask = msgType & 0xff00
 
 		switch msgTypeMask {
-		case msg.PrefixInput:
-			self.UnpackInputEvents(msgType, m)
-		case msg.PrefixTerminal: //process to hypervisor messages
-			self.UnpackInputEvents(msgType, m)
+		case msg.TypePrefix_Input:
+			println("-----------TypePrefix_Input")
+		case msg.TypePrefix_Terminal: //process to hypervisor messages
+			println("-----------TypePrefix_Terminal")
+		default:
+			println("**************** UNHANDLED TYPE PREFIX! ****************")
 		}
+
+		//FIXME
+		//at this point, messages have already been filtered, in our current usage.
+		//but the lines below will need to be put inside the cases once we start
+		//doing any local filtering or processing of the messages
+		self.UnpackInputEvents(msgType, m)
+		hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, m)
 	}
 }

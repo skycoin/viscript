@@ -14,7 +14,7 @@ func NewProcess() *Process {
 
 	p.MessageIn = make(chan []byte, msg.ChannelCapacity)
 	// p.OutChannel = make(chan []byte, msg.ChannelCapacity)
-	p.PubSubChannelId = 0
+	p.OutChannelId = 0
 
 	p.State.Init(&p)
 
@@ -23,8 +23,8 @@ func NewProcess() *Process {
 
 //terminal process
 type Process struct {
-	Id              msg.ProcessId
-	PubSubChannelId dbus.ChannelId
+	Id           msg.ProcessId
+	OutChannelId dbus.ChannelId
 
 	MessageIn chan []byte
 	// OutChannel chan []byte
