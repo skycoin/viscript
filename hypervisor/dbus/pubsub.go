@@ -30,21 +30,16 @@ func (self *DbusInstance) AddPubsubChannelSubscriber(chanId ChannelId, ResourceI
 }
 
 func (self *DbusInstance) PublishTo(chanId ChannelId, msg []byte) {
-	println("(dbus/pubsub.go).PublishTo() - TODO: NOT IMPLEMENTED CORRECTLY")
-	// chann := self.PubsubChannels[chanId]
-	// fmt.Printf("%+v\n", chann.Subscribers)
+	println("(dbus/pubsub.go).PublishTo()")
+	chann := self.PubsubChannels[chanId]
+	//fmt.Printf("%+v\n", chann.Subscribers)
 
-	println("---length before prefixing chan id:", len(msg))
 	self.prefixMessageWithChanId(chanId, &msg)
-	println("---length AFTER  prefixing chan id:", len(msg))
 
-	// TODO: If you uncomment this terminal.go Tick method is called too many
-	// times and 1 iteration of t.InChannel is printed but then it freezes
-	// kind of going in an infinite loop.
 	//fix non-determinism?
-	// for _, sub := range chann.Subscribers {
-	// 	sub.Channel <- msg
-	// }
+	for _, sub := range chann.Subscribers {
+		sub.Channel <- msg
+	}
 }
 
 func (self *DbusInstance) prefixMessageWithChanId(id ChannelId, msg *[]byte) {

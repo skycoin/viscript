@@ -46,7 +46,7 @@ func (t *Terminal) Init() {
 
 func (t *Terminal) Tick() {
 	for len(t.InChannel) > 0 {
-		println("1 iteration of t.InChannel")
+		t.UnpackEvent(<-t.InChannel)
 	}
 }
 
@@ -157,8 +157,6 @@ func (t *Terminal) SetGridSize() {
 
 	// ERROR IN THIS CODE!
 	// .... but I don't see any need for this right now anyways.
-	// This USED to be "SetSize", which set the GL/float-based size of
-	// the panel/window, rather than number of characters
 
 	// t.Chars = make([][]uint32, t.GridSize.Y, t.GridSize.Y)
 

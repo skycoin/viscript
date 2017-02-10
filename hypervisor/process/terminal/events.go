@@ -30,7 +30,6 @@ func (self *State) UnpackInputEvents(msgType uint16, message []byte) []byte {
 		var m msg.MessageChar
 		msg.MustDeserialize(message, &m)
 		onChar(m)
-		//hypervisor.DbusGlobal.PublishTo(self.proc.MessageOut, message)
 		// TODO...messageout needs to be set in SetupTerminalDbus()?
 		hypervisor.DbusGlobal.PublishTo(self.proc.PubSubChannelId, message)
 
