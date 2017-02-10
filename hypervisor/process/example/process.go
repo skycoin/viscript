@@ -8,14 +8,9 @@ import (
 func NewProcess() *Process {
 	println("(process/example/process.go).NewProcess()")
 	var p Process
-
 	p.Id = msg.NextProcessId()
-
 	p.MessageIn = make(chan []byte, msg.ChannelCapacity)
-	//p.OutChannel = make(chan []byte, msg.ChannelCapacity)
-
 	p.State.Init(&p)
-
 	return &p
 }
 

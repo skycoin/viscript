@@ -1204,6 +1204,15 @@ terminal must not import process and vice versa
 
 
 
-
 dbus right now does not store or manage the channels
 the InChannel is the channel dbus is writing to, to send messages to terminal
+
+
+
+
+dbus will prefix the channel id, so the program knows which subscribed channel
+wrote the message
+
+
+
+

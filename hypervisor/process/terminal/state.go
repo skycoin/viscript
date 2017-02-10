@@ -2,6 +2,7 @@ package process
 
 import (
 	"github.com/corpusc/viscript/hypervisor"
+	"github.com/corpusc/viscript/hypervisor/dbus"
 	"github.com/corpusc/viscript/msg"
 	//"log"
 )
@@ -45,6 +46,6 @@ func (self *State) HandleMessages() {
 		//but the lines below will need to be put inside the cases once we start
 		//doing any local filtering or processing of the messages
 		self.UnpackInputEvents(msgType, m)
-		hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, m)
+		hypervisor.DbusGlobal.PublishTo(dbus.ChannelId(self.proc.OutChannelId), m)
 	}
 }

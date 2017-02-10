@@ -113,7 +113,7 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 		dbus.ResourceTypeProcess,   //owner type
 		rid2)
 
-	p.OutChannelId = tcid
+	p.OutChannelId = uint32(tcid)
 	self.Terms[TerminalId].OutChannelId = pcid
 	self.Terms[TerminalId].AttachedProcess = ProcessId
 

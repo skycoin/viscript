@@ -1,7 +1,6 @@
 package process
 
 import (
-	"github.com/corpusc/viscript/hypervisor/dbus"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -9,22 +8,16 @@ import (
 func NewProcess() *Process {
 	println("(process/terminal/process.go).NewProcess()")
 	var p Process
-
 	p.Id = msg.NextProcessId()
-
 	p.MessageIn = make(chan []byte, msg.ChannelCapacity)
-	// p.OutChannel = make(chan []byte, msg.ChannelCapacity)
-	p.OutChannelId = 0
-
 	p.State.Init(&p)
-
 	return &p
 }
 
 //terminal process
 type Process struct {
 	Id           msg.ProcessId
-	OutChannelId dbus.ChannelId
+	OutChannelId uint32
 
 	MessageIn chan []byte
 	// OutChannel chan []byte
