@@ -30,7 +30,7 @@ func (self *DbusInstance) AddPubsubChannelSubscriber(chanId ChannelId, ResourceI
 }
 
 func (self *DbusInstance) PublishTo(chanId ChannelId, msg []byte) {
-	println("(dbus/pubsub.go).PublishTo()")
+	println("(dbus/pubsub.go).PublishTo()", chanId)
 	chann := self.PubsubChannels[chanId]
 	//fmt.Printf("%+v\n", chann.Subscribers)
 

@@ -99,8 +99,6 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 	var pi msg.ProcessInterface = msg.ProcessInterface(p)
 	ProcessId := hypervisor.AddProcess(pi)
 
-	self.Terms[TerminalId].AttachedProcess = ProcessId
-
 	//terminal dbus
 	rid1 := fmt.Sprintf("dbus.pubsub.terminal-%d", int(TerminalId)) //ResourceIdentifier
 	tcid := hypervisor.DbusGlobal.CreatePubsubChannel(              //terminal channel id
@@ -114,9 +112,10 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 		dbus.ResourceId(ProcessId), //owner id
 		dbus.ResourceTypeProcess,   //owner type
 		rid2)
-	self.Terms[TerminalId].OutChannelId = tcid
 
-	p.PubSubChannelId = pcid
+	p.PubSubChannelId = tcid
+	self.Terms[TerminalId].OutChannelId = pcid
+	self.Terms[TerminalId].AttachedProcess = ProcessId
 
 	//subscribe process to the terminal id
 	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(

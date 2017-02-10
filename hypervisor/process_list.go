@@ -45,8 +45,7 @@ func AddProcess(p msg.ProcessInterface) msg.ProcessId {
 }
 
 func GetProcessEvents() {
-	println("process_list.GetProcessEvents()")
-	//TODO
+	println("process_list.GetProcessEvents()               ---------------- TODO !!!!!!!!!!!")
 }
 
 //run the process, creating new events for hypervisor
@@ -59,23 +58,23 @@ func ProcessTick() {
 	}
 }
 
-//events from process to hypervisor
-func DispatchProcessEvents() {
-	//println("process_list.DispatchProcessEvents()")
+// //events from process to hypervisor
+// func DispatchProcessEvents() {
+// 	//println("process_list.DispatchProcessEvents()")
 
-	for id, task := range ProcessListGlobal.ProcessMap {
-		c := task.GetOutgoingChannel()
+// 	for id, task := range ProcessListGlobal.ProcessMap {
+// 		c := task.GetOutChannel()
 
-		for len(c) > 0 {
-			m := <-c //read event
-			HandleEvent(m, id)
-		}
-	}
-}
+// 		for len(c) > 0 {
+// 			m := <-c //read event
+// 			HandleEvent(m, id)
+// 		}
+// 	}
+// }
 
-func HandleEvent(msg []byte, Id msg.ProcessId) {
-	println("process_list.HandleEvent()               ---------------- TODO !!!!!!!!!!!")
-}
+// func HandleEvent(msg []byte, Id msg.ProcessId) {
+// 	println("process_list.HandleEvent()               ---------------- TODO !!!!!!!!!!!")
+// }
 
 //Test by adding example Process
 func AddTestProcess() {

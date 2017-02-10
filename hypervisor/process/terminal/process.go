@@ -13,7 +13,7 @@ func NewProcess() *Process {
 	p.Id = msg.NextProcessId()
 
 	p.MessageIn = make(chan []byte, msg.ChannelCapacity)
-	p.MessageOut = make(chan []byte, msg.ChannelCapacity)
+	// p.MessageOut = make(chan []byte, msg.ChannelCapacity)
 	p.PubSubChannelId = 0
 
 	p.State.Init(&p)
@@ -26,8 +26,8 @@ type Process struct {
 	Id              msg.ProcessId
 	PubSubChannelId dbus.ChannelId
 
-	MessageIn  chan []byte
-	MessageOut chan []byte
+	MessageIn chan []byte
+	// MessageOut chan []byte
 
 	State State
 }
@@ -40,7 +40,7 @@ func (self *Process) GetProcessInterface() msg.ProcessInterface {
 func (self *Process) DeleteProcess() {
 	println("(process/terminal/process.go).DeleteProcess()")
 	close(self.MessageIn)
-	close(self.MessageOut)
+	// close(self.MessageOut)
 	self.State.proc = nil
 	self = nil
 }
@@ -57,10 +57,10 @@ func (self *Process) GetIncomingChannel() chan []byte {
 	return self.MessageIn
 }
 
-func (self *Process) GetOutgoingChannel() chan []byte {
-	//println("(process/terminal/process.go).GetOutgoingChannel()")
-	return self.MessageOut
-}
+// func (self *Process) GetOutChannel() chan []byte {
+// 	//println("(process/terminal/process.go).GetOutChannel()")
+// 	return self.MessageOut
+// }
 
 //Business logic
 func (self *Process) Tick() {

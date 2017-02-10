@@ -1199,3 +1199,11 @@ terminal must not import process and vice versa
 
 
 [PublishTo()] also appends prefix of 32 bit, to tell app id of channel.
+
+
+
+
+
+
+dbus right now does not store or manage the channels
+the InChannel is the channel dbus is writing to, to send messages to terminal
