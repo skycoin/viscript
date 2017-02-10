@@ -40,7 +40,7 @@ func (self *State) HandleMessages() {
 		case msg.TypePrefix_Input:
 			println("-----------TypePrefix_Input")
 			self.UnpackInputEvents(msgType, m[6:])
-			hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, m)
+			hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, m[4:])
 		case msg.TypePrefix_Terminal: //process to hypervisor messages
 			println("-----------TypePrefix_Terminal")
 		default:
