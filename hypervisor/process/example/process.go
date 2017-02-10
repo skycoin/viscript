@@ -12,7 +12,7 @@ func NewProcess() *Process {
 	p.Id = msg.NextProcessId()
 
 	p.MessageIn = make(chan []byte, msg.ChannelCapacity)
-	//p.MessageOut = make(chan []byte, msg.ChannelCapacity)
+	//p.OutChannel = make(chan []byte, msg.ChannelCapacity)
 
 	p.State.Init(&p)
 
@@ -24,7 +24,7 @@ type Process struct {
 	Id msg.ProcessId
 
 	MessageIn chan []byte
-	//MessageOut chan []byte
+	//OutChannel chan []byte
 
 	State State
 }
@@ -37,7 +37,7 @@ func (self *Process) GetProcessInterface() msg.ProcessInterface {
 func (self *Process) DeleteProcess() {
 	println("(process/example/process.go).DeleteProcess()")
 	close(self.MessageIn)
-	//close(self.MessageOut)
+	//close(self.OutChannel)
 	self.State.proc = nil
 	self = nil
 }
@@ -56,7 +56,7 @@ func (self *Process) GetIncomingChannel() chan []byte {
 
 // func (self *Process) GetOutChannel() chan []byte {
 // 	//println("(process/example/process.go).GetOutChannel()")
-// 	return self.MessageOut
+// 	return self.OutChannel
 // }
 
 //Business logic
