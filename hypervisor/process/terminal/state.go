@@ -29,23 +29,20 @@ func (self *State) HandleMessages() {
 		println("(process/terminal/state.go).HandleMessages() - ...ONE ITERATION OF CHANNEL")
 		m := <-c // read from channel
 		//route the message
-		msgType = msg.GetType(m)
+		msgType = msg.GetType(m[4:])
+		// println("msgType", msgType)
 		msgTypeMask = msgType & 0xff00
+		// println("msgTypeMask", msgTypeMask)
 
 		switch msgTypeMask {
 		case msg.TypePrefix_Input:
 			println("-----------TypePrefix_Input")
-		case msg.TypePrefix_Terminal: //process to hypervisor messages
-			println("-----------TypePrefix_Terminal")
+			self.UnpackInputEvents(msgType, m[6:])                                         //m
+			hypervisor.DbusGlobal.PublishTo(dbus.ChannelId(self.proc.OutChannelId), m[4:]) //m
+		case msg.TypePrefix_Terminal:
+			println("-----------TypePrefix_Terminal     ----------NOTHING HANDLED HERE ATM")
 		default:
-			println("**************** UNHANDLED TYPE PREFIX! ****************")
+			println("**************** UNHANDLED MESSAGE TYPE CATEGORY! ****************")
 		}
-
-		//FIXME
-		//at this point, messages have already been filtered, in our current usage.
-		//but the lines below will need to be put inside the cases once we start
-		//doing any local filtering or processing of the messages
-		self.UnpackInputEvents(msgType, m)
-		hypervisor.DbusGlobal.PublishTo(dbus.ChannelId(self.proc.OutChannelId), m)
 	}
 }

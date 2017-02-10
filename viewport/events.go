@@ -37,14 +37,14 @@ func UnpackInputEvents(message []byte) []byte {
 		msg.MustDeserialize(message, &m)
 		onChar(m)
 
-		Terms.Focused.RelayToTask(message)
+		Terms.Focused.RelayToTask(msg.Serialize(msg.TypeChar, message))
 
 	case msg.TypeKey:
 		var m msg.MessageKey
 		msg.MustDeserialize(message, &m)
 		onKey(m)
 
-		Terms.Focused.RelayToTask(message)
+		Terms.Focused.RelayToTask(msg.Serialize(msg.TypeKey, message))
 
 	case msg.TypeFrameBufferSize:
 		// FIXME: BRAD SAYS THIS IS NOT INPUT
