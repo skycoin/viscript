@@ -13,7 +13,7 @@ Messages from:
 // - terminal resource IDs, destroy determinism
 // - how do we eliminate or abstract resource ids?
 
-const TypePrefix_Terminal uint16 = 0x02 // terminal message prefix
+const TypePrefix_Terminal uint16 = 0x0200 // terminal message prefix
 
 // Process to Hypervisor, input event
 const (
