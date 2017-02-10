@@ -21,6 +21,7 @@ func (self *State) Init(proc *Process) {
 func (self *State) HandleMessages() {
 	//println("(process/terminal/state.go).HandleMessages()")
 	c := self.proc.MessageIn
+	// var channelId uint16  doesn't compile unused. uncomment for usage
 	var msgType uint16
 	var msgTypeMask uint16
 
@@ -28,12 +29,18 @@ func (self *State) HandleMessages() {
 		println("(process/terminal/state.go).HandleMessages() - ...ONE ITERATION OF CHANNEL")
 		m := <-c // read from channel
 		//route the message
-		msgType = msg.GetType(m)
+		// channelId = msg.GetType(m)	and here too.
+		// println("PubSubChannelId", channelId)
+		msgType = msg.GetType(m[4:])
+		// println("MsgType", msgType)
 		msgTypeMask = msgType & 0xff00
+		// println("MsgTypeMask", msgTypeMask)
 
 		switch msgTypeMask {
 		case msg.TypePrefix_Input:
 			println("-----------TypePrefix_Input")
+			self.UnpackInputEvents(msgType, m[6:])
+			hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, m)
 		case msg.TypePrefix_Terminal: //process to hypervisor messages
 			println("-----------TypePrefix_Terminal")
 		default:
@@ -44,7 +51,6 @@ func (self *State) HandleMessages() {
 		//at this point, messages have already been filtered, in our current usage.
 		//but the lines below will need to be put inside the cases once we start
 		//doing any local filtering or processing of the messages
-		self.UnpackInputEvents(msgType, m)
-		hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, m)
+
 	}
 }
