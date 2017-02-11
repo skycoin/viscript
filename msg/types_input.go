@@ -3,12 +3,11 @@ package msg
 const CATEGORY_Input uint16 = 0x0100 //flag
 
 const (
-	TypeMousePos        = 1 + CATEGORY_Input
-	TypeMouseScroll     = 2 + CATEGORY_Input
-	TypeMouseButton     = 3 + CATEGORY_Input
-	TypeChar            = 4 + CATEGORY_Input
-	TypeKey             = 5 + CATEGORY_Input
-	TypeFrameBufferSize = 6 + CATEGORY_Input
+	TypeMousePos    = 1 + CATEGORY_Input
+	TypeMouseScroll = 2 + CATEGORY_Input
+	TypeMouseButton = 3 + CATEGORY_Input
+	TypeChar        = 4 + CATEGORY_Input
+	TypeKey         = 5 + CATEGORY_Input
 )
 
 type MessageMousePos struct {

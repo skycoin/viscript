@@ -9,8 +9,6 @@ func onChar(m msg.MessageChar) {
 	if DebugPrintInputEvents {
 		fmt.Printf("\n\nTypeChar: %s\n", string(m.Char))
 	}
-
-	Terms.Focused.PutCharacter(m) // TEMPORARY hack
 }
 
 // WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can detect a

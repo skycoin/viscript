@@ -8,25 +8,29 @@ import (
 func (t *Terminal) UnpackEvent(message []byte) []byte {
 	println("viewport/terminal/events.UnpackEvent()")
 
-	switch msg.GetType(message[4:]) { // look past the channel prefix
+	//TODO/FIXME:   cache channel id wherever it may be needed
+	message = message[4:] //for now DISCARD the channel id prefix
+
+	switch msg.GetType(message) {
 
 	case msg.TypeChar:
 		var m msg.MessageChar
 		msg.MustDeserialize(message, &m)
-		onChar(m)
+		t.onChar(m)
 
 	case msg.TypeKey:
 		var m msg.MessageKey
 		msg.MustDeserialize(message, &m)
-		onKey(m)
+		t.onKey(m)
 
 	case msg.TypeFrameBufferSize: //FIXME? SHOULD WE HANDLE THIS MESSAGE HERE???
 		// FIXME: BRAD SAYS THIS IS NOT INPUT
 		var m msg.MessageFrameBufferSize
 		msg.MustDeserialize(message, &m)
-		onFrameBufferSize(m)
+		t.onFrameBufferSize(m)
+
 	default:
-		fmt.Println("**************** UNHANDLED MESSAGE TYPE! ****************")
+		fmt.Println("viewport/terminal/events.go ************* UNHANDLED MESSAGE TYPE! *************")
 	}
 
 	return message
@@ -37,14 +41,15 @@ func (t *Terminal) UnpackEvent(message []byte) []byte {
 //
 
 //FIXME? SHOULD WE HANDLE THIS MESSAGE HERE???
-func onFrameBufferSize(m msg.MessageFrameBufferSize) {
+func (t *Terminal) onFrameBufferSize(m msg.MessageFrameBufferSize) {
 	println("viewport/terminal/events.onFrameBufferSize()")
 }
 
-func onChar(m msg.MessageChar) {
+func (t *Terminal) onChar(m msg.MessageChar) {
 	println("viewport/terminal/events.onChar()")
+	t.PutCharacter(m) // TEMPORARY hack
 }
 
-func onKey(m msg.MessageKey) {
+func (t *Terminal) onKey(m msg.MessageKey) {
 	println("viewport/terminal/events.onKey()")
 }

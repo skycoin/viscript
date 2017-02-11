@@ -76,7 +76,6 @@ func ProcessTick() {
 // 	println("process_list.HandleEvent()               ---------------- TODO !!!!!!!!!!!")
 // }
 
-//Test by adding example Process
 func AddTestProcess() {
 	println("process_list.AddTestProcess()")
 	var p *example.Process = example.NewProcess()

@@ -24,7 +24,9 @@ func (self *State) HandleMessages() {
 
 	for len(c) > 0 {
 		m := <-c
-		msgType := msg.GetType(m[4:])
+		//TODO/FIXME:   cache channel id wherever it may be needed
+		m = m[4:] //for now, DISCARD the chan id prefix
+		msgType := msg.GetType(m)
 		// println("msgType", msgType)
 		msgTypeMask := msgType & 0xff00
 		// println("msgTypeMask", msgTypeMask)
@@ -32,8 +34,9 @@ func (self *State) HandleMessages() {
 		switch msgTypeMask {
 		case msg.CATEGORY_Input:
 			println("-----------CATEGORY_Input")
-			self.UnpackEvent(msgType, m[6:])                                               //m
-			hypervisor.DbusGlobal.PublishTo(dbus.ChannelId(self.proc.OutChannelId), m[4:]) //m
+			self.UnpackEvent(msgType, m)
+			hypervisor.DbusGlobal.PublishTo(
+				dbus.ChannelId(self.proc.OutChannelId), m) // EVERY publish action prefixes another chan id
 		case msg.CATEGORY_Terminal:
 			println("-----------CATEGORY_Terminal     ----------NOTHING HANDLED HERE ATM")
 		default:

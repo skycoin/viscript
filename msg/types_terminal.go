@@ -6,6 +6,8 @@ const (
 	TypePutChar   = 1 + CATEGORY_Terminal
 	TypeSetChar   = 2 + CATEGORY_Terminal
 	TypeSetCursor = 3 + CATEGORY_Terminal
+	// low level events
+	TypeFrameBufferSize = 4 + CATEGORY_Terminal
 )
 
 type MessagePutChar struct {
@@ -26,7 +28,7 @@ type MessageSetCursor struct {
 	Y      uint32
 }
 
-// Terminal Driving Messages
+// low level events
 type MessageFrameBufferSize struct {
 	X uint32
 	Y uint32
