@@ -6,7 +6,7 @@ import (
 )
 
 func (t *Terminal) UnpackEvent(message []byte) []byte {
-	println("viewport/terminal/events.UnpackEvents()")
+	println("viewport/terminal/events.UnpackEvent()")
 
 	switch msg.GetType(message[4:]) { // look past the channel prefix
 
