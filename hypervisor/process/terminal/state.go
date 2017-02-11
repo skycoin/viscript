@@ -20,7 +20,7 @@ func (self *State) Init(proc *Process) {
 
 func (self *State) HandleMessages() {
 	//println("(process/terminal/state.go).HandleMessages()")
-	c := self.proc.MessageIn
+	c := self.proc.InChannel
 
 	for len(c) > 0 {
 		m := <-c

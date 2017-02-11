@@ -9,20 +9,16 @@ func NewProcess() *Process {
 	println("(process/terminal/process.go).NewProcess()")
 	var p Process
 	p.Id = msg.NextProcessId()
-	p.MessageIn = make(chan []byte, msg.ChannelCapacity)
+	p.InChannel = make(chan []byte, msg.ChannelCapacity)
 	p.State.Init(&p)
 	return &p
 }
 
-//terminal process
 type Process struct {
 	Id           msg.ProcessId
 	OutChannelId uint32
-
-	MessageIn chan []byte
-	// OutChannel chan []byte
-
-	State State
+	InChannel    chan []byte
+	State        State
 }
 
 func (self *Process) GetProcessInterface() msg.ProcessInterface {
@@ -32,8 +28,7 @@ func (self *Process) GetProcessInterface() msg.ProcessInterface {
 
 func (self *Process) DeleteProcess() {
 	println("(process/terminal/process.go).DeleteProcess()")
-	close(self.MessageIn)
-	// close(self.OutChannel)
+	close(self.InChannel)
 	self.State.proc = nil
 	self = nil
 }
@@ -41,22 +36,13 @@ func (self *Process) DeleteProcess() {
 //implement the interface
 
 func (self *Process) GetId() msg.ProcessId {
-	println("(process/terminal/process.go).GetId()")
 	return self.Id
 }
 
 func (self *Process) GetIncomingChannel() chan []byte {
-	println("(process/terminal/process.go).GetIncomingChannel()")
-	return self.MessageIn
+	return self.InChannel
 }
 
-// func (self *Process) GetOutChannel() chan []byte {
-// 	//println("(process/terminal/process.go).GetOutChannel()")
-// 	return self.OutChannel
-// }
-
-//Business logic
 func (self *Process) Tick() {
-	//println("(process/terminal/process.go).Tick()")
 	self.State.HandleMessages()
 }

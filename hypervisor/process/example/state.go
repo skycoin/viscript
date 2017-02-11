@@ -18,7 +18,7 @@ func (self *State) Init(proc *Process) {
 
 func (self *State) HandleMessages() {
 	//println("(process/example/state.go).HandleMessages()")
-	c := self.proc.MessageIn
+	c := self.proc.InChannel
 
 	for len(c) > 0 {
 		m := <-c // FIXME if this task ends up prefixing a channel id
