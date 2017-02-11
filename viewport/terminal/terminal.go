@@ -67,7 +67,7 @@ func (t *Terminal) RelayToTask(message []byte) {
 	hypervisor.DbusGlobal.PublishTo(t.OutChannelId, message)
 }
 
-func (t *Terminal) PutCharacter(m msg.MessageChar) {
+func (t *Terminal) PutCharacter(m msg.MessagePutChar) {
 	t.SetCharacter(m.Char)
 	t.MoveRight()
 }

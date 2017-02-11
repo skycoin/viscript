@@ -1,8 +1,6 @@
 package process
 
 import (
-	"github.com/corpusc/viscript/hypervisor"
-	"github.com/corpusc/viscript/hypervisor/dbus"
 	"github.com/corpusc/viscript/msg"
 	//"log"
 )
@@ -19,7 +17,7 @@ func (self *State) Init(proc *Process) {
 }
 
 func (self *State) HandleMessages() {
-	//println("(process/terminal/state.go).HandleMessages()")
+	//called per Tick()
 	c := self.proc.InChannel
 
 	for len(c) > 0 {
@@ -33,14 +31,13 @@ func (self *State) HandleMessages() {
 
 		switch msgTypeMask {
 		case msg.CATEGORY_Input:
-			println("-----------CATEGORY_Input")
+			println("(process/terminal/state.go)-----------CATEGORY_Input")
 			self.UnpackEvent(msgType, m)
-			hypervisor.DbusGlobal.PublishTo(
-				dbus.ChannelId(self.proc.OutChannelId), m) // EVERY publish action prefixes another chan id
 		case msg.CATEGORY_Terminal:
-			println("-----------CATEGORY_Terminal     ----------NOTHING HANDLED HERE ATM")
+			println("(process/terminal/state.go)-----------CATEGORY_Terminal")
+			self.UnpackEvent(msgType, m)
 		default:
-			println("**************** UNHANDLED MESSAGE TYPE CATEGORY! ****************")
+			println("(process/terminal/state.go)**************** UNHANDLED MESSAGE TYPE CATEGORY! ****************")
 		}
 	}
 }

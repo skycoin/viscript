@@ -21,22 +21,21 @@ func (self *State) HandleMessages() {
 	c := self.proc.InChannel
 
 	for len(c) > 0 {
-		m := <-c // FIXME if this task ends up prefixing a channel id
-		//like terminal task does.
-		//then we would need to use something like m[4:]
-		//(possibly in more than one place) instead of just "m"
+		m := <-c // FIXME IF this task ends up prefixing a channel id
+		//(like terminal task does)
+		//then we would need to do "m = m[4:]" before its multiple uses
 		msgType := msg.GetType(m)
 		msgTypeMask := msgType & 0xff00
 
 		switch msgTypeMask {
 		case msg.CATEGORY_Input:
-			println("(process/example/state.go).HandleMessages()-----------CATEGORY_Input")
+			println("(process/example/state.go) -----------CATEGORY_Input")
 			self.UnpackEvent(msgType, m)
 		case msg.CATEGORY_Terminal:
-			println("(process/example/state.go).HandleMessages()-----------CATEGORY_Terminal")
+			println("(process/example/state.go) -----------CATEGORY_Terminal")
 			log.Panic("Error: Example process does NOT handle TERMINAL messages")
 		default:
-			println("**************** UNHANDLED MESSAGE TYPE CATEGORY! ****************")
+			println("(process/example/state.go) **************** UNHANDLED MESSAGE TYPE CATEGORY! ****************")
 		}
 	}
 }

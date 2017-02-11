@@ -1,7 +1,8 @@
 package process
 
 import (
-	"fmt"
+	"github.com/corpusc/viscript/hypervisor"
+	"github.com/corpusc/viscript/hypervisor/dbus"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -10,43 +11,28 @@ func (self *State) UnpackEvent(msgType uint16, message []byte) []byte {
 
 	switch msgType {
 
-	case msg.TypeMousePos:
-		var m msg.MessageMousePos
-		msg.MustDeserialize(message, &m)
-		onMouseCursorPos(m)
-
-	case msg.TypeMouseScroll:
-		var m msg.MessageMouseScroll
-		msg.MustDeserialize(message, &m)
-		onMouseScroll(m)
-
-	case msg.TypeMouseButton:
-		var m msg.MessageMouseButton
-		msg.MustDeserialize(message, &m)
-		onMouseButton(m)
-
 	case msg.TypeChar:
 		var m msg.MessageChar
 		msg.MustDeserialize(message, &m)
-		onChar(m)
+		self.onChar(m)
 
 	case msg.TypeKey:
 		var m msg.MessageKey
 		msg.MustDeserialize(message, &m)
-		onKey(m)
+		self.onKey(m)
 
 	case msg.TypeFrameBufferSize:
 		// FIXME: BRAD SAYS THIS IS NOT INPUT
 		var m msg.MessageFrameBufferSize
 		msg.MustDeserialize(message, &m)
-		onFrameBufferSize(m)
+		self.onFrameBufferSize(m)
 
 	default:
-		fmt.Println("UNKNOWN MESSAGE TYPE!")
+		println("UNKNOWN MESSAGE TYPE!")
 	}
 
 	if self.DebugPrintInputEvents {
-		fmt.Println()
+		println()
 	}
 
 	return message
@@ -56,27 +42,20 @@ func (self *State) UnpackEvent(msgType uint16, message []byte) []byte {
 //EVENT HANDLERS
 //
 
-// triggered both by moving **AND*** by pressing buttons
-func onMouseCursorPos(m msg.MessageMousePos) {
-	println("process/terminal/events.onMouseCursorPos()")
-}
-
-func onMouseScroll(m msg.MessageMouseScroll) {
-	println("process/terminal/events.onMouseScroll()")
-}
-
-func onFrameBufferSize(m msg.MessageFrameBufferSize) {
+func (self *State) onFrameBufferSize(m msg.MessageFrameBufferSize) {
 	println("process/terminal/events.onFrameBufferSize()")
 }
 
-func onChar(m msg.MessageChar) {
+func (self *State) onChar(m msg.MessageChar) {
 	println("process/terminal/events.onChar()")
+
+	//FIXME? actual terminal id really needed?
+	message := msg.Serialize(
+		msg.TypePutChar, msg.MessagePutChar{0, m.Char}) //....just gave it 0 for now
+	hypervisor.DbusGlobal.PublishTo(
+		dbus.ChannelId(self.proc.OutChannelId), message) //EVERY publish action prefixes another chan id
 }
 
-func onKey(m msg.MessageKey) {
+func (self *State) onKey(m msg.MessageKey) {
 	println("process/terminal/events.onKey()")
-}
-
-func onMouseButton(m msg.MessageMouseButton) {
-	println("process/terminal/events.onMouseButton()")
 }

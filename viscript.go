@@ -3,9 +3,8 @@
 ------- NEWER TODO: -------
 
 * put console feedback into focused terminal
-* have the *relay* funcs in terminal send/receive related messages
-	to/from AttachedProcess
 * restore 9 slicing, for thin borders around terminals
+* push terminal text in slightly, to leave an unobstructed border margin
 
 ------- OLDER TODO: -------
 
