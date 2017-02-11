@@ -1,34 +1,16 @@
 package msg
 
-import (
-	_ "bytes"
-	_ "encoding/binary"
-	_ "fmt"
-)
+const CATEGORY_Input uint16 = 0x0100 //flag
 
-/*
-Messages from:
-	Opengl -> HyperVisor
-	HyperVisor -> Process
-*/
-
-const TypePrefix_Input uint16 = 0x0100 //message prefix
-
-// HyperVisor -> Process, input event
 const (
-	TypeMousePos        = 1 + TypePrefix_Input
-	TypeMouseScroll     = 2 + TypePrefix_Input
-	TypeMouseButton     = 3 + TypePrefix_Input
-	TypeChar            = 4 + TypePrefix_Input
-	TypeKey             = 5 + TypePrefix_Input
-	TypeFrameBufferSize = 6 + TypePrefix_Input
+	TypeMousePos        = 1 + CATEGORY_Input
+	TypeMouseScroll     = 2 + CATEGORY_Input
+	TypeMouseButton     = 3 + CATEGORY_Input
+	TypeChar            = 4 + CATEGORY_Input
+	TypeKey             = 5 + CATEGORY_Input
+	TypeFrameBufferSize = 6 + CATEGORY_Input
 )
 
-//Input Messages
-
-// HyperVisor -> Process
-
-//message received by process, by hypervisor
 type MessageMousePos struct {
 	X float64
 	Y float64
@@ -55,10 +37,4 @@ type MessageKey struct {
 	Scan   uint32
 	Action uint8
 	Mod    uint8
-}
-
-// Terminal Driving Messages
-type MessageFrameBufferSize struct {
-	X uint32
-	Y uint32
 }

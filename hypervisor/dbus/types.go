@@ -1,5 +1,11 @@
 package dbus
 
+//Note:
+// (TODO)
+//
+// - terminal resource IDs, destroy determinism
+// - how do we eliminate or abstract resource ids?
+
 //channels
 const (
 	ChannelTypePubsub = 1

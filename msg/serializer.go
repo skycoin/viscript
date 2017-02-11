@@ -68,6 +68,8 @@ func GetType(message []byte) uint16 {
 }
 
 /*
+	TODO?
+
 	//simplify with direct
 	var value2 uint16
 	value2 = uint16(message[0] << 8)

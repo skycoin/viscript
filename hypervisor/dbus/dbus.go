@@ -14,26 +14,28 @@ package dbus
 	- have server/daemon
 	- allow new bidirectional socket via setup
 
-*/
 
-/*
-	Todo:
+
+
+	TODO:
 	- dbus channel manager (process library)
 	- abstract resource IDs
 	- allow process to import the channel manager
 	-- process will receive an unnumbered channel object for internal usage
 	- channel manager will automatically route to the channel ID
-*/
 
-/*
+
+
+
 	- dbus server
 	- dbus client
 	-- local client
 	-- remote client (over network)
 	-- master / root, resource directory
-*/
 
-/*
+
+
+
 	dbus file system daemon
 	- file system over dbus
 	- fuse etc
@@ -42,7 +44,9 @@ package dbus
 	- networking over dbus
 */
 
-//ID generation (should eventually be per dbus instance)
+//ID generation
+//(should eventually be per dbus instance)
+
 var ChannelIdGlobal ChannelId = 2 //sequential
 
 func GetChannelId() ChannelId {

@@ -35,12 +35,12 @@ func (self *State) HandleMessages() {
 		// println("msgTypeMask", msgTypeMask)
 
 		switch msgTypeMask {
-		case msg.TypePrefix_Input:
-			println("-----------TypePrefix_Input")
+		case msg.CATEGORY_Input:
+			println("-----------CATEGORY_Input")
 			self.UnpackInputEvents(msgType, m[6:])                                         //m
 			hypervisor.DbusGlobal.PublishTo(dbus.ChannelId(self.proc.OutChannelId), m[4:]) //m
-		case msg.TypePrefix_Terminal:
-			println("-----------TypePrefix_Terminal     ----------NOTHING HANDLED HERE ATM")
+		case msg.CATEGORY_Terminal:
+			println("-----------CATEGORY_Terminal     ----------NOTHING HANDLED HERE ATM")
 		default:
 			println("**************** UNHANDLED MESSAGE TYPE CATEGORY! ****************")
 		}

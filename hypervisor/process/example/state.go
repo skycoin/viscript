@@ -30,9 +30,9 @@ func (self *State) HandleMessages() {
 		msgTypeMask = msgType & 0xff00
 
 		switch msgTypeMask {
-		case msg.TypePrefix_Input:
+		case msg.CATEGORY_Input:
 			self.UnpackInputEvents(msgType, m)
-		case msg.TypePrefix_Terminal:
+		case msg.CATEGORY_Terminal:
 			log.Panic("Error: Example process does not handle TERMINAL messages")
 		}
 	}

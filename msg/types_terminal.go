@@ -1,25 +1,11 @@
 package msg
 
-// _ "bytes"
-// _ "encoding/binary"
-// _ "fmt"
+const CATEGORY_Terminal uint16 = 0x0200 //flag
 
-/*
-Messages from:
-	Process -> HyperVisor
-*/
-
-//Note:
-// - terminal resource IDs, destroy determinism
-// - how do we eliminate or abstract resource ids?
-
-const TypePrefix_Terminal uint16 = 0x0200 // terminal message prefix
-
-// Process to Hypervisor, input event
 const (
-	TypePutChar   = 1 + TypePrefix_Terminal
-	TypeSetChar   = 2 + TypePrefix_Terminal
-	TypeSetCursor = 3 + TypePrefix_Terminal
+	TypePutChar   = 1 + CATEGORY_Terminal
+	TypeSetChar   = 2 + CATEGORY_Terminal
+	TypeSetCursor = 3 + CATEGORY_Terminal
 )
 
 type MessagePutChar struct {
@@ -38,4 +24,10 @@ type MessageSetCursor struct {
 	TermId uint32 //terminal
 	X      uint32
 	Y      uint32
+}
+
+// Terminal Driving Messages
+type MessageFrameBufferSize struct {
+	X uint32
+	Y uint32
 }
