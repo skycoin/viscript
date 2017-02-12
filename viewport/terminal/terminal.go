@@ -60,14 +60,7 @@ func (t *Terminal) Clear() {
 }
 
 func (t *Terminal) RelayToTask(message []byte) {
-	println("(viewport/terminal/terminal.go).RelayToTask()")
-
 	hypervisor.DbusGlobal.PublishTo(t.OutChannelId, message)
-}
-
-func (t *Terminal) PutCharacter(m msg.MessagePutChar) {
-	t.SetCharacter(m.Char)
-	t.MoveRight()
 }
 
 func (t *Terminal) MoveLeft() {
@@ -113,37 +106,45 @@ func (t *Terminal) SpanY() float32 {
 }
 
 func (t *Terminal) SetCursor(X uint32, Y uint32) {
-	//fmt.Printf("Terminal.SetCursor()\n")
-	t.Curs.X = X
-	t.Curs.Y = Y
+	if t.posIsValid(X, Y) {
+		t.Curs.X = X
+		t.Curs.Y = Y
+	}
 }
 
-func (t *Terminal) SetCharacter(Char uint32) {
-	//fmt.Printf("Terminal.SetCharacter()\n")
-	t.SetCharacterAt(t.Curs.X, t.Curs.Y, Char)
+// there should be 2 paradigms of adding chars/strings:
+//
+// (1) full manual control/management.  (explicitly tell terminal exactly
+//			where to place something, without disrupting cursor position.
+//			must make sure there is space for it)
+// (2) automated flow control.  (just tell what char/string to put into the current flow
+//			and term manages it's placement, wrapping, & eventually word-preserving-wrapping)
+func (t *Terminal) PutCharacter(m msg.MessagePutChar) {
+	t.SetCharacterAt(t.Curs.X, t.Curs.Y, m.Char)
+	t.MoveRight()
 }
 
 func (t *Terminal) SetCharacterAt(X uint32, Y uint32, Char uint32) {
-	//fmt.Printf("Terminal.SetCharacterAt()\n")
-
 	numOOB = 0
+
 	if t.posIsValid(X, Y) {
 		t.Chars[Y][X] = Char
 	}
 }
 
-func (t *Terminal) SetString(s string) {
-	//fmt.Printf("Terminal.SetString()\n")
-	t.SetStringAt(t.Curs.X, t.Curs.Y, s)
+func (t *Terminal) PutString(s string) {
+	for _, c := range s {
+		t.PutCharacter(uint32(c))
+	}
 }
 
 func (t *Terminal) SetStringAt(X uint32, Y uint32, S string) {
-	//fmt.Printf("Terminal.SetStringAt()\n")
-	t.SetCursor(X, Y)
 	numOOB = 0
-	for _, c := range S {
-		t.SetCharacter(uint32(c))
-		t.MoveRight()
+
+	for x, c := range S {
+		if t.posIsValid(X+uint32(x), Y) {
+			t.Chars[Y][X+uint32(x)] = uint32(c)
+		}
 	}
 }
 

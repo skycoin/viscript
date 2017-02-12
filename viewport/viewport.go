@@ -59,11 +59,11 @@ func PollUiInputEvents() {
 }
 
 //could be in messages
-func DispatchInputEvents() []byte {
+func DispatchEvents() []byte {
 	message := []byte{}
 
-	for len(igl.InputEvents) > 0 { //if channel has elements
-		v := <-igl.InputEvents //read from channel
+	for len(igl.InputEvents) > 0 {
+		v := <-igl.InputEvents
 		message = UnpackEvent(v)
 	}
 

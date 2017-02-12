@@ -33,7 +33,7 @@ func TestRuneMsgFlow(t *testing.T) {
 func flowTest(b []byte) []byte {
 
 	gl.InputEvents <- b
-	message := hypervisor.DispatchInputEvents(gl.InputEvents)
+	message := hypervisor.DispatchEvents(gl.InputEvents)
 
 	return message
 }

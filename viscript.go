@@ -54,8 +54,8 @@ func main() {
 
 	fmt.Printf("Start Loop; \n")
 	for viewport.CloseWindow == false {
-		viewport.DispatchInputEvents() //event channel
-		hypervisor.ProcessTick()       //processes, handle incoming events
+		viewport.DispatchEvents() //event channel
+		hypervisor.ProcessTick()  //processes, handle incoming events
 		viewport.PollUiInputEvents()
 		viewport.Tick()
 		viewport.UpdateDrawBuffer()
