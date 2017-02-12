@@ -29,20 +29,31 @@ type Terminal struct {
 
 	//float32 / GL space
 	//(mouse pos events, and resize event resolutions are the only things that use pixels)
-	Bounds *app.Rectangle
-	Depth  float32 //0 for lowest
+	BorderSize float32
+	CharSize   app.Vec2F
+	Bounds     *app.Rectangle
+	Depth      float32 //0 for lowest
 }
 
 func (t *Terminal) Init() {
-	fmt.Printf("Terminal.Init()\n")
+	println("Terminal.Init()")
 
 	t.TerminalId = msg.RandTerminalId()
 	t.InChannel = make(chan []byte, msg.ChannelCapacity)
 	t.GridSize = app.Vec2I{NumColumns, NumRows}
 	t.Chars = [NumRows][NumColumns]uint32{}
+	t.BorderSize = 0.013
+	t.SetSize()
+
 	t.makeRandomChars(20)
-	t.PutString("calling PutString() with a very loooooooooooooooooooooooooooooooooooong string")
+	t.PutString("calling PutString() with a very loooooooooooooooooooooooooooooooooong string")
 	t.SetCursor(0, 0)
+}
+
+func (t *Terminal) SetSize() {
+	println("Terminal.SetSize()        --------FIXME once we allow dragging edges")
+	t.CharSize.X = (t.Bounds.Width() - t.BorderSize*2) / float32(t.GridSize.X)
+	t.CharSize.Y = (t.Bounds.Height() - t.BorderSize*2) / float32(t.GridSize.Y)
 }
 
 func (t *Terminal) Tick() {
@@ -95,14 +106,6 @@ func (t *Terminal) MoveDown() {
 	if t.Curs.Y >= uint32(t.GridSize.Y) {
 		t.Curs.Y = 0
 	}
-}
-
-func (t *Terminal) SpanX() float32 { // span across a char
-	return t.Bounds.Width() / float32(t.GridSize.X)
-}
-
-func (t *Terminal) SpanY() float32 {
-	return t.Bounds.Height() / float32(t.GridSize.Y)
 }
 
 func (t *Terminal) SetCursor(x, y uint32) {

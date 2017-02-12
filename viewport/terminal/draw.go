@@ -6,10 +6,7 @@ import (
 )
 
 func (self *TerminalStack) Draw() {
-	//println("TerminalStack.Draw()")
-
 	for _, value := range self.Terms {
-		//println("drawing terminal --- Key (TermId):", key, "Value:", value)
 		z := value.Depth
 
 		if value == self.Focused {
@@ -22,11 +19,16 @@ func (self *TerminalStack) Draw() {
 
 		gl.Draw9SlicedRect(gl.Pic_GradientBorder, value.Bounds, z)
 
-		cr := &app.Rectangle{
+		cr := &app.Rectangle{ //current rect
 			value.Bounds.Top,
-			value.Bounds.Left + value.SpanX(),
-			value.Bounds.Top - value.SpanY(),
-			value.Bounds.Left} //current rectangle
+			value.Bounds.Left + value.CharSize.X,
+			value.Bounds.Top - value.CharSize.Y,
+			value.Bounds.Left}
+
+		cr.Left += value.BorderSize //start with the initial rect being offset by the border margin
+		cr.Right += value.BorderSize
+		cr.Top -= value.BorderSize
+		cr.Bottom -= value.BorderSize
 
 		for x := 0; x < value.GridSize.X; x++ {
 			for y := 0; y < value.GridSize.Y; y++ {
@@ -34,22 +36,23 @@ func (self *TerminalStack) Draw() {
 					gl.DrawCharAtRect(rune(value.Chars[y][x]), cr, z)
 				}
 
-				if x == int(value.Curs.X) && y == int(value.Curs.Y) {
-					// draw cursor
+				//draw cursor (if it's here)
+				if x == int(value.Curs.X) &&
+					y == int(value.Curs.Y) {
 					gl.DrawQuad(
 						gl.Pic_GradientBorder,
 						gl.Curs.GetCurrentFrame(*cr), z)
 				}
 
-				cr.Top -= value.SpanY()
-				cr.Bottom -= value.SpanY()
+				cr.Top -= value.CharSize.Y
+				cr.Bottom -= value.CharSize.Y
 			}
 
-			cr.Top = value.Bounds.Top
-			cr.Bottom = value.Bounds.Top - value.SpanY()
+			cr.Top = value.Bounds.Top - value.BorderSize
+			cr.Bottom = value.Bounds.Top - value.BorderSize - value.CharSize.Y
 
-			cr.Left += value.SpanX()
-			cr.Right += value.SpanX()
+			cr.Left += value.CharSize.X
+			cr.Right += value.CharSize.X
 		}
 	}
 }
