@@ -41,7 +41,7 @@ func (t *Terminal) Init() {
 	t.GridSize = app.Vec2I{NumColumns, NumRows}
 	t.Chars = [NumRows][NumColumns]uint32{}
 	t.makeRandomChars(20)
-	t.SetStringAt(37, 2, "this is text made by SetString()")
+	t.PutString("calling PutString() with a very loooooooooooooooooooooooooooooooooooong string")
 	t.SetCursor(0, 0)
 }
 
@@ -105,10 +105,10 @@ func (t *Terminal) SpanY() float32 {
 	return t.Bounds.Height() / float32(t.GridSize.Y)
 }
 
-func (t *Terminal) SetCursor(X uint32, Y uint32) {
-	if t.posIsValid(X, Y) {
-		t.Curs.X = X
-		t.Curs.Y = Y
+func (t *Terminal) SetCursor(x, y uint32) {
+	if t.posIsValid(x, y) {
+		t.Curs.X = x
+		t.Curs.Y = y
 	}
 }
 
@@ -119,16 +119,18 @@ func (t *Terminal) SetCursor(X uint32, Y uint32) {
 //			must make sure there is space for it)
 // (2) automated flow control.  (just tell what char/string to put into the current flow
 //			and term manages it's placement, wrapping, & eventually word-preserving-wrapping)
-func (t *Terminal) PutCharacter(m msg.MessagePutChar) {
-	t.SetCharacterAt(t.Curs.X, t.Curs.Y, m.Char)
-	t.MoveRight()
+func (t *Terminal) PutCharacter(char uint32) {
+	if t.posIsValid(t.Curs.X, t.Curs.Y) {
+		t.SetCharacterAt(t.Curs.X, t.Curs.Y, char)
+		t.MoveRight()
+	}
 }
 
-func (t *Terminal) SetCharacterAt(X uint32, Y uint32, Char uint32) {
+func (t *Terminal) SetCharacterAt(x, y uint32, Char uint32) {
 	numOOB = 0
 
-	if t.posIsValid(X, Y) {
-		t.Chars[Y][X] = Char
+	if t.posIsValid(x, y) {
+		t.Chars[y][x] = Char
 	}
 }
 
@@ -138,7 +140,7 @@ func (t *Terminal) PutString(s string) {
 	}
 }
 
-func (t *Terminal) SetStringAt(X uint32, Y uint32, S string) {
+func (t *Terminal) SetStringAt(X, Y uint32, S string) {
 	numOOB = 0
 
 	for x, c := range S {

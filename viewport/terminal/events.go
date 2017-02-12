@@ -16,7 +16,7 @@ func (t *Terminal) UnpackEvent(message []byte) []byte {
 		println("viewport/terminal/events ----- FINALLY got   <<< msg.TypePutChar >>>   sent from task  LOL")
 		var m msg.MessagePutChar
 		msg.MustDeserialize(message, &m)
-		t.PutCharacter(m)
+		t.PutCharacter(m.Char)
 
 	case msg.TypeFrameBufferSize: //FIXME? SHOULD WE HANDLE THIS MESSAGE HERE???
 		//(i think it gets consumed and never passed on, probably in viewport)
