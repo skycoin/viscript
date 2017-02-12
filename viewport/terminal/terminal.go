@@ -106,6 +106,7 @@ func (t *Terminal) MoveDown() {
 func (t *Terminal) SpanX() float32 { // span across a char
 	return t.Bounds.Width() / float32(t.GridSize.X)
 }
+
 func (t *Terminal) SpanY() float32 {
 	return t.Bounds.Height() / float32(t.GridSize.Y)
 }
@@ -137,12 +138,11 @@ func (t *Terminal) SetString(s string) {
 
 func (t *Terminal) SetStringAt(X uint32, Y uint32, S string) {
 	//fmt.Printf("Terminal.SetStringAt()\n")
-
+	t.SetCursor(X, Y)
 	numOOB = 0
-	for x, c := range S {
-		if t.posIsValid(X+uint32(x), Y) {
-			t.Chars[Y][X+uint32(x)] = uint32(c)
-		}
+	for _, c := range S {
+		t.SetCharacter(uint32(c))
+		t.MoveRight()
 	}
 }
 
