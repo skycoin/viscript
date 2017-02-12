@@ -61,9 +61,6 @@ func (t *Terminal) Clear() {
 func (t *Terminal) RelayToTask(message []byte) {
 	println("(viewport/terminal/terminal.go).RelayToTask()")
 
-	// TODO: Added msgType to the RelayToTask but I don't understand the
-	// difference between inputevents and temrinalevents. If the input events
-	// get transmitted here where do temrinalevents relay then?
 	hypervisor.DbusGlobal.PublishTo(t.OutChannelId, message)
 }
 

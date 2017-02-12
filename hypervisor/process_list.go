@@ -1,7 +1,6 @@
 package hypervisor
 
 import (
-	example "github.com/corpusc/viscript/hypervisor/process/example"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -37,10 +36,12 @@ func HypervisorProcessListTeardown() {
 
 func AddProcess(p msg.ProcessInterface) msg.ProcessId {
 	println("process_list.AddProcess()")
-
 	id := p.GetId()
-	//TODO: check to make sure processId is not already in list
-	ProcessListGlobal.ProcessMap[id] = p
+
+	_, isInTheMap := ProcessListGlobal.ProcessMap[id]
+	if !isInTheMap {
+		ProcessListGlobal.ProcessMap[id] = p
+	}
 	return id
 }
 
@@ -52,8 +53,7 @@ func GetProcessEvents() {
 func ProcessTick() {
 	//println("process_list.ProcessTick()")
 
-	for id, p := range ProcessListGlobal.ProcessMap {
-		_ = id
+	for _, p := range ProcessListGlobal.ProcessMap {
 		p.Tick() //only do if incoming messages
 	}
 }
@@ -75,10 +75,3 @@ func ProcessTick() {
 // func HandleEvent(msg []byte, Id msg.ProcessId) {
 // 	println("process_list.HandleEvent()               ---------------- TODO !!!!!!!!!!!")
 // }
-
-func AddTestProcess() {
-	println("process_list.AddTestProcess()")
-	var p *example.Process = example.NewProcess()
-	var pi msg.ProcessInterface = msg.ProcessInterface(p)
-	AddProcess(pi)
-}
