@@ -25,11 +25,9 @@ func (self *State) HandleMessages() {
 		//TODO/FIXME:   cache channel id wherever it may be needed
 		m = m[4:] //for now, DISCARD the chan id prefix
 		msgType := msg.GetType(m)
-		// println("msgType", msgType)
-		msgTypeMask := msgType & 0xff00
-		// println("msgTypeMask", msgTypeMask)
+		msgCategory := msgType & 0xff00 // get back masked category
 
-		switch msgTypeMask {
+		switch msgCategory {
 		case msg.CATEGORY_Input:
 			println("(process/terminal/state.go)-----------CATEGORY_Input")
 			self.UnpackEvent(msgType, m)

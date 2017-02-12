@@ -39,7 +39,6 @@ import (
 
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/viewport"
-	igl "github.com/corpusc/viscript/viewport/gl" //eliminate
 )
 
 func main() {
@@ -55,9 +54,8 @@ func main() {
 
 	fmt.Printf("Start Loop; \n")
 	for viewport.CloseWindow == false {
-		viewport.DispatchInputEvents(igl.InputEvents) //event channel
-		//hypervisor.DispatchProcessEvents()            //viewport handles incoming process events
-		hypervisor.ProcessTick() //processes, handle incoming events
+		viewport.DispatchInputEvents() //event channel
+		hypervisor.ProcessTick()       //processes, handle incoming events
 		viewport.PollUiInputEvents()
 		viewport.Tick()
 		viewport.UpdateDrawBuffer()

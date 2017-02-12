@@ -124,8 +124,8 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 		dbus.ResourceTypeProcess,
 		self.Terms[TerminalId].InChannel) // (a 2nd call had: p.GetIncomingChannel() as last parameter)
 
-	fmt.Printf("\nPubSub Channel After Adding Terminal\n %+v\n",
-		hypervisor.DbusGlobal.PubsubChannels[tcid])
+	// fmt.Printf("\nPubSub Channel After Adding Subscriber\n %+v\n",
+	// 	hypervisor.DbusGlobal.PubsubChannels[tcid])
 
 	//subscribe terminal to the process id
 	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
@@ -134,6 +134,6 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 		dbus.ResourceTypeTerminal,
 		pi.GetIncomingChannel()) // (a 2nd call had: self.Terms[TerminalId].InChannel) as last parameter)
 
-	fmt.Printf("\nPubSub Channel After Adding Terminal\n %+v\n",
-		hypervisor.DbusGlobal.PubsubChannels[pcid])
+	// fmt.Printf("\nPubSub Channel After Adding Subscriber\n %+v\n",
+	// 	hypervisor.DbusGlobal.PubsubChannels[pcid])
 }

@@ -16,7 +16,6 @@ func (self *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType Resour
 	return n.ChannelId
 }
 
-//where do we get the channel id from?
 func (self *DbusInstance) AddPubsubChannelSubscriber(chanId ChannelId, ResourceId ResourceId, ResourceType ResourceType, channelIn chan []byte) {
 	println("(dbus/pubsub.go).AddPubsubChannelSubscriber()")
 	pc := self.PubsubChannels[chanId] // pubsub channel
@@ -26,7 +25,6 @@ func (self *DbusInstance) AddPubsubChannelSubscriber(chanId ChannelId, ResourceI
 	ns.Channel = channelIn
 
 	pc.Subscribers = append(pc.Subscribers, ns)
-	// fmt.Printf("\nPubSub Channel After adding Subscriber: \n%+v\n", pc)
 }
 
 func (self *DbusInstance) PublishTo(chanId ChannelId, msg []byte) {

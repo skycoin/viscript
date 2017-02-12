@@ -42,6 +42,7 @@ func (t *Terminal) Init() {
 	t.Chars = [NumRows][NumColumns]uint32{}
 	t.makeRandomChars(20)
 	t.SetStringAt(37, 2, "this is text made by SetString()")
+	t.SetCursor(0, 0)
 }
 
 func (t *Terminal) Tick() {
@@ -61,9 +62,6 @@ func (t *Terminal) Clear() {
 func (t *Terminal) RelayToTask(message []byte) {
 	println("(viewport/terminal/terminal.go).RelayToTask()")
 
-	// TODO: Added msgType to the RelayToTask but I don't understand the
-	// difference between inputevents and temrinalevents. If the input events
-	// get transmitted here where do temrinalevents relay then?
 	hypervisor.DbusGlobal.PublishTo(t.OutChannelId, message)
 }
 
@@ -109,6 +107,7 @@ func (t *Terminal) MoveDown() {
 func (t *Terminal) SpanX() float32 { // span across a char
 	return t.Bounds.Width() / float32(t.GridSize.X)
 }
+
 func (t *Terminal) SpanY() float32 {
 	return t.Bounds.Height() / float32(t.GridSize.Y)
 }
@@ -140,12 +139,11 @@ func (t *Terminal) SetString(s string) {
 
 func (t *Terminal) SetStringAt(X uint32, Y uint32, S string) {
 	//fmt.Printf("Terminal.SetStringAt()\n")
-
+	t.SetCursor(X, Y)
 	numOOB = 0
-	for x, c := range S {
-		if t.posIsValid(X+uint32(x), Y) {
-			t.Chars[Y][X+uint32(x)] = uint32(c)
-		}
+	for _, c := range S {
+		t.SetCharacter(uint32(c))
+		t.MoveRight()
 	}
 }
 

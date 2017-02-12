@@ -1,9 +1,5 @@
 package hypervisor
 
-import (
-//"fmt"
-)
-
 /*
 	Hypervisor
 	- routes messages
@@ -42,7 +38,6 @@ func Init() {
 	println("(hypervisor.go).Init()")
 	HypervisorInitProcessList()
 	DbusInit()
-	AddTestProcess()
 }
 
 func HypervisorTeardown() {
