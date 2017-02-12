@@ -42,6 +42,7 @@ func (t *Terminal) Init() {
 	t.Chars = [NumRows][NumColumns]uint32{}
 	t.makeRandomChars(20)
 	t.SetStringAt(37, 2, "this is text made by SetString()")
+	t.SetCursor(0, 0)
 }
 
 func (t *Terminal) Tick() {
