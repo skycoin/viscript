@@ -20,7 +20,7 @@ func (self *TerminalStack) Draw() {
 			gl.SetColor(gl.Gray)
 		}
 
-		gl.DrawQuad(gl.Pic_GradientBorder, value.Bounds, z)
+		gl.Draw9SlicedRect(gl.Pic_GradientBorder, value.Bounds, z)
 
 		cr := &app.Rectangle{
 			value.Bounds.Top,
