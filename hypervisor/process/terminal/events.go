@@ -44,6 +44,10 @@ func (self *State) UnpackEvent(msgType uint16, message []byte) []byte {
 
 func (self *State) onFrameBufferSize(m msg.MessageFrameBufferSize) {
 	println("process/terminal/events.onFrameBufferSize()")
+	message := msg.Serialize(
+		msg.TypeFrameBufferSize, msg.MessageFrameBufferSize{m.X, m.Y})
+	hypervisor.DbusGlobal.PublishTo(
+		dbus.ChannelId(self.proc.OutChannelId), message)
 }
 
 func (self *State) onChar(m msg.MessageChar) {

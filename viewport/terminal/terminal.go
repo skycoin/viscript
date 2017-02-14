@@ -45,9 +45,9 @@ func (t *Terminal) Init() {
 	t.BorderSize = 0.013
 	t.SetSize()
 
-	t.makeRandomChars(20)
-	t.PutString("calling PutString() with a very loooooooooooooooooooooooooooooooooong string")
-	t.SetCursor(0, 0)
+	// t.makeRandomChars(20)
+	t.PutString("prompt_ ")
+	t.SetCursor(8, 0)
 }
 
 func (t *Terminal) SetSize() {
