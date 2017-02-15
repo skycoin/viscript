@@ -28,8 +28,32 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 		// coordinates because I thought pixel delta was used for scrollbar scrolling
 		for id, t := range Terms.Terms {
 			if mouse.CursorIsInside(t.Bounds) && Terms.FocusedId == id {
+
 				deltaVec := app.Vec2F{mouse.GlX - mouse.PrevGlX,
 					mouse.GlY - mouse.PrevGlY}
+
+				// REFACTORME: cause I made it messy i guess
+				// FIXME: dragging doesn't work correctly it needs some more
+				// refinement and also maybe corner dragging implementation too
+				// where you can drag two sides together. Also the context in this
+				// case text is left there and allowed to right not only the bounds
+				// should resize or it should be using characters as kind of measures
+
+				// focusedBounds := Terms.Focused.Bounds
+				// const allowedDifference float64 = 0.2
+				// if math.Abs(float64(mouse.GlX-focusedBounds.Left)) <= allowedDifference {
+				// 	Terms.ResizeTerminalLeft(deltaVec.X)
+				// } else if math.Abs(float64(mouse.GlX-focusedBounds.Right)) <= allowedDifference {
+				// 	Terms.ResizeTerminalRight(deltaVec.X)
+				// } else if math.Abs(float64(mouse.GlY-focusedBounds.Top)) <= allowedDifference {
+				// 	Terms.ResizeTerminalTop(deltaVec.Y)
+				// } else if math.Abs(float64(mouse.GlY-focusedBounds.Bottom)) <= allowedDifference {
+				// 	Terms.ResizeTerminalBottom(deltaVec.Y)
+				// } else {
+				// 	// Move then
+				// 	Terms.MoveTerminal(id, deltaVec)
+				// }
+
 				Terms.MoveTerminal(id, deltaVec)
 
 				if DebugPrintInputEvents {

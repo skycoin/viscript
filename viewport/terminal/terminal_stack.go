@@ -83,6 +83,26 @@ func (self *TerminalStack) Tick() {
 	}
 }
 
+func (self *TerminalStack) ResizeTerminalLeft(offsetX float32) {
+	println("TerminalStack.ResizeTerminalLeft()")
+	self.Focused.Bounds.Left += offsetX
+}
+
+func (self *TerminalStack) ResizeTerminalRight(offsetX float32) {
+	println("TerminalStack.ResizeTerminalRight()")
+	self.Focused.Bounds.Right += offsetX
+}
+
+func (self *TerminalStack) ResizeTerminalTop(offsetY float32) {
+	println("TerminalStack.ResizeTerminalTop()")
+	self.Focused.Bounds.Top += offsetY
+}
+
+func (self *TerminalStack) ResizeTerminalBottom(offsetY float32) {
+	println("TerminalStack.ResizeTerminalBottom()")
+	self.Focused.Bounds.Bottom += offsetY
+}
+
 func (self *TerminalStack) ResizeTerminal(id msg.TerminalId, x int, y int) {
 	println("TerminalStack.ResizeTerminal()")
 
@@ -91,10 +111,10 @@ func (self *TerminalStack) ResizeTerminal(id msg.TerminalId, x int, y int) {
 func (self *TerminalStack) MoveTerminal(id msg.TerminalId, offset app.Vec2F) {
 	println("TerminalStack.MoveTerminal()")
 	bounds := self.Terms[id].Bounds
-	bounds.Top = bounds.Top + offset.Y
-	bounds.Bottom = bounds.Bottom + offset.Y
-	bounds.Left = bounds.Left + offset.X
-	bounds.Right = bounds.Right + offset.X
+	bounds.Top += offset.Y
+	bounds.Bottom += offset.Y
+	bounds.Left += offset.X
+	bounds.Right += offset.X
 }
 
 func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
