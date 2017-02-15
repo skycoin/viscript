@@ -117,7 +117,7 @@ func DrawBegin() {
 	// FIXME: should this change on framebuffer size change?
 	dbw, dbh :=
 		GlfwWindow.GetFramebufferSize()
-	println("Frame BUFFER IN DRAW BEGIN: ", dbw, dbh)
+	// println("Frame BUFFER IN DRAW BEGIN: ", dbw, dbh)
 	gl.Viewport(0, 0, int32(dbw), int32(dbh))
 
 	if *PrevFrustum != *CurrFrustum {
