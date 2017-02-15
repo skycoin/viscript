@@ -2,7 +2,7 @@ package terminal
 
 import (
 	"github.com/corpusc/viscript/msg"
-	"github.com/corpusc/viscript/viewport/gl"
+	// "github.com/corpusc/viscript/viewport/gl"
 )
 
 func (t *Terminal) UnpackEvent(message []byte) []byte {

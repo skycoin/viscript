@@ -85,10 +85,16 @@ func (self *TerminalStack) Tick() {
 
 func (self *TerminalStack) ResizeTerminal(id msg.TerminalId, x int, y int) {
 	println("TerminalStack.ResizeTerminal()")
+
 }
 
-func (self *TerminalStack) MoveTerminal(id msg.TerminalId, xoff int, yoff int) {
+func (self *TerminalStack) MoveTerminal(id msg.TerminalId, offset app.Vec2F) {
 	println("TerminalStack.MoveTerminal()")
+	bounds := self.Terms[id].Bounds
+	bounds.Top = bounds.Top + offset.Y
+	bounds.Bottom = bounds.Bottom + offset.Y
+	bounds.Left = bounds.Left + offset.X
+	bounds.Right = bounds.Right + offset.X
 }
 
 func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {

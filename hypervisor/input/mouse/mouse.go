@@ -8,6 +8,8 @@ import (
 var (
 	GlX               float32 // current mouse position in OpenGL space
 	GlY               float32
+	PrevGlX           float32
+	PrevGlY           float32
 	PixelDelta        app.Vec2F
 	HoldingLeftButton bool
 
@@ -30,6 +32,11 @@ func CursorIsInside(r *app.Rectangle) bool {
 	}
 
 	return false
+}
+
+func StorePreviousGlPosition() {
+	PrevGlX = GlX
+	PrevGlY = GlY
 }
 
 func UpdatePosition(pos app.Vec2F) {

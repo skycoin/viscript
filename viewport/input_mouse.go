@@ -15,13 +15,39 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 		showFloat64("Y", m.Y)
 		println()
 	}
-
+	mouse.StorePreviousGlPosition()
 	mouse.UpdatePosition(app.Vec2F{float32(m.X), float32(m.Y)}) // state update
 
 	if mouse.HoldingLeftButton {
 		println("TODO EVENTUALLY: implement something like 'ScrollFocusedTerm()'")
 		//old logic is in ScrollTermThatHasMousePointer(mouse.PixelDelta.X, mouse.PixelDelta.Y),
 		//which was a janky way to do it
+
+		// Determination should be here if the mouse is over scrollbar or over the
+		// area where terminal can be moved. Moving windows happens in GL space
+		// coordinates because I thought pixel delta was used for scrollbar scrolling
+		for id, t := range Terms.Terms {
+			if mouse.CursorIsInside(t.Bounds) && Terms.FocusedId == id {
+				deltaVec := app.Vec2F{mouse.GlX - mouse.PrevGlX,
+					mouse.GlY - mouse.PrevGlY}
+				Terms.MoveTerminal(id, deltaVec)
+
+				if DebugPrintInputEvents {
+					println("\nTerminal Id:", id, "\nTop", Terms.Terms[id].Bounds.Top,
+						"\nLeft", Terms.Terms[id].Bounds.Left,
+						"\nRight", Terms.Terms[id].Bounds.Right,
+						"\nBottom", Terms.Terms[id].Bounds.Bottom,
+						"\n\n GL MouseX:", mouse.GlX,
+						"\n GL MouseY:", mouse.GlY,
+						"\n\n Previous GL MouseX:", mouse.PrevGlX,
+						"\n Previous GL MouseY:", mouse.PrevGlY,
+						"\n\n DeltaVecX:", deltaVec.X,
+						"\n DeltaVecY:", deltaVec.Y,
+						"\n\n Rect Center X:", Terms.Terms[id].Bounds.CenterX(),
+						"\n Rect Center Y:", Terms.Terms[id].Bounds.CenterY())
+				}
+			}
+		}
 	}
 }
 

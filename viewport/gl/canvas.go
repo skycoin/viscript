@@ -69,7 +69,7 @@ func GetMenuSizedRect() *app.Rectangle {
 }
 
 func SetSize(x, y int32) {
-	println("\n(gl/canvas.go).SetSize()")
+	println("\n(gl/canvas.go).SetSize()", x, y)
 	*PrevFrustum = *CurrFrustum
 	CurrAppWidth = x
 	CurrAppHeight = y
