@@ -5,18 +5,20 @@ import (
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"
+	"math"
 )
 
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(m msg.MessageMousePos) {
-	if DebugPrintInputEvents {
-		fmt.Print("TypeMousePos")
-		showFloat64("X", m.X)
-		showFloat64("Y", m.Y)
-		println()
-	}
+	// if DebugPrintInputEvents {
+	// 	fmt.Print("TypeMousePos")
+	// 	showFloat64("X", m.X)
+	// 	showFloat64("Y", m.Y)
+	// 	println()
+	// }
 	mouse.StorePreviousGlPosition()
 	mouse.UpdatePosition(app.Vec2F{float32(m.X), float32(m.Y)}) // state update
+	focused := Terms.Focused
 
 	if mouse.HoldingLeftButton {
 		println("TODO EVENTUALLY: implement something like 'ScrollFocusedTerm()'")
@@ -26,52 +28,49 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 		// Determination should be here if the mouse is over scrollbar or over the
 		// area where terminal can be moved. Moving windows happens in GL space
 		// coordinates because I thought pixel delta was used for scrollbar scrolling
-		for id, t := range Terms.Terms {
-			if mouse.CursorIsInside(t.Bounds) && Terms.FocusedId == id {
 
-				deltaVec := app.Vec2F{mouse.GlX - mouse.PrevGlX,
-					mouse.GlY - mouse.PrevGlY}
+		// REFACTORME: cause I made it messy i guess
+		// FIXME: dragging doesn't work correctly it needs some more
+		// refinement and also maybe corner dragging implementation too
+		// where you can drag two sides together. Also the context in this
+		// case text is left there and allowed to right not only the bounds
+		// should resize or it should be using characters as kind of measures
 
-				// REFACTORME: cause I made it messy i guess
-				// FIXME: dragging doesn't work correctly it needs some more
-				// refinement and also maybe corner dragging implementation too
-				// where you can drag two sides together. Also the context in this
-				// case text is left there and allowed to right not only the bounds
-				// should resize or it should be using characters as kind of measures
+		if math.Abs(float64(mouse.GlX-focused.Bounds.Right)) <=
+			focused.EdgeGlMaxAbs && !focused.ResizingBottom {
+			focused.IncreaseEdgeGlMaxAbs()
+			Terms.ResizeFocusedTerminalRight(mouse.GlX)
+		} else if math.Abs(float64(mouse.GlY-focused.Bounds.Bottom)) <=
+			focused.EdgeGlMaxAbs && !focused.ResizingRight {
+			focused.IncreaseEdgeGlMaxAbs()
+			Terms.ResizeFocusedTerminalBottom(mouse.GlY)
+		}
 
-				// focusedBounds := Terms.Focused.Bounds
-				// const allowedDifference float64 = 0.2
-				// if math.Abs(float64(mouse.GlX-focusedBounds.Left)) <= allowedDifference {
-				// 	Terms.ResizeTerminalLeft(deltaVec.X)
-				// } else if math.Abs(float64(mouse.GlX-focusedBounds.Right)) <= allowedDifference {
-				// 	Terms.ResizeTerminalRight(deltaVec.X)
-				// } else if math.Abs(float64(mouse.GlY-focusedBounds.Top)) <= allowedDifference {
-				// 	Terms.ResizeTerminalTop(deltaVec.Y)
-				// } else if math.Abs(float64(mouse.GlY-focusedBounds.Bottom)) <= allowedDifference {
-				// 	Terms.ResizeTerminalBottom(deltaVec.Y)
-				// } else {
-				// 	// Move then
-				// 	Terms.MoveTerminal(id, deltaVec)
-				// }
+		if mouse.CursorIsInside(focused.Bounds) && !focused.IsResizing() {
 
-				Terms.MoveTerminal(id, deltaVec)
+			deltaVec := app.Vec2F{mouse.GlX - mouse.PrevGlX,
+				mouse.GlY - mouse.PrevGlY}
+			Terms.MoveFocusedTerminal(deltaVec)
 
-				if DebugPrintInputEvents {
-					println("\nTerminal Id:", id, "\nTop", Terms.Terms[id].Bounds.Top,
-						"\nLeft", Terms.Terms[id].Bounds.Left,
-						"\nRight", Terms.Terms[id].Bounds.Right,
-						"\nBottom", Terms.Terms[id].Bounds.Bottom,
-						"\n\n GL MouseX:", mouse.GlX,
-						"\n GL MouseY:", mouse.GlY,
-						"\n\n Previous GL MouseX:", mouse.PrevGlX,
-						"\n Previous GL MouseY:", mouse.PrevGlY,
-						"\n\n DeltaVecX:", deltaVec.X,
-						"\n DeltaVecY:", deltaVec.Y,
-						"\n\n Rect Center X:", Terms.Terms[id].Bounds.CenterX(),
-						"\n Rect Center Y:", Terms.Terms[id].Bounds.CenterY())
-				}
+			if DebugPrintInputEvents {
+				println("\nTerminal Id:", focused.TerminalId,
+					"\nTop", focused.Bounds.Top,
+					"\nLeft", focused.Bounds.Left,
+					"\nRight", focused.Bounds.Right,
+					"\nBottom", focused.Bounds.Bottom,
+					"\n\n GL MouseX:", mouse.GlX,
+					"\n GL MouseY:", mouse.GlY,
+					"\n\n Previous GL MouseX:", mouse.PrevGlX,
+					"\n Previous GL MouseY:", mouse.PrevGlY,
+					"\n\n DeltaVecX:", deltaVec.X,
+					"\n DeltaVecY:", deltaVec.Y,
+					"\n\n Rect Center X:", focused.Bounds.CenterX(),
+					"\n Rect Center Y:", focused.Bounds.CenterY())
 			}
 		}
+	} else {
+		focused.SetResizingOff()
+		focused.DecreaseEdgeGlMaxAbs()
 	}
 }
 
