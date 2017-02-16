@@ -26,6 +26,12 @@ func (t *Terminal) UnpackEvent(message []byte) []byte {
 		msg.MustDeserialize(message, &m)
 		t.onFrameBufferSize(m)
 
+	case msg.TypePutKey:
+		println("viewport/terminal/events ------- case msg.TypePutKey -------- TODO?")
+		var m msg.MessagePutKey
+		msg.MustDeserialize(message, &m)
+		t.onPutKey(m)
+
 	default:
 		println("viewport/terminal/events.go ************ UNHANDLED MESSAGE TYPE! ************")
 	}
@@ -37,9 +43,14 @@ func (t *Terminal) UnpackEvent(message []byte) []byte {
 //EVENT HANDLERS
 //
 
-//FIXME? SHOULD WE HANDLE THIS MESSAGE HERE???
+// FIXME: SHOULD WE HANDLE THIS MESSAGE HERE???
 func (t *Terminal) onFrameBufferSize(m msg.MessageFrameBufferSize) {
 	println("viewport/terminal/events.onFrameBufferSize()", m.X, m.Y)
 
 	// gl.ResizeViewportToFrameBuffer(int32(m.X), int32(m.Y))
+}
+
+// FIXME: also how about this?
+func (t *Terminal) onPutKey(m msg.MessagePutKey) {
+	println("viewport/terminal/events.onPutKey()", m.Key)
 }

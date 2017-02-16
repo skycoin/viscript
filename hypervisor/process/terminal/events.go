@@ -62,4 +62,8 @@ func (self *State) onChar(m msg.MessageChar) {
 
 func (self *State) onKey(m msg.MessageKey) {
 	println("process/terminal/events.onKey()")
+	message := msg.Serialize(
+		msg.TypePutKey, msg.MessagePutKey{0, m.Key, m.Scan, m.Action, m.Mod})
+	hypervisor.DbusGlobal.PublishTo(
+		dbus.ChannelId(self.proc.OutChannelId), message)
 }
