@@ -57,21 +57,3 @@ func ProcessTick() {
 		p.Tick() //only do if incoming messages
 	}
 }
-
-// //events from process to hypervisor
-// func DispatchProcessEvents() {
-// 	//println("process_list.DispatchProcessEvents()")
-
-// 	for id, task := range ProcessListGlobal.ProcessMap {
-// 		c := task.GetOutChannel()
-
-// 		for len(c) > 0 {
-// 			m := <-c //read event
-// 			HandleEvent(m, id)
-// 		}
-// 	}
-// }
-
-// func HandleEvent(msg []byte, Id msg.ProcessId) {
-// 	println("process_list.HandleEvent()               ---------------- TODO !!!!!!!!!!!")
-// }
