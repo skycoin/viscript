@@ -5,23 +5,72 @@ import (
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"
+	"math"
 )
 
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(m msg.MessageMousePos) {
-	if DebugPrintInputEvents {
-		fmt.Print("TypeMousePos")
-		showFloat64("X", m.X)
-		showFloat64("Y", m.Y)
-		println()
-	}
-
+	// if DebugPrintInputEvents {
+	// 	fmt.Print("TypeMousePos")
+	// 	showFloat64("X", m.X)
+	// 	showFloat64("Y", m.Y)
+	// 	println()
+	// }
+	mouse.StorePreviousGlPosition()
 	mouse.UpdatePosition(app.Vec2F{float32(m.X), float32(m.Y)}) // state update
+	focused := Terms.Focused
 
 	if mouse.HoldingLeftButton {
 		println("TODO EVENTUALLY: implement something like 'ScrollFocusedTerm()'")
 		//old logic is in ScrollTermThatHasMousePointer(mouse.PixelDelta.X, mouse.PixelDelta.Y),
 		//which was a janky way to do it
+
+		// Determination should be here if the mouse is over scrollbar or over the
+		// area where terminal can be moved. Moving windows happens in GL space
+		// coordinates because I thought pixel delta was used for scrollbar scrolling
+
+		// REFACTORME: cause I made it messy i guess
+		// FIXME: dragging doesn't work correctly it needs some more
+		// refinement and also maybe corner dragging implementation too
+		// where you can drag two sides together. Also the context in this
+		// case text is left there and allowed to right not only the bounds
+		// should resize or it should be using characters as kind of measures
+
+		if math.Abs(float64(mouse.GlX-focused.Bounds.Right)) <=
+			focused.EdgeGlMaxAbs && !focused.ResizingBottom {
+			focused.IncreaseEdgeGlMaxAbs()
+			Terms.ResizeFocusedTerminalRight(mouse.GlX)
+		} else if math.Abs(float64(mouse.GlY-focused.Bounds.Bottom)) <=
+			focused.EdgeGlMaxAbs && !focused.ResizingRight {
+			focused.IncreaseEdgeGlMaxAbs()
+			Terms.ResizeFocusedTerminalBottom(mouse.GlY)
+		}
+
+		if mouse.CursorIsInside(focused.Bounds) && !focused.IsResizing() {
+
+			deltaVec := app.Vec2F{mouse.GlX - mouse.PrevGlX,
+				mouse.GlY - mouse.PrevGlY}
+			Terms.MoveFocusedTerminal(deltaVec)
+
+			if DebugPrintInputEvents {
+				println("\nTerminal Id:", focused.TerminalId,
+					"\nTop", focused.Bounds.Top,
+					"\nLeft", focused.Bounds.Left,
+					"\nRight", focused.Bounds.Right,
+					"\nBottom", focused.Bounds.Bottom,
+					"\n\n GL MouseX:", mouse.GlX,
+					"\n GL MouseY:", mouse.GlY,
+					"\n\n Previous GL MouseX:", mouse.PrevGlX,
+					"\n Previous GL MouseY:", mouse.PrevGlY,
+					"\n\n DeltaVecX:", deltaVec.X,
+					"\n DeltaVecY:", deltaVec.Y,
+					"\n\n Rect Center X:", focused.Bounds.CenterX(),
+					"\n Rect Center Y:", focused.Bounds.CenterY())
+			}
+		}
+	} else {
+		focused.SetResizingOff()
+		focused.DecreaseEdgeGlMaxAbs()
 	}
 }
 
@@ -58,11 +107,15 @@ func onMouseButton(m msg.MessageMouseButton) {
 			// } else { // respond to any panel clicks outside of menu
 			focusOnTopmostRectThatContainsPointer()
 			// }
+		case msg.MouseButtonRight:
+			mouse.HoldingLeftButton = true
 		}
 	} else if msg.Action(m.Action) == msg.Release {
 		switch msg.MouseButton(m.Button) {
 		case msg.MouseButtonLeft:
 			mouse.HoldingLeftButton = false
+		case msg.MouseButtonRight:
+			mouse.HoldingRightButton = false
 		}
 	}
 }

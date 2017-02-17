@@ -83,12 +83,25 @@ func (self *TerminalStack) Tick() {
 	}
 }
 
-func (self *TerminalStack) ResizeTerminal(id msg.TerminalId, x int, y int) {
-	println("TerminalStack.ResizeTerminal()")
+func (self *TerminalStack) ResizeFocusedTerminalRight(newRightOffset float32) {
+	println("TerminalStack.ResizeFocusedTerminalRight()")
+	self.Focused.ResizingRight = true
+	self.Focused.Bounds.Right = newRightOffset
 }
 
-func (self *TerminalStack) MoveTerminal(id msg.TerminalId, xoff int, yoff int) {
+func (self *TerminalStack) ResizeFocusedTerminalBottom(newBottomOffset float32) {
+	println("TerminalStack.ResizeFocusedTerminalBottom()")
+	self.Focused.ResizingBottom = true
+	self.Focused.Bounds.Bottom = newBottomOffset
+}
+
+func (self *TerminalStack) MoveFocusedTerminal(offset app.Vec2F) {
 	println("TerminalStack.MoveTerminal()")
+	bounds := self.Focused.Bounds
+	bounds.Top += offset.Y
+	bounds.Bottom += offset.Y
+	bounds.Left += offset.X
+	bounds.Right += offset.X
 }
 
 func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {

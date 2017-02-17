@@ -34,13 +34,12 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/viewport"
 )
 
 func main() {
-	fmt.Printf("Start\n")
+	fmt.Printf("Starting...")
 
 	hypervisor.Init()
 

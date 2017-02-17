@@ -33,6 +33,10 @@ type Terminal struct {
 	CharSize   app.Vec2F
 	Bounds     *app.Rectangle
 	Depth      float32 //0 for lowest
+
+	ResizingRight  bool
+	ResizingBottom bool
+	EdgeGlMaxAbs   float64 // how close cursor should be to the edge
 }
 
 func (t *Terminal) Init() {
@@ -45,9 +49,29 @@ func (t *Terminal) Init() {
 	t.BorderSize = 0.013
 	t.SetSize()
 
-	t.makeRandomChars(20)
-	t.PutString("calling PutString() with a very loooooooooooooooooooooooooooooooooong string")
-	t.SetCursor(0, 0)
+	// t.makeRandomChars(20)
+	t.PutString("prompt_ ")
+	t.SetCursor(8, 0)
+	t.ResizingRight = false
+	t.ResizingBottom = false
+	t.EdgeGlMaxAbs = 0.05
+}
+
+func (t *Terminal) IncreaseEdgeGlMaxAbs() {
+	t.EdgeGlMaxAbs = 10.0
+}
+
+func (t *Terminal) DecreaseEdgeGlMaxAbs() {
+	t.EdgeGlMaxAbs = 0.05
+}
+
+func (t *Terminal) IsResizing() bool {
+	return t.ResizingRight || t.ResizingBottom
+}
+
+func (t *Terminal) SetResizingOff() {
+	t.ResizingRight = false
+	t.ResizingBottom = false
 }
 
 func (t *Terminal) SetSize() {
