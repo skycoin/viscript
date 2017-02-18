@@ -107,15 +107,11 @@ func onMouseButton(m msg.MessageMouseButton) {
 			// } else { // respond to any panel clicks outside of menu
 			focusOnTopmostRectThatContainsPointer()
 			// }
-		case msg.MouseButtonRight:
-			mouse.HoldingLeftButton = true
 		}
 	} else if msg.Action(m.Action) == msg.Release {
 		switch msg.MouseButton(m.Button) {
 		case msg.MouseButtonLeft:
 			mouse.HoldingLeftButton = false
-		case msg.MouseButtonRight:
-			mouse.HoldingRightButton = false
 		}
 	}
 }
