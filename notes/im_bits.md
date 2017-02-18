@@ -1216,3 +1216,54 @@ wrote the message
 
 
 
+skycoin/skycoin
+
+the CLI for skycoin.  you will write a lib for task to run a cli like that inside of 
+the viscript terminal but als in normal terminal with same lib
+
+and look in src mesh and run node for that and cli
+
+
+
+
+
+red: mesh doesn't appear to be having GUI i think it doesn't compile
+
+it compiles.  it has a node of command line
+and it has a CLI interface to the node
+
+its in /src/mesh folder.  look at the readme
+
+
+
+
+
+
+do the mesh api
+
+
+
+
+
+run the meshnet cli and meshnet daemon.  we need to get cli like this.  working in viscript
+
+
+
+
+
+Terminal might even store its own character of text array or have DOM so that it can do
+back scroll through history
+
+
+
+
+
+[i believe this was a quote from Vyacheslav Zgord...]: you can just use web interface for
+command-line client - the manual for it is in skycoin/src/mesh/README.md and it let's you 
+run web interface on port 9999.
+
+
+
+
+
+

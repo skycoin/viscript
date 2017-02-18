@@ -1,10 +1,24 @@
 /*
 
+------- NEXT THINGS TODO: -------
+
+* Unfocusing
+* Move terminals
+	* "option to snap to grid"
+* Resize terminals
+	* "snap to grid or char size"
+
+* put console feedback into focused terminal
+
+
+
 ------- NEWER TODO: -------
 
 * put console feedback into focused terminal
 
-------- OLDER TODO: -------
+
+
+------- OLDER TODO: ------- (everything below was for the text editor)
 
 * KEY-BASED NAVIGATION
 	* CTRL-HOME/END - PGUP/DN
@@ -15,7 +29,7 @@
 		(manual activity in the middle could increase size, so do this only when appending to body)
 
 
-------- LOWER PRIORITY POLISH -------
+------- LOWER PRIORITY POLISH: -------
 
 * if typing goes past right of screen, auto-horizontal-scroll as you type
 * same for when newlines/enters/returns push cursor past the bottom of visible space
