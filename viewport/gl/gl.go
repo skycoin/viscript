@@ -13,6 +13,7 @@ var goldenFraction = float32(goldenRatio / (goldenRatio + 1))
 
 var (
 	GlfwWindow *glfw.Window // deprecate eventually
+	GlfwCursor *glfw.Cursor // for changing cursor for example: resizing etc.
 	Texture    uint32
 )
 
@@ -52,6 +53,37 @@ func WindowInit() {
 		panic(err)
 	}
 
+	// initialize cursor
+
+	CreateAndSetCursor(glfw.ArrowCursor)
+}
+
+func CreateAndSetCursor(cursorType glfw.StandardCursor) {
+	if GlfwCursor != nil {
+		GlfwCursor.Destroy()
+	}
+	GlfwCursor = glfw.CreateStandardCursor(int(cursorType))
+	GlfwWindow.SetCursor(GlfwCursor)
+}
+
+func SetArrowCursor() {
+	CreateAndSetCursor(glfw.ArrowCursor)
+}
+
+func SetHResizeCursor() {
+	CreateAndSetCursor(glfw.HResizeCursor)
+}
+
+func SetVResizeCursor() {
+	CreateAndSetCursor(glfw.VResizeCursor)
+}
+
+func SetIBeamCursor() {
+	CreateAndSetCursor(glfw.IBeamCursor)
+}
+
+func SetHandCursor() {
+	CreateAndSetCursor(glfw.HandCursor)
 }
 
 func LoadTextures() {
