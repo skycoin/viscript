@@ -8,7 +8,7 @@ const (
 	TypeSetCursor = 3 + CATEGORY_Terminal
 
 	// low level events
-	TypeFrameBufferSize = 5 + CATEGORY_Terminal
+	TypeFrameBufferSize = 4 + CATEGORY_Terminal
 )
 
 type MessagePutChar struct {
