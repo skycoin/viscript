@@ -41,10 +41,8 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 		// coordinates because I thought pixel delta was used for scrollbar scrolling
 
 		// REFACTORME: cause I made it messy i guess
-		// FIXME: dragging doesn't work correctly it needs some more
-		// refinement and also maybe corner dragging implementation too
-		// where you can drag two sides together. Also the context in this
-		// case text is left there and allowed to right not only the bounds
+		// FIXME: Also the context in this case text is left there and
+		// allowed to right not only the bounds
 		// should resize or it should be using characters as kind of measures
 
 		if mouse.IsNearRight && !focused.ResizingBottom {
@@ -129,7 +127,9 @@ func onMouseButton(m msg.MessageMouseButton) {
 }
 
 func focusOnTopmostRectThatContainsPointer() {
-	// FIXME: Weird behaviour when clicking
+	if mouse.CursorIsInside(Terms.Focused.Bounds) {
+		return // because it's focused. can't just click through like that
+	}
 	var topmostZ float32
 	var topmostId msg.TerminalId
 
@@ -141,7 +141,6 @@ func focusOnTopmostRectThatContainsPointer() {
 			}
 		}
 	}
-
 	if topmostZ > 0 {
 		Terms.FocusedId = topmostId
 		Terms.Focused = Terms.Terms[topmostId]
