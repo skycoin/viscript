@@ -5,26 +5,33 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/corpusc/viscript/hypervisor"
 )
+
+type rpcMessage struct {
+	Command   string
+	Arguments []string
+}
 
 func main() {
 	// port := "7777"
 	// if len(os.Args) >= 2 {
 	// 	port = os.Args[1]
 	// }
-	// rpcClient := nodemanager.RunClient(":" + port)
-	promptCycle()
+	// rpcClient := hypervisor.RunClient(":" + port)
+	// promptCycle(rpcClient)
 }
 
-func promptCycle() {
+func promptCycle(rpcClient *hypervisor.RPCClient) {
 	for {
-		if commandDispatcher() {
+		if commandDispatcher(rpcClient) {
 			break
 		}
 	}
 }
 
-func commandDispatcher() bool {
+func commandDispatcher(rpcClient *hypervisor.RPCClient) bool {
 	command, _ := cliInput("Enter the command (help for commands list):\n> ")
 
 	if command == "" {
