@@ -3,6 +3,7 @@ package viewport
 import (
 	"fmt"
 	"github.com/corpusc/viscript/msg"
+	// "github.com/go-gl/glfw/v3.2/glfw"
 )
 
 func onChar(m msg.MessageChar) {
@@ -56,6 +57,12 @@ func onKey(m msg.MessageKey) {
 			fmt.Println("'Super' modifier key RELEASED")
 		}
 	} else { // glfw.Press   or   glfw.Repeat
+
+		switch m.Key {
+		case msg.KeyBackspace:
+			Terms.Focused.BackSpace()
+		}
+
 		//foc := Focused
 
 		/*

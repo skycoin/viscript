@@ -70,6 +70,13 @@ func (t *Terminal) SetSize() {
 	t.CharSize.Y = (t.Bounds.Height() - t.BorderSize*2) / float32(t.GridSize.Y)
 }
 
+func (t *Terminal) BackSpace() {
+	// FIXME: should have to look at this more in depth tomorrow
+	t.SetCharacter(0)
+	t.MoveLeft()
+	t.SetCharacter(0)
+}
+
 func (t *Terminal) Tick() {
 	for len(t.InChannel) > 0 {
 		t.UnpackEvent(<-t.InChannel)
@@ -149,6 +156,10 @@ func (t *Terminal) SetCharacterAt(x, y uint32, Char uint32) {
 	if t.posIsValid(x, y) {
 		t.Chars[y][x] = Char
 	}
+}
+
+func (t *Terminal) SetCharacter(Char uint32) {
+	t.SetCharacterAt(t.Curs.X, t.Curs.Y, Char)
 }
 
 func (t *Terminal) PutString(s string) {
