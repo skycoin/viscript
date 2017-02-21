@@ -36,7 +36,6 @@ type Terminal struct {
 
 	ResizingRight  bool
 	ResizingBottom bool
-	EdgeGlMaxAbs   float64 // how close cursor should be to the edge
 }
 
 func (t *Terminal) Init() {
@@ -54,15 +53,6 @@ func (t *Terminal) Init() {
 	t.SetCursor(8, 0)
 	t.ResizingRight = false
 	t.ResizingBottom = false
-	t.EdgeGlMaxAbs = 0.05
-}
-
-func (t *Terminal) IncreaseEdgeGlMaxAbs() {
-	t.EdgeGlMaxAbs = 10.0
-}
-
-func (t *Terminal) DecreaseEdgeGlMaxAbs() {
-	t.EdgeGlMaxAbs = 0.05
 }
 
 func (t *Terminal) IsResizing() bool {
@@ -78,6 +68,13 @@ func (t *Terminal) SetSize() {
 	println("Terminal.SetSize()        --------FIXME once we allow dragging edges")
 	t.CharSize.X = (t.Bounds.Width() - t.BorderSize*2) / float32(t.GridSize.X)
 	t.CharSize.Y = (t.Bounds.Height() - t.BorderSize*2) / float32(t.GridSize.Y)
+}
+
+func (t *Terminal) BackSpace() {
+	// FIXME: should have to look at this more in depth tomorrow
+	t.SetCharacter(0)
+	t.MoveLeft()
+	t.SetCharacter(0)
 }
 
 func (t *Terminal) Tick() {
@@ -159,6 +156,10 @@ func (t *Terminal) SetCharacterAt(x, y uint32, Char uint32) {
 	if t.posIsValid(x, y) {
 		t.Chars[y][x] = Char
 	}
+}
+
+func (t *Terminal) SetCharacter(Char uint32) {
+	t.SetCharacterAt(t.Curs.X, t.Curs.Y, Char)
 }
 
 func (t *Terminal) PutString(s string) {

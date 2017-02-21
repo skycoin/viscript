@@ -5,7 +5,7 @@ import (
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"
-	"math"
+	"github.com/corpusc/viscript/viewport/gl"
 )
 
 // triggered both by moving **AND*** by pressing buttons
@@ -16,11 +16,22 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 	// 	showFloat64("Y", m.Y)
 	// 	println()
 	// }
-	mouse.StorePreviousGlPosition()
-	mouse.UpdatePosition(app.Vec2F{float32(m.X), float32(m.Y)}) // state update
 	focused := Terms.Focused
+	mouse.Bounds = focused.Bounds
+	mouse.Update(app.Vec2F{float32(m.X), float32(m.Y)})
 
-	if mouse.HoldingLeftButton {
+	// set cursor appropriately
+	if mouse.IsNearRight && !focused.ResizingBottom && !mouse.HoldingLeft {
+		gl.SetHResizeCursor()
+	} else if mouse.IsNearBottom && !focused.ResizingRight && !mouse.HoldingLeft {
+		gl.SetVResizeCursor()
+	} else if mouse.IsInsideTerminal {
+		gl.SetIBeamCursor()
+	} else {
+		gl.SetArrowCursor()
+	}
+
+	if mouse.HoldingLeft {
 		println("TODO EVENTUALLY: implement something like 'ScrollFocusedTerm()'")
 		//old logic is in ScrollTermThatHasMousePointer(mouse.PixelDelta.X, mouse.PixelDelta.Y),
 		//which was a janky way to do it
@@ -30,19 +41,17 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 		// coordinates because I thought pixel delta was used for scrollbar scrolling
 
 		// REFACTORME: cause I made it messy i guess
-		// FIXME: dragging doesn't work correctly it needs some more
-		// refinement and also maybe corner dragging implementation too
-		// where you can drag two sides together. Also the context in this
-		// case text is left there and allowed to right not only the bounds
+		// FIXME: Also the context in this case text is left there and
+		// allowed to right not only the bounds
 		// should resize or it should be using characters as kind of measures
 
-		if math.Abs(float64(mouse.GlX-focused.Bounds.Right)) <=
-			focused.EdgeGlMaxAbs && !focused.ResizingBottom {
-			focused.IncreaseEdgeGlMaxAbs()
+		if mouse.IsNearRight && !focused.ResizingBottom {
+			gl.SetHResizeCursor()
+			mouse.IncreaseEdgeGlMaxAbs()
 			Terms.ResizeFocusedTerminalRight(mouse.GlX)
-		} else if math.Abs(float64(mouse.GlY-focused.Bounds.Bottom)) <=
-			focused.EdgeGlMaxAbs && !focused.ResizingRight {
-			focused.IncreaseEdgeGlMaxAbs()
+		} else if mouse.IsNearBottom && !focused.ResizingRight {
+			gl.SetVResizeCursor()
+			mouse.IncreaseEdgeGlMaxAbs()
 			Terms.ResizeFocusedTerminalBottom(mouse.GlY)
 		}
 
@@ -51,6 +60,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 			deltaVec := app.Vec2F{mouse.GlX - mouse.PrevGlX,
 				mouse.GlY - mouse.PrevGlY}
 			Terms.MoveFocusedTerminal(deltaVec)
+			gl.SetHandCursor()
 
 			if DebugPrintInputEvents {
 				println("\nTerminal Id:", focused.TerminalId,
@@ -70,7 +80,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 		}
 	} else {
 		focused.SetResizingOff()
-		focused.DecreaseEdgeGlMaxAbs()
+		mouse.DecreaseEdgeGlMaxAbs()
 	}
 }
 
@@ -99,7 +109,7 @@ func onMouseButton(m msg.MessageMouseButton) {
 	if msg.Action(m.Action) == msg.Press {
 		switch msg.MouseButton(m.Button) {
 		case msg.MouseButtonLeft:
-			mouse.HoldingLeftButton = true
+			mouse.HoldingLeft = true
 
 			// // detect clicks in rects
 			// if mouse.CursorIsInside(ui.MainMenu.Rect) {
@@ -111,12 +121,15 @@ func onMouseButton(m msg.MessageMouseButton) {
 	} else if msg.Action(m.Action) == msg.Release {
 		switch msg.MouseButton(m.Button) {
 		case msg.MouseButtonLeft:
-			mouse.HoldingLeftButton = false
+			mouse.HoldingLeft = false
 		}
 	}
 }
 
 func focusOnTopmostRectThatContainsPointer() {
+	if mouse.CursorIsInside(Terms.Focused.Bounds) {
+		return // because it's focused. can't just click through like that
+	}
 	var topmostZ float32
 	var topmostId msg.TerminalId
 
@@ -128,7 +141,6 @@ func focusOnTopmostRectThatContainsPointer() {
 			}
 		}
 	}
-
 	if topmostZ > 0 {
 		Terms.FocusedId = topmostId
 		Terms.Focused = Terms.Terms[topmostId]
