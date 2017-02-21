@@ -57,6 +57,17 @@ func (t *Terminal) onKey(m msg.MessageKey) {
 	println("viewport/terminal/events.onKey()")
 
 	switch m.Key {
+	case msg.KeyUp:
+		t.MoveUp()
+	case msg.KeyDown:
+		t.MoveDown()
+	case msg.KeyLeft:
+		t.MoveLeft()
+	case msg.KeyRight:
+		t.MoveRight()
+	case msg.KeyEnter:
+		t.MoveDown()
+		t.Curs.X = 0
 	case msg.KeyBackspace:
 		t.BackSpace()
 	}

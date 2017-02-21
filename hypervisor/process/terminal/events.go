@@ -68,9 +68,24 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 		fallthrough
 	case msg.Repeat:
 		switch m.Key {
+		case msg.KeyUp:
+			hypervisor.DbusGlobal.PublishTo(
+				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+		case msg.KeyDown:
+			hypervisor.DbusGlobal.PublishTo(
+				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+		case msg.KeyLeft:
+			hypervisor.DbusGlobal.PublishTo(
+				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+		case msg.KeyRight:
+			hypervisor.DbusGlobal.PublishTo(
+				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+		case msg.KeyEnter:
+			hypervisor.DbusGlobal.PublishTo(
+				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
 		case msg.KeyBackspace:
 			hypervisor.DbusGlobal.PublishTo(
-				dbus.ChannelId(self.proc.OutChannelId), serializedMsg) //EVERY publish action prefixes another chan id
+				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
 		}
 	case msg.Release:
 		// most keys will do nothing upon release
