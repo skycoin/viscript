@@ -127,9 +127,6 @@ func onMouseButton(m msg.MessageMouseButton) {
 }
 
 func focusOnTopmostRectThatContainsPointer() {
-	if mouse.CursorIsInside(Terms.Focused.Bounds) {
-		return // because it's focused. can't just click through like that
-	}
 	var topmostZ float32
 	var topmostId msg.TerminalId
 
@@ -141,6 +138,7 @@ func focusOnTopmostRectThatContainsPointer() {
 			}
 		}
 	}
+
 	if topmostZ > 0 {
 		Terms.FocusedId = topmostId
 		Terms.Focused = Terms.Terms[topmostId]

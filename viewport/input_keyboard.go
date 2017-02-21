@@ -3,7 +3,6 @@ package viewport
 import (
 	"fmt"
 	"github.com/corpusc/viscript/msg"
-	// "github.com/go-gl/glfw/v3.2/glfw"
 )
 
 func onChar(m msg.MessageChar) {
