@@ -4,7 +4,7 @@ const CATEGORY_Terminal uint16 = 0x0200 //flag
 
 const (
 	TypePutChar   = 1 + CATEGORY_Terminal
-	TypeSetChar   = 2 + CATEGORY_Terminal
+	TypeSetCharAt = 2 + CATEGORY_Terminal
 	TypeSetCursor = 3 + CATEGORY_Terminal
 
 	// low level events
@@ -16,7 +16,7 @@ type MessagePutChar struct {
 	Char   uint32
 }
 
-type MessageSetChar struct {
+type MessageSetCharAt struct {
 	TermId uint32
 	X      uint32
 	Y      uint32

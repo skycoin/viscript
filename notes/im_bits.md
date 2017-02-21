@@ -1267,3 +1267,24 @@ run web interface on port 9999.
 
 
 
+for scrolling the terminal task needs to store internal redundant text backlog etc.
+
+
+
+
+
+
+eventually we need master api
+to list all terminals and attached processes
+or list all dbus objects and subscribers and publishers
+and to start a new terminal or process of a specific type from a list.
+it might only need one packet type.  for receiving text and another for responding
+
+
+
+
+
+
+
+do we have library for task to get user input and printf to terminal and
+maintaning a back buffer and scroll in terminal etc.

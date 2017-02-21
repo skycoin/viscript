@@ -72,9 +72,9 @@ func (t *Terminal) SetSize() {
 
 func (t *Terminal) BackSpace() {
 	// FIXME: should have to look at this more in depth tomorrow
-	t.SetCharacter(0)
 	t.MoveLeft()
-	t.SetCharacter(0)
+	t.PutCharacter(0)
+	t.MoveLeft()
 }
 
 func (t *Terminal) Tick() {
@@ -156,10 +156,6 @@ func (t *Terminal) SetCharacterAt(x, y uint32, Char uint32) {
 	if t.posIsValid(x, y) {
 		t.Chars[y][x] = Char
 	}
-}
-
-func (t *Terminal) SetCharacter(Char uint32) {
-	t.SetCharacterAt(t.Curs.X, t.Curs.Y, Char)
 }
 
 func (t *Terminal) PutString(s string) {

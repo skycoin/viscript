@@ -46,7 +46,7 @@ func UnpackEvent(message []byte) []byte {
 		msg.MustDeserialize(message, &m)
 		onFrameBufferSize(m)
 
-		Terms.Focused.RelayToTask(message)
+		//Terms.Focused.RelayToTask(message)
 
 	default:
 		fmt.Println("********** UNKNOWN MESSAGE TYPE! ************")

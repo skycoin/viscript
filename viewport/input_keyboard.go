@@ -56,13 +56,7 @@ func onKey(m msg.MessageKey) {
 		case msg.KeyRightSuper:
 			fmt.Println("'Super' modifier key RELEASED")
 		}
-	} else { // glfw.Press   or   glfw.Repeat
-
-		switch m.Key {
-		case msg.KeyBackspace:
-			Terms.Focused.BackSpace()
-		}
-
+	} else { //     .Press   or   .Repeat
 		//foc := Focused
 
 		/*
