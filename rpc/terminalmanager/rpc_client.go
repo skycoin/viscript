@@ -1,4 +1,4 @@
-package hypervisor
+package terminalmanager
 
 import (
 	"net/rpc"
