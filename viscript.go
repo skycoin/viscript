@@ -48,7 +48,7 @@ package main
 
 import (
 	"github.com/corpusc/viscript/hypervisor"
-	// "github.com/corpusc/viscript/rpc/terminalmanager"
+	"github.com/corpusc/viscript/rpc/terminalmanager"
 	"github.com/corpusc/viscript/viewport"
 )
 
@@ -64,8 +64,10 @@ func main() {
 	viewport.ViewportTerminalsInit() //start the terminal
 
 	// rpc
-	// rpcInstance := terminalmanager.NewRPC()
-	// rpcInstance.Serve()
+	go func() {
+		rpcInstance := terminalmanager.NewRPC()
+		rpcInstance.Serve()
+	}()
 
 	println("Start Loop;")
 	for viewport.CloseWindow == false {

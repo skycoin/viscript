@@ -21,6 +21,26 @@ func (receiver *RPCReceiver) ListTerminalIDs(_ []string, result *[]byte) error {
 	return nil
 }
 
+func (receiver *RPCReceiver) ListTIDsWithProcessIDs(_ []string, result *[]byte) error {
+	terms := receiver.TerminalManager.terminalStack.Terms
+	termsWithProcessIDs := make([]msg.TermAndAttachedProcessID, 0)
+
+	for termID, term := range terms {
+		termsWithProcessIDs = append(termsWithProcessIDs, msg.TermAndAttachedProcessID{termID, term.AttachedProcess})
+	}
+	fmt.Printf("Terms with process IDs list:%+v", termsWithProcessIDs)
+	*result = msg.Serialize((uint16)(0), termsWithProcessIDs)
+	return nil
+}
+
+func (receiver *RPCReceiver) StartTerminalWithProcess(_ []string, result *[]byte) error {
+	terms := receiver.TerminalManager.terminalStack
+	newTerminalID := terms.AddTerminal()
+	fmt.Println("Terminal with ID", newTerminalID, "created!")
+	*result = msg.Serialize((uint16)(0), newTerminalID)
+	return nil
+}
+
 func (receiver *RPCReceiver) ListProcessIDs(_ []string, result *[]byte) error {
 	processes := receiver.TerminalManager.processList.ProcessMap
 	processIDs := make([]msg.ProcessId, 0)
