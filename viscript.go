@@ -47,19 +47,18 @@
 package main
 
 import (
-	"fmt"
 	"github.com/corpusc/viscript/hypervisor"
 	// "github.com/corpusc/viscript/rpc/terminalmanager"
 	"github.com/corpusc/viscript/viewport"
 )
 
 func main() {
-	fmt.Printf("Starting...")
+	println("Starting...")
 
 	hypervisor.Init()
 
 	viewport.DebugPrintInputEvents = true //print input events
-	viewport.ViewportInit()               //runtime.LockOSThread()
+	viewport.ViewportInit()               //runtime.LockOSThread(), InitCanvas()
 	viewport.ViewportScreenInit()
 	viewport.InitEvents()
 	viewport.ViewportTerminalsInit() //start the terminal
@@ -68,7 +67,7 @@ func main() {
 	// rpcInstance := terminalmanager.NewRPC()
 	// rpcInstance.Serve()
 
-	fmt.Printf("Start Loop; \n")
+	println("Start Loop;")
 	for viewport.CloseWindow == false {
 		viewport.DispatchEvents() //event channel
 		hypervisor.ProcessTick()  //processes, handle incoming events
@@ -78,7 +77,7 @@ func main() {
 		viewport.SwapDrawBuffer() //with new frame
 	}
 
-	fmt.Printf("Closing down viewport \n")
+	println("Closing down viewport")
 	viewport.ViewportScreenTeardown()
 	hypervisor.HypervisorTeardown()
 }
