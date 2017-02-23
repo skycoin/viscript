@@ -27,15 +27,15 @@ type TerminalStack struct {
 	Terms     map[msg.TerminalId]*Terminal
 
 	// private
-	nextRect  app.Rectangle // for next/new terminal spawn
-	nextDepth float32
-	nextSpan  float32 // how far from previous terminal
+	nextRect   app.Rectangle // for next/new terminal spawn
+	nextDepth  float32
+	nextOffset float32 // how far from previous terminal
 }
 
 func (self *TerminalStack) Init() {
 	println("TerminalStack.Init()")
 	self.Terms = make(map[msg.TerminalId]*Terminal)
-	self.nextSpan = gl.CanvasExtents.Y / 3
+	self.nextOffset = gl.CanvasExtents.Y / 3
 	self.nextRect = app.Rectangle{
 		gl.CanvasExtents.Y,
 		gl.CanvasExtents.X / 2,
@@ -46,7 +46,7 @@ func (self *TerminalStack) Init() {
 func (self *TerminalStack) AddTerminal() {
 	println("TerminalStack.AddTerminal()")
 
-	self.nextDepth += self.nextSpan / 10 // done first, cuz desktop is at 0
+	self.nextDepth += self.nextOffset / 10 // done first, cuz desktop is at 0
 
 	tid := msg.RandTerminalId() //terminal id
 	self.Terms[tid] = &Terminal{
@@ -60,10 +60,10 @@ func (self *TerminalStack) AddTerminal() {
 	self.FocusedId = tid
 	self.Focused = self.Terms[tid]
 
-	self.nextRect.Top -= self.nextSpan
-	self.nextRect.Right += self.nextSpan
-	self.nextRect.Bottom -= self.nextSpan
-	self.nextRect.Left += self.nextSpan
+	self.nextRect.Top -= self.nextOffset
+	self.nextRect.Right += self.nextOffset
+	self.nextRect.Bottom -= self.nextOffset
+	self.nextRect.Left += self.nextOffset
 
 	//hook up proccess
 	self.SetupTerminalDbus(tid)
