@@ -24,6 +24,7 @@ var (
 func ViewportInit() {
 	fmt.Println("viewport.ViewportInit()")
 	app.MakeHighlyVisibleLogHeader(app.Name, 15)
+	igl.InitCanvas()
 	// GLFW event handling must run on the main OS thread
 	// See documentation for functions that are only allowed to be called from the main thread.
 	runtime.LockOSThread()

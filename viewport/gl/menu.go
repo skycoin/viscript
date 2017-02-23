@@ -1,15 +1,10 @@
 package gl
 
 import (
-	"fmt"
 	"github.com/corpusc/viscript/app"
 )
 
 var MainMenu = Menu{}
-
-func init() {
-	fmt.Println("(viewport/gl/menu.go).init()")
-}
 
 type Menu struct {
 	//IsVertical bool // controls which dimension gets divided up for button sizes

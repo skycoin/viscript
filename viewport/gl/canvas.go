@@ -39,8 +39,8 @@ var (
 	CurrY float32
 )
 
-func init() {
-	println("(gl/canvas.go).init()")
+func InitCanvas() {
+	println("(gl/canvas.go).InitCanvas()")
 	// one-time setup
 	PrevColor = GrayDark
 	CurrColor = GrayDark
