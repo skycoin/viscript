@@ -43,7 +43,7 @@ func (self *TerminalStack) Init() {
 		-gl.CanvasExtents.X}
 }
 
-func (self *TerminalStack) AddTerminal() {
+func (self *TerminalStack) AddTerminal() msg.TerminalId {
 	println("TerminalStack.AddTerminal()")
 
 	self.nextDepth += self.nextOffset / 10 // done first, cuz desktop is at 0
@@ -67,6 +67,8 @@ func (self *TerminalStack) AddTerminal() {
 
 	//hook up proccess
 	self.SetupTerminalDbus(tid)
+
+	return tid
 }
 
 func (self *TerminalStack) RemoveTerminal(id msg.TerminalId) {

@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/corpusc/viscript/msg"
-	"github.com/corpusc/viscript/rpc/terminalmanager"
+	tm "github.com/corpusc/viscript/rpc/terminalmanager"
 	"os/exec"
 	"runtime"
 )
@@ -48,18 +48,18 @@ func main() {
 		port = os.Args[1]
 	}
 	fmt.Println(port)
-	rpcClient := terminalmanager.RunClient(":" + port)
+	rpcClient := tm.RunClient(":" + port)
 	promptCycle(rpcClient)
 }
 
-func promptCycle(rpcClient *terminalmanager.RPCClient) {
+func promptCycle(rpcClient *tm.RPCClient) {
 	ended := false
 	for !ended {
 		ended = commandDispatcher(rpcClient)
 	}
 }
 
-func commandDispatcher(rpcClient *terminalmanager.RPCClient) bool {
+func commandDispatcher(rpcClient *tm.RPCClient) bool {
 	command, _ := cliInput("Enter the command (help(h) for commands list):\n> ")
 
 	if command == "" {
@@ -73,8 +73,11 @@ func commandDispatcher(rpcClient *terminalmanager.RPCClient) bool {
 	case "lt":
 		listTerminalIDs(rpcClient)
 
+	case "ltp":
+		listTermIDsWithAttachedProcesses(rpcClient)
+
 	case "lp":
-		listProcesses(rpcClient)
+		listProcessIDs(rpcClient)
 
 	case "ld":
 		listDbusObjects(rpcClient)
@@ -127,10 +130,11 @@ func printHelp() {
 	fmt.Println("\n<< -[ HELP ]- >>")
 	fmt.Println()
 	fmt.Println("> lt\t\tList all terminal IDs.")
+	fmt.Println("> ltp\t\tList all terminal IDs with Attached Process IDs.")
 	fmt.Println("> lp\t\tList all process IDs.")
-	fmt.Println("> ld\t\tList all dbus objects.")
-	fmt.Println("> lsub\t\tList all subscribers.")
-	fmt.Println("> lpub\t\tList all publishers.")
+	fmt.Println("> ld\t\tList all dbus objects. --TODO")
+	fmt.Println("> lsub\t\tList all subscribers. --TODO")
+	fmt.Println("> lpub\t\tList all publishers. --TODO")
 	fmt.Println()
 	fmt.Println("> stp\t\tStart a new terminal with process.")
 	fmt.Println()
@@ -152,9 +156,7 @@ func errorOut(err error) {
 	fmt.Println("Error. Server says:", err)
 }
 
-func listTerminalIDs(client *terminalmanager.RPCClient) {
-	fmt.Println("listTerminals()")
-
+func listTerminalIDs(client *tm.RPCClient) {
 	termIDs, err := getTerminalIDs(client)
 	if err != nil {
 		errorOut(err)
@@ -169,9 +171,22 @@ func listTerminalIDs(client *terminalmanager.RPCClient) {
 	}
 }
 
-func listProcesses(client *terminalmanager.RPCClient) {
-	fmt.Println("listProcesses()")
+func listTermIDsWithAttachedProcesses(client *tm.RPCClient) {
+	termsWithProcessIDs, err := getTermIDsWithProcessIDs(client)
+	if err != nil {
+		errorOut(err)
+		return
+	}
 
+	fmt.Printf("\nTerminals(%d total):\n\n", len(termsWithProcessIDs))
+	fmt.Println("Index\tTerminalID\t\tAttached Process ID")
+	fmt.Println()
+	for i, term := range termsWithProcessIDs {
+		fmt.Printf("%d\t%d\t%d\n", i, term.TerminalId, term.AttachedProcessId)
+	}
+}
+
+func listProcessIDs(client *tm.RPCClient) {
 	processIDs, err := getProcessIDs(client)
 	if err != nil {
 		errorOut(err)
@@ -186,24 +201,38 @@ func listProcesses(client *terminalmanager.RPCClient) {
 	}
 }
 
-func listDbusObjects(client *terminalmanager.RPCClient) {
+func listDbusObjects(client *tm.RPCClient) {
 	fmt.Println("listDbusIDs()")
 
 }
 
-func listSubscribers(client *terminalmanager.RPCClient) {
+func listSubscribers(client *tm.RPCClient) {
 	fmt.Println("listSubscribers()")
 }
 
-func listPublishers(client *terminalmanager.RPCClient) {
+func listPublishers(client *tm.RPCClient) {
 	fmt.Println("listPublishers()")
 }
 
-func startTerminalWithProcess(client *terminalmanager.RPCClient) {
+func startTerminalWithProcess(client *tm.RPCClient) {
 	fmt.Println("startTerminalWithProcess()")
+	response, err := client.SendToRPC("StartTerminalWithProcess", []string{})
+	if err != nil {
+		errorOut(err)
+		return
+	}
+
+	var newID msg.TerminalId
+	err = msg.Deserialize(response, &newID)
+	if err != nil {
+		errorOut(err)
+		return
+	}
+
+	fmt.Println("New terminal was created with ID", newID)
 }
 
-func getTerminalIDs(client *terminalmanager.RPCClient) ([]msg.TerminalId, error) {
+func getTerminalIDs(client *tm.RPCClient) ([]msg.TerminalId, error) {
 	response, err := client.SendToRPC("ListTerminalIDs", []string{})
 	if err != nil {
 		return []msg.TerminalId{}, err
@@ -217,7 +246,21 @@ func getTerminalIDs(client *terminalmanager.RPCClient) ([]msg.TerminalId, error)
 	return termIDs, nil
 }
 
-func getProcessIDs(client *terminalmanager.RPCClient) ([]msg.ProcessId, error) {
+func getTermIDsWithProcessIDs(client *tm.RPCClient) ([]msg.TermAndAttachedProcessID, error) {
+	response, err := client.SendToRPC("ListTIDsWithProcessIDs", []string{})
+	if err != nil {
+		return []msg.TermAndAttachedProcessID{}, err
+	}
+
+	var termsAndAttachedProcesses []msg.TermAndAttachedProcessID
+	err = msg.Deserialize(response, &termsAndAttachedProcesses)
+	if err != nil {
+		return []msg.TermAndAttachedProcessID{}, err
+	}
+	return termsAndAttachedProcesses, nil
+}
+
+func getProcessIDs(client *tm.RPCClient) ([]msg.ProcessId, error) {
 	response, err := client.SendToRPC("ListProcessIDs", []string{})
 	if err != nil {
 		return []msg.ProcessId{}, err
