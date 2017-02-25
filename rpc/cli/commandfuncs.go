@@ -159,7 +159,6 @@ func (c *CliManager) StartTerminalWithProcess(_ []string) error {
 	return nil
 }
 
-// TODO: fix em all
 func getTerminalIDs(client *tm.RPCClient) ([]msg.TerminalId, error) {
 	response, err := client.SendToRPC("ListTerminalIDs", []string{})
 	if err != nil {
