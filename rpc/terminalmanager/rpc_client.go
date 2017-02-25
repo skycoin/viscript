@@ -32,3 +32,7 @@ func (rpcClient *RPCClient) SendToRPC(command string, args []string) ([]byte, er
 		&result)
 	return result, err
 }
+
+func (rpcClient *RPCClient) ErrorOut(err error) {
+	println("Error. Server says:", err)
+}
