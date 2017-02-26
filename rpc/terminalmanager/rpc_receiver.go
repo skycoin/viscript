@@ -26,12 +26,19 @@ func (receiver *RPCReceiver) ListTIDsWithProcessIDs(_ []string, result *[]byte) 
 	termsWithProcessIDs := make([]msg.TermAndAttachedProcessID, 0)
 
 	for termID, term := range terms {
-		termsWithProcessIDs = append(termsWithProcessIDs, msg.TermAndAttachedProcessID{termID, term.AttachedProcess})
+		termsWithProcessIDs = append(termsWithProcessIDs,
+			msg.TermAndAttachedProcessID{TerminalId: termID, AttachedProcessId: term.AttachedProcess})
 	}
 	fmt.Printf("Terms with process IDs list:%+v", termsWithProcessIDs)
 	*result = msg.Serialize((uint16)(0), termsWithProcessIDs)
 	return nil
 }
+
+// TODO: here, finish this
+// func (receiver *RPCReceiver) GetChannelInfo(args []string, result *[]byte) error {
+// 	println("rpc_receiver.go/GetChannelInfo()")
+// 	return nil
+// }
 
 func (receiver *RPCReceiver) StartTerminalWithProcess(_ []string, result *[]byte) error {
 	terms := receiver.TerminalManager.terminalStack
