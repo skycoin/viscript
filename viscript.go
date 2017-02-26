@@ -7,8 +7,7 @@
 	* "option to snap to grid"
 * Resize terminals
 	* "snap to grid or char size"
-
-* put console feedback into focused terminal
+* terminal back buffer with scrolling
 
 
 

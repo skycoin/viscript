@@ -58,31 +58,41 @@ func (self *State) onChar(m msg.MessageChar) {
 		msg.TypePutChar, msg.MessagePutChar{0, m.Char}) //....just gave it 0 for now
 	hypervisor.DbusGlobal.PublishTo(
 		dbus.ChannelId(self.proc.OutChannelId), message) //EVERY publish action prefixes another chan id
+
+	commands[currCmd] += string(m.Char)
+	cursPos++
 }
 
 func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 	println("process/terminal/events.onKey()")
 
 	switch msg.Action(m.Action) {
+
 	case msg.Press:
 		fallthrough
 	case msg.Repeat:
 		switch m.Key {
+
 		case msg.KeyUp:
-			hypervisor.DbusGlobal.PublishTo(
-				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+			currCmd--
+			EchoWholeCommand()
 		case msg.KeyDown:
-			hypervisor.DbusGlobal.PublishTo(
-				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+			currCmd++
+			EchoWholeCommand()
+
 		case msg.KeyLeft:
-			hypervisor.DbusGlobal.PublishTo(
-				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+			fallthrough
 		case msg.KeyRight:
 			hypervisor.DbusGlobal.PublishTo(
 				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+
 		case msg.KeyEnter:
 			hypervisor.DbusGlobal.PublishTo(
 				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+			log = append(log, commands[currCmd])
+			commands = append(commands, prompt)
+			currCmd++
+			cursPos = len(prompt)
 		case msg.KeyBackspace:
 			hypervisor.DbusGlobal.PublishTo(
 				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)

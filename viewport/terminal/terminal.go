@@ -23,12 +23,13 @@ type Terminal struct {
 	InChannel       chan []byte
 
 	//int / character grid space
-	Curs     app.Vec2UI32 //current cursor/insert pos
-	GridSize app.Vec2I    //number of characters
+	Curr     app.Vec2UI32 //current insert position
+	Cursor   app.Vec2UI32
+	GridSize app.Vec2I //number of characters across
 	Chars    [NumRows][NumColumns]uint32
 
 	//float32 / GL space
-	//(mouse pos events, and resize event resolutions are the only things that use pixels)
+	//(mouse pos events & frame buffer sizes are the only things that use pixels)
 	BorderSize float32
 	CharSize   app.Vec2F
 	Bounds     *app.Rectangle
@@ -48,9 +49,7 @@ func (t *Terminal) Init() {
 	t.BorderSize = 0.013
 	t.SetSize()
 
-	// t.makeRandomChars(20)
-	t.PutString("prompt_ ")
-	t.SetCursor(8, 0)
+	t.PutString(">")
 	t.ResizingRight = false
 	t.ResizingBottom = false
 }
@@ -96,43 +95,43 @@ func (t *Terminal) RelayToTask(message []byte) {
 }
 
 func (t *Terminal) MoveLeft() {
-	t.Curs.X--
+	t.Curr.X--
 
-	if t.Curs.X < 0 {
-		t.Curs.X = uint32(t.GridSize.X) - 1
+	if t.Curr.X < 0 {
+		t.Curr.X = uint32(t.GridSize.X) - 1
 		t.MoveUp()
 	}
 }
 
 func (t *Terminal) MoveRight() {
-	t.Curs.X++
+	t.Curr.X++
 
-	if t.Curs.X >= uint32(t.GridSize.X) {
-		t.Curs.X = 0
+	if t.Curr.X >= uint32(t.GridSize.X) {
+		t.Curr.X = 0
 		t.MoveDown()
 	}
 }
 
 func (t *Terminal) MoveUp() {
-	t.Curs.Y--
+	t.Curr.Y--
 
-	if t.Curs.Y < 0 {
-		t.Curs.Y = uint32(t.GridSize.Y) - 1
+	if t.Curr.Y < 0 {
+		t.Curr.Y = uint32(t.GridSize.Y) - 1
 	}
 }
 
 func (t *Terminal) MoveDown() {
-	t.Curs.Y++
+	t.Curr.Y++
 
-	if t.Curs.Y >= uint32(t.GridSize.Y) {
-		t.Curs.Y = 0
+	if t.Curr.Y >= uint32(t.GridSize.Y) {
+		t.Curr.Y = 0
 	}
 }
 
 func (t *Terminal) SetCursor(x, y uint32) {
 	if t.posIsValid(x, y) {
-		t.Curs.X = x
-		t.Curs.Y = y
+		t.Curr.X = x
+		t.Curr.Y = y
 	}
 }
 
@@ -144,8 +143,8 @@ func (t *Terminal) SetCursor(x, y uint32) {
 // (2) automated flow control.  (just tell what char/string to put into the current flow
 //			and term manages it's placement, wrapping, & eventually word-preserving-wrapping)
 func (t *Terminal) PutCharacter(char uint32) {
-	if t.posIsValid(t.Curs.X, t.Curs.Y) {
-		t.SetCharacterAt(t.Curs.X, t.Curs.Y, char)
+	if t.posIsValid(t.Curr.X, t.Curr.Y) {
+		t.SetCharacterAt(t.Curr.X, t.Curr.Y, char)
 		t.MoveRight()
 	}
 }

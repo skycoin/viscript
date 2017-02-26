@@ -67,7 +67,7 @@ func (t *Terminal) onKey(m msg.MessageKey) {
 		t.MoveRight()
 	case msg.KeyEnter:
 		t.MoveDown()
-		t.Curs.X = 0
+		t.Curr.X = 0
 	case msg.KeyBackspace:
 		t.BackSpace()
 	}

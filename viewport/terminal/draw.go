@@ -6,10 +6,10 @@ import (
 )
 
 func (self *TerminalStack) Draw() {
-	for _, value := range self.Terms {
-		z := value.Depth
+	for _, t := range self.Terms {
+		z := t.Depth
 
-		if value == self.Focused {
+		if t == self.Focused {
 			z = 10
 
 			gl.SetColor(gl.White)
@@ -17,42 +17,43 @@ func (self *TerminalStack) Draw() {
 			gl.SetColor(gl.Gray)
 		}
 
-		gl.Draw9SlicedRect(gl.Pic_GradientBorder, value.Bounds, z)
+		gl.Draw9SlicedRect(gl.Pic_GradientBorder, t.Bounds, z)
 
 		cr := &app.Rectangle{ //current rect
-			value.Bounds.Top,
-			value.Bounds.Left + value.CharSize.X,
-			value.Bounds.Top - value.CharSize.Y,
-			value.Bounds.Left}
+			t.Bounds.Top,
+			t.Bounds.Left + t.CharSize.X,
+			t.Bounds.Top - t.CharSize.Y,
+			t.Bounds.Left}
 
-		cr.Left += value.BorderSize //start with the initial rect being offset by the border margin
-		cr.Right += value.BorderSize
-		cr.Top -= value.BorderSize
-		cr.Bottom -= value.BorderSize
+		cr.Left += t.BorderSize //start with the initial rect being offset by the border margin
+		cr.Right += t.BorderSize
+		cr.Top -= t.BorderSize
+		cr.Bottom -= t.BorderSize
 
-		for x := 0; x < value.GridSize.X; x++ {
-			for y := 0; y < value.GridSize.Y; y++ {
-				if value.Chars[y][x] != 0 {
-					gl.DrawCharAtRect(rune(value.Chars[y][x]), cr, z)
+		for x := 0; x < t.GridSize.X; x++ {
+			for y := 0; y < t.GridSize.Y; y++ {
+				if t.Chars[y][x] != 0 {
+					gl.DrawCharAtRect(rune(t.Chars[y][x]), cr, z)
 				}
 
 				//draw cursor (if it's here)
-				if x == int(value.Curs.X) &&
-					y == int(value.Curs.Y) {
+				if x == int(t.Cursor.X) &&
+					y == int(t.Cursor.Y) {
+
 					gl.DrawQuad(
 						gl.Pic_GradientBorder,
 						gl.Curs.GetCurrentFrame(*cr), z)
 				}
 
-				cr.Top -= value.CharSize.Y
-				cr.Bottom -= value.CharSize.Y
+				cr.Top -= t.CharSize.Y
+				cr.Bottom -= t.CharSize.Y
 			}
 
-			cr.Top = value.Bounds.Top - value.BorderSize
-			cr.Bottom = value.Bounds.Top - value.BorderSize - value.CharSize.Y
+			cr.Top = t.Bounds.Top - t.BorderSize
+			cr.Bottom = t.Bounds.Top - t.BorderSize - t.CharSize.Y
 
-			cr.Left += value.CharSize.X
-			cr.Right += value.CharSize.X
+			cr.Left += t.CharSize.X
+			cr.Right += t.CharSize.X
 		}
 	}
 }
