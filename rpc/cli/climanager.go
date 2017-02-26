@@ -9,7 +9,6 @@ type CliManager struct {
 	Commands         map[string]func(args []string) error
 	ChosenTerminalId msg.TerminalId
 	ChosenProcessId  msg.ProcessId
-	CachedIds        []msg.TermAndAttachedProcessID
 
 	Client     *tm.RPCClient
 	SessionEnd bool
@@ -18,7 +17,6 @@ type CliManager struct {
 func (c *CliManager) Init(port string) {
 	c.initCommands()
 
-	c.CachedIds = make([]msg.TermAndAttachedProcessID, 0)
 	c.SessionEnd = false
 	c.Client = tm.RunClient(":" + port)
 }
@@ -31,24 +29,31 @@ func (c *CliManager) CommandDispatcher(command string, args []string) {
 			c.PrintServerError(serverError)
 		}
 	} else {
-		println("Command not found. Type 'help' or 'h'.")
+		println("Command not found. Type 'help(h)' for commands.")
 	}
 }
 
 func (c *CliManager) initCommands() {
 	c.Commands = map[string]func(args []string) error{}
+
+	c.Commands["ltp"] = c.ListTermIDsWithAttachedProcesses
+	c.Commands["sett"] = c.SetDefaultTerminalId
+	c.Commands["setp"] = c.SetDefaultProcessId
+
+	c.Commands["cft"] = c.ShowChosenTermChannelInfo
+
+	c.Commands["stp"] = c.StartTerminalWithProcess
+
 	c.Commands["help"] = c.PrintHelp
 	c.Commands["h"] = c.PrintHelp
-
-	c.Commands["lt"] = c.ListTerminalIDs
-	c.Commands["ltp"] = c.ListTermIDsWithAttachedProcesses
-	c.Commands["lp"] = c.ListProcessIDs
-	c.Commands["stp"] = c.StartTerminalWithProcess
-	// TODO: c.commands["cinf"] = c.GetChannelInfo
-
 	c.Commands["clear"] = c.ClearTerminal
+	c.Commands["c"] = c.ClearTerminal
 	c.Commands["quit"] = c.Quit
 	c.Commands["q"] = c.Quit
+}
+
+func (c *CliManager) PrintServerError(err error) {
+	c.Client.ErrorOut(err)
 }
 
 func (c *CliManager) TerminalIdNotNil() bool {
