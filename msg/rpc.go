@@ -13,5 +13,10 @@ type ChannelInfo struct {
 	OwnerType          dbus.ResourceType
 	ResourceIdentifier string
 
-	Subscribers []dbus.PubsubSubscriber
+	Subscribers []PubsubSubscriber
+}
+
+type PubsubSubscriber struct {
+	SubscriberId   dbus.ResourceId
+	SubscriberType dbus.ResourceType
 }

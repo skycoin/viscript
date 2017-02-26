@@ -7,33 +7,32 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strconv"
 )
-
-func (c *CliManager) PrintServerError(err error) {
-	c.Client.ErrorOut(err)
-}
 
 func (c *CliManager) PrintHelp(_ []string) error {
 	p := fmt.Printf
-	p("\n<< -[ HELP ]- >>\n\n")
-
-	p("> lt\t\tList all terminal IDs.\n")
-	p("> ltp\t\tList all terminal IDs with Attached Process IDs.\n")
-	p("> lp\t\tList all process IDs.\n")
-	// p("> ld\t\tList all dbus objects. --TODO\n")
-	p("> cinf <Id>\tGet channel info of terminal with Id. --TODO\n\n")
-	// p("> lpub\t\tList all publishers. --TODO\n\n")
+	p("\n<< [- HELP -] >>\n\n")
 
 	p("> stp\t\tStart a new terminal with process.\n\n")
 
-	p("> clear\t\tClear the terminal.\n")
+	p("> ltp\t\tList terminal Ids with Attached Process Ids.\n")
+	p("> sett <tId>\tSet given terminal Id as default for all following commands.\n")
+	p("> setp <pId>\tSet given process Id as default for all following commands.\n\n")
+
+	p("> cft\t\tGet out channel info of terminal with default Id.\n\n")
+	// p("> lpub\t\tList all publishers. --TODO\n\n")
+	// p("> ld\t\tList all dbus objects. --TODO\n")
+
+	p("> clear(c)\t\tClear the terminal.\n")
 	p("> quit(q)\tQuit from cli.\n\n")
 
 	return nil
 }
 
 func (c *CliManager) Quit(_ []string) error {
-	c.SessionEnd = false
+	println("See ya again! :>")
+	c.SessionEnd = true
 	return nil
 }
 
@@ -56,90 +55,93 @@ func (c *CliManager) ClearTerminal(_ []string) error {
 	return nil
 }
 
-func (c *CliManager) ListTerminalIDs(_ []string) error {
-	termIDs, err := getTerminalIDs(c.Client)
-	if err != nil {
-		return err
-	}
-
-	fmt.Printf("\nTerminals(%d total):\n\n", len(termIDs))
-	fmt.Println("Num\tID")
-	fmt.Println()
-	for i, termID := range termIDs {
-		fmt.Println(i, "\t", termID)
-	}
-
-	return nil
-}
-
 func (c *CliManager) ListTermIDsWithAttachedProcesses(_ []string) error {
-	termsWithProcessIDs, err := getTermIDsWithProcessIDs(c.Client)
+	termsWithProcessIDs, err := GetTermIDsWithProcessIDs(c.Client)
+
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("\nTerminals(%d total):\n\n", len(termsWithProcessIDs))
+	fmt.Printf("\nTerminals(%d total) defaults marked with [$]:\n\n", len(termsWithProcessIDs))
 	fmt.Println("Index\tTerminalID\t\tAttached Process ID")
 	fmt.Println()
-	for i, term := range termsWithProcessIDs {
-		fmt.Printf("%d\t%d\t%d\n", i, term.TerminalId, term.AttachedProcessId)
+	for index, term := range termsWithProcessIDs {
+		fmt.Printf("%d\t", index)
+
+		// mark selected default terminal id
+		if term.TerminalId == c.ChosenTerminalId {
+			fmt.Printf("[ %d ]\t", term.TerminalId)
+		} else {
+			fmt.Printf("  %d\t", term.TerminalId)
+		}
+
+		// mark selected default process id
+		if term.AttachedProcessId == c.ChosenProcessId {
+			fmt.Printf("[ %d ]\t", term.AttachedProcessId)
+		} else {
+			fmt.Printf("  %d\t", term.AttachedProcessId)
+		}
+		fmt.Printf("\n")
 	}
 
 	return nil
 }
 
-func (c *CliManager) ListProcessIDs(_ []string) error {
-	processIDs, err := getProcessIDs(c.Client)
+func (c *CliManager) SetDefaultTerminalId(args []string) error {
+	if len(args) == 0 {
+		fmt.Printf("\n\nPass the terminal Id as arguement please.")
+		return nil
+	}
+
+	termId, err := strconv.Atoi(args[0])
+	if err != nil || termId < 1 {
+		fmt.Printf("\n\nArgument should be a number > 0, not %s\n\n", args[0])
+		return nil
+	}
+
+	c.ChosenTerminalId = msg.TerminalId(termId)
+	return nil
+}
+
+func (c *CliManager) SetDefaultProcessId(args []string) error {
+	if len(args) == 0 {
+		fmt.Printf("\n\nArgument should be a number > 0, not %s\n\n", args[0])
+		return nil
+	}
+
+	processId, err := strconv.Atoi(args[0])
+	if err != nil || processId < 1 {
+		fmt.Printf("\n\nArgument should be a number > 0, not %s\n\n", args[0])
+	}
+
+	c.ChosenProcessId = msg.ProcessId(processId)
+	return nil
+}
+
+func (c *CliManager) ShowChosenTermChannelInfo(_ []string) error {
+	if c.ChosenTerminalId == 0 {
+		fmt.Printf("\nDefault terminal Id is not set.\n\n")
+		return nil
+	}
+
+	response, err := c.Client.SendToRPC("GetTermChannelInfo", []string{fmt.Sprintf("%d", c.ChosenTerminalId)})
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("\nProcesses(%d total):\n\n", len(processIDs))
-	fmt.Println("Num\tID")
-	fmt.Println()
-	for i, processID := range processIDs {
-		fmt.Println(i, "\t", processID)
+	var channelInfo msg.ChannelInfo
+	err = msg.Deserialize(response, &channelInfo)
+	if err != nil {
+		return err
 	}
+
+	// TODO: print structured channel info
+	// fmt.Printf("Terminal out channel info with subscribers (%d total):\n", len(channelInfo.Subscribers))
+	// fmt.Printf("")
+	fmt.Printf("Channel Info:\n%+v\n\n", channelInfo)
 
 	return nil
 }
-
-// func (c *CliManager) ListDbusObjects(client *tm.RPCClient) {
-// 	fmt.Println("listDbusIDs()")
-
-// }
-
-// func (c *CliManager) GetChannelInfo(args []string) error {
-// 	fmt.Println("commandfuncs.go/GetChannelInfo()")
-// 	// TODO: implement this
-// 	if len(args) == 0 {
-// 		fmt.Printf("\n\nPass the terminal Id as argument please.")
-// 		return
-// 	}
-
-// 	termId, err := strconv.Atoi(args[0])
-// 	// FIXME: we should save i guess the list of terminal IDS and not send a request if its
-// 	// incorrect. So we need a terminal id list and from there should cli user choose the id.
-// 	if err != nil || termId < 1 {
-// 		fmt.Printf("\nArgument should be a number > 0, not %s\n\n", args[0])
-// 	}
-
-// 	response, err := c.client.SendToRPC("GetChannelInfo", termId)
-// 	if err != nil {
-// 		errorOut(err)
-// 		return
-// 	}
-
-// 	var channelInfo msg.ChannelInfo
-// 	err = msg.Deserialize(response, &channelInfo)
-// 	if err != nil {
-// 		errorOut(err)
-// 		return
-// 	}
-
-// 	// TODO: print structured channel info
-
-// }
 
 func (c *CliManager) StartTerminalWithProcess(_ []string) error {
 	fmt.Println("startTerminalWithProcess()")
@@ -159,7 +161,7 @@ func (c *CliManager) StartTerminalWithProcess(_ []string) error {
 	return nil
 }
 
-func getTerminalIDs(client *tm.RPCClient) ([]msg.TerminalId, error) {
+func GetTerminalIDs(client *tm.RPCClient) ([]msg.TerminalId, error) {
 	response, err := client.SendToRPC("ListTerminalIDs", []string{})
 	if err != nil {
 		return []msg.TerminalId{}, err
@@ -173,7 +175,7 @@ func getTerminalIDs(client *tm.RPCClient) ([]msg.TerminalId, error) {
 	return termIDs, nil
 }
 
-func getTermIDsWithProcessIDs(client *tm.RPCClient) ([]msg.TermAndAttachedProcessID, error) {
+func GetTermIDsWithProcessIDs(client *tm.RPCClient) ([]msg.TermAndAttachedProcessID, error) {
 	response, err := client.SendToRPC("ListTIDsWithProcessIDs", []string{})
 	if err != nil {
 		return []msg.TermAndAttachedProcessID{}, err
@@ -187,7 +189,7 @@ func getTermIDsWithProcessIDs(client *tm.RPCClient) ([]msg.TermAndAttachedProces
 	return termsAndAttachedProcesses, nil
 }
 
-func getProcessIDs(client *tm.RPCClient) ([]msg.ProcessId, error) {
+func GetProcessIDs(client *tm.RPCClient) ([]msg.ProcessId, error) {
 	response, err := client.SendToRPC("ListProcessIDs", []string{})
 	if err != nil {
 		return []msg.ProcessId{}, err

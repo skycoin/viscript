@@ -1,27 +1,19 @@
 package terminalmanager
 
 import (
+	"errors"
 	"fmt"
+	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
+	"strconv"
 )
 
 type RPCReceiver struct {
 	TerminalManager *TerminalManager
 }
 
-func (receiver *RPCReceiver) ListTerminalIDs(_ []string, result *[]byte) error {
-	terms := receiver.TerminalManager.terminalStack.Terms
-	terminalIDs := make([]msg.TerminalId, 0)
-
-	for k, _ := range terms {
-		terminalIDs = append(terminalIDs, k)
-	}
-	fmt.Println("Terminal ID list:", terminalIDs)
-	*result = msg.Serialize((uint16)(0), terminalIDs)
-	return nil
-}
-
 func (receiver *RPCReceiver) ListTIDsWithProcessIDs(_ []string, result *[]byte) error {
+	println("\nHandling Request: Lis terminal Ids with attached process Ids")
 	terms := receiver.TerminalManager.terminalStack.Terms
 	termsWithProcessIDs := make([]msg.TermAndAttachedProcessID, 0)
 
@@ -29,33 +21,61 @@ func (receiver *RPCReceiver) ListTIDsWithProcessIDs(_ []string, result *[]byte) 
 		termsWithProcessIDs = append(termsWithProcessIDs,
 			msg.TermAndAttachedProcessID{TerminalId: termID, AttachedProcessId: term.AttachedProcess})
 	}
-	fmt.Printf("Terms with process IDs list:%+v", termsWithProcessIDs)
-	*result = msg.Serialize((uint16)(0), termsWithProcessIDs)
+	fmt.Printf("Terms with process IDs list:%+v\n", termsWithProcessIDs)
+	*result = msg.Serialize(uint16(0), termsWithProcessIDs)
 	return nil
 }
 
-// TODO: here, finish this
-// func (receiver *RPCReceiver) GetChannelInfo(args []string, result *[]byte) error {
-// 	println("rpc_receiver.go/GetChannelInfo()")
-// 	return nil
-// }
+func (receiver *RPCReceiver) GetTermChannelInfo(args []string, result *[]byte) error {
+	println("\nHandling Request: Get terminal out dbus channel info")
+	terminalId, err := strconv.Atoi(args[0])
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	term, ok := receiver.TerminalManager.terminalStack.Terms[msg.TerminalId(terminalId)]
+	if !ok {
+		termExistsErrText := fmt.Sprintf("Terminal with given Id: %d doesn't exist.", terminalId)
+		fmt.Println(termExistsErrText)
+		return errors.New(termExistsErrText)
+	}
+
+	// We could also get dbusChannel from this terminal's perspective
+	// but out channel should give some useful info I guess
+	dbusChannel, ok := hypervisor.DbusGlobal.PubsubChannels[term.OutChannelId]
+	if !ok {
+		channelExistsErrText := fmt.Sprintf("Channel with given Id: %d doesn't exist.", term.OutChannelId)
+		fmt.Println(channelExistsErrText)
+		return errors.New(channelExistsErrText)
+	}
+
+	channelInfo := msg.ChannelInfo{}
+
+	channelInfo.ChannelId = dbusChannel.ChannelId
+	channelInfo.Owner = dbusChannel.Owner
+	channelInfo.OwnerType = dbusChannel.OwnerType
+	channelInfo.ResourceIdentifier = dbusChannel.ResourceIdentifier
+
+	// moving subscribers to the type without chan
+	channelSubscribers := make([]msg.PubsubSubscriber, 0)
+	for _, v := range dbusChannel.Subscribers {
+		channelSubscribers = append(channelSubscribers, msg.PubsubSubscriber{
+			SubscriberId:   v.SubscriberId,
+			SubscriberType: v.SubscriberType})
+	}
+
+	channelInfo.Subscribers = channelSubscribers
+
+	*result = msg.Serialize(uint16(0), channelInfo)
+	return nil
+}
 
 func (receiver *RPCReceiver) StartTerminalWithProcess(_ []string, result *[]byte) error {
+	println("\nHandling Request: ")
 	terms := receiver.TerminalManager.terminalStack
 	newTerminalID := terms.AddTerminal()
 	fmt.Println("Terminal with ID", newTerminalID, "created!")
 	*result = msg.Serialize((uint16)(0), newTerminalID)
-	return nil
-}
-
-func (receiver *RPCReceiver) ListProcessIDs(_ []string, result *[]byte) error {
-	processes := receiver.TerminalManager.processList.ProcessMap
-	processIDs := make([]msg.ProcessId, 0)
-
-	for k, _ := range processes {
-		processIDs = append(processIDs, k)
-	}
-	fmt.Println("Process ID list:", processIDs)
-	*result = msg.Serialize((uint16)(0), processIDs)
 	return nil
 }

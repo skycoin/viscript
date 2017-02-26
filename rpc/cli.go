@@ -11,8 +11,11 @@ import (
 
 var cliManager cli.CliManager
 
+const prompt string = "Enter the command (help(h) for commands list):\n> "
+const defaultPort string = "7777"
+
 func main() {
-	port := "7777"
+	port := defaultPort
 	if len(os.Args) >= 2 {
 		port = os.Args[1]
 	}
@@ -33,7 +36,7 @@ func promptCycle() {
 }
 
 func inputFromCli() (command string, args []string) {
-	fmt.Printf("Enter the command (help(h) for commands list):\n> ")
+	fmt.Printf(prompt)
 	command = ""
 	args = []string{}
 
