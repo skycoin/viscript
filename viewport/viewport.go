@@ -1,12 +1,8 @@
 package viewport
 
 import (
-	"fmt"
-
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/viewport/terminal"
-	//"github.com/corpusc/viscript/script"
-	//"log"
 	"runtime"
 
 	igl "github.com/corpusc/viscript/viewport/gl" //internal gl
@@ -22,7 +18,7 @@ var (
 )
 
 func ViewportInit() {
-	fmt.Println("viewport.ViewportInit()")
+	println("viewport.ViewportInit()")
 	app.MakeHighlyVisibleLogHeader(app.Name, 15)
 	igl.InitCanvas()
 	// GLFW event handling must run on the main OS thread
@@ -30,29 +26,29 @@ func ViewportInit() {
 	runtime.LockOSThread()
 }
 
-func ViewportTerminalsInit() {
-	fmt.Println("viewport.init()")
-	Terms.Init()
-	Terms.AddTerminal()
-	Terms.AddTerminal()
-	Terms.AddTerminal()
-}
-
-func ViewportScreenTeardown() {
-	igl.ScreenTeardown()
-}
-
 func ViewportScreenInit() {
-	fmt.Printf("Viewport: screen init\n")
+	println("Viewport: screen init")
 	igl.WindowInit()
 	igl.LoadTextures()
 	igl.InitRenderer()
 }
 
 func InitEvents() {
-	fmt.Printf("Viewport: init events \n")
+	println("Viewport: init events")
 	igl.InitInputEvents(igl.GlfwWindow)
 	igl.InitMiscEvents(igl.GlfwWindow)
+}
+
+func ViewportTerminalsInit() {
+	println("viewport.ViewportTerminalsInit()")
+	Terms.Init()
+	Terms.AddTerminal()
+	Terms.AddTerminal()
+	Terms.AddTerminal()
+}
+
+func TeardownScreen() {
+	igl.ScreenTeardown()
 }
 
 func PollUiInputEvents() {

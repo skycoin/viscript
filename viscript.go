@@ -56,11 +56,11 @@ func main() {
 
 	hypervisor.Init()
 
-	viewport.DebugPrintInputEvents = true //print input events
-	viewport.ViewportInit()               //runtime.LockOSThread(), InitCanvas()
+	viewport.DebugPrintInputEvents = true
+	viewport.ViewportInit() //runtime.LockOSThread(), InitCanvas()
 	viewport.ViewportScreenInit()
 	viewport.InitEvents()
-	viewport.ViewportTerminalsInit() //start the terminal
+	viewport.ViewportTerminalsInit()
 
 	// rpc
 	go func() {
@@ -71,7 +71,9 @@ func main() {
 	println("Start Loop;")
 	for viewport.CloseWindow == false {
 		viewport.DispatchEvents() //event channel
-		hypervisor.ProcessTick()  //processes, handle incoming events
+
+		hypervisor.TickTasks()
+
 		viewport.PollUiInputEvents()
 		viewport.Tick()
 		viewport.UpdateDrawBuffer()
@@ -79,6 +81,6 @@ func main() {
 	}
 
 	println("Closing down viewport")
-	viewport.ViewportScreenTeardown()
+	viewport.TeardownScreen()
 	hypervisor.HypervisorTeardown()
 }

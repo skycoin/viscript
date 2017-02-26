@@ -46,14 +46,11 @@ func AddProcess(p msg.ProcessInterface) msg.ProcessId {
 }
 
 func GetProcessEvents() {
-	println("process_list.GetProcessEvents()               ---------------- TODO !!!!!!!!!!!")
+	println("process_list.GetProcessEvents()   ---------------- TODO !!!!!!!!!!!")
 }
 
-//run the process, creating new events for hypervisor
-func ProcessTick() {
-	//println("process_list.ProcessTick()")
-
+func TickTasks() {
 	for _, p := range ProcessListGlobal.ProcessMap {
-		p.Tick() //only do if incoming messages
+		p.Tick()
 	}
 }
