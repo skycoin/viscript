@@ -99,7 +99,6 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 			log = append(log, commands[currCmd])
 			commands = append(commands, prompt)
 			traverseCommands(+1)
-			cursPos = len(prompt)
 
 		case msg.KeyBackspace:
 			hypervisor.DbusGlobal.PublishTo(

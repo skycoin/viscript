@@ -13,16 +13,17 @@ var (
 	cursPos  int    //cursor/insert position, local to 1 commands space (2 lines)
 	prompt   string = ">"
 	//this assumes 64 horizontal characters.  so we dedicate 2 lines for each command
-	maxCommandSize = 128 - len(prompt) - 1 //& ending space for cursor at the end of (potentially the 2nd) line
+	maxCommandSize = 128 - len(prompt) - 1 //& ending space for cursor at the end of line (potentially the 2nd)
 )
 
 func init() {
 	println("(process/terminal/cli).init()")
 	log = []string{}
 	commands = []string{}
-	commands = append(commands, "OLDEST command that you typed (not really, just an example of functionality)")
-	commands = append(commands, "older line that you typed (nah, not really)")
+	commands = append(commands, prompt+"OLDEST command that you typed (not really, just an example of functionality)")
+	commands = append(commands, prompt+"older line that you typed (nah, not really)")
 	commands = append(commands, prompt)
+	cursPos = 1
 	currCmd = 2
 }
 
@@ -54,4 +55,6 @@ func traverseCommands(delta int) {
 	if currCmd >= len(commands) {
 		currCmd = len(commands) - 1
 	}
+
+	cursPos = len(commands[currCmd])
 }
