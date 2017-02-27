@@ -18,6 +18,8 @@ func (c *CliManager) PrintHelp(_ []string) error {
 	p("> stp\t\tStart a new terminal with process.\n\n")
 
 	p("> ltp\t\tList terminal Ids with Attached Process Ids.\n")
+	p("> lp\t\tList process Ids. (TODO: labels?)\n\n")
+
 	p("> sett <tId>\tSet given terminal Id as default for all following commands.\n")
 	p("> setp <pId>\tSet given process Id as default for all following commands.\n\n")
 
@@ -83,6 +85,22 @@ func (c *CliManager) ListTermIDsWithAttachedProcesses(_ []string) error {
 			fmt.Printf("  %d\t", term.AttachedProcessId)
 		}
 		fmt.Printf("\n")
+	}
+
+	return nil
+}
+
+func (c *CliManager) ListProcessIDs(_ []string) error {
+	processIDs, err := GetProcessIDs(c.Client)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("\nProcesses(%d total):\n\n", len(processIDs))
+	fmt.Println("Num\tId")
+	fmt.Println()
+	for i, processID := range processIDs {
+		fmt.Println(i, "\t", processID)
 	}
 
 	return nil

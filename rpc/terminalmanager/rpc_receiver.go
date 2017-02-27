@@ -79,3 +79,15 @@ func (receiver *RPCReceiver) StartTerminalWithProcess(_ []string, result *[]byte
 	*result = msg.Serialize((uint16)(0), newTerminalID)
 	return nil
 }
+
+func (receiver *RPCReceiver) ListProcessIDs(_ []string, result *[]byte) error {
+	processes := receiver.TerminalManager.processList.ProcessMap
+	processIDs := make([]msg.ProcessId, 0)
+
+	for k, _ := range processes {
+		processIDs = append(processIDs, k)
+	}
+	fmt.Println("Process ID list:", processIDs)
+	*result = msg.Serialize((uint16)(0), processIDs)
+	return nil
+}
