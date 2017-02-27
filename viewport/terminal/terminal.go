@@ -23,7 +23,7 @@ type Terminal struct {
 	InChannel       chan []byte
 
 	//int / character grid space
-	Curr     app.Vec2UI32 //current insert position
+	Curr     app.Vec2I //current insert position
 	Cursor   app.Vec2I
 	GridSize app.Vec2I //number of characters across
 	Chars    [NumRows][NumColumns]uint32
@@ -49,7 +49,7 @@ func (t *Terminal) Init() {
 	t.BorderSize = 0.013
 	t.SetSize()
 
-	t.PutString(">")
+	t.PutString("> ")
 	t.ResizingRight = false
 	t.ResizingBottom = false
 }
@@ -70,7 +70,6 @@ func (t *Terminal) SetSize() {
 }
 
 func (t *Terminal) BackSpace() {
-	// FIXME: should have to look at this more in depth tomorrow
 	t.MoveLeft()
 	t.PutCharacter(0)
 	t.MoveLeft()
@@ -98,7 +97,7 @@ func (t *Terminal) MoveLeft() {
 	t.Curr.X--
 
 	if t.Curr.X < 0 {
-		t.Curr.X = uint32(t.GridSize.X) - 1
+		t.Curr.X = t.GridSize.X - 1
 		t.MoveUp()
 	}
 }
@@ -106,7 +105,7 @@ func (t *Terminal) MoveLeft() {
 func (t *Terminal) MoveRight() {
 	t.Curr.X++
 
-	if t.Curr.X >= uint32(t.GridSize.X) {
+	if t.Curr.X >= t.GridSize.X {
 		t.Curr.X = 0
 		t.MoveDown()
 	}
@@ -116,19 +115,19 @@ func (t *Terminal) MoveUp() {
 	t.Curr.Y--
 
 	if t.Curr.Y < 0 {
-		t.Curr.Y = uint32(t.GridSize.Y) - 1
+		t.Curr.Y = t.GridSize.Y - 1
 	}
 }
 
 func (t *Terminal) MoveDown() {
 	t.Curr.Y++
 
-	if t.Curr.Y >= uint32(t.GridSize.Y) {
+	if t.Curr.Y >= t.GridSize.Y {
 		t.Curr.Y = 0
 	}
 }
 
-func (t *Terminal) SetCursor(x, y uint32) {
+func (t *Terminal) SetCursor(x, y int) {
 	if t.posIsValid(x, y) {
 		t.Curr.X = x
 		t.Curr.Y = y
@@ -149,7 +148,7 @@ func (t *Terminal) PutCharacter(char uint32) {
 	}
 }
 
-func (t *Terminal) SetCharacterAt(x, y uint32, Char uint32) {
+func (t *Terminal) SetCharacterAt(x, y int, Char uint32) {
 	numOOB = 0
 
 	if t.posIsValid(x, y) {
@@ -163,12 +162,12 @@ func (t *Terminal) PutString(s string) {
 	}
 }
 
-func (t *Terminal) SetStringAt(X, Y uint32, S string) {
+func (t *Terminal) SetStringAt(X, Y int, S string) {
 	numOOB = 0
 
-	for x, c := range S {
-		if t.posIsValid(X+uint32(x), Y) {
-			t.Chars[Y][X+uint32(x)] = uint32(c)
+	for index, c := range S {
+		if t.posIsValid(X+index, Y) {
+			t.Chars[Y][X+index] = uint32(c)
 		}
 	}
 }
@@ -189,8 +188,8 @@ func (t *Terminal) SetGridSize() {
 func (t *Terminal) makeRandomChars(count int) {
 	for i := 0; i < count; i++ {
 		t.SetCharacterAt(
-			uint32(rand.Int31n(NumColumns)),
-			uint32(rand.Int31n(NumRows)),
+			int(rand.Int31n(NumColumns)),
+			int(rand.Int31n(NumRows)),
 			uint32(rand.Int31n(128)))
 	}
 }
@@ -219,9 +218,9 @@ func (t *Terminal) updateCommandLine(m msg.MessageCommandLine) {
 }
 
 var numOOB int // number of out of bound characters
-func (t *Terminal) posIsValid(X, Y uint32) bool {
-	if X < 0 || X >= uint32(t.GridSize.X) ||
-		Y < 0 || Y >= uint32(t.GridSize.Y) {
+func (t *Terminal) posIsValid(X, Y int) bool {
+	if X < 0 || X >= t.GridSize.X ||
+		Y < 0 || Y >= t.GridSize.Y {
 		numOOB++
 
 		if numOOB == 1 {
