@@ -95,8 +95,9 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 			traverseCommands(+1)
 
 		case msg.KeyBackspace:
-			//commands[currCmd] = commands[currCmd][:cursPos] + string(m.Char) + commands[currCmd][cursPos:]
-			//cursorBackward()
+			if cursorBackward() { //...succeeded
+				commands[currCmd] = commands[currCmd][:cursPos] + commands[currCmd][cursPos+1:]
+			}
 		}
 
 		EchoWholeCommand(self.proc.OutChannelId)
@@ -113,10 +114,13 @@ func cursorForward() {
 	}
 }
 
-func cursorBackward() {
+func cursorBackward() bool { //returns whether moved successfully
 	cursPos--
 
-	if cursPos < 0 {
-		cursPos = 0
+	if cursPos < len(prompt) {
+		cursPos = len(prompt)
+		return false
 	}
+
+	return true
 }
