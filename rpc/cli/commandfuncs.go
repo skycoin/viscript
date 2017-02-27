@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"github.com/corpusc/viscript/hypervisor/dbus"
 	"github.com/corpusc/viscript/msg"
 	tm "github.com/corpusc/viscript/rpc/terminalmanager"
 	"os"
@@ -135,10 +136,25 @@ func (c *CliManager) ShowChosenTermChannelInfo(_ []string) error {
 		return err
 	}
 
-	// TODO: print structured channel info
-	// fmt.Printf("Terminal out channel info with subscribers (%d total):\n", len(channelInfo.Subscribers))
-	// fmt.Printf("")
-	fmt.Printf("Channel Info:\n%+v\n\n", channelInfo)
+	fmt.Printf("Term (Id: %d) out channel info:\n", c.ChosenTerminalId)
+
+	println("Channel Id:", channelInfo.ChannelId)
+	println("Channel Owner:", channelInfo.Owner)
+	println("Channel Owner's Type:", dbus.ResourceTypeNames[channelInfo.OwnerType])
+	println("Channel ResourceIdentifier:", channelInfo.ResourceIdentifier)
+
+	subCount := len(channelInfo.Subscribers)
+
+	if subCount == 0 {
+		fmt.Printf("No subscribers to this channel.\n")
+	} else {
+		fmt.Printf("Channel's Subscribers (%d total):\n\n", subCount)
+		fmt.Println("Index\tResourceId\t\tResource Type")
+		for index, subscriber := range channelInfo.Subscribers {
+			fmt.Println(index, "\t", subscriber.SubscriberId, "\t\t",
+				dbus.ResourceTypeNames[subscriber.SubscriberType])
+		}
+	}
 
 	return nil
 }
