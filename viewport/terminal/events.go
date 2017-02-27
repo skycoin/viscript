@@ -59,21 +59,13 @@ func (t *Terminal) UnpackEvent(message []byte) []byte {
 // }
 
 func (t *Terminal) onKey(m msg.MessageKey) {
-	println("viewport/terminal/events.onKey() -----SHOULD PROBABLY NOT HANDLE THESE HERE")
+	println("viewport/terminal/events.onKey() -----SHOULD NOT HANDLE THESE HERE?")
 
-	// switch m.Key {
-	// case msg.KeyUp:
-	// 	t.MoveUp()
-	// case msg.KeyDown:
-	// 	t.MoveDown()
-	// case msg.KeyLeft:
-	// 	t.MoveLeft()
-	// case msg.KeyRight:
-	// 	t.MoveRight()
-	// case msg.KeyEnter:
-	// 	t.MoveDown()
-	// 	t.Curr.X = 0
-	// case msg.KeyBackspace:
-	// 	t.BackSpace()
-	// }
+	switch m.Key {
+	case msg.KeyEnter:
+		t.MoveDown()
+		// 	t.Curr.X = 0
+		// case msg.KeyBackspace:
+		// 	t.BackSpace()
+	}
 }

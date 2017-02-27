@@ -1287,4 +1287,27 @@ it might only need one packet type.  for receiving text and another for respondi
 
 
 do we have library for task to get user input and printf to terminal and
-maintaning a back buffer and scroll in terminal etc.
+maintaining a back buffer and scroll in terminal etc.
+
+
+
+
+
+
+what about a meshnet process
+have list of task types which is a process interface implementation
+then do task implementation for meshnet CLI
+
+
+
+
+
+how would we share printf library implementation between different task implementations?
+
+
+
+
+
+task type.  we do not have text labels for task type yet
+and probably only have one task type or task interface implementation.  right now.
+we should have a task type id and a text label for each task interface implementation

@@ -52,9 +52,13 @@ func (self *State) UnpackEvent(msgType uint16, message []byte) []byte {
 
 func (self *State) onChar(m msg.MessageChar) {
 	println("process/terminal/events.onChar()")
-	commands[currCmd] += string(m.Char)
-	cursPos++
-	EchoWholeCommand(self.proc.OutChannelId)
+
+	//if we have one more free space to put character into
+	if len(commands[currCmd]) < maxCommandSize-1 {
+		commands[currCmd] = commands[currCmd][:cursPos] + string(m.Char) + commands[currCmd][cursPos:]
+		cursPos++
+		EchoWholeCommand(self.proc.OutChannelId)
+	}
 }
 
 func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
@@ -96,9 +100,11 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 		case msg.KeyEnter:
 			hypervisor.DbusGlobal.PublishTo(
 				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+
 			log = append(log, commands[currCmd])
 			commands = append(commands, prompt)
 			traverseCommands(+1)
+			EchoWholeCommand(self.proc.OutChannelId)
 
 		case msg.KeyBackspace:
 			hypervisor.DbusGlobal.PublishTo(

@@ -54,36 +54,36 @@ func WindowInit() {
 	}
 
 	// initialize cursor
-
-	CreateAndSetCursor(glfw.ArrowCursor)
+	CreateAndSetPointer(glfw.ArrowCursor)
 }
 
-func CreateAndSetCursor(cursorType glfw.StandardCursor) {
+func CreateAndSetPointer(cursorType glfw.StandardCursor) {
 	if GlfwCursor != nil {
 		GlfwCursor.Destroy()
 	}
+
 	GlfwCursor = glfw.CreateStandardCursor(int(cursorType))
 	GlfwWindow.SetCursor(GlfwCursor)
 }
 
-func SetArrowCursor() {
-	CreateAndSetCursor(glfw.ArrowCursor)
+func SetArrowPointer() {
+	CreateAndSetPointer(glfw.ArrowCursor)
 }
 
-func SetHResizeCursor() {
-	CreateAndSetCursor(glfw.HResizeCursor)
+func SetHResizePointer() {
+	CreateAndSetPointer(glfw.HResizeCursor)
 }
 
-func SetVResizeCursor() {
-	CreateAndSetCursor(glfw.VResizeCursor)
+func SetVResizePointer() {
+	CreateAndSetPointer(glfw.VResizeCursor)
 }
 
-func SetIBeamCursor() {
-	CreateAndSetCursor(glfw.IBeamCursor)
+func SetIBeamPointer() {
+	CreateAndSetPointer(glfw.IBeamCursor)
 }
 
-func SetHandCursor() {
-	CreateAndSetCursor(glfw.HandCursor)
+func SetHandPointer() {
+	CreateAndSetPointer(glfw.HandCursor)
 }
 
 func LoadTextures() {

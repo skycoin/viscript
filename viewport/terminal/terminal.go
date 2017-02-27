@@ -191,13 +191,11 @@ func (t *Terminal) updateCommandLine(m msg.MessageCommandLine) {
 		var char uint32
 		x := i % t.GridSize.X
 		y := i / t.GridSize.X
+		y += int(t.Curr.Y)
 
 		if i == int(m.CursorOffset) {
-			t.Cursor.X = x
-			t.Cursor.Y = y
+			t.SetCursor(x, y)
 		}
-
-		y += int(t.Curr.Y)
 
 		if i < len(m.CommandLine) {
 			char = uint32(m.CommandLine[i])

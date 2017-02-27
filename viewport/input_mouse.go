@@ -22,13 +22,13 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 
 	// set cursor appropriately
 	if mouse.IsNearRight && !focused.ResizingBottom && !mouse.HoldingLeft {
-		gl.SetHResizeCursor()
+		gl.SetHResizePointer()
 	} else if mouse.IsNearBottom && !focused.ResizingRight && !mouse.HoldingLeft {
-		gl.SetVResizeCursor()
+		gl.SetVResizePointer()
 	} else if mouse.IsInsideTerminal {
-		gl.SetIBeamCursor()
+		gl.SetIBeamPointer()
 	} else {
-		gl.SetArrowCursor()
+		gl.SetArrowPointer()
 	}
 
 	if mouse.HoldingLeft {
@@ -46,11 +46,11 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 		// should resize or it should be using characters as kind of measures
 
 		if mouse.IsNearRight && !focused.ResizingBottom {
-			gl.SetHResizeCursor()
+			gl.SetHResizePointer()
 			mouse.IncreaseEdgeGlMaxAbs()
 			Terms.ResizeFocusedTerminalRight(mouse.GlX)
 		} else if mouse.IsNearBottom && !focused.ResizingRight {
-			gl.SetVResizeCursor()
+			gl.SetVResizePointer()
 			mouse.IncreaseEdgeGlMaxAbs()
 			Terms.ResizeFocusedTerminalBottom(mouse.GlY)
 		}
@@ -60,7 +60,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 			deltaVec := app.Vec2F{mouse.GlX - mouse.PrevGlX,
 				mouse.GlY - mouse.PrevGlY}
 			Terms.MoveFocusedTerminal(deltaVec)
-			gl.SetHandCursor()
+			gl.SetHandPointer()
 
 			if DebugPrintInputEvents {
 				println("\nTerminal Id:", focused.TerminalId,
