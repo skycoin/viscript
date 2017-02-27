@@ -56,7 +56,7 @@ func (self *State) onChar(m msg.MessageChar) {
 	//if we have one more free space to put character into
 	if len(commands[currCmd]) < maxCommandSize-1 {
 		commands[currCmd] = commands[currCmd][:cursPos] + string(m.Char) + commands[currCmd][cursPos:]
-		cursPos++
+		cursorForward()
 		EchoWholeCommand(self.proc.OutChannelId)
 	}
 }
@@ -71,31 +71,20 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 	case msg.Repeat:
 		switch m.Key {
 
+		case msg.KeyHome:
+			cursPos = len(prompt)
+		case msg.KeyEnd:
+			cursPos = len(commands[currCmd])
+
 		case msg.KeyUp:
 			traverseCommands(-1)
-			EchoWholeCommand(self.proc.OutChannelId)
-
 		case msg.KeyDown:
 			traverseCommands(+1)
-			EchoWholeCommand(self.proc.OutChannelId)
 
 		case msg.KeyLeft:
-			cursPos--
-
-			if cursPos < 0 {
-				cursPos = 0
-			}
-
-			EchoWholeCommand(self.proc.OutChannelId)
-
+			cursorBackward()
 		case msg.KeyRight:
-			cursPos++
-
-			if cursPos >= maxCommandSize {
-				cursPos = maxCommandSize - 1
-			}
-
-			EchoWholeCommand(self.proc.OutChannelId)
+			cursorForward()
 
 		case msg.KeyEnter:
 			hypervisor.DbusGlobal.PublishTo(
@@ -104,13 +93,30 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 			log = append(log, commands[currCmd])
 			commands = append(commands, prompt)
 			traverseCommands(+1)
-			EchoWholeCommand(self.proc.OutChannelId)
 
 		case msg.KeyBackspace:
-			hypervisor.DbusGlobal.PublishTo(
-				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+			//commands[currCmd] = commands[currCmd][:cursPos] + string(m.Char) + commands[currCmd][cursPos:]
+			//cursorBackward()
 		}
+
+		EchoWholeCommand(self.proc.OutChannelId)
 	case msg.Release:
 		// most keys will do nothing upon release
+	}
+}
+
+func cursorForward() {
+	cursPos++
+
+	if cursPos >= maxCommandSize {
+		cursPos = maxCommandSize - 1
+	}
+}
+
+func cursorBackward() {
+	cursPos--
+
+	if cursPos < 0 {
+		cursPos = 0
 	}
 }
