@@ -12,8 +12,12 @@ func (t *Terminal) UnpackEvent(message []byte) []byte {
 
 	switch msg.GetType(message) {
 
+	case msg.TypeCommandLine:
+		var m msg.MessageCommandLine
+		msg.MustDeserialize(message, &m)
+		t.updateCommandLine(m)
+
 	case msg.TypePutChar:
-		println("viewport/terminal/events <<< msg.TypePutChar >>>")
 		var m msg.MessagePutChar
 		msg.MustDeserialize(message, &m)
 		t.PutCharacter(m.Char)
@@ -47,6 +51,7 @@ func (t *Terminal) UnpackEvent(message []byte) []byte {
 //and task logic shouldn't care about the display.
 //if we want to do anything here, then we should probably just
 //call this func directly with no messaging?
+//
 // func (t *Terminal) onFrameBufferSize(m msg.MessageFrameBufferSize) {
 // 	println("viewport/terminal/events.onFrameBufferSize()", m.X, m.Y)
 // 	println("......NOT DOING ANYTHING HERE, READ THE COMMENTS HERE")
@@ -54,21 +59,21 @@ func (t *Terminal) UnpackEvent(message []byte) []byte {
 // }
 
 func (t *Terminal) onKey(m msg.MessageKey) {
-	println("viewport/terminal/events.onKey()")
+	println("viewport/terminal/events.onKey() -----SHOULD PROBABLY NOT HANDLE THESE HERE")
 
-	switch m.Key {
-	case msg.KeyUp:
-		t.MoveUp()
-	case msg.KeyDown:
-		t.MoveDown()
-	case msg.KeyLeft:
-		t.MoveLeft()
-	case msg.KeyRight:
-		t.MoveRight()
-	case msg.KeyEnter:
-		t.MoveDown()
-		t.Curr.X = 0
-	case msg.KeyBackspace:
-		t.BackSpace()
-	}
+	// switch m.Key {
+	// case msg.KeyUp:
+	// 	t.MoveUp()
+	// case msg.KeyDown:
+	// 	t.MoveDown()
+	// case msg.KeyLeft:
+	// 	t.MoveLeft()
+	// case msg.KeyRight:
+	// 	t.MoveRight()
+	// case msg.KeyEnter:
+	// 	t.MoveDown()
+	// 	t.Curr.X = 0
+	// case msg.KeyBackspace:
+	// 	t.BackSpace()
+	// }
 }

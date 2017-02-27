@@ -24,7 +24,7 @@ type Terminal struct {
 
 	//int / character grid space
 	Curr     app.Vec2UI32 //current insert position
-	Cursor   app.Vec2UI32
+	Cursor   app.Vec2I
 	GridSize app.Vec2I //number of characters across
 	Chars    [NumRows][NumColumns]uint32
 
@@ -192,6 +192,29 @@ func (t *Terminal) makeRandomChars(count int) {
 			uint32(rand.Int31n(NumColumns)),
 			uint32(rand.Int31n(NumRows)),
 			uint32(rand.Int31n(128)))
+	}
+}
+
+func (t *Terminal) updateCommandLine(m msg.MessageCommandLine) {
+	for i := 0; i < t.GridSize.X*2; i++ {
+		var char uint32
+		x := i % t.GridSize.X
+		y := i / t.GridSize.X
+
+		if i == int(m.CursorOffset) {
+			t.Cursor.X = x
+			t.Cursor.Y = y
+		}
+
+		y += int(t.Curr.Y)
+
+		if i < len(m.CommandLine) {
+			char = uint32(m.CommandLine[i])
+		} else {
+			char = 0
+		}
+
+		t.SetCharacterAt(uint32(x), uint32(y), char)
 	}
 }
 

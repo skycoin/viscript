@@ -57,10 +57,7 @@ func main() {
 	hypervisor.Init()
 
 	viewport.DebugPrintInputEvents = true
-	viewport.ViewportInit() //runtime.LockOSThread(), InitCanvas()
-	viewport.ViewportScreenInit()
-	viewport.InitEvents()
-	viewport.ViewportTerminalsInit()
+	viewport.Init() //runtime.LockOSThread(), InitCanvas()
 
 	// rpc
 	go func() {

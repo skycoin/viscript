@@ -1,14 +1,16 @@
 package process
 
-/*import (
-	"github.com/corpusc/viscript/app"
-)*/
+import (
+	"github.com/corpusc/viscript/hypervisor"
+	"github.com/corpusc/viscript/hypervisor/dbus"
+	"github.com/corpusc/viscript/msg"
+)
 
 var (
 	log      []string
 	commands []string
 	currCmd  int    //index
-	cursPos  int    //cursor/insert position
+	cursPos  int    //cursor/insert position, local to 1 commands space (2 lines)
 	prompt   string = ">"
 	//this assumes 64 horizontal characters.  so we dedicate 2 lines for each command
 	maxCommandSize = 128 - len(prompt) - 1 //& ending space for cursor at the end of (potentially the 2nd) line
@@ -24,6 +26,32 @@ func init() {
 	currCmd = 2
 }
 
-func EchoWholeCommand() {
+func EchoWholeCommand(outChanId uint32) {
 	println("(process/terminal/cli).EchoWholeCommand()")
+
+	//FIXME? actual terminal id really needed?  i just gave it 0 for now
+	//message := msg.Serialize(msg.TypePutChar, msg.MessagePutChar{0, m.Char})
+
+	message := msg.Serialize(
+		msg.TypeCommandLine, msg.MessageCommandLine{0, commands[currCmd], uint32(cursPos)})
+
+	hypervisor.DbusGlobal.PublishTo(
+		dbus.ChannelId(outChanId), message) //EVERY publish action prefixes another chan id
+}
+
+func traverseCommands(delta int) {
+	if delta > 1 || delta < -1 {
+		println("FIXME if we ever want to step/jump by more than 1!")
+		return
+	}
+
+	currCmd += delta
+
+	if currCmd < 0 {
+		currCmd = 0
+	}
+
+	if currCmd >= len(commands) {
+		currCmd = len(commands) - 1
+	}
 }

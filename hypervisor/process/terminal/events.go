@@ -52,15 +52,9 @@ func (self *State) UnpackEvent(msgType uint16, message []byte) []byte {
 
 func (self *State) onChar(m msg.MessageChar) {
 	println("process/terminal/events.onChar()")
-
-	//FIXME? actual terminal id really needed?
-	message := msg.Serialize(
-		msg.TypePutChar, msg.MessagePutChar{0, m.Char}) //....just gave it 0 for now
-	hypervisor.DbusGlobal.PublishTo(
-		dbus.ChannelId(self.proc.OutChannelId), message) //EVERY publish action prefixes another chan id
-
 	commands[currCmd] += string(m.Char)
 	cursPos++
+	EchoWholeCommand(self.proc.OutChannelId)
 }
 
 func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
@@ -74,25 +68,39 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 		switch m.Key {
 
 		case msg.KeyUp:
-			currCmd--
-			EchoWholeCommand()
+			traverseCommands(-1)
+			EchoWholeCommand(self.proc.OutChannelId)
+
 		case msg.KeyDown:
-			currCmd++
-			EchoWholeCommand()
+			traverseCommands(+1)
+			EchoWholeCommand(self.proc.OutChannelId)
 
 		case msg.KeyLeft:
-			fallthrough
+			cursPos--
+
+			if cursPos < 0 {
+				cursPos = 0
+			}
+
+			EchoWholeCommand(self.proc.OutChannelId)
+
 		case msg.KeyRight:
-			hypervisor.DbusGlobal.PublishTo(
-				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+			cursPos++
+
+			if cursPos >= maxCommandSize {
+				cursPos = maxCommandSize - 1
+			}
+
+			EchoWholeCommand(self.proc.OutChannelId)
 
 		case msg.KeyEnter:
 			hypervisor.DbusGlobal.PublishTo(
 				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
 			log = append(log, commands[currCmd])
 			commands = append(commands, prompt)
-			currCmd++
+			traverseCommands(+1)
 			cursPos = len(prompt)
+
 		case msg.KeyBackspace:
 			hypervisor.DbusGlobal.PublishTo(
 				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)

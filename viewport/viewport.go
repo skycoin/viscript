@@ -17,30 +17,34 @@ var (
 	Terms       terminal.TerminalStack = terminal.TerminalStack{}
 )
 
-func ViewportInit() {
-	println("viewport.ViewportInit()")
+func Init() {
+	println("viewport.Init()")
 	app.MakeHighlyVisibleLogHeader(app.Name, 15)
 	igl.InitCanvas()
 	// GLFW event handling must run on the main OS thread
 	// See documentation for functions that are only allowed to be called from the main thread.
 	runtime.LockOSThread()
+
+	initScreen()
+	initEvents()
+	initTerms()
 }
 
-func ViewportScreenInit() {
-	println("Viewport: screen init")
+func initScreen() {
+	println("Viewport: init screen")
 	igl.WindowInit()
 	igl.LoadTextures()
 	igl.InitRenderer()
 }
 
-func InitEvents() {
+func initEvents() {
 	println("Viewport: init events")
 	igl.InitInputEvents(igl.GlfwWindow)
 	igl.InitMiscEvents(igl.GlfwWindow)
 }
 
-func ViewportTerminalsInit() {
-	println("viewport.ViewportTerminalsInit()")
+func initTerms() {
+	println("Viewport: init terminals")
 	Terms.Init()
 	Terms.AddTerminal()
 	Terms.AddTerminal()
