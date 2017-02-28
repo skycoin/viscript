@@ -127,7 +127,7 @@ func onMouseButton(m msg.MessageMouseButton) {
 }
 
 func focusOnTopmostRectThatContainsPointer() {
-	var topmostZ float32
+	var topmostZ float32 //....that also contains pointer!
 	var topmostId msg.TerminalId
 
 	for id, t := range Terms.Terms {
@@ -140,8 +140,7 @@ func focusOnTopmostRectThatContainsPointer() {
 	}
 
 	if topmostZ > 0 {
-		Terms.FocusedId = topmostId
-		Terms.Focused = Terms.Terms[topmostId]
+		Terms.SetFocused(topmostId)
 	}
 }
 

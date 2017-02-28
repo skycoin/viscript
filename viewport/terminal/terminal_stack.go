@@ -152,3 +152,41 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 	// fmt.Printf("\nPubSub Channel After Adding Subscriber\n %+v\n",
 	// 	hypervisor.DbusGlobal.PubsubChannels[pcid])
 }
+
+func (self *TerminalStack) SetFocused(topmostId msg.TerminalId) {
+	//store which is focused and bring it to top
+	currDepth := float32(9.9) //FIXME (all uses of this var IF you ever want tons of terms)
+	self.FocusedId = topmostId
+	self.Focused = self.Terms[topmostId]
+	self.Focused.Depth = currDepth
+
+	//store the REST of the terms
+	theRest := []*Terminal{}
+
+	for id, t := range self.Terms {
+		if id != self.FocusedId {
+			theRest = append(theRest, t)
+		}
+	}
+
+	//sort them (top/closest at the start of slice)
+	fullySorted := false
+	for !fullySorted {
+		fullySorted = true
+
+		for i := 0; i < len(theRest)-1; i++ {
+			if theRest[i].Depth < theRest[i+1].Depth {
+				theNext := theRest[i+1]
+				theRest[i+1] = theRest[i]
+				theRest[i] = theNext
+				fullySorted = false
+			}
+		}
+	}
+
+	//assign receding z/depth values
+	for _, t := range theRest {
+		currDepth -= 0.2
+		t.Depth = currDepth
+	}
+}
