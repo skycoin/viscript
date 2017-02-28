@@ -54,7 +54,7 @@ func (self *State) onChar(m msg.MessageChar) {
 	println("process/terminal/events.onChar()")
 
 	//if we have one more free space to put character into
-	if len(commands[currCmd]) < maxCommandSize-1 {
+	if len(commands[currCmd]) < maxCommandSize {
 		commands[currCmd] = commands[currCmd][:cursPos] + string(m.Char) + commands[currCmd][cursPos:]
 		cursorForward()
 		EchoWholeCommand(self.proc.OutChannelId)
@@ -109,8 +109,8 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 func cursorForward() {
 	cursPos++
 
-	if cursPos >= maxCommandSize {
-		cursPos = maxCommandSize - 1
+	if cursPos > maxCommandSize { //allows cursor to be one position beyond last char
+		cursPos = maxCommandSize
 	}
 }
 

@@ -12,8 +12,8 @@ var (
 	currCmd  int    //index
 	cursPos  int    //cursor/insert position, local to 1 commands space (2 lines)
 	prompt   string = ">"
-	//this assumes 64 horizontal characters.  so we dedicate 2 lines for each command
-	maxCommandSize = 128 - len(prompt) - 1 //& ending space for cursor at the end of line (potentially the 2nd)
+	//assume 64 horizontal characters, then dedicate 2 lines for each command
+	maxCommandSize = 128 - 1 //reserve ending space for cursor at the end of last line
 )
 
 func init() {
