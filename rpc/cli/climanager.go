@@ -36,20 +36,34 @@ func (c *CliManager) CommandDispatcher(command string, args []string) {
 func (c *CliManager) initCommands() {
 	c.Commands = map[string]func(args []string) error{}
 
-	c.Commands["ltp"] = c.ListTermIDsWithAttachedProcesses
-	c.Commands["sett"] = c.SetDefaultTerminalId
-	c.Commands["setp"] = c.SetDefaultProcessId
+	c.setCommand("ltp", c.ListTermIDsWithAttachedProcesses)
+	c.setCommand("lp", c.ListProcessIDs)
+	c.setCommand("sett", c.SetDefaultTerminalId)
+	c.setCommand("setp", c.SetDefaultProcessId)
 
-	c.Commands["cft"] = c.ShowChosenTermChannelInfo
+	c.setCommand("cft", c.ShowChosenTermChannelInfo)
 
-	c.Commands["stp"] = c.StartTerminalWithProcess
+	c.setCommand("stp", c.StartTerminalWithProcess)
 
-	c.Commands["help"] = c.PrintHelp
-	c.Commands["h"] = c.PrintHelp
-	c.Commands["clear"] = c.ClearTerminal
-	c.Commands["c"] = c.ClearTerminal
-	c.Commands["quit"] = c.Quit
-	c.Commands["q"] = c.Quit
+	c.setCommandWithShortcut("help", c.PrintHelp)
+	c.setCommandWithShortcut("clear", c.ClearTerminal)
+	c.setCommandWithShortcut("quit", c.Quit)
+}
+
+func (c *CliManager) setCommand(command string, f func(args []string) error) {
+	if !c.commandExists(command) {
+		c.Commands[command] = f
+	}
+}
+
+func (c *CliManager) setCommandWithShortcut(command string, f func(args []string) error) {
+	c.setCommand(command, f)
+	c.setCommand(string(command[0]), f) // set first char as shortcut
+}
+
+func (c *CliManager) commandExists(key string) bool {
+	_, ok := c.Commands[key]
+	return ok
 }
 
 func (c *CliManager) PrintServerError(err error) {
@@ -57,7 +71,7 @@ func (c *CliManager) PrintServerError(err error) {
 }
 
 func (c *CliManager) TerminalIdNotNil() bool {
-	return c.ChosenProcessId != 0
+	return c.ChosenTerminalId != 0
 }
 
 func (c *CliManager) ProcessIdNotNil() bool {

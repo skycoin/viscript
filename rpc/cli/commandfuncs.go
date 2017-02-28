@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"github.com/corpusc/viscript/hypervisor/dbus"
 	"github.com/corpusc/viscript/msg"
 	tm "github.com/corpusc/viscript/rpc/terminalmanager"
 	"os"
@@ -17,6 +18,8 @@ func (c *CliManager) PrintHelp(_ []string) error {
 	p("> stp\t\tStart a new terminal with process.\n\n")
 
 	p("> ltp\t\tList terminal Ids with Attached Process Ids.\n")
+	p("> lp\t\tList process Ids. (TODO: labels?)\n\n")
+
 	p("> sett <tId>\tSet given terminal Id as default for all following commands.\n")
 	p("> setp <pId>\tSet given process Id as default for all following commands.\n\n")
 
@@ -87,6 +90,22 @@ func (c *CliManager) ListTermIDsWithAttachedProcesses(_ []string) error {
 	return nil
 }
 
+func (c *CliManager) ListProcessIDs(_ []string) error {
+	processIDs, err := GetProcessIDs(c.Client)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("\nProcesses(%d total):\n\n", len(processIDs))
+	fmt.Println("Num\tId")
+	fmt.Println()
+	for i, processID := range processIDs {
+		fmt.Println(i, "\t", processID)
+	}
+
+	return nil
+}
+
 func (c *CliManager) SetDefaultTerminalId(args []string) error {
 	if len(args) == 0 {
 		fmt.Printf("\n\nPass the terminal Id as arguement please.")
@@ -135,10 +154,25 @@ func (c *CliManager) ShowChosenTermChannelInfo(_ []string) error {
 		return err
 	}
 
-	// TODO: print structured channel info
-	// fmt.Printf("Terminal out channel info with subscribers (%d total):\n", len(channelInfo.Subscribers))
-	// fmt.Printf("")
-	fmt.Printf("Channel Info:\n%+v\n\n", channelInfo)
+	fmt.Printf("Term (Id: %d) out channel info:\n", c.ChosenTerminalId)
+
+	println("Channel Id:", channelInfo.ChannelId)
+	println("Channel Owner:", channelInfo.Owner)
+	println("Channel Owner's Type:", dbus.ResourceTypeNames[channelInfo.OwnerType])
+	println("Channel ResourceIdentifier:", channelInfo.ResourceIdentifier)
+
+	subCount := len(channelInfo.Subscribers)
+
+	if subCount == 0 {
+		fmt.Printf("No subscribers to this channel.\n")
+	} else {
+		fmt.Printf("Channel's Subscribers (%d total):\n\n", subCount)
+		fmt.Println("Index\tResourceId\t\tResource Type")
+		for index, subscriber := range channelInfo.Subscribers {
+			fmt.Println(index, "\t", subscriber.SubscriberId, "\t\t",
+				dbus.ResourceTypeNames[subscriber.SubscriberType])
+		}
+	}
 
 	return nil
 }

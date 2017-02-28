@@ -24,6 +24,13 @@ type ChannelId uint32
 type ResourceId uint32
 type ResourceType uint32
 
+var ResourceTypeNames = map[ResourceType]string{
+	1: "Channel",
+	2: "Viewport",
+	3: "Terminal",
+	4: "Process",
+}
+
 //Do we do resource tracking in dbus?
 type ResourceMeta struct {
 	Id   ResourceId
