@@ -10,8 +10,6 @@ func (self *TerminalStack) Draw() {
 		z := t.Depth
 
 		if t == self.Focused {
-			z = 10
-
 			gl.SetColor(gl.White)
 		} else {
 			gl.SetColor(gl.Gray)
