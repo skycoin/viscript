@@ -109,7 +109,9 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 func cursorForward() {
 	cursPos++
 
-	if cursPos > maxCommandSize { //allows cursor to be one position beyond last char
+	if cursPos > len(commands[currCmd]) {
+		cursPos = len(commands[currCmd])
+	} else if cursPos > maxCommandSize { //allows cursor to be one position beyond last char
 		cursPos = maxCommandSize
 	}
 }
