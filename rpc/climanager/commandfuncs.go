@@ -1,14 +1,15 @@
-package cli
+package climanager
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/hypervisor/dbus"
-	"github.com/corpusc/viscript/msg"
-	tm "github.com/corpusc/viscript/rpc/terminalmanager"
 	"os"
 	"os/exec"
 	"runtime"
 	"strconv"
+
+	"github.com/corpusc/viscript/hypervisor/dbus"
+	"github.com/corpusc/viscript/msg"
+	tm "github.com/corpusc/viscript/rpc/terminalmanager"
 )
 
 func (c *CliManager) PrintHelp(_ []string) error {
@@ -27,7 +28,7 @@ func (c *CliManager) PrintHelp(_ []string) error {
 	// p("> lpub\t\tList all publishers. --TODO\n\n")
 	// p("> ld\t\tList all dbus objects. --TODO\n")
 
-	p("> clear(c)\t\tClear the terminal.\n")
+	p("> clear(c)\tClear the terminal.\n")
 	p("> quit(q)\tQuit from cli.\n\n")
 
 	return nil
