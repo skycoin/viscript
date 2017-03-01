@@ -13,14 +13,14 @@ type RPCMessage struct {
 	Arguments []string
 }
 
-func RunClient(addr string) *RPCClient {
+func RunClient(addr string) (*RPCClient, error) {
 	rpcClient := &RPCClient{}
 	client, err := rpc.DialHTTP("tcp", addr)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	rpcClient.Client = client
-	return rpcClient
+	return rpcClient, nil
 }
 
 func (rpcClient *RPCClient) SendToRPC(command string, args []string) ([]byte, error) {
@@ -34,5 +34,5 @@ func (rpcClient *RPCClient) SendToRPC(command string, args []string) ([]byte, er
 }
 
 func (rpcClient *RPCClient) ErrorOut(err error) {
-	println("Error. Server says:", err)
+	println("Error. Server says:\n", err.Error())
 }

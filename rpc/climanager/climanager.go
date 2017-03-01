@@ -1,6 +1,8 @@
-package cli
+package climanager
 
 import (
+	"os"
+
 	"github.com/corpusc/viscript/msg"
 	tm "github.com/corpusc/viscript/rpc/terminalmanager"
 )
@@ -15,10 +17,18 @@ type CliManager struct {
 }
 
 func (c *CliManager) Init(port string) {
-	c.initCommands()
+	println("Attempting to connect on port:", port)
+	var clienError error
+	c.Client, clienError = tm.RunClient(":" + port)
 
+	if clienError != nil {
+		println(clienError.Error())
+		os.Exit(1)
+	}
+
+	println("Connected!")
+	c.initCommands()
 	c.SessionEnd = false
-	c.Client = tm.RunClient(":" + port)
 }
 
 func (c *CliManager) CommandDispatcher(command string, args []string) {
@@ -68,12 +78,4 @@ func (c *CliManager) commandExists(key string) bool {
 
 func (c *CliManager) PrintServerError(err error) {
 	c.Client.ErrorOut(err)
-}
-
-func (c *CliManager) TerminalIdNotNil() bool {
-	return c.ChosenTerminalId != 0
-}
-
-func (c *CliManager) ProcessIdNotNil() bool {
-	return c.ChosenProcessId != 0
 }

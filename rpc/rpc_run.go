@@ -1,8 +1,10 @@
 package main
 
-import "github.com/corpusc/viscript/rpc/terminalmanager"
+// Commented because currently rpc server is run inside a goroutine in viscript.go
+// import "github.com/corpusc/viscript/rpc/terminalmanager"
 
-func run() {
-	rpcInstance := terminalmanager.NewRPC()
-	rpcInstance.Serve()
+func main() {
+	println("It should be running with viscript. Try connecting with cli client instead.")
+	// rpcInstance := terminalmanager.NewRPC()
+	// rpcInstance.Serve()
 }

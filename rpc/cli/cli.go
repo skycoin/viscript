@@ -6,10 +6,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/corpusc/viscript/rpc/cli"
+	cm "github.com/corpusc/viscript/rpc/climanager"
 )
 
-var cliManager cli.CliManager
+var cliManager cm.CliManager
 
 const prompt string = "Enter the command (help(h) for commands list):\n> "
 const defaultPort string = "7777"
@@ -19,8 +19,6 @@ func main() {
 	if len(os.Args) >= 2 {
 		port = os.Args[1]
 	}
-	println("Connecting on port:", port)
-
 	cliManager.Init(port)
 	promptCycle()
 }
