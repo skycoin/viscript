@@ -98,6 +98,10 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 			if cursorBackward() { //...succeeded
 				commands[currCmd] = commands[currCmd][:cursPos] + commands[currCmd][cursPos+1:]
 			}
+		case msg.KeyDelete:
+			if cursPos < len(commands[currCmd]) {
+				commands[currCmd] = commands[currCmd][:cursPos] + commands[currCmd][cursPos+1:]
+			}
 		}
 
 		EchoWholeCommand(self.proc.OutChannelId)

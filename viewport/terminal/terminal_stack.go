@@ -13,10 +13,8 @@ import (
 
 /*
 	What operations?
-	- create terminal
 	- delete terminal
 	- draw terminal state
-	- change terminal in focus
 	- resize terminal (in pixels or chars)
 	- move terminal
 */
@@ -155,10 +153,10 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 
 func (self *TerminalStack) SetFocused(topmostId msg.TerminalId) {
 	//store which is focused and bring it to top
-	currDepth := float32(9.9) //FIXME (all uses of this var IF you ever want tons of terms)
+	newZ := float32(9.9) //FIXME (all uses of this var IF you ever want tons of terms)
 	self.FocusedId = topmostId
 	self.Focused = self.Terms[topmostId]
-	self.Focused.Depth = currDepth
+	self.Focused.Depth = newZ
 
 	//store the REST of the terms
 	theRest := []*Terminal{}
@@ -169,7 +167,7 @@ func (self *TerminalStack) SetFocused(topmostId msg.TerminalId) {
 		}
 	}
 
-	//sort them (top/closest at the start of slice)
+	//sort them (top/closest at the start of list)
 	fullySorted := false
 	for !fullySorted {
 		fullySorted = true
@@ -186,7 +184,7 @@ func (self *TerminalStack) SetFocused(topmostId msg.TerminalId) {
 
 	//assign receding z/depth values
 	for _, t := range theRest {
-		currDepth -= 0.2
-		t.Depth = currDepth
+		newZ -= 0.2
+		t.Depth = newZ
 	}
 }
