@@ -88,10 +88,39 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 			} else {
 				traverseCommands(+1)
 			}
+
 		case msg.KeyLeft:
-			cursorBackward()
+			if msg.ModifierKey(m.Mod) == msg.ModControl {
+				numSpaces := 0
+				numVisible := 0 //NON-space
+
+				for cursorBackward() == true {
+					if commands[currCmd][cursPos] == ' ' {
+						numSpaces++
+
+						if numVisible > 0 || numSpaces > 1 {
+							cursorForward()
+							break
+						}
+					} else {
+						numVisible++
+					}
+				}
+			} else {
+				cursorBackward()
+			}
 		case msg.KeyRight:
-			cursorForward()
+			if msg.ModifierKey(m.Mod) == msg.ModControl {
+				for cursorForward() == true {
+					if cursPos < len(commands[currCmd]) &&
+						commands[currCmd][cursPos] == ' ' {
+						cursorForward()
+						break
+					}
+				}
+			} else {
+				cursorForward()
+			}
 
 		case msg.KeyEnter:
 			hypervisor.DbusGlobal.PublishTo(
@@ -117,14 +146,18 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 	}
 }
 
-func cursorForward() {
+func cursorForward() bool { //returns whether moved successfully
 	cursPos++
 
 	if cursPos > len(commands[currCmd]) {
 		cursPos = len(commands[currCmd])
+		return false
 	} else if cursPos > maxCommandSize { //allows cursor to be one position beyond last char
 		cursPos = maxCommandSize
+		return false
 	}
+
+	return true
 }
 
 func cursorBackward() bool { //returns whether moved successfully
