@@ -77,10 +77,17 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 			cursPos = len(commands[currCmd])
 
 		case msg.KeyUp:
-			traverseCommands(-1)
+			if msg.ModifierKey(m.Mod) == msg.ModControl {
+				currCmd = 0
+			} else {
+				traverseCommands(-1)
+			}
 		case msg.KeyDown:
-			traverseCommands(+1)
-
+			if msg.ModifierKey(m.Mod) == msg.ModControl {
+				currCmd = len(commands) - 1 // this could crash if we don't make sure at least 1 command always exists
+			} else {
+				traverseCommands(+1)
+			}
 		case msg.KeyLeft:
 			cursorBackward()
 		case msg.KeyRight:
