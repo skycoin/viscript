@@ -12,10 +12,6 @@
 	terminal size changed
 
 
-------- NEWER TODO: -------
-
-* put console feedback into focused terminal
-
 
 
 ------- OLDER TODO: ------- (everything below was for the text editor)

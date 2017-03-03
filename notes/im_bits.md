@@ -1311,3 +1311,21 @@ how would we share printf library implementation between different task implemen
 task type.  we do not have text labels for task type yet
 and probably only have one task type or task interface implementation.  right now.
 we should have a task type id and a text label for each task interface implementation
+
+
+
+
+
+
+George:
+1) go install && viscript
+2) go run rpc/cli.go
+
+
+
+
+
+
+HaltingState: 
+for CLI apps/daemons, getting self inspection terminal to run inside of viscript,
+for listing the tasks etc

@@ -11,6 +11,7 @@ import (
 
 const (
 	// num == count/number of...
+	// new terminals start with these values
 	NumColumns = 64
 	NumRows    = 32
 )
