@@ -15,18 +15,18 @@ import (
 // }
 
 func (self *State) onChar(m msg.MessageChar) {
-	println("process/terminal/events.onChar()")
+	//println("process/terminal/events.onChar()")
 
 	if len(commands[currCmd]) < maxCommandSize {
 		// (we have free space to put character into)
 		commands[currCmd] = commands[currCmd][:cursPos] + string(m.Char) + commands[currCmd][cursPos:]
-		cursorForward()
+		moveOneStepRight()
 		EchoWholeCommand(self.proc.OutChannelId)
 	}
 }
 
 func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
-	println("process/terminal/events.onKey()")
+	//println("process/terminal/events.onKey()")
 
 	switch msg.Action(m.Action) {
 
@@ -41,39 +41,26 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 			cursPos = len(commands[currCmd])
 
 		case msg.KeyUp:
-			if msg.ModifierKey(m.Mod) == msg.ModControl {
-				currCmd = 0
-			} else {
-				traverseCommands(-1)
-			}
+			goUpCommandHistory(m.Mod)
 		case msg.KeyDown:
-			if msg.ModifierKey(m.Mod) == msg.ModControl {
-				currCmd = len(commands) - 1 // this could crash if we don't make sure at least 1 command always exists
-			} else {
-				traverseCommands(+1)
-			}
+			goDownCommandHistory(m.Mod)
 
 		case msg.KeyLeft:
-			moveCursorLeft()
+			moveOrJumpCursorLeft(m.Mod)
 		case msg.KeyRight:
-			moveCursorRight()
-
-		case msg.KeyEnter:
-			hypervisor.DbusGlobal.PublishTo(
-				dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
-
-			log = append(log, commands[currCmd])
-			commands = append(commands, prompt)
-			traverseCommands(+1)
+			moveOrJumpCursorRight(m.Mod)
 
 		case msg.KeyBackspace:
-			if cursorBackward() { //...succeeded
+			if moveOneStepLeft() { //...succeeded
 				commands[currCmd] = commands[currCmd][:cursPos] + commands[currCmd][cursPos+1:]
 			}
 		case msg.KeyDelete:
 			if cursPos < len(commands[currCmd]) {
 				commands[currCmd] = commands[currCmd][:cursPos] + commands[currCmd][cursPos+1:]
 			}
+
+		case msg.KeyEnter:
+			self.actOnEnter(serializedMsg)
 		}
 
 		EchoWholeCommand(self.proc.OutChannelId)
@@ -82,7 +69,18 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 	}
 }
 
-func cursorForward() bool { //returns whether moved successfully
+func moveOneStepLeft() bool { //returns whether moved successfully
+	cursPos--
+
+	if cursPos < len(prompt) {
+		cursPos = len(prompt)
+		return false
+	}
+
+	return true
+}
+
+func moveOneStepRight() bool { //returns whether moved successfully
 	cursPos++
 
 	if cursPos > len(commands[currCmd]) {
@@ -96,28 +94,17 @@ func cursorForward() bool { //returns whether moved successfully
 	return true
 }
 
-func cursorBackward() bool { //returns whether moved successfully
-	cursPos--
-
-	if cursPos < len(prompt) {
-		cursPos = len(prompt)
-		return false
-	}
-
-	return true
-}
-
-func moveCursorLeft() {
-	if msg.ModifierKey(m.Mod) == msg.ModControl {
+func moveOrJumpCursorLeft(mod uint8) {
+	if msg.ModifierKey(mod) == msg.ModControl {
 		numSpaces := 0
 		numVisible := 0 //NON-space
 
-		for cursorBackward() == true {
+		for moveOneStepLeft() == true {
 			if commands[currCmd][cursPos] == ' ' {
 				numSpaces++
 
 				if numVisible > 0 || numSpaces > 1 {
-					cursorForward()
+					moveOneStepRight()
 					break
 				}
 			} else {
@@ -125,20 +112,45 @@ func moveCursorLeft() {
 			}
 		}
 	} else {
-		cursorBackward()
+		moveOneStepLeft()
 	}
 }
 
-func moveCursorRight() {
-	if msg.ModifierKey(m.Mod) == msg.ModControl {
-		for cursorForward() == true {
+func moveOrJumpCursorRight(mod uint8) {
+	if msg.ModifierKey(mod) == msg.ModControl {
+		for moveOneStepRight() == true {
 			if cursPos < len(commands[currCmd]) &&
 				commands[currCmd][cursPos] == ' ' {
-				cursorForward()
+				moveOneStepRight()
 				break
 			}
 		}
 	} else {
-		cursorForward()
+		moveOneStepRight()
 	}
+}
+
+func goUpCommandHistory(mod uint8) {
+	if msg.ModifierKey(mod) == msg.ModControl {
+		currCmd = 0
+	} else {
+		traverseCommands(-1)
+	}
+}
+
+func goDownCommandHistory(mod uint8) {
+	if msg.ModifierKey(mod) == msg.ModControl {
+		currCmd = len(commands) - 1 // this could crash if we don't make sure at least 1 command always exists
+	} else {
+		traverseCommands(+1)
+	}
+}
+
+func (self *State) actOnEnter(serializedMsg []byte) {
+	hypervisor.DbusGlobal.PublishTo(
+		dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+
+	log = append(log, commands[currCmd])
+	commands = append(commands, prompt)
+	traverseCommands(+1)
 }
