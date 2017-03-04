@@ -7,10 +7,12 @@
 	* "option to snap to grid"
 * Resize terminals
 	* "snap to grid or char size"
-* terminal back buffer with scrolling
-	* pgup/pgdn
+	* change ACTUAL GridSize?  the underlying character array?  or just virtualize?
+	* change flow of text with wrapping, so for example,
+			squeezing horizontally would cause more lines
+* Make terminal back buffer with scrolling
+	* pgup/pgdn hotkeys
 	* 1-3 lines with scrollwheel
-* change GridSize whenever terminal size changed
 
 
 

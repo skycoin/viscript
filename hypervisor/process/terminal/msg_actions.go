@@ -152,5 +152,5 @@ func (self *State) actOnEnter(serializedMsg []byte) {
 
 	log = append(log, commands[currCmd])
 	commands = append(commands, prompt)
-	traverseCommands(+1)
+	currCmd = len(commands) - 1
 }
