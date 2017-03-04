@@ -66,44 +66,47 @@ func (c *CliManager) ListTermIDsWithAttachedProcesses(_ []string) error {
 		return err
 	}
 
-	fmt.Printf("\nTerminals(%d total) defaults marked with [$]:\n\n", len(termsWithProcessIDs))
-	fmt.Println("Index\tTerminalID\t\tAttached Process ID")
-	fmt.Println()
+	fmt.Printf("Terminals (%d) defaults marked with {}:\n", len(termsWithProcessIDs))
+	fmt.Println("\nIdx\tTerminal Id\t\tAttached Process Id")
 	for index, term := range termsWithProcessIDs {
-		fmt.Printf("%d\t", index)
+		fmt.Printf("[ %d ]\t", index)
 
 		// mark selected default terminal id
 		if term.TerminalId == c.ChosenTerminalId {
-			fmt.Printf("[ %d ]\t", term.TerminalId)
+			fmt.Printf("{ %d }\t", term.TerminalId)
 		} else {
 			fmt.Printf("  %d\t", term.TerminalId)
 		}
 
 		// mark selected default process id
 		if term.AttachedProcessId == c.ChosenProcessId {
-			fmt.Printf("[ %d ]\t", term.AttachedProcessId)
+			fmt.Printf("{ %d }\t", term.AttachedProcessId)
 		} else {
 			fmt.Printf("  %d\t", term.AttachedProcessId)
 		}
 		fmt.Printf("\n")
 	}
+	println()
 
 	return nil
 }
 
-func (c *CliManager) ListProcessIDs(_ []string) error {
-	processIDs, err := GetProcessIDs(c.Client)
+func (c *CliManager) ListProcesses(_ []string) error {
+	processInfos, err := GetProcesses(c.Client)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("\nProcesses(%d total):\n\n", len(processIDs))
-	fmt.Println("Num\tId")
-	fmt.Println()
-	for i, processID := range processIDs {
-		fmt.Println(i, "\t", processID)
+	fmt.Printf("Processes (%d) default marked with {}:\n", len(processInfos))
+	fmt.Println("\nIdx\t Id\t Type\t\t Label")
+	for index, processInfo := range processInfos {
+		if processInfo.Id == c.ChosenProcessId {
+			fmt.Printf("[ %d ]\t{ %6d } %6d \t%s\n", index, processInfo.Id, processInfo.Type, processInfo.Label)
+		} else {
+			fmt.Printf("[ %d ]\t  %6d   %6d \t%s\n", index, processInfo.Id, processInfo.Type, processInfo.Label)
+		}
 	}
-
+	println()
 	return nil
 }
 
@@ -224,16 +227,16 @@ func GetTermIDsWithProcessIDs(client *tm.RPCClient) ([]msg.TermAndAttachedProces
 	return termsAndAttachedProcesses, nil
 }
 
-func GetProcessIDs(client *tm.RPCClient) ([]msg.ProcessId, error) {
-	response, err := client.SendToRPC("ListProcessIDs", []string{})
+func GetProcesses(client *tm.RPCClient) ([]msg.ProcessInfo, error) {
+	response, err := client.SendToRPC("ListProcesses", []string{})
 	if err != nil {
-		return []msg.ProcessId{}, err
+		return []msg.ProcessInfo{}, err
 	}
 
-	var processIDs []msg.ProcessId
-	err = msg.Deserialize(response, &processIDs)
+	var processInfos []msg.ProcessInfo
+	err = msg.Deserialize(response, &processInfos)
 	if err != nil {
-		return []msg.ProcessId{}, err
+		return []msg.ProcessInfo{}, err
 	}
-	return processIDs, nil
+	return processInfos, nil
 }

@@ -2,6 +2,12 @@ package msg
 
 import "github.com/corpusc/viscript/hypervisor/dbus"
 
+type ProcessInfo struct {
+	Id    ProcessId
+	Type  ProcessType
+	Label string
+}
+
 type TermAndAttachedProcessID struct {
 	TerminalId        TerminalId
 	AttachedProcessId ProcessId

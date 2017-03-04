@@ -47,7 +47,7 @@ func (c *CliManager) initCommands() {
 	c.Commands = map[string]func(args []string) error{}
 
 	c.setCommand("ltp", c.ListTermIDsWithAttachedProcesses)
-	c.setCommand("lp", c.ListProcessIDs)
+	c.setCommand("lp", c.ListProcesses)
 	c.setCommand("sett", c.SetDefaultTerminalId)
 	c.setCommand("setp", c.SetDefaultProcessId)
 

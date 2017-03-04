@@ -9,6 +9,8 @@ func NewProcess() *Process {
 	println("(process/terminal/process.go).NewProcess()")
 	var p Process
 	p.Id = msg.NextProcessId()
+	p.Type = 0
+	p.Label = "TestLabel"
 	p.InChannel = make(chan []byte, msg.ChannelCapacity)
 	p.State.Init(&p)
 	return &p
@@ -16,6 +18,8 @@ func NewProcess() *Process {
 
 type Process struct {
 	Id           msg.ProcessId
+	Type         msg.ProcessType
+	Label        string
 	OutChannelId uint32
 	InChannel    chan []byte
 	State        State
@@ -37,6 +41,14 @@ func (self *Process) DeleteProcess() {
 
 func (self *Process) GetId() msg.ProcessId {
 	return self.Id
+}
+
+func (self *Process) GetType() msg.ProcessType {
+	return self.Type
+}
+
+func (self *Process) GetLabel() string {
+	return self.Label
 }
 
 func (self *Process) GetIncomingChannel() chan []byte {

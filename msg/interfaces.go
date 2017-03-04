@@ -5,6 +5,8 @@ const ChannelCapacity = 64 // FIXME?  might only need capacity of 2?
 
 type ProcessInterface interface {
 	GetId() ProcessId
+	GetType() ProcessType
+	GetLabel() string
 	GetIncomingChannel() chan []byte //channel for incoming messages
 	Tick()                           //process the messages and emit messages
 }
