@@ -23,20 +23,23 @@ Refer to the [gvt documentation](https://github.com/FiloSottile/gvt) or `gvt hel
 
 
 
-Debian
+Building on Debian
 =======
+sudo apt-get install libgl1-mesa-dev<br>
+sudo apt-get install libxrandr-dev<br>
+sudo apt-get install libxcursor-dev<br>
+sudo apt-get install libxinerama-dev<br>
 
-sudo apt-get install libgl1-mesa-dev
-sudo apt-get install libxrandr-dev
-sudo apt-get install libxcursor-dev
-sudo apt-get install libxinerama-dev
+Building on Ubuntu 16.04 also requires:<br>
+sudo apt-get install libxi-dev
 
-go get github.com/go-gl/gl/v{3.2,3.3,4.1,4.4,4.5}-{core,compatibility}/gl
-go get github.com/go-gl/gl/v3.3-core/gl
+Gl, Glfw and other dependencies:<br>
+go get github.com/go-gl/gl/v{3.2,3.3,4.1,4.4,4.5}-{core,compatibility}/gl<br>
+go get github.com/go-gl/gl/v3.3-core/gl<br>
 
+go get github.com/go-gl/glfw/v3.2/glfw<br>
 
-
-
+go get github.com/skycoin/skycoin<br>
 
 
 
