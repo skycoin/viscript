@@ -7,7 +7,7 @@ const (
 	TypePutChar         = 2 + CATEGORY_Terminal
 	TypeSetCharAt       = 3 + CATEGORY_Terminal
 	TypeSetCursor       = 4 + CATEGORY_Terminal
-	TypeFrameBufferSize = 5 + CATEGORY_Terminal //low level events
+	TypeFrameBufferSize = 5 + CATEGORY_Terminal //start of low level events
 )
 
 type MessageCommandLine struct { //updates/replaces current command line on any change
@@ -34,7 +34,7 @@ type MessageSetCursor struct {
 	Y      uint32
 }
 
-// low level events
+//low level events
 type MessageFrameBufferSize struct {
 	X uint32
 	Y uint32

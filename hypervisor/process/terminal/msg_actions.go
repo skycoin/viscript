@@ -140,7 +140,7 @@ func goUpCommandHistory(mod uint8) {
 
 func goDownCommandHistory(mod uint8) {
 	if msg.ModifierKey(mod) == msg.ModControl {
-		currCmd = len(commands) - 1 // this could crash if we don't make sure at least 1 command always exists
+		currCmd = len(commands) - 1 // this could cause crash if we don't make sure at least 1 command always exists
 	} else {
 		traverseCommands(+1)
 	}

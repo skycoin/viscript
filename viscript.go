@@ -8,8 +8,9 @@
 * Resize terminals
 	* "snap to grid or char size"
 * terminal back buffer with scrolling
-* either change GridSize, or the sizes of each character whenever
-	terminal size changed
+	* pgup/pgdn
+	* 1-3 lines with scrollwheel
+* change GridSize whenever terminal size changed
 
 
 
