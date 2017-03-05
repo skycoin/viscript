@@ -16,46 +16,47 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 	// 	showFloat64("Y", m.Y)
 	// 	println()
 	// }
-	focused := Terms.Focused
-	mouse.Bounds = focused.Bounds
+
 	mouse.Update(app.Vec2F{float32(m.X), float32(m.Y)})
 
-	// set cursor appropriately
-	if mouse.IsNearRight && !focused.ResizingBottom && !mouse.HoldingLeft {
+	foc := Terms.Focused
+
+	if foc == nil {
+		return
+	}
+
+	// set pointer appropriately
+	if mouse.NearRight(foc.Bounds) && !foc.ResizingBottom && !mouse.HoldingLeft {
 		gl.SetHResizePointer()
-	} else if mouse.IsNearBottom && !focused.ResizingRight && !mouse.HoldingLeft {
+	} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight && !mouse.HoldingLeft {
 		gl.SetVResizePointer()
-	} else if mouse.IsInsideTerminal {
+	} else if mouse.PointerIsInside(foc.Bounds) {
 		gl.SetIBeamPointer()
 	} else {
 		gl.SetArrowPointer()
 	}
 
 	if mouse.HoldingLeft {
-		println("TODO EVENTUALLY: implement something like 'ScrollFocusedTerm()'")
-		//old logic is in ScrollTermThatHasMousePointer(mouse.PixelDelta.X, mouse.PixelDelta.Y),
-		//which was a janky way to do it
-
 		// Determination should be here if the mouse is over scrollbar or over the
 		// area where terminal can be moved. Moving windows happens in GL space
 		// coordinates because I thought pixel delta was used for scrollbar scrolling
 
 		// REFACTORME: cause I made it messy i guess
 		// FIXME: Also the context in this case text is left there and
-		// allowed to right not only the bounds
+		// allowed to write outside the bounds
 		// should resize or it should be using characters as kind of measures
 
-		if mouse.IsNearRight && !focused.ResizingBottom {
+		if mouse.NearRight(foc.Bounds) && !foc.ResizingBottom {
 			gl.SetHResizePointer()
-			mouse.IncreaseEdgeGlMaxAbs()
+			mouse.IncreaseNearnessThreshold()
 			Terms.ResizeFocusedTerminalRight(mouse.GlX)
-		} else if mouse.IsNearBottom && !focused.ResizingRight {
+		} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight {
 			gl.SetVResizePointer()
-			mouse.IncreaseEdgeGlMaxAbs()
+			mouse.IncreaseNearnessThreshold()
 			Terms.ResizeFocusedTerminalBottom(mouse.GlY)
 		}
 
-		if mouse.CursorIsInside(focused.Bounds) && !focused.IsResizing() {
+		if mouse.PointerIsInside(foc.Bounds) && !foc.IsResizing() {
 
 			deltaVec := app.Vec2F{mouse.GlX - mouse.PrevGlX,
 				mouse.GlY - mouse.PrevGlY}
@@ -63,24 +64,24 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 			gl.SetHandPointer()
 
 			if DebugPrintInputEvents {
-				println("\nTerminal Id:", focused.TerminalId,
-					"\nTop", focused.Bounds.Top,
-					"\nLeft", focused.Bounds.Left,
-					"\nRight", focused.Bounds.Right,
-					"\nBottom", focused.Bounds.Bottom,
+				println("\nTerminal Id:", foc.TerminalId,
+					"\nTop", foc.Bounds.Top,
+					"\nLeft", foc.Bounds.Left,
+					"\nRight", foc.Bounds.Right,
+					"\nBottom", foc.Bounds.Bottom,
 					"\n\n GL MouseX:", mouse.GlX,
 					"\n GL MouseY:", mouse.GlY,
 					"\n\n Previous GL MouseX:", mouse.PrevGlX,
 					"\n Previous GL MouseY:", mouse.PrevGlY,
 					"\n\n DeltaVecX:", deltaVec.X,
 					"\n DeltaVecY:", deltaVec.Y,
-					"\n\n Rect Center X:", focused.Bounds.CenterX(),
-					"\n Rect Center Y:", focused.Bounds.CenterY())
+					"\n\n Rect Center X:", foc.Bounds.CenterX(),
+					"\n Rect Center Y:", foc.Bounds.CenterY())
 			}
 		}
 	} else {
-		focused.SetResizingOff()
-		mouse.DecreaseEdgeGlMaxAbs()
+		foc.SetResizingOff()
+		mouse.DecreaseNearnessThreshold()
 	}
 }
 
@@ -112,7 +113,7 @@ func onMouseButton(m msg.MessageMouseButton) {
 			mouse.HoldingLeft = true
 
 			// // detect clicks in rects
-			// if mouse.CursorIsInside(ui.MainMenu.Rect) {
+			// if mouse.PointerIsInside(ui.MainMenu.Rect) {
 			// 	respondToAnyMenuButtonClicks()
 			// } else { // respond to any panel clicks outside of menu
 			focusOnTopmostRectThatContainsPointer()
@@ -127,11 +128,11 @@ func onMouseButton(m msg.MessageMouseButton) {
 }
 
 func focusOnTopmostRectThatContainsPointer() {
-	var topmostZ float32 //....that also contains pointer!
+	var topmostZ float32
 	var topmostId msg.TerminalId
 
 	for id, t := range Terms.Terms {
-		if mouse.CursorIsInside(t.Bounds) {
+		if mouse.PointerIsInside(t.Bounds) {
 			if topmostZ < t.Depth {
 				topmostZ = t.Depth
 				topmostId = id
@@ -168,7 +169,7 @@ func convertClickToTextCursorPosition(button, action uint8) {
 
 func respondToAnyMenuButtonClicks() {
 	// for _, bu := range ui.MainMenu.Buttons {
-	// 	if mouse.CursorIsInside(bu.Rect.Rectangle) {
+	// 	if mouse.PointerIsInside(bu.Rect.Rectangle) {
 	// 		bu.Activated = !bu.Activated
 
 	// 		switch bu.Name {

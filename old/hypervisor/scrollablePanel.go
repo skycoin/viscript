@@ -112,7 +112,7 @@ func (t *Terminal) changeColorIfCodeAt(x, y, ncId int, nc *cGfx.ColorSpot) (int,
 }
 
 func (t *Terminal) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float32) {
-	if mouse.CursorIsInside(t.Whole) {
+	if mouse.PointerIsInside(t.Whole) {
 		// position increments in gl space
 		xInc := mousePixelDeltaX * cGfx.PixelSize.X
 		yInc := mousePixelDeltaY * cGfx.PixelSize.Y

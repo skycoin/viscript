@@ -153,7 +153,7 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 
 func (self *TerminalStack) SetFocused(topmostId msg.TerminalId) {
 	//store which is focused and bring it to top
-	newZ := float32(9.9) //FIXME (all uses of this var IF you ever want tons of terms)
+	newZ := float32(9.9) //FIXME (for all uses of this var, IF you ever want tons of terms)
 	self.FocusedId = topmostId
 	self.Focused = self.Terms[topmostId]
 	self.Focused.Depth = newZ
@@ -187,4 +187,9 @@ func (self *TerminalStack) SetFocused(topmostId msg.TerminalId) {
 		newZ -= 0.2
 		t.Depth = newZ
 	}
+}
+
+func (self *TerminalStack) Defocus() {
+	self.FocusedId = 0
+	self.Focused = nil
 }

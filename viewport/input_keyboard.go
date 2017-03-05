@@ -3,6 +3,7 @@ package viewport
 import (
 	"fmt"
 	"github.com/corpusc/viscript/msg"
+	"github.com/corpusc/viscript/viewport/gl"
 )
 
 func onChar(m msg.MessageChar) {
@@ -56,11 +57,7 @@ func onKey(m msg.MessageKey) {
 			fmt.Println("'Super' modifier key RELEASED")
 		}
 	} else { //     .Press   or   .Repeat
-		//foc := Focused
-
 		/*
-			b := foc.TextBodies[0]
-
 			switch glfw.ModifierKey(m.Mod) {
 			case glfw.ModShift:
 				fmt.Println("Started selecting")
@@ -72,97 +69,106 @@ func onKey(m msg.MessageKey) {
 			case glfw.ModControl:
 				fmt.Println("glfw.ModControl")
 			}
+		*/
 
-			switch glfw.Key(m.Key) {
-			case glfw.KeyEnter:
-				startOfLine := b[foc.CursY][:foc.CursX]
-				restOfLine := b[foc.CursY][foc.CursX:len(b[foc.CursY])]
-				b[foc.CursY] = startOfLine
-				b = insert(b, foc.CursY+1, restOfLine)
+		switch m.Key {
 
-				foc.CursX = 0
-				foc.CursY++
-				foc.TextBodies[0] = b
+		case msg.KeyLeftControl:
+			fallthrough
+		case msg.KeyRightControl:
+			Terms.Defocus()
+			gl.SetArrowPointer()
 
-				if foc.CursY >= len(b) {
-					foc.CursY = len(b) - 1
-				}
-			case glfw.KeyHome:
-				if eitherControlKeyHeld() {
-					foc.CursY = 0
-				}
+			/*
+				case glfw.KeyEnter:
+					startOfLine := b[foc.CursY][:foc.CursX]
+					restOfLine := b[foc.CursY][foc.CursX:len(b[foc.CursY])]
+					b[foc.CursY] = startOfLine
+					b = insert(b, foc.CursY+1, restOfLine)
 
-				foc.CursX = 0
-				movedCursorSoUpdateDependents()
-			case glfw.KeyEnd:
-				if eitherControlKeyHeld() {
-					foc.CursY = len(b) - 1
-				}
-
-				foc.CursX = len(b[foc.CursY])
-				movedCursorSoUpdateDependents()
-			case glfw.KeyUp:
-				if foc.CursY > 0 {
-					foc.CursY--
-
-					if foc.CursX > len(b[foc.CursY]) {
-						foc.CursX = len(b[foc.CursY])
-					}
-				}
-
-				movedCursorSoUpdateDependents()
-			case glfw.KeyDown:
-				if foc.CursY < len(b)-1 {
+					foc.CursX = 0
 					foc.CursY++
+					foc.TextBodies[0] = b
 
-					if foc.CursX > len(b[foc.CursY]) {
-						foc.CursX = len(b[foc.CursY])
+					if foc.CursY >= len(b) {
+						foc.CursY = len(b) - 1
 					}
-				}
+				case glfw.KeyHome:
+					if eitherControlKeyHeld() {
+						foc.CursY = 0
+					}
 
-				movedCursorSoUpdateDependents()
-			case glfw.KeyLeft:
-				if foc.CursX == 0 {
+					foc.CursX = 0
+					movedCursorSoUpdateDependents()
+				case glfw.KeyEnd:
+					if eitherControlKeyHeld() {
+						foc.CursY = len(b) - 1
+					}
+
+					foc.CursX = len(b[foc.CursY])
+					movedCursorSoUpdateDependents()
+				case glfw.KeyUp:
 					if foc.CursY > 0 {
 						foc.CursY--
+
+						if foc.CursX > len(b[foc.CursY]) {
+							foc.CursX = len(b[foc.CursY])
+						}
+					}
+
+					movedCursorSoUpdateDependents()
+				case glfw.KeyDown:
+					if foc.CursY < len(b)-1 {
+						foc.CursY++
+
+						if foc.CursX > len(b[foc.CursY]) {
+							foc.CursX = len(b[foc.CursY])
+						}
+					}
+
+					movedCursorSoUpdateDependents()
+				case glfw.KeyLeft:
+					if foc.CursX == 0 {
+						if foc.CursY > 0 {
+							foc.CursY--
+							foc.CursX = len(b[foc.CursY])
+						}
+					} else {
+						if glfw.ModifierKey(m.Mod) == glfw.ModControl {
+							foc.CursX = getWordSkipPos(foc.CursX, -1)
+						} else {
+							foc.CursX--
+						}
+					}
+
+					movedCursorSoUpdateDependents()
+				case glfw.KeyRight:
+					if foc.CursX < len(b[foc.CursY]) {
+						if glfw.ModifierKey(m.Mod) == glfw.ModControl {
+							foc.CursX = getWordSkipPos(foc.CursX, 1)
+						} else {
+							foc.CursX++
+						}
+					}
+
+					movedCursorSoUpdateDependents()
+				case glfw.KeyBackspace:
+					if foc.CursX == 0 {
+						b = remove(b, foc.CursY, b[foc.CursY])
+						foc.TextBodies[0] = b
+						foc.CursY--
 						foc.CursX = len(b[foc.CursY])
-					}
-				} else {
-					if glfw.ModifierKey(m.Mod) == glfw.ModControl {
-						foc.CursX = getWordSkipPos(foc.CursX, -1)
+
 					} else {
-						foc.CursX--
+						foc.RemoveCharacter(false)
 					}
-				}
 
-				movedCursorSoUpdateDependents()
-			case glfw.KeyRight:
-				if foc.CursX < len(b[foc.CursY]) {
-					if glfw.ModifierKey(m.Mod) == glfw.ModControl {
-						foc.CursX = getWordSkipPos(foc.CursX, 1)
-					} else {
-						foc.CursX++
-					}
-				}
+				case glfw.KeyDelete:
+					foc.RemoveCharacter(true)
+					fmt.Println("Key Deleted")
+			*/
 
-				movedCursorSoUpdateDependents()
-			case glfw.KeyBackspace:
-				if foc.CursX == 0 {
-					b = remove(b, foc.CursY, b[foc.CursY])
-					foc.TextBodies[0] = b
-					foc.CursY--
-					foc.CursX = len(b[foc.CursY])
-
-				} else {
-					foc.RemoveCharacter(false)
-				}
-
-			case glfw.KeyDelete:
-				foc.RemoveCharacter(true)
-				fmt.Println("Key Deleted")
-
-			}
-		*/
+		}
 
 		//script.Process(false)
 	}

@@ -32,22 +32,23 @@ func UnpackEvent(message []byte) []byte {
 		msg.MustDeserialize(message, &m)
 		onChar(m)
 
-		Terms.Focused.RelayToTask(message)
+		if Terms.Focused != nil {
+			Terms.Focused.RelayToTask(message)
+		}
 
 	case msg.TypeKey:
 		var m msg.MessageKey
 		msg.MustDeserialize(message, &m)
 		onKey(m)
 
-		Terms.Focused.RelayToTask(message)
+		if Terms.Focused != nil {
+			Terms.Focused.RelayToTask(message)
+		}
 
 	case msg.TypeFrameBufferSize:
-		// FIXME?: BRAD SAYS THIS IS NOT INPUT
 		var m msg.MessageFrameBufferSize
 		msg.MustDeserialize(message, &m)
 		onFrameBufferSize(m)
-
-		//Terms.Focused.RelayToTask(message)
 
 	default:
 		fmt.Println("********** UNKNOWN MESSAGE TYPE! ************")
