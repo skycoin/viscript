@@ -10,10 +10,10 @@ import (
 )
 
 const (
-	// num == count/number of...
 	// new terminals start with these values
-	NumColumns = 64
-	NumRows    = 32
+	NumColumns     = 64 // num == count/number of...
+	NumRows        = 32
+	NumPromptLines = 2 //this * t.GridSize.X - 1 == max command size
 )
 
 type Terminal struct {
@@ -70,13 +70,6 @@ func (t *Terminal) SetSize() {
 	t.CharSize.Y = (t.Bounds.Height() - t.BorderSize*2) / float32(t.GridSize.Y)
 }
 
-func (t *Terminal) BackSpace() {
-	// FIXME: should have to look at this more in depth tomorrow
-	t.MoveLeft()
-	t.PutCharacter(0)
-	t.MoveLeft()
-}
-
 func (t *Terminal) Tick() {
 	for len(t.InChannel) > 0 {
 		t.UnpackEvent(<-t.InChannel)
@@ -95,37 +88,28 @@ func (t *Terminal) RelayToTask(message []byte) {
 	hypervisor.DbusGlobal.PublishTo(t.OutChannelId, message)
 }
 
-func (t *Terminal) MoveLeft() {
-	t.Curr.X--
-
-	if t.Curr.X < 0 {
-		t.Curr.X = t.GridSize.X - 1
-		t.MoveUp()
-	}
-}
-
 func (t *Terminal) MoveRight() {
 	t.Curr.X++
 
 	if t.Curr.X >= t.GridSize.X {
 		t.Curr.X = 0
-		t.MoveDown()
+		t.LineFeed()
 	}
 }
 
-func (t *Terminal) MoveUp() {
-	t.Curr.Y--
-
-	if t.Curr.Y < 0 {
-		t.Curr.Y = t.GridSize.Y - 1
-	}
-}
-
-func (t *Terminal) MoveDown() {
+func (t *Terminal) LineFeed() {
 	t.Curr.Y++
 
-	if t.Curr.Y >= t.GridSize.Y {
-		t.Curr.Y = 0
+	//reserve space along bottom to allow for max prompt size
+	if t.Curr.Y > t.GridSize.Y-NumPromptLines {
+		t.Curr.Y--
+
+		//shift everything up by one line
+		for y := 0; y < t.GridSize.Y-1; y++ {
+			for x := 0; x < t.GridSize.X; x++ {
+				t.Chars[y][x] = t.Chars[y+1][x]
+			}
+		}
 	}
 }
 
@@ -136,13 +120,13 @@ func (t *Terminal) SetCursor(x, y int) {
 	}
 }
 
-// there should be 2 paradigms of adding chars/strings:
+// there should be 2 paradigms for adding chars/strings:
 //
 // (1) full manual control/management.  (explicitly tell terminal exactly
-//			where to place something, without disrupting cursor position.
+//			where to place something, without disrupting current position.
 //			must make sure there is space for it)
 // (2) automated flow control.  (just tell what char/string to put into the current flow
-//			and term manages it's placement, wrapping, & eventually word-preserving-wrapping)
+//			and Terminal manages it's placement & wrapping)
 func (t *Terminal) PutCharacter(char uint32) {
 	if t.posIsValid(t.Curr.X, t.Curr.Y) {
 		t.SetCharacterAt(t.Curr.X, t.Curr.Y, char)
