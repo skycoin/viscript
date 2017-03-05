@@ -17,6 +17,11 @@ func (t *Terminal) UnpackEvent(message []byte) []byte {
 		msg.MustDeserialize(message, &m)
 		t.updateCommandLine(m)
 
+	case msg.TypeSetCharAt:
+		var m msg.MessageSetCharAt
+		msg.MustDeserialize(message, &m)
+		t.SetCharacterAt(int(m.X), int(m.Y), m.Char)
+
 	case msg.TypePutChar:
 		var m msg.MessagePutChar
 		msg.MustDeserialize(message, &m)

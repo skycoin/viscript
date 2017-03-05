@@ -9,6 +9,7 @@ func Printfc(out chan []byte, format string, vars ...interface{}) {
 	println("(process/terminal/api.go).Printfc()")
 
 	b := fmt.Sprintf(format, vars)
+
 	for _, v := range b {
 		PutChar(out, uint32(v))
 	}

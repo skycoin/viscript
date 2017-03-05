@@ -27,12 +27,10 @@ var (
 )
 
 var (
-	CanvasExtents   app.Vec2F
-	PixelSize       app.Vec2F
-	CharWid         float32
-	CharHei         float32
-	CharWidInPixels int
-	CharHeiInPixels int
+	CanvasExtents app.Vec2F
+	PixelSize     app.Vec2F
+	CharWid       float32
+	CharHei       float32
 
 	// current position renderer draws to
 	CurrX float32
@@ -50,8 +48,6 @@ func InitCanvas() {
 	CanvasExtents.Y = DistanceFromOrigin
 	CharWid = float32(CanvasExtents.X*2) / float32(NumChars.X)
 	CharHei = float32(CanvasExtents.Y*2) / float32(NumChars.Y)
-	CharWidInPixels = int(float32(CurrAppWidth) / float32(NumChars.X))
-	CharHeiInPixels = int(float32(CurrAppHeight) / float32(NumChars.Y))
 	PixelSize.X = CanvasExtents.X * 2 / float32(CurrAppWidth)
 	PixelSize.Y = CanvasExtents.Y * 2 / float32(CurrAppHeight)
 

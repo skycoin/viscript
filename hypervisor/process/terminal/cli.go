@@ -43,7 +43,7 @@ func EchoWholeCommand(outChanId uint32) {
 
 func traverseCommands(delta int) {
 	if delta > 1 || delta < -1 {
-		println("FIXME if we ever want to stride/jump by more than 1!")
+		println("FIXME if we ever want to stride/jump by more than 1")
 		return
 	}
 
