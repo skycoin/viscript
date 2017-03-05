@@ -49,17 +49,17 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 		if mouse.NearRight(foc.Bounds) && !foc.ResizingBottom {
 			gl.SetHResizePointer()
 			mouse.IncreaseNearnessThreshold()
-			Terms.ResizeFocusedTerminalRight(mouse.GlX)
+			Terms.ResizeFocusedTerminalRight(mouse.GlPos.X)
 		} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight {
 			gl.SetVResizePointer()
 			mouse.IncreaseNearnessThreshold()
-			Terms.ResizeFocusedTerminalBottom(mouse.GlY)
+			Terms.ResizeFocusedTerminalBottom(mouse.GlPos.Y)
 		}
 
 		if mouse.PointerIsInside(foc.Bounds) && !foc.IsResizing() {
 
-			deltaVec := app.Vec2F{mouse.GlX - mouse.PrevGlX,
-				mouse.GlY - mouse.PrevGlY}
+			deltaVec := app.Vec2F{mouse.GlPos.X - mouse.PrevGlPos.X,
+				mouse.GlPos.Y - mouse.PrevGlPos.Y}
 			Terms.MoveFocusedTerminal(deltaVec)
 			gl.SetHandPointer()
 
@@ -69,10 +69,10 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 					"\nLeft", foc.Bounds.Left,
 					"\nRight", foc.Bounds.Right,
 					"\nBottom", foc.Bounds.Bottom,
-					"\n\n GL MouseX:", mouse.GlX,
-					"\n GL MouseY:", mouse.GlY,
-					"\n\n Previous GL MouseX:", mouse.PrevGlX,
-					"\n Previous GL MouseY:", mouse.PrevGlY,
+					"\n\n GL MouseX:", mouse.GlPos.X,
+					"\n GL MouseY:", mouse.GlPos.Y,
+					"\n\n Previous GL MouseX:", mouse.PrevGlPos.X,
+					"\n Previous GL MouseY:", mouse.PrevGlPos.Y,
 					"\n\n DeltaVecX:", deltaVec.X,
 					"\n DeltaVecY:", deltaVec.Y,
 					"\n\n Rect Center X:", foc.Bounds.CenterX(),

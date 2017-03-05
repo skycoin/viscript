@@ -6,10 +6,8 @@ import (
 )
 
 var (
-	GlX         float32 //current mouse position in OpenGL space
-	GlY         float32
-	PrevGlX     float32
-	PrevGlY     float32
+	GlPos       app.Vec2F //current mouse position in OpenGL space
+	PrevGlPos   app.Vec2F //previous " " " " "
 	PixelDelta  app.Vec2F
 	HoldingLeft bool
 
@@ -21,30 +19,20 @@ var (
 )
 
 func Update(pos app.Vec2F) {
-	PrevGlX = GlX
-	PrevGlY = GlY
-	GlX = PixelXtoGlX(pos.X)
-	GlY = PixelYtoGlY(pos.Y)
+	PrevGlPos = GlPos
+	cacheGlPosFromPixel(pos)
 	PixelDelta.X = pos.X - prevPixelPos.X
 	PixelDelta.Y = pos.Y - prevPixelPos.Y
 	prevPixelPos.X = pos.X
 	prevPixelPos.Y = pos.Y
 }
 
-func PixelXtoGlX(posX float32) float32 {
-	return -canvasExtents.X + posX*pixelSize_.X
-}
-
-func PixelYtoGlY(posY float32) float32 {
-	return canvasExtents.Y - posY*pixelSize_.Y
-}
-
 func NearRight(bounds *app.Rectangle) bool {
-	return math.Abs(float64(GlX-bounds.Right)) <= nearThresh
+	return math.Abs(float64(GlPos.X-bounds.Right)) <= nearThresh
 }
 
 func NearBottom(bounds *app.Rectangle) bool {
-	return math.Abs(float64(GlY-bounds.Bottom)) <= nearThresh
+	return math.Abs(float64(GlPos.Y-bounds.Bottom)) <= nearThresh
 }
 
 func IncreaseNearnessThreshold() {
@@ -56,8 +44,8 @@ func DecreaseNearnessThreshold() {
 }
 
 func PointerIsInside(r *app.Rectangle) bool {
-	if GlY <= r.Top && GlY >= r.Bottom {
-		if GlX <= r.Right && GlX >= r.Left {
+	if GlPos.Y <= r.Top && GlPos.Y >= r.Bottom {
+		if GlPos.X <= r.Right && GlPos.X >= r.Left {
 			return true
 		}
 	}
@@ -76,4 +64,9 @@ func GetScrollDeltaX() float32 {
 
 func GetScrollDeltaY() float32 {
 	return PixelDelta.Y * pixelSize_.Y
+}
+
+func cacheGlPosFromPixel(pos app.Vec2F) {
+	GlPos.X = -canvasExtents.X + pos.X*pixelSize_.X
+	GlPos.Y = canvasExtents.Y - pos.Y*pixelSize_.Y
 }
