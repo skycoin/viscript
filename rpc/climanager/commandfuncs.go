@@ -19,7 +19,7 @@ func (c *CliManager) PrintHelp(_ []string) error {
 	p("> stp\t\tStart a new terminal with process.\n\n")
 
 	p("> ltp\t\tList terminal Ids with Attached Process Ids.\n")
-	p("> lp\t\tList process Ids. (TODO: labels?)\n\n")
+	p("> lp\t\tList process Ids.\n\n")
 
 	p("> sett <tId>\tSet given terminal Id as default for all following commands.\n")
 	p("> setp <pId>\tSet given process Id as default for all following commands.\n\n")

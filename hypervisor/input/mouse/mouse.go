@@ -23,12 +23,20 @@ var (
 func Update(pos app.Vec2F) {
 	PrevGlX = GlX
 	PrevGlY = GlY
-	GlX = -canvasExtents.X + pos.X*pixelSize_.X
-	GlY = canvasExtents.Y - pos.Y*pixelSize_.Y
+	GlX = PixelXtoGlX(pos.X)
+	GlY = PixelYtoGlY(pos.Y)
 	PixelDelta.X = pos.X - prevPixelPos.X
 	PixelDelta.Y = pos.Y - prevPixelPos.Y
 	prevPixelPos.X = pos.X
 	prevPixelPos.Y = pos.Y
+}
+
+func PixelXtoGlX(posX float32) float32 {
+	return -canvasExtents.X + posX*pixelSize_.X
+}
+
+func PixelYtoGlY(posY float32) float32 {
+	return canvasExtents.Y - posY*pixelSize_.Y
 }
 
 func NearRight(bounds *app.Rectangle) bool {
