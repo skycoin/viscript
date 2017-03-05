@@ -2,7 +2,6 @@
 
 ------- NEXT THINGS TODO: -------
 
-* Unfocusing
 * Move terminals
 	* "option to snap to grid"
 * Resize terminals

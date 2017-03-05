@@ -147,10 +147,20 @@ func goDownCommandHistory(mod uint8) {
 }
 
 func (self *State) actOnEnter(serializedMsg []byte) {
-	hypervisor.DbusGlobal.PublishTo(
-		dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+	numLineFeeds := 1
+
+	if cursPos >= 64 { //FIXME using Terminal's self.GridSize.X
+		numLineFeeds++
+	}
+
+	for numLineFeeds > 0 {
+		numLineFeeds--
+		hypervisor.DbusGlobal.PublishTo(
+			dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+	}
 
 	log = append(log, commands[currCmd])
 	commands = append(commands, prompt)
 	currCmd = len(commands) - 1
+	cursPos = len(commands[currCmd])
 }

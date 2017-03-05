@@ -12,7 +12,8 @@ var (
 	currCmd  int    //index
 	cursPos  int    //cursor/insert position, local to 1 commands space (2 lines)
 	prompt   string = ">"
-	//assume 64 horizontal characters, then dedicate 2 lines for each command
+	//FIXME to work with Terminal's dynamic self.GridSize.X
+	//assumes 64 horizontal characters, then dedicates 2 lines for each command.
 	maxCommandSize = 128 - 1 //reserve ending space for cursor at the end of last line
 )
 
