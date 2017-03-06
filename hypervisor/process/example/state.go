@@ -1,8 +1,9 @@
 package process
 
 import (
-	"github.com/corpusc/viscript/msg"
 	"log"
+
+	"github.com/corpusc/viscript/msg"
 )
 
 type State struct {
@@ -10,15 +11,15 @@ type State struct {
 	DebugPrintInputEvents bool
 }
 
-func (self *State) Init(proc *Process) {
+func (st *State) Init(proc *Process) {
 	println("(process/example/state.go).Init()")
-	self.proc = proc
-	self.DebugPrintInputEvents = true
+	st.proc = proc
+	st.DebugPrintInputEvents = true
 }
 
-func (self *State) HandleMessages() {
+func (st *State) HandleMessages() {
 	//println("(process/example/state.go).HandleMessages()")
-	c := self.proc.InChannel
+	c := st.proc.InChannel
 
 	for len(c) > 0 {
 		m := <-c // FIXME IF this task ends up prefixing a channel id

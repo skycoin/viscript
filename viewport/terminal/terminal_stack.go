@@ -30,81 +30,81 @@ type TerminalStack struct {
 	nextOffset float32 // how far from previous terminal
 }
 
-func (self *TerminalStack) Init() {
+func (ts *TerminalStack) Init() {
 	println("TerminalStack.Init()")
-	self.Terms = make(map[msg.TerminalId]*Terminal)
-	self.nextOffset = gl.CanvasExtents.Y / 3
-	self.nextRect = app.Rectangle{
+	ts.Terms = make(map[msg.TerminalId]*Terminal)
+	ts.nextOffset = gl.CanvasExtents.Y / 3
+	ts.nextRect = app.Rectangle{
 		gl.CanvasExtents.Y,
 		gl.CanvasExtents.X / 2,
 		-gl.CanvasExtents.Y / 2,
 		-gl.CanvasExtents.X}
 }
 
-func (self *TerminalStack) AddTerminal() msg.TerminalId {
+func (ts *TerminalStack) AddTerminal() msg.TerminalId {
 	println("TerminalStack.AddTerminal()")
 
-	self.nextDepth += self.nextOffset / 10 // done first, cuz desktop is at 0
+	ts.nextDepth += ts.nextOffset / 10 // done first, cuz desktop is at 0
 
 	tid := msg.RandTerminalId() //terminal id
-	self.Terms[tid] = &Terminal{
-		Depth: self.nextDepth,
+	ts.Terms[tid] = &Terminal{
+		Depth: ts.nextDepth,
 		Bounds: &app.Rectangle{
-			self.nextRect.Top,
-			self.nextRect.Right,
-			self.nextRect.Bottom,
-			self.nextRect.Left}}
-	self.Terms[tid].Init()
-	self.FocusedId = tid
-	self.Focused = self.Terms[tid]
+			ts.nextRect.Top,
+			ts.nextRect.Right,
+			ts.nextRect.Bottom,
+			ts.nextRect.Left}}
+	ts.Terms[tid].Init()
+	ts.FocusedId = tid
+	ts.Focused = ts.Terms[tid]
 
-	self.nextRect.Top -= self.nextOffset
-	self.nextRect.Right += self.nextOffset
-	self.nextRect.Bottom -= self.nextOffset
-	self.nextRect.Left += self.nextOffset
+	ts.nextRect.Top -= ts.nextOffset
+	ts.nextRect.Right += ts.nextOffset
+	ts.nextRect.Bottom -= ts.nextOffset
+	ts.nextRect.Left += ts.nextOffset
 
 	//hook up proccess
-	self.SetupTerminalDbus(tid)
+	ts.SetupTerminalDbus(tid)
 
 	return tid
 }
 
-func (self *TerminalStack) RemoveTerminal(id msg.TerminalId) {
+func (ts *TerminalStack) RemoveTerminal(id msg.TerminalId) {
 	println("TerminalStack.RemoveTerminal()")
-	// delete(self.Terms, id)
+	// delete(ts.Terms, id)
 	// TODO: what should happen here after deleting terminal from the stack?
 }
 
-func (self *TerminalStack) Tick() {
+func (ts *TerminalStack) Tick() {
 	//println("TerminalStack.Tick()")
 
-	for _, term := range self.Terms {
+	for _, term := range ts.Terms {
 		term.Tick()
 	}
 }
 
-func (self *TerminalStack) ResizeFocusedTerminalRight(newRightOffset float32) {
+func (ts *TerminalStack) ResizeFocusedTerminalRight(newRightOffset float32) {
 	println("TerminalStack.ResizeFocusedTerminalRight()")
-	self.Focused.ResizingRight = true
-	self.Focused.Bounds.Right = newRightOffset
+	ts.Focused.ResizingRight = true
+	ts.Focused.Bounds.Right = newRightOffset
 }
 
-func (self *TerminalStack) ResizeFocusedTerminalBottom(newBottomOffset float32) {
+func (ts *TerminalStack) ResizeFocusedTerminalBottom(newBottomOffset float32) {
 	println("TerminalStack.ResizeFocusedTerminalBottom()")
-	self.Focused.ResizingBottom = true
-	self.Focused.Bounds.Bottom = newBottomOffset
+	ts.Focused.ResizingBottom = true
+	ts.Focused.Bounds.Bottom = newBottomOffset
 }
 
-func (self *TerminalStack) MoveFocusedTerminal(offset app.Vec2F) {
+func (ts *TerminalStack) MoveFocusedTerminal(offset app.Vec2F) {
 	println("TerminalStack.MoveTerminal()")
-	bounds := self.Focused.Bounds
+	bounds := ts.Focused.Bounds
 	bounds.Top += offset.Y
 	bounds.Bottom += offset.Y
 	bounds.Left += offset.X
 	bounds.Right += offset.X
 }
 
-func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
+func (ts *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 	println("TerminalStack.SetupTerminalDbus()")
 
 	//create process
@@ -127,15 +127,15 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 		rid2)
 
 	p.OutChannelId = uint32(tcid)
-	self.Terms[TerminalId].OutChannelId = uint32(pcid)
-	self.Terms[TerminalId].AttachedProcess = ProcessId
+	ts.Terms[TerminalId].OutChannelId = uint32(pcid)
+	ts.Terms[TerminalId].AttachedProcess = ProcessId
 
 	//subscribe process to the terminal id
 	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
 		tcid,
 		dbus.ResourceId(ProcessId),
 		dbus.ResourceTypeProcess,
-		self.Terms[TerminalId].InChannel) // (a 2nd call had: p.GetIncomingChannel() as last parameter)
+		ts.Terms[TerminalId].InChannel) // (a 2nd call had: p.GetIncomingChannel() as last parameter)
 
 	// fmt.Printf("\nPubSub Channel After Adding Subscriber\n %+v\n",
 	// 	hypervisor.DbusGlobal.PubsubChannels[tcid])
@@ -145,24 +145,24 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 		pcid,
 		dbus.ResourceId(TerminalId),
 		dbus.ResourceTypeTerminal,
-		pi.GetIncomingChannel()) // (a 2nd call had: self.Terms[TerminalId].InChannel) as last parameter)
+		pi.GetIncomingChannel()) // (a 2nd call had: ts.Terms[TerminalId].InChannel) as last parameter)
 
 	// fmt.Printf("\nPubSub Channel After Adding Subscriber\n %+v\n",
 	// 	hypervisor.DbusGlobal.PubsubChannels[pcid])
 }
 
-func (self *TerminalStack) SetFocused(topmostId msg.TerminalId) {
+func (ts *TerminalStack) SetFocused(topmostId msg.TerminalId) {
 	//store which is focused and bring it to top
 	newZ := float32(9.9) //FIXME (for all uses of this var, IF you ever want tons of terms)
-	self.FocusedId = topmostId
-	self.Focused = self.Terms[topmostId]
-	self.Focused.Depth = newZ
+	ts.FocusedId = topmostId
+	ts.Focused = ts.Terms[topmostId]
+	ts.Focused.Depth = newZ
 
 	//store the REST of the terms
 	theRest := []*Terminal{}
 
-	for id, t := range self.Terms {
-		if id != self.FocusedId {
+	for id, t := range ts.Terms {
+		if id != ts.FocusedId {
 			theRest = append(theRest, t)
 		}
 	}
@@ -189,7 +189,7 @@ func (self *TerminalStack) SetFocused(topmostId msg.TerminalId) {
 	}
 }
 
-func (self *TerminalStack) Defocus() {
-	self.FocusedId = 0
-	self.Focused = nil
+func (ts *TerminalStack) Defocus() {
+	ts.FocusedId = 0
+	ts.Focused = nil
 }

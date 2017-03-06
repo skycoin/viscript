@@ -25,36 +25,36 @@ type Process struct {
 	State        State
 }
 
-func (self *Process) GetProcessInterface() msg.ProcessInterface {
+func (pr *Process) GetProcessInterface() msg.ProcessInterface {
 	println("(process/terminal/process.go).GetProcessInterface()")
-	return msg.ProcessInterface(self)
+	return msg.ProcessInterface(pr)
 }
 
-func (self *Process) DeleteProcess() {
+func (pr *Process) DeleteProcess() {
 	println("(process/terminal/process.go).DeleteProcess()")
-	close(self.InChannel)
-	self.State.proc = nil
-	self = nil
+	close(pr.InChannel)
+	pr.State.proc = nil
+	pr = nil
 }
 
 //implement the interface
 
-func (self *Process) GetId() msg.ProcessId {
-	return self.Id
+func (pr *Process) GetId() msg.ProcessId {
+	return pr.Id
 }
 
-func (self *Process) GetType() msg.ProcessType {
-	return self.Type
+func (pr *Process) GetType() msg.ProcessType {
+	return pr.Type
 }
 
-func (self *Process) GetLabel() string {
-	return self.Label
+func (pr *Process) GetLabel() string {
+	return pr.Label
 }
 
-func (self *Process) GetIncomingChannel() chan []byte {
-	return self.InChannel
+func (pr *Process) GetIncomingChannel() chan []byte {
+	return pr.InChannel
 }
 
-func (self *Process) Tick() {
-	self.State.HandleMessages()
+func (pr *Process) Tick() {
+	pr.State.HandleMessages()
 }
