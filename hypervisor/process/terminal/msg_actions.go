@@ -2,16 +2,14 @@ package process
 
 import (
 	"github.com/corpusc/viscript/hypervisor"
-	"github.com/corpusc/viscript/hypervisor/dbus"
 	"github.com/corpusc/viscript/msg"
+	"strings"
 )
 
 // func (self *State) onFrameBufferSize(m msg.MessageFrameBufferSize) {
 // 	println("process/terminal/events.onFrameBufferSize()")
-// 	message := msg.Serialize(
-// 		msg.TypeFrameBufferSize, msg.MessageFrameBufferSize{m.X, m.Y})
-// 	hypervisor.DbusGlobal.PublishTo(
-// 		dbus.ChannelId(self.proc.OutChannelId), message)
+// 	message := msg.Serialize(msg.TypeFrameBufferSize, msg.MessageFrameBufferSize{m.X, m.Y})
+// 	hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, message)
 // }
 
 func (self *State) onChar(m msg.MessageChar) {
@@ -155,12 +153,45 @@ func (self *State) actOnEnter(serializedMsg []byte) {
 
 	for numLineFeeds > 0 {
 		numLineFeeds--
-		hypervisor.DbusGlobal.PublishTo(
-			dbus.ChannelId(self.proc.OutChannelId), serializedMsg)
+		hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, serializedMsg)
 	}
 
+	self.actOnCommand()
 	log = append(log, commands[currCmd])
 	commands = append(commands, prompt)
 	currCmd = len(commands) - 1
 	cursPos = len(commands[currCmd])
+}
+
+func (self *State) actOnCommand() {
+	words := strings.Split(commands[currCmd][len(prompt):], " ")
+
+	switch strings.ToLower(words[0]) {
+
+	case "?":
+		fallthrough
+	case "h":
+		fallthrough
+	case "help":
+		self.print("Yes master, help is coming 'very soon'. (TM)")
+		self.newLine()
+	}
+}
+
+func (self *State) newLine() {
+	m := msg.Serialize(
+		msg.TypeKey,
+		msg.MessageKey{
+			msg.KeyEnter,
+			0, // Scan   uint32
+			uint8(msg.Action(msg.Press)),
+			0}) // Mod
+	hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, m)
+}
+
+func (self *State) print(s string) {
+	for _, c := range s {
+		m := msg.Serialize(msg.TypePutChar, msg.MessagePutChar{0, uint32(c)})
+		hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, m) //EVERY publish action prefixes another chan id
+	}
 }

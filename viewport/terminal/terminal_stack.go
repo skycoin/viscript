@@ -127,7 +127,7 @@ func (self *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 		rid2)
 
 	p.OutChannelId = uint32(tcid)
-	self.Terms[TerminalId].OutChannelId = pcid
+	self.Terms[TerminalId].OutChannelId = uint32(pcid)
 	self.Terms[TerminalId].AttachedProcess = ProcessId
 
 	//subscribe process to the terminal id

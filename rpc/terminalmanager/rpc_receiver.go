@@ -52,7 +52,7 @@ func (receiver *RPCReceiver) GetTermChannelInfo(args []string, result *[]byte) e
 		return errors.New(termExistsErrText)
 	}
 
-	dbusChannel, ok := hypervisor.DbusGlobal.PubsubChannels[term.OutChannelId]
+	dbusChannel, ok := hypervisor.DbusGlobal.PubsubChannels[dbus.ChannelId(term.OutChannelId)]
 	if !ok {
 		channelExistsErrText := fmt.Sprintf("Channel with given Id: %d doesn't exist.", term.OutChannelId)
 		println("[==============!!==============]")

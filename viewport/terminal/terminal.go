@@ -5,7 +5,6 @@ import (
 
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor"
-	"github.com/corpusc/viscript/hypervisor/dbus"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -19,7 +18,7 @@ const (
 type Terminal struct {
 	TerminalId      msg.TerminalId
 	AttachedProcess msg.ProcessId
-	OutChannelId    dbus.ChannelId //id of pubsub channel
+	OutChannelId    uint32 //id of pubsub channel
 	InChannel       chan []byte
 
 	//int/character grid space
@@ -92,12 +91,12 @@ func (t *Terminal) MoveRight() {
 	t.Curr.X++
 
 	if t.Curr.X >= t.GridSize.X {
-		t.Curr.X = 0
 		t.LineFeed()
 	}
 }
 
 func (t *Terminal) LineFeed() {
+	t.Curr.X = 0
 	t.Curr.Y++
 
 	//reserve space along bottom to allow for max prompt size

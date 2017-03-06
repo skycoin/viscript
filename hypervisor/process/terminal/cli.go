@@ -1,6 +1,7 @@
 package process
 
 import (
+	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 )
 
