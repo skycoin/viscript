@@ -145,14 +145,14 @@ func goDownCommandHistory(mod uint8) {
 }
 
 func (self *State) actOnEnter(serializedMsg []byte) {
-	numLineFeeds := 1
+	numLines := 1
 
 	if cursPos >= 64 { //FIXME using Terminal's self.GridSize.X
-		numLineFeeds++
+		numLines++
 	}
 
-	for numLineFeeds > 0 {
-		numLineFeeds--
+	for numLines > 0 {
+		numLines--
 		hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, serializedMsg)
 	}
 

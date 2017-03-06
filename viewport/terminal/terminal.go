@@ -91,11 +91,11 @@ func (t *Terminal) MoveRight() {
 	t.Curr.X++
 
 	if t.Curr.X >= t.GridSize.X {
-		t.LineFeed()
+		t.NewLine()
 	}
 }
 
-func (t *Terminal) LineFeed() {
+func (t *Terminal) NewLine() {
 	t.Curr.X = 0
 	t.Curr.Y++
 

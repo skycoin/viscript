@@ -48,6 +48,6 @@ func (t *Terminal) onKey(m msg.MessageKey) {
 
 	switch m.Key {
 	case msg.KeyEnter:
-		t.LineFeed()
+		t.NewLine()
 	}
 }
