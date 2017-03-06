@@ -1,8 +1,6 @@
 package process
 
 import (
-	"github.com/corpusc/viscript/hypervisor"
-	"github.com/corpusc/viscript/hypervisor/dbus"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -34,11 +32,8 @@ func EchoWholeCommand(outChanId uint32) {
 	//FIXME? actual terminal id really needed?  i just gave it 0 for now
 	//message := msg.Serialize(msg.TypePutChar, msg.MessagePutChar{0, m.Char})
 
-	message := msg.Serialize(
-		msg.TypeCommandLine, msg.MessageCommandLine{0, commands[currCmd], uint32(cursPos)})
-
-	hypervisor.DbusGlobal.PublishTo(
-		dbus.ChannelId(outChanId), message) //EVERY publish action prefixes another chan id
+	m := msg.Serialize(msg.TypeCommandLine, msg.MessageCommandLine{0, commands[currCmd], uint32(cursPos)})
+	hypervisor.DbusGlobal.PublishTo(outChanId, m) //EVERY publish action prefixes another chan id
 }
 
 func traverseCommands(delta int) {
