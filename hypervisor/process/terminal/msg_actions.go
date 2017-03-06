@@ -173,8 +173,9 @@ func (self *State) actOnCommand() {
 	case "h":
 		fallthrough
 	case "help":
-		self.print("Yes master, help is coming 'very soon'. (TM)")
-		self.newLine()
+		self.printLn("Yes master, help is coming 'very soon'. (TM)")
+	default:
+		self.printLn("ERROR: \"" + words[0] + "\" is an unknown command.")
 	}
 }
 
@@ -189,9 +190,11 @@ func (self *State) newLine() {
 	hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, m)
 }
 
-func (self *State) print(s string) {
+func (self *State) printLn(s string) {
 	for _, c := range s {
 		m := msg.Serialize(msg.TypePutChar, msg.MessagePutChar{0, uint32(c)})
 		hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, m) //EVERY publish action prefixes another chan id
 	}
+
+	self.newLine()
 }
