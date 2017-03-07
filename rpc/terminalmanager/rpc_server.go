@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-const DEFAULT_PORT = "7777"
+const DefaultPort = "7777"
 
 type RPC struct {
 }
@@ -21,8 +21,8 @@ func NewRPC() *RPC {
 func (r *RPC) Serve() {
 	port := os.Getenv("TERMINAL_RPC_PORT")
 	if port == "" {
-		log.Println("No TERMINAL_RPC_PORT environmental variable is found, assignig default port value:", DEFAULT_PORT)
-		port = DEFAULT_PORT
+		log.Println("No TERMINAL_RPC_PORT environmental variable is found, assignig default port value:", DefaultPort)
+		port = DefaultPort
 	}
 
 	terminalManager := newTerminalManager()
