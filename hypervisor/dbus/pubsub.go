@@ -1,6 +1,6 @@
 package dbus
 
-func (self *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType ResourceType, ResourceIdentifier string) ChannelId {
+func (di *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType ResourceType, ResourceIdentifier string) ChannelId {
 	println("(dbus/pubsub.go).CreatePubsubChannel()")
 
 	n := PubsubChannel{}
@@ -10,16 +10,16 @@ func (self *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType Resour
 	n.ResourceIdentifier = ResourceIdentifier
 	n.Subscribers = make([]PubsubSubscriber, 0)
 
-	self.PubsubChannels[n.ChannelId] = &n
-	self.ResourceRegister(n.Owner, n.OwnerType)
+	di.PubsubChannels[n.ChannelId] = &n
+	di.ResourceRegister(n.Owner, n.OwnerType)
 
 	return n.ChannelId
 }
 
-func (self *DbusInstance) AddPubsubChannelSubscriber(chanId ChannelId, ResourceId ResourceId, ResourceType ResourceType, channelIn chan []byte) {
+func (di *DbusInstance) AddPubsubChannelSubscriber(chanId ChannelId, ResourceId ResourceId, ResourceType ResourceType, channelIn chan []byte) {
 	println("(dbus/pubsub.go).AddPubsubChannelSubscriber()")
-	pc := self.PubsubChannels[chanId] // pubsub channel
-	ns := PubsubSubscriber{}          // new subscriber
+	pc := di.PubsubChannels[chanId] // pubsub channel
+	ns := PubsubSubscriber{}        // new subscriber
 	ns.SubscriberId = ResourceId
 	ns.SubscriberType = ResourceType
 	ns.Channel = channelIn
@@ -27,12 +27,12 @@ func (self *DbusInstance) AddPubsubChannelSubscriber(chanId ChannelId, ResourceI
 	pc.Subscribers = append(pc.Subscribers, ns)
 }
 
-func (self *DbusInstance) PublishTo(chanId uint32, msg []byte) {
+func (di *DbusInstance) PublishTo(chanId uint32, msg []byte) {
 	id := ChannelId(chanId)
 	println("(dbus/pubsub.go).PublishTo()", id)
 
-	channel := self.PubsubChannels[id]
-	self.prefixMessageWithChanId(id, &msg)
+	channel := di.PubsubChannels[id]
+	di.prefixMessageWithChanId(id, &msg)
 
 	//fix non-determinism?
 	for _, sub := range channel.Subscribers {
@@ -40,7 +40,7 @@ func (self *DbusInstance) PublishTo(chanId uint32, msg []byte) {
 	}
 }
 
-func (self *DbusInstance) prefixMessageWithChanId(id ChannelId, msg *[]byte) {
+func (di *DbusInstance) prefixMessageWithChanId(id ChannelId, msg *[]byte) {
 	prefix := make([]byte, 4)
 	prefix[0] = (uint8)((id & 0x000000ff) >> 0)
 	prefix[1] = (uint8)((id & 0x0000ff00) >> 8)

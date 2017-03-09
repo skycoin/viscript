@@ -1,4 +1,4 @@
-package process
+package api
 
 import (
 	"github.com/corpusc/viscript/msg"

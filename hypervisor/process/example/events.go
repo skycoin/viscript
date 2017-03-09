@@ -2,10 +2,11 @@ package process
 
 import (
 	"fmt"
+
 	"github.com/corpusc/viscript/msg"
 )
 
-func (self *State) UnpackEvent(msgType uint16, message []byte) []byte {
+func (st *State) UnpackEvent(msgType uint16, message []byte) []byte {
 	println("hypervisor/process/example/events.UnpackEvent()")
 
 	switch msgType {

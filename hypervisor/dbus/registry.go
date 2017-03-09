@@ -5,28 +5,28 @@ type DbusInstance struct {
 	Resources      []ResourceMeta
 }
 
-func (self *DbusInstance) Init() {
+func (di *DbusInstance) Init() {
 	println("(dbus/registry.go).Init()")
-	self.PubsubChannels = make(map[ChannelId]*PubsubChannel)
-	self.Resources = make([]ResourceMeta, 0)
+	di.PubsubChannels = make(map[ChannelId]*PubsubChannel)
+	di.Resources = make([]ResourceMeta, 0)
 }
 
 //register that a resource exists
-func (self *DbusInstance) ResourceRegister(ResourceId ResourceId, ResourceType ResourceType) {
+func (di *DbusInstance) ResourceRegister(ResourceId ResourceId, ResourceType ResourceType) {
 	println("(dbus/registry.go).ResourceRegister()")
 	x := ResourceMeta{}
 	x.Id = ResourceId
 	x.Type = ResourceType
 
-	self.Resources = append(self.Resources, x)
+	di.Resources = append(di.Resources, x)
 }
 
 //remove resource from list
-func (self *DbusInstance) ResourceUnregister(ResourceID ResourceId, ResourceType ResourceType) {
+func (di *DbusInstance) ResourceUnregister(ResourceID ResourceId, ResourceType ResourceType) {
 	println("(dbus/registry.go).ResourceUnregister()")
-	for i, resourceMeta := range self.Resources {
+	for i, resourceMeta := range di.Resources {
 		if resourceMeta.Id == ResourceID {
-			self.Resources = append(self.Resources[:i], self.Resources[i+1:]...)
+			di.Resources = append(di.Resources[:i], di.Resources[i+1:]...)
 		}
 	}
 }

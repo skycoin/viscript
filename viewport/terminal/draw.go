@@ -5,11 +5,11 @@ import (
 	"github.com/corpusc/viscript/viewport/gl"
 )
 
-func (self *TerminalStack) Draw() {
-	for _, t := range self.Terms {
+func (ts *TerminalStack) Draw() {
+	for _, t := range ts.Terms {
 		z := t.Depth
 
-		if t == self.Focused {
+		if t == ts.Focused {
 			gl.SetColor(gl.White)
 		} else {
 			gl.SetColor(gl.Gray)

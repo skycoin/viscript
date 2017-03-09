@@ -1,29 +1,31 @@
 package process
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
-	"strings"
 )
 
-// func (self *State) onFrameBufferSize(m msg.MessageFrameBufferSize) {
+// func (st *State) onFrameBufferSize(m msg.MessageFrameBufferSize) {
 // 	println("process/terminal/events.onFrameBufferSize()")
 // 	message := msg.Serialize(msg.TypeFrameBufferSize, msg.MessageFrameBufferSize{m.X, m.Y})
-// 	hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, message)
+// 	hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, message)
 // }
 
-func (self *State) onChar(m msg.MessageChar) {
+func (st *State) onChar(m msg.MessageChar) {
 	//println("process/terminal/events.onChar()")
 
 	if len(commands[currCmd]) < maxCommandSize {
 		// (we have free space to put character into)
 		commands[currCmd] = commands[currCmd][:cursPos] + string(m.Char) + commands[currCmd][cursPos:]
 		moveOneStepRight()
-		EchoWholeCommand(self.proc.OutChannelId)
+		EchoWholeCommand(st.proc.OutChannelId)
 	}
 }
 
-func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
+func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 	//println("process/terminal/events.onKey()")
 
 	switch msg.Action(m.Action) {
@@ -58,10 +60,10 @@ func (self *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 			}
 
 		case msg.KeyEnter:
-			self.actOnEnter(serializedMsg)
+			st.actOnEnter(serializedMsg)
 		}
 
-		EchoWholeCommand(self.proc.OutChannelId)
+		EchoWholeCommand(st.proc.OutChannelId)
 	case msg.Release:
 		// most keys will do nothing upon release
 	}
@@ -144,26 +146,26 @@ func goDownCommandHistory(mod uint8) {
 	}
 }
 
-func (self *State) actOnEnter(serializedMsg []byte) {
+func (st *State) actOnEnter(serializedMsg []byte) {
 	numLines := 1
 
-	if cursPos >= 64 { //FIXME using Terminal's self.GridSize.X
+	if cursPos >= 64 { //FIXME using Terminal's st.GridSize.X
 		numLines++
 	}
 
 	for numLines > 0 {
 		numLines--
-		hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, serializedMsg)
+		hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
 	}
 
-	self.actOnCommand()
+	st.actOnCommand()
 	log = append(log, commands[currCmd])
 	commands = append(commands, prompt)
 	currCmd = len(commands) - 1
 	cursPos = len(commands[currCmd])
 }
 
-func (self *State) actOnCommand() {
+func (st *State) actOnCommand() {
 	words := strings.Split(commands[currCmd][len(prompt):], " ")
 
 	switch strings.ToLower(words[0]) {
@@ -173,13 +175,13 @@ func (self *State) actOnCommand() {
 	case "h":
 		fallthrough
 	case "help":
-		self.printLn("Yes master, help is coming 'very soon'. (TM)")
+		st.printLn("Yes master, help is coming 'very soon'. (TM)")
 	default:
-		self.printLn("ERROR: \"" + words[0] + "\" is an unknown command.")
+		st.printLn("ERROR: \"" + words[0] + "\" is an unknown command.")
 	}
 }
 
-func (self *State) newLine() {
+func (st *State) newLine() {
 	m := msg.Serialize(
 		msg.TypeKey,
 		msg.MessageKey{
@@ -187,14 +189,25 @@ func (self *State) newLine() {
 			0, // Scan   uint32
 			uint8(msg.Action(msg.Press)),
 			0}) // Mod
-	hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, m)
+	hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, m)
 }
 
-func (self *State) printLn(s string) {
+func (st *State) printLn(s string) {
 	for _, c := range s {
-		m := msg.Serialize(msg.TypePutChar, msg.MessagePutChar{0, uint32(c)})
-		hypervisor.DbusGlobal.PublishTo(self.proc.OutChannelId, m) //EVERY publish action prefixes another chan id
+		st.sendChar(uint32(c))
 	}
 
-	self.newLine()
+	st.newLine()
+}
+
+func (st *State) printf(format string, vars ...interface{}) {
+	formattedString := fmt.Sprintf(format, vars)
+	for _, c := range formattedString {
+		st.sendChar(uint32(c))
+	}
+}
+
+func (st *State) sendChar(c uint32) {
+	m := msg.Serialize(msg.TypePutChar, msg.MessagePutChar{0, c})
+	hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, m) // EVERY publish action prefixes another chan id
 }
