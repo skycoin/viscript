@@ -9,7 +9,7 @@
 	* change ACTUAL GridSize?  the underlying character array?  or just virtualize?
 	* change flow of text with wrapping, so for example,
 			squeezing horizontally would cause more lines
-* Make terminal back buffer with scrolling
+* back buffer scrolling
 	* pgup/pgdn hotkeys
 	* 1-3 lines with scrollwheel
 

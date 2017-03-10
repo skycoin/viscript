@@ -1329,3 +1329,116 @@ George:
 HaltingState: 
 for CLI apps/daemons, getting self inspection terminal to run inside of viscript,
 for listing the tasks etc
+
+
+
+
+
+
+
+corpusc: For integrating CLI apps into terminal, i guess all it's files go into
+process/terminal?
+
+HaltingState: yes.  you create a new process implementation
+and each one has a type or identifier and you choose which type to start
+
+
+
+
+
+
+
+skycoind
+terminald
+cxod
+
+the terminal implementation needs to import some library that manages everything.
+like println and etc.
+
+
+
+
+
+
+
+i would not worry about changing the back process for now
+if we spawn new process, we will have new terminal for now
+
+but i need to get meshnet CLI and daemon or skycoind running in viscript.
+
+
+
+
+
+
+we just need to have library that is drop in replacement for log or fmt.  and which can
+wrap log or format and work in normal terminal.
+
+can you run the meshnet daemon.  and meshnet CLI and get it working as a process type in
+viscript
+2 separate process types
+
+
+
+
+
+
+
+we will replace all fmt and log imports with our library
+
+
+
+
+
+
+
+
+it has 2 options.  
+just use printf normally
+unless it is configured for viscript.  then send to channel
+
+
+
+
+
+
+
+we could create a type "external process" which is process run with exec...
+how does gotty work
+
+
+
+
+
+
+
+how quickly can we dump exes into a folder and run them from inside viscript?
+like bash does for its bin folder?
+
+Lets ls or have command to give us list of commands in folder.
+then we type the command name or "run command" and it will pop open new terminal & run it
+
+and we will throw the daemons and meshnet etc in the bin folder
+
+
+
+
+
+
+
+George:
+so I run: "go install" at first in the skycoin server directory and once it's installed
+I use same package as gotty it's called pty and I run 2 routines that wait for the output
+from the skycoin server as you can see
+
+
+
+
+
+
+HaltingState:
+we want to be able to control the directory the exes we are running are in.
+you can use path if you want
+
+yes like you have 'go run command.go'
+and we could run apps from source if needed and not just exe

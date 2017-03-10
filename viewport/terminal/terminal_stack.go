@@ -24,27 +24,34 @@ type TerminalStack struct {
 	Focused   *Terminal
 	Terms     map[msg.TerminalId]*Terminal
 
-	// private
-	nextRect   app.Rectangle // for next/new terminal spawn
+	//private
+	//next/new terminal spawn vars
+	nextRect   app.Rectangle
 	nextDepth  float32
-	nextOffset float32 // how far from previous terminal
+	nextOffset app.Vec2F // how far from previous terminal
 }
 
 func (ts *TerminalStack) Init() {
 	println("TerminalStack.Init()")
+
+	w := gl.CanvasExtents.X * 1.5 //width of terminal window
+	h := gl.CanvasExtents.Y * 1.5 //height
+
 	ts.Terms = make(map[msg.TerminalId]*Terminal)
-	ts.nextOffset = gl.CanvasExtents.Y / 3
+	ts.nextOffset.X = (gl.CanvasExtents.X*2 - w) / 2
+	ts.nextOffset.Y = (gl.CanvasExtents.Y*2 - h) / 2
+
 	ts.nextRect = app.Rectangle{
 		gl.CanvasExtents.Y,
-		gl.CanvasExtents.X / 2,
-		-gl.CanvasExtents.Y / 2,
+		-gl.CanvasExtents.X + w,
+		gl.CanvasExtents.Y - h,
 		-gl.CanvasExtents.X}
 }
 
 func (ts *TerminalStack) AddTerminal() msg.TerminalId {
 	println("TerminalStack.AddTerminal()")
 
-	ts.nextDepth += ts.nextOffset / 10 // done first, cuz desktop is at 0
+	ts.nextDepth += ts.nextOffset.X / 10 // done first, cuz desktop is at 0
 
 	tid := msg.RandTerminalId() //terminal id
 	ts.Terms[tid] = &Terminal{
@@ -58,10 +65,10 @@ func (ts *TerminalStack) AddTerminal() msg.TerminalId {
 	ts.FocusedId = tid
 	ts.Focused = ts.Terms[tid]
 
-	ts.nextRect.Top -= ts.nextOffset
-	ts.nextRect.Right += ts.nextOffset
-	ts.nextRect.Bottom -= ts.nextOffset
-	ts.nextRect.Left += ts.nextOffset
+	ts.nextRect.Top -= ts.nextOffset.Y
+	ts.nextRect.Right += ts.nextOffset.X
+	ts.nextRect.Bottom -= ts.nextOffset.Y
+	ts.nextRect.Left += ts.nextOffset.X
 
 	//hook up proccess
 	ts.SetupTerminalDbus(tid)
