@@ -11,8 +11,8 @@ var (
 	DistanceFromOrigin float32 = 1
 
 	// dimensions (in pixel units)
-	InitAppWidth  int = 800 // initial/startup size (when resizing, compare against this)
-	InitAppHeight int = 600
+	InitAppWidth  int = 1024 // initial/startup size (when resizing, compare against this)
+	InitAppHeight int = 768
 	CurrAppWidth      = int32(InitAppWidth) // current
 	CurrAppHeight     = int32(InitAppHeight)
 

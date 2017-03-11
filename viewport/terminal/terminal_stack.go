@@ -90,16 +90,28 @@ func (ts *TerminalStack) Tick() {
 	}
 }
 
-func (ts *TerminalStack) ResizeFocusedTerminalRight(newRightOffset float32) {
-	println("TerminalStack.ResizeFocusedTerminalRight()")
+func (ts *TerminalStack) ResizeFocusedTerminalRight(newRight float32) {
+	fmt.Printf("TerminalStack.ResizeFocusedTerminalRight()   %.2f\n", newRight)
 	ts.Focused.ResizingRight = true
-	ts.Focused.Bounds.Right = newRightOffset
+	delta := newRight - ts.Focused.Bounds.Right
+
+	if delta > ts.Focused.CharSize.X {
+		ts.Focused.Bounds.Right += ts.Focused.CharSize.X
+	} else if delta < -ts.Focused.CharSize.X {
+		ts.Focused.Bounds.Right -= ts.Focused.CharSize.X
+	}
 }
 
-func (ts *TerminalStack) ResizeFocusedTerminalBottom(newBottomOffset float32) {
+func (ts *TerminalStack) ResizeFocusedTerminalBottom(newBottom float32) {
 	println("TerminalStack.ResizeFocusedTerminalBottom()")
 	ts.Focused.ResizingBottom = true
-	ts.Focused.Bounds.Bottom = newBottomOffset
+	delta := newBottom - ts.Focused.Bounds.Bottom
+
+	if delta > ts.Focused.CharSize.Y {
+		ts.Focused.Bounds.Bottom += ts.Focused.CharSize.Y
+	} else if delta < -ts.Focused.CharSize.Y {
+		ts.Focused.Bounds.Bottom -= ts.Focused.CharSize.Y
+	}
 }
 
 func (ts *TerminalStack) MoveFocusedTerminal(offset app.Vec2F) {
@@ -145,7 +157,7 @@ func (ts *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 		ts.Terms[TerminalId].InChannel) // (a 2nd call had: p.GetIncomingChannel() as last parameter)
 
 	// fmt.Printf("\nPubSub Channel After Adding Subscriber\n %+v\n",
-	// 	hypervisor.DbusGlobal.PubsubChannels[tcid])
+	// hypervisor.DbusGlobal.PubsubChannels[tcid])
 
 	//subscribe terminal to the process id
 	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
@@ -155,7 +167,7 @@ func (ts *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 		pi.GetIncomingChannel()) // (a 2nd call had: ts.Terms[TerminalId].InChannel) as last parameter)
 
 	// fmt.Printf("\nPubSub Channel After Adding Subscriber\n %+v\n",
-	// 	hypervisor.DbusGlobal.PubsubChannels[pcid])
+	// hypervisor.DbusGlobal.PubsubChannels[pcid])
 }
 
 func (ts *TerminalStack) SetFocused(topmostId msg.TerminalId) {
