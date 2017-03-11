@@ -6,10 +6,11 @@ import (
 )
 
 var (
-	GlPos       app.Vec2F //current mouse position in OpenGL space
-	PrevGlPos   app.Vec2F //previous " " " " "
-	PixelDelta  app.Vec2F
-	HoldingLeft bool
+	GlPos               app.Vec2F //current mouse position in OpenGL space
+	PrevGlPos           app.Vec2F //previous " " " " "
+	PixelDelta          app.Vec2F //used when determining new scrollbar position (in old text editor)
+	DeltaSinceClickLeft app.Vec2F
+	HoldingLeft         bool
 
 	// private
 	pixelSize_    app.Vec2F
@@ -21,6 +22,7 @@ var (
 func Update(pos app.Vec2F) {
 	PrevGlPos = GlPos
 	cacheGlPosFromPixel(pos)
+	DeltaSinceClickLeft.MoveBy(GlPos.GetDeltaFrom(PrevGlPos))
 	PixelDelta.X = pos.X - prevPixelPos.X
 	PixelDelta.Y = pos.Y - prevPixelPos.Y
 	prevPixelPos.X = pos.X

@@ -57,10 +57,11 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 		}
 
 		if mouse.PointerIsInside(foc.Bounds) && !foc.IsResizing() {
-
-			deltaVec := app.Vec2F{mouse.GlPos.X - mouse.PrevGlPos.X,
+			hiResDelta := app.Vec2F{
+				mouse.GlPos.X - mouse.PrevGlPos.X,
 				mouse.GlPos.Y - mouse.PrevGlPos.Y}
-			Terms.MoveFocusedTerminal(deltaVec)
+
+			Terms.MoveFocusedTerminal(hiResDelta, &mouse.DeltaSinceClickLeft)
 			gl.SetHandPointer()
 
 			if DebugPrintInputEvents {
@@ -73,8 +74,8 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 					"\n GL MouseY:", mouse.GlPos.Y,
 					"\n\n Previous GL MouseX:", mouse.PrevGlPos.X,
 					"\n Previous GL MouseY:", mouse.PrevGlPos.Y,
-					"\n\n DeltaVecX:", deltaVec.X,
-					"\n DeltaVecY:", deltaVec.Y,
+					"\n\n hiResDeltaX:", hiResDelta.X,
+					"\n hiResDeltaY:", hiResDelta.Y,
 					"\n\n Rect Center X:", foc.Bounds.CenterX(),
 					"\n Rect Center Y:", foc.Bounds.CenterY())
 			}
@@ -111,6 +112,7 @@ func onMouseButton(m msg.MessageMouseButton) {
 		switch msg.MouseButton(m.Button) {
 		case msg.MouseButtonLeft:
 			mouse.HoldingLeft = true
+			mouse.DeltaSinceClickLeft = app.Vec2F{0, 0}
 
 			// // detect clicks in rects
 			// if mouse.PointerIsInside(ui.MainMenu.Rect) {

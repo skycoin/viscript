@@ -30,6 +30,13 @@ func (r *Rectangle) Contains(x, y float32) bool {
 	return false
 }
 
+func (r *Rectangle) MoveBy(amount Vec2F) {
+	r.Top += amount.Y
+	r.Bottom += amount.Y
+	r.Left += amount.X
+	r.Right += amount.X
+}
+
 // ----------------------------------
 // rectangles with extra graphic data
 // ----------------------------------

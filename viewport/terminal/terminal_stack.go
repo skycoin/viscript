@@ -77,21 +77,19 @@ func (ts *TerminalStack) AddTerminal() msg.TerminalId {
 }
 
 func (ts *TerminalStack) RemoveTerminal(id msg.TerminalId) {
-	println("TerminalStack.RemoveTerminal()")
+	println("TerminalStack.RemoveTerminal() ---------------------------- FIXME/TODO")
+	//what should happen here after deleting terminal from the stack?
 	// delete(ts.Terms, id)
-	// TODO: what should happen here after deleting terminal from the stack?
 }
 
 func (ts *TerminalStack) Tick() {
-	//println("TerminalStack.Tick()")
-
 	for _, term := range ts.Terms {
 		term.Tick()
 	}
 }
 
 func (ts *TerminalStack) ResizeFocusedTerminalRight(newRight float32) {
-	fmt.Printf("TerminalStack.ResizeFocusedTerminalRight()   %.2f\n", newRight)
+	//fmt.Printf("TerminalStack.ResizeFocusedTerminalRight()   %.2f\n", newRight)
 	ts.Focused.ResizingRight = true
 	delta := newRight - ts.Focused.Bounds.Right
 
@@ -103,7 +101,7 @@ func (ts *TerminalStack) ResizeFocusedTerminalRight(newRight float32) {
 }
 
 func (ts *TerminalStack) ResizeFocusedTerminalBottom(newBottom float32) {
-	println("TerminalStack.ResizeFocusedTerminalBottom()")
+	//println("TerminalStack.ResizeFocusedTerminalBottom()")
 	ts.Focused.ResizingBottom = true
 	delta := newBottom - ts.Focused.Bounds.Bottom
 
@@ -114,13 +112,32 @@ func (ts *TerminalStack) ResizeFocusedTerminalBottom(newBottom float32) {
 	}
 }
 
-func (ts *TerminalStack) MoveFocusedTerminal(offset app.Vec2F) {
-	println("TerminalStack.MoveTerminal()")
-	bounds := ts.Focused.Bounds
-	bounds.Top += offset.Y
-	bounds.Bottom += offset.Y
-	bounds.Left += offset.X
-	bounds.Right += offset.X
+func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSinceClick *app.Vec2F) {
+	//println("TerminalStack.MoveTerminal()")
+
+	d := mouseDeltaSinceClick
+	cs := ts.Focused.CharSize
+	fb := ts.Focused.Bounds
+
+	if true { //snap to char size
+		if d.X > cs.X {
+			d.X -= cs.X
+			fb.MoveBy(app.Vec2F{cs.X, 0})
+		} else if d.X < -cs.X {
+			d.X += cs.X
+			fb.MoveBy(app.Vec2F{-cs.X, 0})
+		}
+
+		if d.Y > cs.Y {
+			d.Y -= cs.Y
+			fb.MoveBy(app.Vec2F{0, cs.Y})
+		} else if d.Y < -cs.Y {
+			d.Y += cs.Y
+			fb.MoveBy(app.Vec2F{0, -cs.Y})
+		}
+	} else { //smooth, high resolution movement
+		fb.MoveBy(hiResDelta)
+	}
 }
 
 func (ts *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
