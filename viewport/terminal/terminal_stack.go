@@ -6,7 +6,7 @@ import (
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/hypervisor/dbus"
-	//"github.com/corpusc/viscript/hypervisor/input/keyboard"
+	"github.com/corpusc/viscript/hypervisor/input/keyboard"
 	termTask "github.com/corpusc/viscript/hypervisor/process/terminal"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/viewport/gl"
@@ -116,29 +116,29 @@ func (ts *TerminalStack) ResizeFocusedTerminalBottom(newBottom float32) {
 func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSinceClick *app.Vec2F) {
 	//println("TerminalStack.MoveTerminal()")
 
-	// d := mouseDeltaSinceClick
-	// cs := ts.Focused.CharSize
+	d := mouseDeltaSinceClick
+	cs := ts.Focused.CharSize
 	fb := ts.Focused.Bounds
 
-	// if keyboard.ControlKeyIsDown { //snap to char size
-	// 	if d.X > cs.X {
-	// 		d.X -= cs.X
-	// 		fb.MoveBy(app.Vec2F{cs.X, 0})
-	// 	} else if d.X < -cs.X {
-	// 		d.X += cs.X
-	// 		fb.MoveBy(app.Vec2F{-cs.X, 0})
-	// 	}
+	if keyboard.ControlKeyIsDown { //snap to char size
+		if d.X > cs.X {
+			d.X -= cs.X
+			fb.MoveBy(app.Vec2F{cs.X, 0})
+		} else if d.X < -cs.X {
+			d.X += cs.X
+			fb.MoveBy(app.Vec2F{-cs.X, 0})
+		}
 
-	// 	if d.Y > cs.Y {
-	// 		d.Y -= cs.Y
-	// 		fb.MoveBy(app.Vec2F{0, cs.Y})
-	// 	} else if d.Y < -cs.Y {
-	// 		d.Y += cs.Y
-	// 		fb.MoveBy(app.Vec2F{0, -cs.Y})
-	// 	}
-	// } else { //smooth, high resolution movement
-	fb.MoveBy(hiResDelta)
-	//	}
+		if d.Y > cs.Y {
+			d.Y -= cs.Y
+			fb.MoveBy(app.Vec2F{0, cs.Y})
+		} else if d.Y < -cs.Y {
+			d.Y += cs.Y
+			fb.MoveBy(app.Vec2F{0, -cs.Y})
+		}
+	} else { //smooth, high resolution movement
+		fb.MoveBy(hiResDelta)
+	}
 }
 
 func (ts *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {

@@ -57,11 +57,10 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 		}
 
 		if mouse.PointerIsInside(foc.Bounds) && !foc.IsResizing() {
-			hiResDelta := app.Vec2F{
-				mouse.GlPos.X - mouse.PrevGlPos.X,
-				mouse.GlPos.Y - mouse.PrevGlPos.Y}
+			//high resolution delta for smooth resizing
+			delt := mouse.GlPos.GetDeltaFrom(mouse.PrevGlPos)
 
-			Terms.MoveFocusedTerminal(hiResDelta, &mouse.DeltaSinceLeftClick)
+			Terms.MoveFocusedTerminal(delt, &mouse.DeltaSinceLeftClick)
 			gl.SetHandPointer()
 
 			if DebugPrintInputEvents {
@@ -74,8 +73,8 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 					"\n GL MouseY:", mouse.GlPos.Y,
 					"\n\n Previous GL MouseX:", mouse.PrevGlPos.X,
 					"\n Previous GL MouseY:", mouse.PrevGlPos.Y,
-					"\n\n hiResDeltaX:", hiResDelta.X,
-					"\n hiResDeltaY:", hiResDelta.Y,
+					"\n\n delt.X:", delt.X,
+					"\n delt.Y:", delt.Y,
 					"\n\n Rect Center X:", foc.Bounds.CenterX(),
 					"\n Rect Center Y:", foc.Bounds.CenterY())
 			}

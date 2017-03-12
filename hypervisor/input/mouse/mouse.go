@@ -22,9 +22,8 @@ var (
 func Update(pixelPos app.Vec2F) {
 	PrevGlPos = GlPos
 	setGlPosFrom(pixelPos)
-	//DeltaSinceLeftClick.MoveBy(GlPos.GetDeltaFrom(PrevGlPos))
-	PixelDelta.X = pixelPos.X - prevPixelPos.X
-	PixelDelta.Y = pixelPos.Y - prevPixelPos.Y
+	DeltaSinceLeftClick.MoveBy(GlPos.GetDeltaFrom(PrevGlPos))
+	PixelDelta = pixelPos.GetDeltaFrom(prevPixelPos)
 	prevPixelPos.SetTo(pixelPos)
 }
 
