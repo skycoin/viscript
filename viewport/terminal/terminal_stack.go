@@ -92,24 +92,34 @@ func (ts *TerminalStack) Tick() {
 func (ts *TerminalStack) ResizeFocusedTerminalRight(newRight float32) {
 	//fmt.Printf("TerminalStack.ResizeFocusedTerminalRight()   %.2f\n", newRight)
 	ts.Focused.ResizingRight = true
-	delta := newRight - ts.Focused.Bounds.Right
 
-	if delta > ts.Focused.CharSize.X {
-		ts.Focused.Bounds.Right += ts.Focused.CharSize.X
-	} else if delta < -ts.Focused.CharSize.X {
-		ts.Focused.Bounds.Right -= ts.Focused.CharSize.X
+	if keyboard.ControlKeyIsDown {
+		ts.Focused.Bounds.Right = newRight
+	} else {
+		delta := newRight - ts.Focused.Bounds.Right
+
+		if delta > ts.Focused.CharSize.X {
+			ts.Focused.Bounds.Right += ts.Focused.CharSize.X
+		} else if delta < -ts.Focused.CharSize.X {
+			ts.Focused.Bounds.Right -= ts.Focused.CharSize.X
+		}
 	}
 }
 
 func (ts *TerminalStack) ResizeFocusedTerminalBottom(newBottom float32) {
 	//println("TerminalStack.ResizeFocusedTerminalBottom()")
 	ts.Focused.ResizingBottom = true
-	delta := newBottom - ts.Focused.Bounds.Bottom
 
-	if delta > ts.Focused.CharSize.Y {
-		ts.Focused.Bounds.Bottom += ts.Focused.CharSize.Y
-	} else if delta < -ts.Focused.CharSize.Y {
-		ts.Focused.Bounds.Bottom -= ts.Focused.CharSize.Y
+	if keyboard.ControlKeyIsDown {
+		ts.Focused.Bounds.Bottom = newBottom
+	} else {
+		delta := newBottom - ts.Focused.Bounds.Bottom
+
+		if delta > ts.Focused.CharSize.Y {
+			ts.Focused.Bounds.Bottom += ts.Focused.CharSize.Y
+		} else if delta < -ts.Focused.CharSize.Y {
+			ts.Focused.Bounds.Bottom -= ts.Focused.CharSize.Y
+		}
 	}
 }
 
@@ -120,7 +130,9 @@ func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSin
 	cs := ts.Focused.CharSize
 	fb := ts.Focused.Bounds
 
-	if keyboard.ControlKeyIsDown { //snap to char size
+	if keyboard.ControlKeyIsDown { //smooth, high resolution
+		fb.MoveBy(hiResDelta)
+	} else { //snap movement to char size
 		if d.X > cs.X {
 			d.X -= cs.X
 			fb.MoveBy(app.Vec2F{cs.X, 0})
@@ -136,8 +148,6 @@ func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSin
 			d.Y += cs.Y
 			fb.MoveBy(app.Vec2F{0, -cs.Y})
 		}
-	} else { //smooth, high resolution movement
-		fb.MoveBy(hiResDelta)
 	}
 }
 
