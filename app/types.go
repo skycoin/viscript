@@ -15,6 +15,11 @@ type Vec2F struct {
 	Y float32
 }
 
+func (v *Vec2F) SetTo(value Vec2F) {
+	v.X = value.X
+	v.Y = value.Y
+}
+
 func (v *Vec2F) MoveBy(amount Vec2F) {
 	v.X += amount.X
 	v.Y += amount.Y

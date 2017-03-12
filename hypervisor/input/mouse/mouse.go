@@ -19,14 +19,13 @@ var (
 	nearThresh    float64 //nearness threshold (how close pointer should be to the edge)
 )
 
-func Update(pos app.Vec2F) {
+func Update(pixelPos app.Vec2F) {
 	PrevGlPos = GlPos
-	cacheGlPosFromPixel(pos)
-	DeltaSinceLeftClick.MoveBy(GlPos.GetDeltaFrom(PrevGlPos))
-	PixelDelta.X = pos.X - prevPixelPos.X
-	PixelDelta.Y = pos.Y - prevPixelPos.Y
-	prevPixelPos.X = pos.X
-	prevPixelPos.Y = pos.Y
+	setGlPosFrom(pixelPos)
+	//DeltaSinceLeftClick.MoveBy(GlPos.GetDeltaFrom(PrevGlPos))
+	PixelDelta.X = pixelPos.X - prevPixelPos.X
+	PixelDelta.Y = pixelPos.Y - prevPixelPos.Y
+	prevPixelPos.SetTo(pixelPos)
 }
 
 func NearRight(bounds *app.Rectangle) bool {
@@ -68,7 +67,7 @@ func GetScrollDeltaY() float32 {
 	return PixelDelta.Y * pixelSize_.Y
 }
 
-func cacheGlPosFromPixel(pos app.Vec2F) {
+func setGlPosFrom(pos app.Vec2F) {
 	GlPos.X = -canvasExtents.X + pos.X*pixelSize_.X
 	GlPos.Y = canvasExtents.Y - pos.Y*pixelSize_.Y
 }
