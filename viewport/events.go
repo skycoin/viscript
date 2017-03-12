@@ -22,6 +22,10 @@ func UnpackEvent(message []byte) []byte {
 		msg.MustDeserialize(message, &m)
 		onMouseScroll(m)
 
+		if Terms.Focused != nil {
+			Terms.Focused.RelayToTask(message)
+		}
+
 	case msg.TypeMouseButton:
 		var m msg.MessageMouseButton
 		msg.MustDeserialize(message, &m)
