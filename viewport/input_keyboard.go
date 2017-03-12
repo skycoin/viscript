@@ -2,6 +2,7 @@ package viewport
 
 import (
 	"fmt"
+	"github.com/corpusc/viscript/hypervisor/input/keyboard"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/viewport/gl"
 )
@@ -32,45 +33,55 @@ func onKey(m msg.MessageKey) {
 		switch m.Key {
 
 		case msg.KeyEscape:
-			fmt.Println("CLOSE OPENGL WINDOW")
+			println("CLOSE OPENGL WINDOW")
 			CloseWindow = true
 
 		case msg.KeyLeftShift:
 			fallthrough
 		case msg.KeyRightShift:
-			fmt.Println("Done selecting")
+			println("Done selecting")
+			keyboard.ShiftKeyIsDown = false
 			//foc.Selection.CurrentlySelecting = false // TODO?  possibly flip around if selectionStart comes after selectionEnd in the page flow?
 
 		case msg.KeyLeftControl:
 			fallthrough
 		case msg.KeyRightControl:
-			fmt.Println("Control RELEASED")
+			println("Control RELEASED")
+			keyboard.ControlKeyIsDown = false
 
 		case msg.KeyLeftAlt:
 			fallthrough
 		case msg.KeyRightAlt:
-			fmt.Println("Alt RELEASED")
+			println("Alt RELEASED")
+			keyboard.AltKeyIsDown = false
 
 		case msg.KeyLeftSuper:
 			fallthrough
 		case msg.KeyRightSuper:
-			fmt.Println("'Super' modifier key RELEASED")
+			println("'Super' modifier key RELEASED")
+			keyboard.SuperKeyIsDown = false
 		}
 	} else { //     .Press   or   .Repeat
-		/*
-			switch glfw.ModifierKey(m.Mod) {
-			case glfw.ModShift:
-				fmt.Println("Started selecting")
-				foc.Selection.CurrentlySelecting = true
-				foc.Selection.StartX = foc.CursX
-				foc.Selection.StartY = foc.CursY
-			case glfw.ModAlt:
-				fmt.Println("glfw.ModAlt")
-			case glfw.ModControl:
-				fmt.Println("glfw.ModControl")
-			}
-		*/
+		//mods
+		switch msg.ModifierKey(m.Mod) {
+		case msg.ModShift:
+			println("PRESSED/REPEATED ModShift --- Started selection")
+			keyboard.ShiftKeyIsDown = true
+			// foc.Selection.CurrentlySelecting = true
+			// foc.Selection.StartX = foc.CursX
+			// foc.Selection.StartY = foc.CursY
+		case msg.ModAlt:
+			println("PRESSED/REPEATED ModAlt")
+			keyboard.AltKeyIsDown = true
+		case msg.ModControl:
+			println("PRESSED/REPEATED ModControl")
+			keyboard.ControlKeyIsDown = true
+		case msg.ModSuper:
+			println("PRESSED/REPEATED ModSuper")
+			keyboard.SuperKeyIsDown = true
+		}
 
+		//keys
 		switch m.Key {
 
 		case msg.KeyLeftAlt:

@@ -6,6 +6,7 @@ import (
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/hypervisor/dbus"
+	"github.com/corpusc/viscript/hypervisor/input/keyboard"
 	termTask "github.com/corpusc/viscript/hypervisor/process/terminal"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/viewport/gl"
@@ -119,7 +120,7 @@ func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSin
 	cs := ts.Focused.CharSize
 	fb := ts.Focused.Bounds
 
-	if true { //snap to char size
+	if keyboard.ControlKeyIsDown { //snap to char size
 		if d.X > cs.X {
 			d.X -= cs.X
 			fb.MoveBy(app.Vec2F{cs.X, 0})

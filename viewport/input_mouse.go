@@ -26,9 +26,9 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 	}
 
 	// set pointer appropriately
-	if mouse.NearRight(foc.Bounds) && !foc.ResizingBottom && !mouse.HoldingLeft {
+	if mouse.NearRight(foc.Bounds) && !foc.ResizingBottom && !mouse.LeftButtonIsDown {
 		gl.SetHResizePointer()
-	} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight && !mouse.HoldingLeft {
+	} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight && !mouse.LeftButtonIsDown {
 		gl.SetVResizePointer()
 	} else if mouse.PointerIsInside(foc.Bounds) {
 		gl.SetIBeamPointer()
@@ -36,7 +36,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 		gl.SetArrowPointer()
 	}
 
-	if mouse.HoldingLeft {
+	if mouse.LeftButtonIsDown {
 		// Determination should be here if the mouse is over scrollbar or over the
 		// area where terminal can be moved. Moving windows happens in GL space
 		// coordinates because I thought pixel delta was used for scrollbar scrolling
@@ -61,7 +61,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 				mouse.GlPos.X - mouse.PrevGlPos.X,
 				mouse.GlPos.Y - mouse.PrevGlPos.Y}
 
-			Terms.MoveFocusedTerminal(hiResDelta, &mouse.DeltaSinceClickLeft)
+			Terms.MoveFocusedTerminal(hiResDelta, &mouse.DeltaSinceLeftClick)
 			gl.SetHandPointer()
 
 			if DebugPrintInputEvents {
@@ -111,8 +111,8 @@ func onMouseButton(m msg.MessageMouseButton) {
 	if msg.Action(m.Action) == msg.Press {
 		switch msg.MouseButton(m.Button) {
 		case msg.MouseButtonLeft:
-			mouse.HoldingLeft = true
-			mouse.DeltaSinceClickLeft = app.Vec2F{0, 0}
+			mouse.LeftButtonIsDown = true
+			mouse.DeltaSinceLeftClick = app.Vec2F{0, 0}
 
 			// // detect clicks in rects
 			// if mouse.PointerIsInside(ui.MainMenu.Rect) {
@@ -124,7 +124,7 @@ func onMouseButton(m msg.MessageMouseButton) {
 	} else if msg.Action(m.Action) == msg.Release {
 		switch msg.MouseButton(m.Button) {
 		case msg.MouseButtonLeft:
-			mouse.HoldingLeft = false
+			mouse.LeftButtonIsDown = false
 		}
 	}
 }
