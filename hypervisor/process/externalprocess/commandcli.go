@@ -14,7 +14,7 @@ import (
 // var GOPATH string = os.Getenv("GOPATH")
 
 func woof() {
-	cmd := exec.Command("srv")
+	cmd := exec.Command(os.Args[1])
 
 	currentCmd, err := pty.Start(cmd)
 	if err != nil {

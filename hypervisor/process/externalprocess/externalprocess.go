@@ -1,7 +1,6 @@
 package externalprocess
 
 import (
-	"log"
 	"os"
 	"os/exec"
 
@@ -49,7 +48,7 @@ func (pr *ExternalProcess) InitCmd(command string) {
 	var err error
 	pr.currentPty, err = pty.Start(pr.cmd)
 	if err != nil {
-		log.Print("Failed to execute command.")
+		println("Failed to execute command.")
 		return
 	}
 
@@ -65,11 +64,11 @@ func (pr *ExternalProcess) InitCmd(command string) {
 	}()
 
 	// Run Process Receive
-	// go func() {
-	// 	defer func() { exit <- true }()
+	go func() {
+		defer func() { exit <- true }()
 
-	// 	pr.processReceive()
-	// }()
+		pr.processReceive()
+	}()
 
 	go func() {
 		// TODO: defer cleanup maybe here
@@ -77,6 +76,8 @@ func (pr *ExternalProcess) InitCmd(command string) {
 		// a command that makes the running command exit
 
 		// wait for close
+
+		// io.Copy(os.Stdout, pr.currentPty)
 		<-exit
 		pr.currentPty.Close()
 
@@ -86,12 +87,12 @@ func (pr *ExternalProcess) InitCmd(command string) {
 }
 
 func (pr *ExternalProcess) processSend() {
-	buf := make([]byte, 1024)
+	buf := make([]byte, 2048)
 
 	for {
 		size, err := pr.currentPty.Read(buf)
 		if err != nil {
-			log.Printf("%s exited.", pr.Command)
+			println("%s exited.", pr.Command)
 			return
 		}
 		pr.writeToSubscribers(buf[:size])
@@ -105,27 +106,16 @@ func (pr *ExternalProcess) writeToSubscribers(data []byte) {
 }
 
 func (pr *ExternalProcess) processReceive() {
-
+	for {
+		select {
+		case data := <-pr.CmdOut:
+			_, err := pr.currentPty.Write(append(data, '\n'))
+			if err != nil {
+				return
+			}
+		}
+	}
 }
-
-// 	// Read from CmdOut
-// 	// <- Send it to external app
-// 	go func() {
-// 		for {
-// 			if buf := <-pr.CmdOut; buf != nil {
-// 				pr.currentRunningPty.Write([]byte(buf))
-// 			}
-// 		}
-// 	}()
-// }()
-
-// var b []byte
-// read, _ := pr.currentRunningPty.Read(b)
-// println("Go CmdIn", string(b))
-// if read > 0 {
-// 	pr.CmdIn <- b
-// }
-// }
 
 func (pr *ExternalProcess) GetProcessInterface() msg.ProcessInterface {
 	println("(process/terminal/process.go).GetProcessInterface()")

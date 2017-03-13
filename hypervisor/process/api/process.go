@@ -4,7 +4,15 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-//non-instanced
+type Process struct {
+	Id           msg.ProcessId
+	Type         msg.ProcessType
+	Label        string
+	OutChannelId uint32
+	InChannel    chan []byte
+	State        State
+}
+
 func NewProcess() *Process {
 	println("(process/terminal/process.go).NewProcess()")
 	var p Process
@@ -14,15 +22,6 @@ func NewProcess() *Process {
 	p.InChannel = make(chan []byte, msg.ChannelCapacity)
 	p.State.Init(&p)
 	return &p
-}
-
-type Process struct {
-	Id           msg.ProcessId
-	Type         msg.ProcessType
-	Label        string
-	OutChannelId uint32
-	InChannel    chan []byte
-	State        State
 }
 
 func (pr *Process) GetProcessInterface() msg.ProcessInterface {
@@ -37,7 +36,7 @@ func (pr *Process) DeleteProcess() {
 	pr = nil
 }
 
-//implement the interface
+// Interface implementations
 
 func (pr *Process) GetId() msg.ProcessId {
 	return pr.Id
