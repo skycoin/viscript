@@ -1,6 +1,8 @@
-package externalprocess
+package api
 
 import (
+	"strings"
+
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 )
@@ -145,7 +147,8 @@ func (st *State) actOnEnter(serializedMsg []byte) {
 		// hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
 	}
 
-	st.actOnCommand()
+	words := strings.Split(commands[currCmd][len(prompt):], " ")
+	st.actOnCommand(words)
 	log = append(log, commands[currCmd])
 	commands = append(commands, prompt)
 	currCmd = len(commands) - 1

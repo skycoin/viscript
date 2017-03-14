@@ -1,4 +1,4 @@
-package externalprocess
+package api
 
 import (
 	"strings"
@@ -14,7 +14,7 @@ func (st *State) onChar(m msg.MessageChar) {
 		// (we have free space to put character into)
 		commands[currCmd] = commands[currCmd][:cursPos] + string(m.Char) + commands[currCmd][cursPos:]
 		moveOneStepRight()
-		EchoWholeCommand(st.proc.OutChannelId)
+		EchoWholeCommand(st.Proc.OutChannelId)
 	}
 }
 
@@ -56,7 +56,7 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 			st.actOnEnter(serializedMsg)
 		}
 
-		EchoWholeCommand(st.proc.OutChannelId)
+		EchoWholeCommand(st.Proc.OutChannelId)
 	case msg.Release:
 		// most keys will do nothing upon release
 	}
@@ -64,26 +64,20 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 
 func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 	//println("process/terminal/events.onMouseScroll()")
-	hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
+	hypervisor.DbusGlobal.PublishTo(st.Proc.OutChannelId, serializedMsg)
 }
 
-func (st *State) actOnCommand() {
-	words := strings.Split(commands[currCmd][len(prompt):], " ")
+func (st *State) actOnCommand(command []string) {
 
-	if len(strings.ToLower(words[0])) > 0 {
-		println("ActOnCommand() ->", strings.ToLower(words[0]))
-		st.proc.CmdOut <- []byte(strings.ToLower(words[0]))
+	switch strings.ToLower(command[0]) {
+
+	case "?":
+		fallthrough
+	case "h":
+		fallthrough
+	case "help":
+		st.PrintLn("Yes master, help is coming 'very soon'. (TM)")
+	default:
+		st.PrintLn("ERROR: \"" + command[0] + "\" is an unknown command.")
 	}
-
-	// switch strings.ToLower(words[0]) {
-
-	// case "?":
-	// 	fallthrough
-	// case "h":
-	// 	fallthrough
-	// case "help":
-	// 	st.printLn("Yes master, help is coming 'very soon'. (TM)")
-	// default:
-	// 	st.printLn("ERROR: \"" + words[0] + "\" is an unknown command.")
-	// }
 }

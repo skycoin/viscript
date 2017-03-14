@@ -31,8 +31,9 @@ func (pr *Process) GetProcessInterface() msg.ProcessInterface {
 
 func (pr *Process) DeleteProcess() {
 	println("(process/terminal/process.go).DeleteProcess()")
+	// TODO: is this even finished?
 	close(pr.InChannel)
-	pr.State.proc = nil
+	pr.State.Proc = nil
 	pr = nil
 }
 

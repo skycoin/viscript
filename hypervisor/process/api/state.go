@@ -6,19 +6,19 @@ import (
 )
 
 type State struct {
-	proc                  *Process
+	Proc                  *Process
 	DebugPrintInputEvents bool
 }
 
 func (st *State) Init(proc *Process) {
 	println("(process/terminal/state.go).Init()")
-	st.proc = proc
+	st.Proc = proc
 	st.DebugPrintInputEvents = true
 }
 
 func (st *State) HandleMessages() {
 	//called per Tick()
-	c := st.proc.InChannel
+	c := st.Proc.InChannel
 
 	for len(c) > 0 {
 		m := <-c

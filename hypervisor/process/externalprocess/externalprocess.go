@@ -8,36 +8,42 @@ import (
 
 	"syscall"
 
+	"github.com/corpusc/viscript/hypervisor/process/api"
 	"github.com/corpusc/viscript/msg"
 	"github.com/kr/pty"
 )
 
 type ExternalProcess struct {
-	Id           msg.ProcessId
-	Type         msg.ProcessType
-	Label        string
-	OutChannelId uint32
-	InChannel    chan []byte
-
-	Command    string
-	cmd        *exec.Cmd
-	currentPty *os.File
-	CmdOut     chan []byte
-	writeMutex *sync.Mutex
-
-	State State
+	*api.Process // Inherit from Process api
+	Command      string
+	cmd          *exec.Cmd
+	currentPty   *os.File
+	CmdOut       chan []byte
+	ExtState     *ExtState
+	writeMutex   *sync.Mutex
 }
 
 func NewExternalProcess(label string, command string) *ExternalProcess {
-	println("(process/terminal/process.go).NewProcess()")
+	println("(process/terminal/process.go).NewExternalProcess()")
 	var p ExternalProcess
-	p.Id = msg.NextProcessId()
-	p.Type = 0
-	p.Label = label
-	p.InChannel = make(chan []byte, msg.ChannelCapacity)
-	p.State.Init(&p)
+
+	p.Process = &api.Process{
+		Id:        msg.NextProcessId(),
+		Type:      0,
+		Label:     label,
+		InChannel: make(chan []byte, msg.ChannelCapacity)}
+
+	p.ExtState = &ExtState{}
+	p.ExtState.Init(p.Process, &p)
 	p.InitCmd(command)
+
 	return &p
+}
+
+func (pr *ExternalProcess) DeleteProcess() {
+	println("(process/terminal/process.go).DeleteProcess()")
+	pr.Process.DeleteProcess()
+	// TODO: further cleanup goes here for the external process
 }
 
 func (pr *ExternalProcess) InitCmd(command string) {
@@ -102,7 +108,7 @@ func (pr *ExternalProcess) processSend() {
 func (pr *ExternalProcess) writeToSubscribers(data []byte) {
 	pr.writeMutex.Lock()
 	defer pr.writeMutex.Unlock()
-	pr.State.printLn(string(data))
+	pr.State.PrintLn(string(data))
 }
 
 func (pr *ExternalProcess) processReceive() {
@@ -115,36 +121,4 @@ func (pr *ExternalProcess) processReceive() {
 			}
 		}
 	}
-}
-
-func (pr *ExternalProcess) GetProcessInterface() msg.ProcessInterface {
-	println("(process/terminal/process.go).GetProcessInterface()")
-	return msg.ProcessInterface(pr)
-}
-
-func (pr *ExternalProcess) DeleteProcess() {
-	println("(process/terminal/process.go).DeleteProcess()")
-	close(pr.InChannel)
-	pr.State.proc = nil
-	pr = nil
-}
-
-func (pr *ExternalProcess) GetId() msg.ProcessId {
-	return pr.Id
-}
-
-func (pr *ExternalProcess) GetType() msg.ProcessType {
-	return pr.Type
-}
-
-func (pr *ExternalProcess) GetLabel() string {
-	return pr.Label
-}
-
-func (pr *ExternalProcess) GetIncomingChannel() chan []byte {
-	return pr.InChannel
-}
-
-func (pr *ExternalProcess) Tick() {
-	pr.State.HandleMessages()
 }
