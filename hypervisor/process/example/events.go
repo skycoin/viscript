@@ -36,11 +36,6 @@ func (st *State) UnpackEvent(msgType uint16, message []byte) []byte {
 		msg.MustDeserialize(message, &m)
 		onKey(m)
 
-	case msg.TypeFrameBufferSize:
-		// FIXME: BRAD SAYS THIS IS NOT INPUT
-		var m msg.MessageFrameBufferSize
-		msg.MustDeserialize(message, &m)
-		onFrameBufferSize(m)
 	default:
 		fmt.Println("UNKNOWN MESSAGE TYPE!")
 	}
@@ -56,17 +51,13 @@ func (st *State) UnpackEvent(msgType uint16, message []byte) []byte {
 //EVENT HANDLERS
 //
 
-// triggered both by moving **AND*** by pressing buttons
+// triggered both by pointer movement ***AND*** by button pressing
 func onMouseCursorPos(m msg.MessageMousePos) {
 	println("hypervisor/process/example/events.onMouseCursorPos()")
 }
 
 func onMouseScroll(m msg.MessageMouseScroll) {
 	println("hypervisor/process/example/events.onMouseScroll()")
-}
-
-func onFrameBufferSize(m msg.MessageFrameBufferSize) {
-	println("hypervisor/process/example/events.onFrameBufferSize()")
 }
 
 func onChar(m msg.MessageChar) {

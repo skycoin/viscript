@@ -19,12 +19,6 @@ func (st *State) UnpackEvent(msgType uint16, message []byte) []byte {
 		msg.MustDeserialize(message, &m)
 		st.onKey(m, message)
 
-	// case msg.TypeFrameBufferSize:
-	// 	// FIXME: BRAD SAYS THIS IS NOT INPUT
-	// 	var m msg.MessageFrameBufferSize
-	// 	msg.MustDeserialize(message, &m)
-	// 	st.onFrameBufferSize(m)
-
 	default:
 		println("UNKNOWN MESSAGE TYPE!")
 	}

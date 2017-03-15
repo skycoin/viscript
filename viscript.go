@@ -2,19 +2,17 @@
 
 ------- NEXT THINGS TODO: -------
 
-* Move terminals
-	* "option to snap to grid"
+* structize task's cli.go
 
 * Resize terminals
-	* change ACTUAL GridSize?  the underlying character array?  or just virtualize?
+	* i believe we'll change the actual grid size, then get enough data
+			from the terminal task to fill the backscroll
 	* change flow of text with wrapping, so for example,
 			squeezing horizontally would cause more lines
 
 * back buffer scrolling
 	* pgup/pgdn hotkeys
 	* 1-3 lines with scrollwheel
-
-* CTRL+mousewheel zoom in/out per terminal
 
 * Fix the fact that you get a resizing pointer outside of focused terminal,
 		yet when you click outside terminal it can land on a background
