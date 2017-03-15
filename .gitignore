@@ -6,3 +6,4 @@ viscript
 /.vscode
 .DS_Store
 debug
+/hypervisor/process/externalp
