@@ -119,19 +119,16 @@ func (st *State) sendChar(c uint32) {
 		st.newLine()
 		return
 	} else if c == msg.EscTab {
-
-		return
-	} else if c == msg.EscDoubleQuote {
-
+		println("Tab!")
 		return
 	} else if c == msg.EscCarriageReturn {
-
+		println("Carriage Return!")
 		return
 	} else if c == msg.EscBackSpace {
-
+		println("Back Space!")
 		return
 	} else if c == msg.EscBackSlash {
-
+		println("Back Slash!")
 		return
 	}
 
