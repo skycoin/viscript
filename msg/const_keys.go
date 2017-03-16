@@ -310,3 +310,18 @@ const (
 	KeyMenu         = GLFW_KEY_MENU
 	KeyLast         = GLFW_KEY_LAST
 )
+
+/*
+
+escape sequence chars
+
+*/
+
+const (
+	EscDoubleQuote    = 34
+	EscBackSlash      = 92
+	EscNewLine        = 10
+	EscCarriageReturn = 13
+	EscTab            = 9
+	EscBackSpace      = 8
+)
