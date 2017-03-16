@@ -11,11 +11,10 @@ import (
 func (st *State) onChar(m msg.MessageChar) {
 	//println("process/terminal/events.onChar()")
 
-	if len(commands[currCmd]) < maxCommandSize {
+	if st.Cli.HasEnoughSpace() {
 		// (we have free space to put character into)
-		commands[currCmd] = commands[currCmd][:cursPos] + string(m.Char) + commands[currCmd][cursPos:]
-		moveOneStepRight()
-		EchoWholeCommand(st.proc.OutChannelId)
+		st.Cli.AddCharAndMoveRight(m.Char)
+		st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 	}
 }
 
@@ -30,34 +29,34 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 		switch m.Key {
 
 		case msg.KeyHome:
-			cursPos = len(prompt)
+			st.Cli.CursPos = len(st.Cli.Prompt)
 		case msg.KeyEnd:
-			cursPos = len(commands[currCmd])
+			st.Cli.CursPos = len(st.Cli.Commands[st.Cli.CurrCmd])
 
 		case msg.KeyUp:
-			goUpCommandHistory(m.Mod)
+			st.Cli.goUpCommandHistory(m.Mod)
 		case msg.KeyDown:
-			goDownCommandHistory(m.Mod)
+			st.Cli.goDownCommandHistory(m.Mod)
 
 		case msg.KeyLeft:
-			moveOrJumpCursorLeft(m.Mod)
+			st.Cli.moveOrJumpCursorLeft(m.Mod)
 		case msg.KeyRight:
-			moveOrJumpCursorRight(m.Mod)
+			st.Cli.moveOrJumpCursorRight(m.Mod)
 
 		case msg.KeyBackspace:
-			if moveOneStepLeft() { //...succeeded
-				commands[currCmd] = commands[currCmd][:cursPos] + commands[currCmd][cursPos+1:]
+			if st.Cli.moveOneStepLeft() { //...succeeded
+				st.Cli.OnBackSpace()
 			}
 		case msg.KeyDelete:
-			if cursPos < len(commands[currCmd]) {
-				commands[currCmd] = commands[currCmd][:cursPos] + commands[currCmd][cursPos+1:]
+			if st.Cli.CursPos < len(st.Cli.Commands[st.Cli.CurrCmd]) {
+				st.Cli.OnDelete()
 			}
 
 		case msg.KeyEnter:
-			st.actOnEnter(serializedMsg)
+			st.Cli.OnEnter(st, serializedMsg)
 		}
 
-		EchoWholeCommand(st.proc.OutChannelId)
+		st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 	case msg.Release:
 		// most keys will do nothing upon release
 	}
@@ -69,9 +68,9 @@ func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 }
 
 func (st *State) actOnCommand() {
-	words := strings.Split(commands[currCmd][len(prompt):], " ")
+	command, _ := st.Cli.GetCommandWithArgs()
 
-	switch strings.ToLower(words[0]) {
+	switch strings.ToLower(command) {
 
 	case "?":
 		fallthrough
@@ -80,7 +79,7 @@ func (st *State) actOnCommand() {
 	case "help":
 		st.printLn("Yes master, help is coming 'very soon'. (TM)")
 	default:
-		st.printLn("ERROR: \"" + words[0] + "\" is an unknown command.")
+		st.printLn("ERROR: \"" + command + "\" is an unknown command.")
 	}
 }
 
