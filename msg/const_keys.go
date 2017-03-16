@@ -318,7 +318,6 @@ escape sequence chars
 */
 
 const (
-	EscDoubleQuote    = 34
 	EscBackSlash      = 92
 	EscNewLine        = 10
 	EscCarriageReturn = 13
