@@ -13,7 +13,7 @@ func (st *State) onChar(m msg.MessageChar) {
 
 	if st.Cli.HasEnoughSpace() {
 		// (we have free space to put character into)
-		st.Cli.AddCharAndMoveRight(m.Char)
+		st.Cli.InsertCharAtCursor(m.Char)
 		st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 	}
 }
@@ -44,12 +44,12 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 			st.Cli.moveOrJumpCursorRight(m.Mod)
 
 		case msg.KeyBackspace:
-			if st.Cli.moveOneStepLeft() { //...succeeded
-				st.Cli.OnBackSpace()
+			if st.Cli.moveCursorOneStepLeft() { //...succeeded
+				st.Cli.DeleteCharAtCursor()
 			}
 		case msg.KeyDelete:
 			if st.Cli.CursPos < len(st.Cli.Commands[st.Cli.CurrCmd]) {
-				st.Cli.OnDelete()
+				st.Cli.DeleteCharAtCursor()
 			}
 
 		case msg.KeyEnter:
@@ -113,21 +113,24 @@ func (st *State) printf(format string, vars ...interface{}) {
 }
 
 func (st *State) sendChar(c uint32) {
-	// TODO: QUESTION: should we implement all the others too?
-	if c == msg.EscNewLine {
+	var s string
+
+	switch c {
+	case msg.EscNewLine:
 		st.newLine()
 		return
-	} else if c == msg.EscTab {
-		println("Tab!")
-		return
-	} else if c == msg.EscCarriageReturn {
-		println("Carriage Return!")
-		return
-	} else if c == msg.EscBackSpace {
-		println("Back Space!")
-		return
-	} else if c == msg.EscBackSlash {
-		println("Back Slash!")
+	case msg.EscTab:
+		s = "Tab"
+	case msg.EscCarriageReturn:
+		s = "Carriage Return"
+	case msg.EscBackSpace:
+		s = "BackSpace"
+	case msg.EscBackSlash:
+		s = "BackSlash"
+	}
+
+	if s != "" {
+		println("TASK ENCOUNTERED ESCAPE CHARACTER FOR [" + s + "], & WON'T SEND IT TO TERMINAL!")
 		return
 	}
 

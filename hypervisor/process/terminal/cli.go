@@ -38,22 +38,18 @@ func (c *Cli) HasEnoughSpace() bool {
 	return len(c.Commands[c.CurrCmd]) < c.MaxCommandSize
 }
 
-func (c *Cli) AddCharAndMoveRight(nextChar uint32) {
+func (c *Cli) InsertCharAtCursor(char uint32) {
 	c.Commands[c.CurrCmd] =
 		c.Commands[c.CurrCmd][:c.CursPos] +
-			string(nextChar) +
+			string(char) +
 			c.Commands[c.CurrCmd][c.CursPos:]
-	c.moveOneStepRight()
+	c.moveCursorOneStepRight()
 }
 
-func (c *Cli) OnBackSpace() {
-	c.Commands[c.CurrCmd] = c.Commands[c.CurrCmd][:c.CursPos] +
-		c.Commands[c.CurrCmd][c.CursPos+1:]
-}
-
-func (c *Cli) OnDelete() {
-	c.Commands[c.CurrCmd] = c.Commands[c.CurrCmd][:c.CursPos] +
-		c.Commands[c.CurrCmd][c.CursPos+1:]
+func (c *Cli) DeleteCharAtCursor() {
+	c.Commands[c.CurrCmd] =
+		c.Commands[c.CurrCmd][:c.CursPos] +
+			c.Commands[c.CurrCmd][c.CursPos+1:]
 }
 
 func (c *Cli) EchoWholeCommand(outChanId uint32) {
@@ -86,7 +82,7 @@ func (c *Cli) traverseCommands(delta int) {
 	c.CursPos = len(c.Commands[c.CurrCmd])
 }
 
-func (c *Cli) moveOneStepLeft() bool { //returns whether moved successfully
+func (c *Cli) moveCursorOneStepLeft() bool { //returns whether moved successfully
 	c.CursPos--
 
 	if c.CursPos < len(c.Prompt) {
@@ -97,7 +93,7 @@ func (c *Cli) moveOneStepLeft() bool { //returns whether moved successfully
 	return true
 }
 
-func (c *Cli) moveOneStepRight() bool { //returns whether moved successfully
+func (c *Cli) moveCursorOneStepRight() bool { //returns whether moved successfully
 	c.CursPos++
 
 	if c.CursPos > len(c.Commands[c.CurrCmd]) {
@@ -116,12 +112,12 @@ func (c *Cli) moveOrJumpCursorLeft(mod uint8) {
 		numSpaces := 0
 		numVisible := 0 //NON-space
 
-		for c.moveOneStepLeft() == true {
+		for c.moveCursorOneStepLeft() == true {
 			if c.Commands[c.CurrCmd][c.CursPos] == ' ' {
 				numSpaces++
 
 				if numVisible > 0 || numSpaces > 1 {
-					c.moveOneStepRight()
+					c.moveCursorOneStepRight()
 					break
 				}
 			} else {
@@ -129,21 +125,21 @@ func (c *Cli) moveOrJumpCursorLeft(mod uint8) {
 			}
 		}
 	} else {
-		c.moveOneStepLeft()
+		c.moveCursorOneStepLeft()
 	}
 }
 
 func (c *Cli) moveOrJumpCursorRight(mod uint8) {
 	if msg.ModifierKey(mod) == msg.ModControl {
-		for c.moveOneStepRight() == true {
+		for c.moveCursorOneStepRight() == true {
 			if c.CursPos < len(c.Commands[c.CurrCmd]) &&
 				c.Commands[c.CurrCmd][c.CursPos] == ' ' {
-				c.moveOneStepRight()
+				c.moveCursorOneStepRight()
 				break
 			}
 		}
 	} else {
-		c.moveOneStepRight()
+		c.moveCursorOneStepRight()
 	}
 }
 

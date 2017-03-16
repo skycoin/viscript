@@ -2,7 +2,12 @@
 
 ------- NEXT THINGS TODO: -------
 
-* structize task's cli.go
+* limit resizing to require at least 16 char columns
+
+* make command line dynamic based on terminal's .GridSize
+	should MaxCommandSize be dynamic?  i don't like the idea
+	of reserving more than 2 lines at the bottom of a terminal
+	(what happens after we've autoscrolled down a whole page)
 
 * Resize terminals
 	* i believe we'll change the actual grid size, then get enough data
