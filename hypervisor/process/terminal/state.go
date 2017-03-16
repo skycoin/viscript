@@ -8,12 +8,14 @@ import (
 type State struct {
 	proc                  *Process
 	DebugPrintInputEvents bool
+	Cli                   *Cli
 }
 
 func (st *State) Init(proc *Process) {
 	println("(process/terminal/state.go).Init()")
 	st.proc = proc
 	st.DebugPrintInputEvents = true
+	st.Cli = NewCli()
 }
 
 func (st *State) HandleMessages() {
