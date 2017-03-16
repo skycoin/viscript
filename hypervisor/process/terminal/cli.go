@@ -1,6 +1,8 @@
 package process
 
 import (
+	"strings"
+
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 )
@@ -30,6 +32,28 @@ func NewCli() *Cli {
 	cli.MaxCommandSize = 128 - 1
 
 	return &cli
+}
+
+func (c *Cli) HasEnoughSpace() bool {
+	return len(c.Commands[c.CurrCmd]) < c.MaxCommandSize
+}
+
+func (c *Cli) AddCharAndMoveRight(nextChar uint32) {
+	c.Commands[c.CurrCmd] =
+		c.Commands[c.CurrCmd][:c.CursPos] +
+			string(nextChar) +
+			c.Commands[c.CurrCmd][c.CursPos:]
+	c.moveOneStepRight()
+}
+
+func (c *Cli) OnBackSpace() {
+	c.Commands[c.CurrCmd] = c.Commands[c.CurrCmd][:c.CursPos] +
+		c.Commands[c.CurrCmd][c.CursPos+1:]
+}
+
+func (c *Cli) OnDelete() {
+	c.Commands[c.CurrCmd] = c.Commands[c.CurrCmd][:c.CursPos] +
+		c.Commands[c.CurrCmd][c.CursPos+1:]
 }
 
 func (c *Cli) EchoWholeCommand(outChanId uint32) {
@@ -139,7 +163,12 @@ func (c *Cli) goDownCommandHistory(mod uint8) {
 	}
 }
 
-func (c *Cli) actOnEnter(st State, serializedMsg []byte) {
+func (c *Cli) GetCommandWithArgs() (string, []string) {
+	words := strings.Split(c.Commands[c.CurrCmd][len(c.Prompt):], " ")
+	return words[0], words[1:]
+}
+
+func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
 	numLines := 1
 
 	if c.CursPos >= 64 { //FIXME using Terminal's st.GridSize.X
