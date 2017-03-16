@@ -84,15 +84,18 @@ func (st *State) actOnCommand() {
 	}
 }
 
+func (st *State) publishToOut(message []byte) {
+	hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, message)
+}
+
 func (st *State) newLine() {
-	m := msg.Serialize(
-		msg.TypeKey,
-		msg.MessageKey{
-			msg.KeyEnter,
-			0, // Scan   uint32
-			uint8(msg.Action(msg.Press)),
-			0}) // Mod
-	hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, m)
+	keyEnter := msg.MessageKey{
+		Key:    msg.KeyEnter,
+		Scan:   0,
+		Action: uint8(msg.Action(msg.Press)),
+		Mod:    0}
+
+	st.publishToOut(msg.Serialize(msg.TypeKey, keyEnter))
 }
 
 func (st *State) printLn(s string) {
@@ -111,6 +114,27 @@ func (st *State) printf(format string, vars ...interface{}) {
 }
 
 func (st *State) sendChar(c uint32) {
+	// TODO: QUESTION: should we implement all the others too?
+	if c == msg.EscNewLine {
+		st.newLine()
+		return
+	} else if c == msg.EscTab {
+
+		return
+	} else if c == msg.EscDoubleQuote {
+
+		return
+	} else if c == msg.EscCarriageReturn {
+
+		return
+	} else if c == msg.EscBackSpace {
+
+		return
+	} else if c == msg.EscBackSlash {
+
+		return
+	}
+
 	m := msg.Serialize(msg.TypePutChar, msg.MessagePutChar{0, c})
-	hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, m) // EVERY publish action prefixes another chan id
+	st.publishToOut(m) // EVERY publish action prefixes another chan id
 }
