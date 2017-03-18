@@ -105,7 +105,7 @@ func (receiver *RPCReceiver) GetTermChannelInfo(args []string, result *[]byte) e
 func (receiver *RPCReceiver) StartTerminalWithProcess(_ []string, result *[]byte) error {
 	println("\nHandling Request: Start terminal with process")
 	terms := receiver.TerminalManager.terminalStack
-	newTerminalID := terms.AddTerminal()
+	newTerminalID := terms.AddTerminal("Added From Cli", "")
 	println("[==============================]")
 	fmt.Println("Terminal with ID", newTerminalID, "created!")
 	*result = msg.Serialize((uint16)(0), newTerminalID)
