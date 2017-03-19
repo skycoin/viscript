@@ -68,10 +68,17 @@ func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 }
 
 func (st *State) actOnCommand() {
-	command, _ := st.Cli.GetCommandWithArgs()
+	command, args := st.Cli.GetCommandWithArgs()
+
+	var wholeCommand []string
+	wholeCommand = append(wholeCommand, strings.ToLower(command))
+
+	for _, v := range args {
+		wholeCommand = append(wholeCommand, strings.ToLower(v))
+	}
 
 	if len(strings.ToLower(command)) > 0 {
-		st.CmdOut <- []byte(strings.ToLower(command))
+		st.CmdOut <- []byte(strings.Join(wholeCommand, " "))
 	}
 
 	// switch strings.ToLower(command) {
