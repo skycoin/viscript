@@ -9,6 +9,7 @@ type State struct {
 	proc                  *Process
 	DebugPrintInputEvents bool
 	Cli                   *Cli
+	CmdOut                chan []byte
 }
 
 func (st *State) Init(proc *Process) {
@@ -16,6 +17,7 @@ func (st *State) Init(proc *Process) {
 	st.proc = proc
 	st.DebugPrintInputEvents = true
 	st.Cli = NewCli()
+	st.CmdOut = make(chan []byte, 1024)
 }
 
 func (st *State) HandleMessages() {

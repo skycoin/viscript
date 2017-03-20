@@ -7,7 +7,7 @@ import (
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/hypervisor/dbus"
 	"github.com/corpusc/viscript/hypervisor/input/keyboard"
-	termTask "github.com/corpusc/viscript/hypervisor/process/terminal"
+	extTask "github.com/corpusc/viscript/hypervisor/process/externalprocess"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/viewport/gl"
 )
@@ -49,7 +49,7 @@ func (ts *TerminalStack) Init() {
 		-gl.CanvasExtents.X}
 }
 
-func (ts *TerminalStack) AddTerminal() msg.TerminalId {
+func (ts *TerminalStack) AddTerminal(label string, command string) msg.TerminalId {
 	println("TerminalStack.AddTerminal()")
 
 	ts.nextDepth += ts.nextOffset.X / 10 // done first, cuz desktop is at 0
@@ -72,7 +72,7 @@ func (ts *TerminalStack) AddTerminal() msg.TerminalId {
 	ts.nextRect.Left += ts.nextOffset.X
 
 	//hook up proccess
-	ts.SetupTerminalDbus(tid)
+	ts.SetupTerminalDbus(tid, label, command)
 
 	return tid
 }
@@ -151,11 +151,12 @@ func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSin
 	}
 }
 
-func (ts *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
+func (ts *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId, label string, command string) {
 	println("TerminalStack.SetupTerminalDbus()")
 
 	//create process
-	var p *termTask.Process = termTask.NewProcess()
+	// var p *termTask.Process = termTask.NewProcess()
+	p := extTask.NewExternalProcess(label, command)
 	var pi msg.ProcessInterface = msg.ProcessInterface(p)
 	ProcessId := hypervisor.AddProcess(pi)
 

@@ -1,9 +1,10 @@
 package viewport
 
 import (
+	"runtime"
+
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/viewport/terminal"
-	"runtime"
 
 	igl "github.com/corpusc/viscript/viewport/gl" //internal gl
 )
@@ -46,9 +47,9 @@ func initEvents() {
 func initTerms() {
 	println("Viewport: init terminals")
 	Terms.Init()
-	Terms.AddTerminal()
-	Terms.AddTerminal()
-	Terms.AddTerminal()
+	Terms.AddTerminal("Meshnet Server", "srv")
+	Terms.AddTerminal("Meshnet Cli", "cli")
+	// Terms.AddTerminal()
 }
 
 func TeardownScreen() {

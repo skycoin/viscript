@@ -68,26 +68,37 @@ func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 }
 
 func (st *State) actOnCommand() {
-	command, _ := st.Cli.GetCommandWithArgs()
+	command, args := st.Cli.GetCommandWithArgs()
 
-	switch strings.ToLower(command) {
+	var wholeCommand []string
+	wholeCommand = append(wholeCommand, strings.ToLower(command))
 
-	case "?":
-		fallthrough
-	case "h":
-		fallthrough
-	case "help":
-		st.printLn("Yes master, help is coming 'very soon'. (TM)")
-	default:
-		st.printLn("ERROR: \"" + command + "\" is an unknown command.")
+	for _, v := range args {
+		wholeCommand = append(wholeCommand, strings.ToLower(v))
 	}
+
+	if len(strings.ToLower(command)) > 0 {
+		st.CmdOut <- []byte(strings.Join(wholeCommand, " "))
+	}
+
+	// switch strings.ToLower(command) {
+
+	// case "?":
+	// 	fallthrough
+	// case "h":
+	// 	fallthrough
+	// case "help":
+	// 	st.PrintLn("Yes master, help is coming 'very soon'. (TM)")
+	// default:
+	// 	st.PrintLn("ERROR: \"" + command + "\" is an unknown command.")
+	// }
 }
 
 func (st *State) publishToOut(message []byte) {
 	hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, message)
 }
 
-func (st *State) newLine() {
+func (st *State) NewLine() {
 	keyEnter := msg.MessageKey{
 		Key:    msg.KeyEnter,
 		Scan:   0,
@@ -97,15 +108,15 @@ func (st *State) newLine() {
 	st.publishToOut(msg.Serialize(msg.TypeKey, keyEnter))
 }
 
-func (st *State) printLn(s string) {
+func (st *State) PrintLn(s string) {
 	for _, c := range s {
 		st.sendChar(uint32(c))
 	}
 
-	st.newLine()
+	st.NewLine()
 }
 
-func (st *State) printf(format string, vars ...interface{}) {
+func (st *State) Printf(format string, vars ...interface{}) {
 	formattedString := fmt.Sprintf(format, vars)
 	for _, c := range formattedString {
 		st.sendChar(uint32(c))
@@ -117,7 +128,7 @@ func (st *State) sendChar(c uint32) {
 
 	switch c {
 	case msg.EscNewLine:
-		st.newLine()
+		st.NewLine()
 		return
 	case msg.EscTab:
 		s = "Tab"
