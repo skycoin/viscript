@@ -1442,3 +1442,20 @@ you can use path if you want
 
 yes like you have 'go run command.go'
 and we could run apps from source if needed and not just exe
+
+
+
+Brad:
+And good api for attachment and detachment etc
+
+But we could do more advanced.
+
+Can we hsve teo commands.
+
+One runs in new terminal window.
+
+Other runs in current window and sets parent which will resume.
+
+Another or third opens process in background
+
+Also keep code clean. And refactoring is important.
