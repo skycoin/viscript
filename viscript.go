@@ -19,9 +19,9 @@
 	* pgup/pgdn hotkeys
 	* 1-3 lines with scrollwheel
 
-* Fix the fact that you get a resizing pointer outside of focused terminal,
-		yet when you click outside terminal it can land on a background
-		terminal which then pops in front
+* Fix getting a resizing pointer outside of focused terminal.
+		When you click outside terminal it can land on a background
+		terminal which then pops in front.  Blocking the resize
 
 
 

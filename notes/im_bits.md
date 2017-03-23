@@ -1445,6 +1445,9 @@ and we could run apps from source if needed and not just exe
 
 
 
+
+
+
 Brad:
 And good api for attachment and detachment etc
 
@@ -1459,3 +1462,70 @@ Other runs in current window and sets parent which will resume.
 Another or third opens process in background
 
 Also keep code clean. And refactoring is important.
+
+
+
+
+
+
+
+can we get the meshnet daemon and clie packaged in there by default
+
+
+
+
+
+
+George: i was thinking of one api that could provide basics to all the
+process types
+
+HaltingState: i like being able to import one thing
+
+
+
+
+
+
+
+
+i do not have problem with each new process starting in its own window.
+
+but emphasis is on working apps afn viscript we can put on the website and
+people can use.
+
+
+but we could do more advanced.
+
+can we hsve teo commands.
+
+one runs in new terminal window.
+
+other runs in current window and sets parent which will resume.
+
+another or third opens process in background
+
+and good api for attachment and detachment etc
+
+
+
+
+
+
+
+
+Benjamin: but we need to be using inheritance
+
+HaltingState: we have api standard interface abd library to import.
+could also use some type of inheritance but api thing is better
+
+not sure how to use interface for this
+
+
+
+Then second thing is packaging viscript for website deployment
+
+But right now it needs to launch process for cxo daemon,
+cxo client, skycoin daemon full node, skycoind/superwallet, meshnet daemon,
+meshnet cli and socks5 client, socks5 server.
+
+Write those down.  They are all tickets.
