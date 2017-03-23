@@ -19,14 +19,12 @@ func (c *CliManager) PrintHelp(_ []string) error {
 	p("> stp\t\tStart a new terminal with process.\n\n")
 
 	p("> ltp\t\tList terminal Ids with Attached Process Ids.\n")
-	p("> lp\t\tList process Ids.\n\n")
+	p("> lp\t\tList process Ids with labels.\n\n")
 
 	p("> sett <tId>\tSet given terminal Id as default for all following commands.\n")
 	p("> setp <pId>\tSet given process Id as default for all following commands.\n\n")
 
 	p("> cft\t\tGet out channel info of terminal with default Id.\n\n")
-	// p("> lpub\t\tList all publishers. --TODO\n\n")
-	// p("> ld\t\tList all dbus objects. --TODO\n")
 
 	p("> clear(c)\tClear the terminal.\n")
 	p("> quit(q)\tQuit from cli.\n\n")

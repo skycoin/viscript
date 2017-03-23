@@ -1,40 +1,63 @@
 package process
 
-// func Printfc(out chan []byte, format string, vars ...interface{}) {
-// 	println("(process/terminal/api.go).Printfc()")
+import (
+	"fmt"
 
-// 	b := fmt.Sprintf(format, vars)
+	"github.com/corpusc/viscript/hypervisor"
+	"github.com/corpusc/viscript/msg"
+)
 
-// 	for _, v := range b {
-// 		PutChar(out, uint32(v))
-// 	}
-// }
+func (st *State) publishToOut(message []byte) {
+	hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, message)
+}
 
-// func PutChar(out chan []byte, char uint32) {
-// 	println("(process/terminal/api.go).PutChar()")
+func (st *State) NewLine() {
+	keyEnter := msg.MessageKey{
+		Key:    msg.KeyEnter,
+		Scan:   0,
+		Action: uint8(msg.Action(msg.Press)),
+		Mod:    0}
 
-// 	msg.SerializeAndDispatch(
-// 		out,
-// 		msg.TypePutChar,
-// 		msg.MessagePutChar{0, char})
-// }
+	st.publishToOut(msg.Serialize(msg.TypeKey, keyEnter))
+}
 
-//sending messages back to hypervisor to set terminal
-// func SetCharAt(out chan []byte, x uint32, y uint32, char uint32) {
-// 	println("(process/terminal/api.go).SetCharAt()")
+func (st *State) PrintLn(s string) {
+	for _, c := range s {
+		st.sendChar(uint32(c))
+	}
 
-// 	msg.SerializeAndDispatch(
-// 		out,
-// 		msg.TypeSetCharAt,
-// 		msg.MessageSetCharAt{TermId: 0, X: x, Y: y, Char: char})
-// }
+	st.NewLine()
+}
 
-//sending messages back to hypervisor to set terminal
-// func SetCursor(out chan []byte, x uint32, y uint32) {
-// 	println("(process/terminal/api.go).SetCursor()")
+func (st *State) Printf(format string, vars ...interface{}) {
+	formattedString := fmt.Sprintf(format, vars)
+	for _, c := range formattedString {
+		st.sendChar(uint32(c))
+	}
+}
 
-// 	msg.SerializeAndDispatch(
-// 		out,
-// 		msg.TypeSetCursor,
-// 		msg.MessageSetCursor{TermId: 0, X: x, Y: y})
-// }
+func (st *State) sendChar(c uint32) {
+	var s string
+
+	switch c {
+	case msg.EscNewLine:
+		st.NewLine()
+		return
+	case msg.EscTab:
+		s = "Tab"
+	case msg.EscCarriageReturn:
+		s = "Carriage Return"
+	case msg.EscBackSpace:
+		s = "BackSpace"
+	case msg.EscBackSlash:
+		s = "BackSlash"
+	}
+
+	if s != "" {
+		println("TASK ENCOUNTERED ESCAPE CHARACTER FOR [" + s + "], & WON'T SEND IT TO TERMINAL!")
+		return
+	}
+
+	m := msg.Serialize(msg.TypePutChar, msg.MessagePutChar{0, c})
+	st.publishToOut(m) // EVERY publish action prefixes another chan id
+}
