@@ -7,7 +7,7 @@ import (
 /*
 	Process can
 	- receive messages from hypervisor
-	- can emite message back to hypervisor
+	- can emit message back to hypervisor
 	- have a tick method for handling incoming messages
 
 	Incoming messages from process to hypervisor come in anytime
