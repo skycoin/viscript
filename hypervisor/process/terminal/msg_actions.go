@@ -1,7 +1,6 @@
 package process
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/corpusc/viscript/hypervisor"
@@ -10,9 +9,7 @@ import (
 
 func (st *State) onChar(m msg.MessageChar) {
 	//println("process/terminal/events.onChar()")
-
 	if st.Cli.HasEnoughSpace() {
-		// (we have free space to put character into)
 		st.Cli.InsertCharAtCursor(m.Char)
 		st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 	}
@@ -20,7 +17,6 @@ func (st *State) onChar(m msg.MessageChar) {
 
 func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 	//println("process/terminal/events.onKey()")
-
 	switch msg.Action(m.Action) {
 
 	case msg.Press:
@@ -92,59 +88,4 @@ func (st *State) actOnCommand() {
 	// default:
 	// 	st.PrintLn("ERROR: \"" + command + "\" is an unknown command.")
 	// }
-}
-
-func (st *State) publishToOut(message []byte) {
-	hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, message)
-}
-
-func (st *State) NewLine() {
-	keyEnter := msg.MessageKey{
-		Key:    msg.KeyEnter,
-		Scan:   0,
-		Action: uint8(msg.Action(msg.Press)),
-		Mod:    0}
-
-	st.publishToOut(msg.Serialize(msg.TypeKey, keyEnter))
-}
-
-func (st *State) PrintLn(s string) {
-	for _, c := range s {
-		st.sendChar(uint32(c))
-	}
-
-	st.NewLine()
-}
-
-func (st *State) Printf(format string, vars ...interface{}) {
-	formattedString := fmt.Sprintf(format, vars)
-	for _, c := range formattedString {
-		st.sendChar(uint32(c))
-	}
-}
-
-func (st *State) sendChar(c uint32) {
-	var s string
-
-	switch c {
-	case msg.EscNewLine:
-		st.NewLine()
-		return
-	case msg.EscTab:
-		s = "Tab"
-	case msg.EscCarriageReturn:
-		s = "Carriage Return"
-	case msg.EscBackSpace:
-		s = "BackSpace"
-	case msg.EscBackSlash:
-		s = "BackSlash"
-	}
-
-	if s != "" {
-		println("TASK ENCOUNTERED ESCAPE CHARACTER FOR [" + s + "], & WON'T SEND IT TO TERMINAL!")
-		return
-	}
-
-	m := msg.Serialize(msg.TypePutChar, msg.MessagePutChar{0, c})
-	st.publishToOut(m) // EVERY publish action prefixes another chan id
 }
