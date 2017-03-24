@@ -47,8 +47,8 @@ func initEvents() {
 func initTerms() {
 	println("Viewport: init terminals")
 	Terms.Init()
-	Terms.AddTerminal("Meshnet Server", "srv")
-	Terms.AddTerminal("Meshnet Cli", "cli")
+	Terms.AddTerminal()
+	// Terms.AddTerminal()
 	// Terms.AddTerminal()
 }
 
