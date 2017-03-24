@@ -10,7 +10,6 @@ import (
 func (st *State) onChar(m msg.MessageChar) {
 	//println("process/terminal/events.onChar()")
 	if st.Cli.HasEnoughSpace() {
-		// (we have free space to put character into)
 		st.Cli.InsertCharAtCursor(m.Char)
 		st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 	}
