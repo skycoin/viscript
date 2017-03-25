@@ -1,4 +1,4 @@
-package externalprocess
+package process
 
 import (
 	"os"
@@ -8,42 +8,39 @@ import (
 
 	"syscall"
 
-	tp "github.com/corpusc/viscript/hypervisor/process/terminal"
-	"github.com/corpusc/viscript/msg"
 	"github.com/kr/pty"
 )
 
 type ExternalProcess struct {
-	*tp.Process // Inherit from Process api
-	Command     string
-	cmd         *exec.Cmd
-	currentPty  *os.File
-	// CmdOut      chan []byte
+	Command    string
+	cmd        *exec.Cmd
+	currentPty *os.File
+	CmdOut     chan []byte
 	writeMutex *sync.Mutex
+
+	State *State
 }
 
-func NewExternalProcess(label string, command string) *ExternalProcess {
+func NewExternalProcess(st *State, command string) (*ExternalProcess, error) {
 	println("(process/terminal/process.go).NewExternalProcess()")
 	var p ExternalProcess
 
-	p.Process = &tp.Process{
-		Id:        msg.NextProcessId(),
-		Type:      0,
-		Label:     label,
-		InChannel: make(chan []byte, msg.ChannelCapacity)}
+	err := p.InitCmd(command)
+	if err != nil {
+		return nil, err
+	}
 
-	p.State.Init(p.Process)
-	p.InitCmd(command)
-	return &p
+	p.State = st
+
+	return &p, nil
 }
 
-func (pr *ExternalProcess) DeleteProcess() {
+func (pr *ExternalProcess) TearDown() {
 	println("(process/terminal/process.go).DeleteProcess()")
-	pr.Process.DeleteProcess()
-	// TODO: further cleanup goes here for the external process
+	// TODO: tear the external process down here, no remorse :rage: :D
 }
 
-func (pr *ExternalProcess) InitCmd(command string) {
+func (pr *ExternalProcess) InitCmd(command string) error {
 	pr.Command = command
 	pr.cmd = exec.Command(pr.Command)
 	pr.writeMutex = &sync.Mutex{}
@@ -52,10 +49,10 @@ func (pr *ExternalProcess) InitCmd(command string) {
 	pr.currentPty, err = pty.Start(pr.cmd)
 	if err != nil {
 		println("Failed to execute command.")
-		return
+		return err
 	}
 
-	// pr.CmdOut = make(chan []byte, 1024)
+	pr.CmdOut = make(chan []byte, 1024)
 
 	exit := make(chan bool, 2)
 
@@ -87,6 +84,8 @@ func (pr *ExternalProcess) InitCmd(command string) {
 		pr.cmd.Process.Signal(syscall.Signal(1))
 		pr.cmd.Wait()
 	}()
+
+	return nil
 }
 
 func (pr *ExternalProcess) processSend() {
@@ -111,7 +110,7 @@ func (pr *ExternalProcess) writeToSubscribers(data []byte) {
 func (pr *ExternalProcess) processReceive() {
 	for {
 		select {
-		case data := <-pr.State.CmdOut:
+		case data := <-pr.CmdOut:
 			_, err := pr.currentPty.Write(append(data, '\n'))
 			if err != nil {
 				return

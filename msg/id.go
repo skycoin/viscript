@@ -6,6 +6,7 @@ import (
 
 type ProcessId uint64 //HyperVisor: processId
 type TerminalId uint64
+type ExtProcessId uint64
 
 var ProcessIdGlobal ProcessId = 1 //sequential
 

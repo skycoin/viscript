@@ -2,6 +2,12 @@
 
 ------- NEXT THINGS TODO: -------
 
+* ExternalProcess:
+	attach,
+	send to background (https://repl.it/GeGn/1),
+	send to foreground,
+	list jobs (external processes)
+
 * limit resizing to require at least 16 char columns
 
 * make command line dynamic based on terminal's .GridSize
