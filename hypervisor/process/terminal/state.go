@@ -30,14 +30,16 @@ func (st *State) HandleMessages() {
 		msgCategory := msgType & 0xff00 // get back masked category
 
 		switch msgCategory {
+
 		case msg.CATEGORY_Input:
-			println("(process/terminal/state.go)-----------CATEGORY_Input")
+			//println("(process/terminal/state.go)-----------CATEGORY_Input")
 			st.UnpackEvent(msgType, m)
 		case msg.CATEGORY_Terminal:
-			println("(process/terminal/state.go)-----------CATEGORY_Terminal")
+			//println("(process/terminal/state.go)-----------CATEGORY_Terminal")
 			st.UnpackEvent(msgType, m)
 		default:
 			println("(process/terminal/state.go)**************** UNHANDLED MESSAGE TYPE CATEGORY! ****************")
+
 		}
 	}
 }
