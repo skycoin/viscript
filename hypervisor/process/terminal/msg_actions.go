@@ -65,27 +65,40 @@ func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 
 func (st *State) actOnCommand() {
 	command, args := st.Cli.GetCommandWithArgs()
+	println("ActOnCommand called with:", command, "and args:", args)
+	command = strings.ToLower(command)
+
+	if len(command) == 0 {
+		println("Command was empty, returning.")
+		return
+	}
 
 	var wholeCommand []string
-	wholeCommand = append(wholeCommand, strings.ToLower(command))
+	wholeCommand = append(wholeCommand, command)
 
 	for _, v := range args {
 		wholeCommand = append(wholeCommand, strings.ToLower(v))
 	}
 
-	if len(strings.ToLower(command)) > 0 {
-		st.CmdOut <- []byte(strings.Join(wholeCommand, " "))
+	if st.proc.HasExtProcessAttached() {
+		// Redirect input to the attached process
+		extProc, err := st.proc.GetAttachedExtProcess()
+		if err != nil {
+			println(err.Error())
+			return
+		}
+		extProc.CmdOut <- []byte(strings.Join(wholeCommand, " "))
+	} else {
+		// Handle terminal command here
+		switch command {
+		case "?":
+			fallthrough
+		case "h":
+			fallthrough
+		case "help":
+			st.PrintLn("Yes master, help is coming 'very soon'. (TM)")
+		default:
+			st.PrintLn("ERROR: \"" + command + "\" is an unknown command.")
+		}
 	}
-
-	// switch strings.ToLower(command) {
-
-	// case "?":
-	// 	fallthrough
-	// case "h":
-	// 	fallthrough
-	// case "help":
-	// 	st.PrintLn("Yes master, help is coming 'very soon'. (TM)")
-	// default:
-	// 	st.PrintLn("ERROR: \"" + command + "\" is an unknown command.")
-	// }
 }
