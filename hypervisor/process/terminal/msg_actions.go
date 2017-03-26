@@ -9,14 +9,12 @@ import (
 
 func (st *State) onChar(m msg.MessageChar) {
 	//println("process/terminal/events.onChar()")
-	if st.Cli.HasEnoughSpace() {
-		st.Cli.InsertCharAtCursor(m.Char)
-		st.Cli.EchoWholeCommand(st.proc.OutChannelId)
-	}
+	st.Cli.InsertCharIfItFits(m.Char, st)
 }
 
 func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 	//println("process/terminal/events.onKey()")
+
 	switch msg.Action(m.Action) {
 
 	case msg.Press:
@@ -50,9 +48,11 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 
 		case msg.KeyEnter:
 			st.Cli.OnEnter(st, serializedMsg)
+
 		}
 
 		st.Cli.EchoWholeCommand(st.proc.OutChannelId)
+
 	case msg.Release:
 		// most keys will do nothing upon release
 	}
@@ -65,7 +65,7 @@ func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 
 func (st *State) actOnCommand() {
 	command, args := st.Cli.GetCommandWithArgs()
-	println("ActOnCommand called with:", command, "and args:", args)
+	println("actOnCommand() called with:", command, "and args:", args)
 	command = strings.ToLower(command)
 
 	if len(command) == 0 {
@@ -83,14 +83,17 @@ func (st *State) actOnCommand() {
 	if st.proc.HasExtProcessAttached() {
 		// Redirect input to the attached process
 		extProc, err := st.proc.GetAttachedExtProcess()
+
 		if err != nil {
 			println(err.Error())
 			return
 		}
+
 		extProc.CmdOut <- []byte(strings.Join(wholeCommand, " "))
 	} else {
 		// Handle terminal command here
 		switch command {
+
 		case "?":
 			fallthrough
 		case "h":
@@ -99,6 +102,7 @@ func (st *State) actOnCommand() {
 			st.PrintLn("Yes master, help is coming 'very soon'. (TM)")
 		default:
 			st.PrintLn("ERROR: \"" + command + "\" is an unknown command.")
+
 		}
 	}
 }

@@ -21,6 +21,7 @@ type Process struct {
 	extProcesses    map[msg.ExtProcessId]*ExternalProcess
 }
 
+//non-instanced
 func NewProcess() *Process {
 	println("(process/terminal/process.go).NewProcess()")
 	var p Process

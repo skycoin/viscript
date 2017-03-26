@@ -34,8 +34,11 @@ func NewCli() *Cli {
 	return &cli
 }
 
-func (c *Cli) HasEnoughSpace() bool {
-	return len(c.Commands[c.CurrCmd]) < c.MaxCommandSize
+func (c *Cli) InsertCharIfItFits(char uint32, state *State) {
+	if len(c.Commands[c.CurrCmd]) < c.MaxCommandSize {
+		c.InsertCharAtCursor(char)
+		c.EchoWholeCommand(state.proc.OutChannelId)
+	}
 }
 
 func (c *Cli) InsertCharAtCursor(char uint32) {
@@ -153,7 +156,7 @@ func (c *Cli) goUpCommandHistory(mod uint8) {
 
 func (c *Cli) goDownCommandHistory(mod uint8) {
 	if msg.ModifierKey(mod) == msg.ModControl {
-		c.CurrCmd = len(c.Commands) - 1 // this could cause crash if we don't make sure at least 1 command always exists
+		c.CurrCmd = len(c.Commands) - 1 //this could cause crash if we don't make sure at least 1 command always exists
 	} else {
 		c.traverseCommands(+1)
 	}

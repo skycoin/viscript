@@ -22,7 +22,7 @@ type ExternalProcess struct {
 }
 
 func NewExternalProcess(st *State, command string) (*ExternalProcess, error) {
-	println("(process/terminal/process.go).NewExternalProcess()")
+	println("(process/terminal/externalprocess.go).NewExternalProcess()")
 	var p ExternalProcess
 
 	err := p.InitCmd(command)
@@ -36,8 +36,8 @@ func NewExternalProcess(st *State, command string) (*ExternalProcess, error) {
 }
 
 func (pr *ExternalProcess) TearDown() {
-	println("(process/terminal/process.go).DeleteProcess()")
-	// TODO: tear the external process down here, no remorse :rage: :D
+	println("(process/terminal/externalprocess.go).TearDown()")
+	println("TODO: tear the external process down here, no remorse :rage: :D")
 }
 
 func (pr *ExternalProcess) InitCmd(command string) error {

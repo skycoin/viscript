@@ -41,6 +41,8 @@ go get github.com/go-gl/glfw/v3.2/glfw<br>
 
 go get github.com/skycoin/skycoin<br>
 
+go get github.com/kr/pty<br>
+
 
 
 
