@@ -5,8 +5,11 @@ import (
 
 	"strconv"
 
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/msg"
 )
+
+var path = "hypervisor/process/terminal/process"
 
 type Process struct {
 	Id           msg.ProcessId
@@ -24,7 +27,8 @@ type Process struct {
 
 //non-instanced
 func NewProcess() *Process {
-	println("(process/terminal/process.go).NewProcess()")
+	app.At(path, "NewProcess")
+
 	var p Process
 	p.Id = msg.NextProcessId()
 	p.Type = 0
@@ -42,12 +46,12 @@ func NewProcess() *Process {
 }
 
 func (pr *Process) GetProcessInterface() msg.ProcessInterface {
-	println("(process/terminal/process.go).GetProcessInterface()")
+	app.At(path, "GetProcessInterface")
 	return msg.ProcessInterface(pr)
 }
 
 func (pr *Process) DeleteProcess() {
-	println("(process/terminal/process.go).DeleteProcess()")
+	app.At(path, "DeleteProcess")
 	close(pr.InChannel)
 	pr.State.proc = nil
 	pr = nil
@@ -58,6 +62,8 @@ func (pr *Process) HasExtProcessAttached() bool {
 }
 
 func (pr *Process) GetAttachedExtProcess() (*ExternalProcess, error) {
+	app.At(path, "GetAttachedExtProcess")
+
 	extProc, ok := pr.extProcesses[pr.extProcessId]
 	if ok {
 		return extProc, nil
@@ -68,35 +74,39 @@ func (pr *Process) GetAttachedExtProcess() (*ExternalProcess, error) {
 }
 
 func (pr *Process) DetachExtProcess() {
-	println("hypervisor/process/terminal/process.go - DetachExtProcess()")
+	app.At(path, "DetachExtProcess")
 	pr.extProcAttached = false
 	delete(pr.extProcesses, pr.extProcessId)
 	pr.State.proc.extProcessId = 0
 }
 
 func (pr *Process) AddExtProcessWithCommand(command []string) (msg.ExtProcessId, error) {
-	println("hypervisor/process/terminal/process.go - AddExtProcessWithCommand()")
+	app.At(path, "AddExtProcessWithCommand")
+
 	newExtProc, err := NewExternalProcess(&pr.State, command[0], command[1:])
 	if err != nil {
 		return 0, err
 	}
+
 	pr.extProcessCounter += 1 // Sequential
 	pr.extProcesses[pr.extProcessCounter] = newExtProc
 	return pr.extProcessCounter, nil
 }
 
 func (pr *Process) AttachExtProcess(pID msg.ExtProcessId) {
-	println("hypervisor/process/terminal/process.go - AttachExtProcess()")
+	app.At(path, "AttachExtProcess")
 	pr.extProcessId = pID
 	pr.extProcAttached = true
 }
 
 func (pr *Process) AddAndAttach(command []string) error {
-	println("hypervisor/process/terminal/process.go - AddAndAttach()")
+	app.At(path, "AddAndAttach")
+
 	pID, err := pr.AddExtProcessWithCommand(command)
 	if err != nil {
 		return err
 	}
+
 	pr.AttachExtProcess(pID)
 	return nil
 }
