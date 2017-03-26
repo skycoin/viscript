@@ -1,31 +1,30 @@
 package process
 
 import (
-	"os"
 	"os/exec"
 
 	"sync"
 
-	"syscall"
-
-	"github.com/kr/pty"
+	"io"
 )
 
 type ExternalProcess struct {
 	Command    string
 	cmd        *exec.Cmd
-	currentPty *os.File
 	CmdOut     chan []byte
 	writeMutex *sync.Mutex
+
+	stdOutPipe io.ReadCloser
+	stdInPipe  io.WriteCloser
 
 	State *State
 }
 
-func NewExternalProcess(st *State, command string) (*ExternalProcess, error) {
+func NewExternalProcess(st *State, command string, args []string) (*ExternalProcess, error) {
 	println("(process/terminal/externalprocess.go).NewExternalProcess()")
 	var p ExternalProcess
 
-	err := p.InitCmd(command)
+	err := p.InitCmd(command, args)
 	if err != nil {
 		return nil, err
 	}
@@ -40,15 +39,26 @@ func (pr *ExternalProcess) TearDown() {
 	println("TODO: tear the external process down here, no remorse :rage: :D")
 }
 
-func (pr *ExternalProcess) InitCmd(command string) error {
+func (pr *ExternalProcess) InitCmd(command string, args []string) error {
 	pr.Command = command
-	pr.cmd = exec.Command(pr.Command)
+	pr.cmd = exec.Command(pr.Command, args...)
 	pr.writeMutex = &sync.Mutex{}
 
 	var err error
-	pr.currentPty, err = pty.Start(pr.cmd)
+	// save stdoutpipe
+	pr.stdOutPipe, err = pr.cmd.StdoutPipe()
 	if err != nil {
-		println("Failed to execute command.")
+		return err
+	}
+
+	// save stdinpipe
+	pr.stdInPipe, err = pr.cmd.StdinPipe()
+	if err != nil {
+		return err
+	}
+
+	err = pr.cmd.Start()
+	if err != nil {
 		return err
 	}
 
@@ -71,18 +81,14 @@ func (pr *ExternalProcess) InitCmd(command string) error {
 	}()
 
 	go func() {
-		// TODO: defer cleanup maybe here
-		// what happens if the process gets closed or we send
-		// a command that makes the running command exit
-
-		// wait for close
-
-		// io.Copy(os.Stdout, pr.currentPty)
+		// TODO: what happens when user closes the application
+		// and the subprocess is running still.
+		// should be a way around this.
 		<-exit
-		pr.currentPty.Close()
-
-		pr.cmd.Process.Signal(syscall.Signal(1))
 		pr.cmd.Wait()
+		pr.State.proc.DetachExtProcess() // TODO: quick way to do it
+		// pr.cmd.Process.Kill()
+		// pr.cmd.Process.Signal(syscall.SIGINT)
 	}()
 
 	return nil
@@ -92,7 +98,7 @@ func (pr *ExternalProcess) processSend() {
 	buf := make([]byte, 2048)
 
 	for {
-		size, err := pr.currentPty.Read(buf)
+		size, err := pr.stdOutPipe.Read(buf)
 		if err != nil {
 			println("%s exited.", pr.Command)
 			return
@@ -111,7 +117,7 @@ func (pr *ExternalProcess) processReceive() {
 	for {
 		select {
 		case data := <-pr.CmdOut:
-			_, err := pr.currentPty.Write(append(data, '\n'))
+			_, err := pr.stdInPipe.Write(append(data, '\n'))
 			if err != nil {
 				return
 			}
