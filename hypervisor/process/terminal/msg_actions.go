@@ -1,8 +1,6 @@
 package process
 
 import (
-	"strings"
-
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 )
@@ -97,13 +95,13 @@ func (st *State) actOnCommand() {
 			st.PrintLn("Help will now work after you EXEC something, I presume...")
 
 		case "exec":
-			extCommand := strings.Join(args, " ") //FIXME?  shouldn't this
+			// extCommand := strings.Join(args, " ") //FIXME?  shouldn't this
 			//take a list of args rather than joining them into a string?  they'll need to be
 			//.Split() later right?  and from here on,
 			//they are called cmd/command/etc. rather than args...which doesn't seem right?
 			//shouldn't need to know it was "exec" that triggered this?
 
-			err := st.proc.AddAndAttach(extCommand)
+			err := st.proc.AddAndAttach(args)
 			if err != nil {
 				println(err.Error())
 			}

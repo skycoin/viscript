@@ -32,6 +32,10 @@ func HypervisorInitProcessList() {
 func HypervisorProcessListTeardown() {
 	println("process_list.HypervisorProcessListTeardown()")
 	ProcessListGlobal.ProcessMap = nil
+	// TODO: actually call teardown methods on all the processes and also
+	// external processes. what about Alt+f4?
+	// upon application exit we need to terminate all the running processes
+	// and external processes
 }
 
 func AddProcess(p msg.ProcessInterface) msg.ProcessId {

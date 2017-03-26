@@ -67,9 +67,16 @@ func (pr *Process) GetAttachedExtProcess() (*ExternalProcess, error) {
 		strconv.Itoa(int(pr.extProcessId)) + " doesn't exist.")
 }
 
-func (pr *Process) AddExtProcessWithCommand(cmd string) (msg.ExtProcessId, error) {
-	// TODO: create new external process and add it to the map
-	newExtProc, err := NewExternalProcess(&pr.State, cmd)
+func (pr *Process) DetachExtProcess() {
+	println("hypervisor/process/terminal/process.go - DetachExtProcess()")
+	pr.extProcAttached = false
+	delete(pr.extProcesses, pr.extProcessId)
+	pr.State.proc.extProcessId = 0
+}
+
+func (pr *Process) AddExtProcessWithCommand(command []string) (msg.ExtProcessId, error) {
+	println("hypervisor/process/terminal/process.go - AddExtProcessWithCommand()")
+	newExtProc, err := NewExternalProcess(&pr.State, command[0], command[1:])
 	if err != nil {
 		return 0, err
 	}
@@ -79,12 +86,14 @@ func (pr *Process) AddExtProcessWithCommand(cmd string) (msg.ExtProcessId, error
 }
 
 func (pr *Process) AttachExtProcess(pID msg.ExtProcessId) {
+	println("hypervisor/process/terminal/process.go - AttachExtProcess()")
 	pr.extProcessId = pID
 	pr.extProcAttached = true
 }
 
-func (pr *Process) AddAndAttach(cmd string) error {
-	pID, err := pr.AddExtProcessWithCommand(cmd)
+func (pr *Process) AddAndAttach(command []string) error {
+	println("hypervisor/process/terminal/process.go - AddAndAttach()")
+	pID, err := pr.AddExtProcessWithCommand(command)
 	if err != nil {
 		return err
 	}
