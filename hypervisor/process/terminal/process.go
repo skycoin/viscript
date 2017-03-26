@@ -16,9 +16,10 @@ type Process struct {
 	InChannel    chan []byte
 	State        State
 
-	extProcAttached bool
-	extProcessId    msg.ExtProcessId
-	extProcesses    map[msg.ExtProcessId]*ExternalProcess
+	extProcAttached   bool
+	extProcessId      msg.ExtProcessId
+	extProcessCounter msg.ExtProcessId
+	extProcesses      map[msg.ExtProcessId]*ExternalProcess
 }
 
 //non-instanced
@@ -34,6 +35,7 @@ func NewProcess() *Process {
 	// means no external process is attached
 	p.extProcAttached = false
 	p.extProcessId = msg.ExtProcessId(0)
+	p.extProcessCounter = 0
 	p.extProcesses = make(map[msg.ExtProcessId]*ExternalProcess)
 
 	return &p
@@ -63,6 +65,31 @@ func (pr *Process) GetAttachedExtProcess() (*ExternalProcess, error) {
 
 	return nil, errors.New("External process with id " +
 		strconv.Itoa(int(pr.extProcessId)) + " doesn't exist.")
+}
+
+func (pr *Process) AddExtProcessWithCommand(cmd string) (msg.ExtProcessId, error) {
+	// TODO: create new external process and add it to the map
+	newExtProc, err := NewExternalProcess(&pr.State, cmd)
+	if err != nil {
+		return 0, err
+	}
+	pr.extProcessCounter += 1 // Sequential
+	pr.extProcesses[pr.extProcessCounter] = newExtProc
+	return pr.extProcessCounter, nil
+}
+
+func (pr *Process) AttachExtProcess(pID msg.ExtProcessId) {
+	pr.extProcessId = pID
+	pr.extProcAttached = true
+}
+
+func (pr *Process) AddAndAttach(cmd string) error {
+	pID, err := pr.AddExtProcessWithCommand(cmd)
+	if err != nil {
+		return err
+	}
+	pr.AttachExtProcess(pID)
+	return nil
 }
 
 //implement the interface
