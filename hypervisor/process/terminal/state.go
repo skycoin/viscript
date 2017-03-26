@@ -25,7 +25,7 @@ func (st *State) HandleMessages() {
 	for len(c) > 0 {
 		m := <-c
 		//TODO/FIXME:   cache channel id wherever it may be needed
-		m = m[4:] //for now, DISCARD the chan id prefix
+		m = m[4:] //.....for now, DISCARD the chan id prefix
 		msgType := msg.GetType(m)
 		msgCategory := msgType & 0xff00 // get back masked category
 

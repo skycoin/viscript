@@ -85,7 +85,7 @@ A union
 - enumerates possibilities
 - a choice of types
 
-A function has an array of "statesments" or "blocks" (an array of statements) or a control flow (if/then, for)
+A function has an array of "statements" or "blocks" (an array of statements) or a control flow (if/then, for)
 
 (def_func, NAME, (u32 a, u32 b), (u32), 
 	(u32_add a, b)
