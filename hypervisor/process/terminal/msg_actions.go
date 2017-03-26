@@ -100,6 +100,12 @@ func (st *State) actOnCommand() {
 			fallthrough
 		case "help":
 			st.PrintLn("Yes master, help is coming 'very soon'. (TM)")
+		case "exec":
+			extCommand := strings.Join(wholeCommand[1:], " ")
+			err := st.proc.AddAndAttach(extCommand)
+			if err != nil {
+				println(err.Error())
+			}
 		default:
 			st.PrintLn("ERROR: \"" + command + "\" is an unknown command.")
 
