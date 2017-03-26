@@ -64,20 +64,16 @@ func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 }
 
 func (st *State) actOnCommand() {
-	command, args := st.Cli.GetCommandWithArgs()
-	println("actOnCommand() called with:", command, "and args:", args)
-	command = strings.ToLower(command)
+	cmd, args := st.Cli.CurrentCommandAndArgs()
+	println("actOnCommand() called with:", cmd)
 
-	if len(command) == 0 {
-		println("Command was empty, returning.")
-		return
+	for _, s := range args {
+		println("and arg:", s)
 	}
 
-	var wholeCommand []string
-	wholeCommand = append(wholeCommand, command)
-
-	for _, v := range args {
-		wholeCommand = append(wholeCommand, strings.ToLower(v))
+	if len(cmd) < 1 {
+		println("Command was empty, returning.")
+		return
 	}
 
 	if st.proc.HasExtProcessAttached() {
@@ -89,25 +85,31 @@ func (st *State) actOnCommand() {
 			return
 		}
 
-		extProc.CmdOut <- []byte(strings.Join(wholeCommand, " "))
-	} else {
-		// Handle terminal command here
-		switch command {
+		extProc.CmdOut <- []byte(st.Cli.CurrentCommandLine())
+	} else { //internal task
+		switch cmd {
 
 		case "?":
 			fallthrough
 		case "h":
 			fallthrough
 		case "help":
-			st.PrintLn("Yes master, help is coming 'very soon'. (TM)")
+			st.PrintLn("Help will now work after you EXEC something, I presume...")
+
 		case "exec":
-			extCommand := strings.Join(wholeCommand[1:], " ")
+			extCommand := strings.Join(args, " ") //FIXME?  shouldn't this
+			//take a list of args rather than joining them into a string?  they'll need to be
+			//.Split() later right?  and from here on,
+			//they are called cmd/command/etc. rather than args...which doesn't seem right?
+			//shouldn't need to know it was "exec" that triggered this?
+
 			err := st.proc.AddAndAttach(extCommand)
 			if err != nil {
 				println(err.Error())
 			}
+
 		default:
-			st.PrintLn("ERROR: \"" + command + "\" is an unknown command.")
+			st.PrintLn("ERROR: \"" + cmd + "\" is an unknown command.")
 
 		}
 	}

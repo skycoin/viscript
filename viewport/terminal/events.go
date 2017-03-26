@@ -6,10 +6,10 @@ import (
 )
 
 func (t *Terminal) UnpackEvent(message []byte) []byte {
-	println("viewport/terminal/events.UnpackEvent()")
+	//println("viewport/terminal/events.UnpackEvent()")
 
 	//TODO/FIXME:   cache channel id wherever it may be needed
-	message = message[4:] //for now DISCARD the channel id prefix
+	message = message[4:] //...for now, DISCARD the channel id prefix
 
 	switch msg.GetType(message) {
 

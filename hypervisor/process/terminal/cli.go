@@ -162,9 +162,13 @@ func (c *Cli) goDownCommandHistory(mod uint8) {
 	}
 }
 
-func (c *Cli) GetCommandWithArgs() (string, []string) {
-	words := strings.Split(c.Commands[c.CurrCmd][len(c.Prompt):], " ")
-	return words[0], words[1:]
+func (c *Cli) CurrentCommandLine() string {
+	return strings.ToLower(c.Commands[c.CurrCmd][len(c.Prompt):])
+}
+
+func (c *Cli) CurrentCommandAndArgs() (string, []string) {
+	tokens := strings.Split(c.CurrentCommandLine(), " ")
+	return tokens[0], tokens[1:]
 }
 
 func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
