@@ -7,6 +7,10 @@ import (
 
 	"io"
 
+	"runtime"
+
+	"strings"
+
 	"github.com/corpusc/viscript/app"
 )
 
@@ -25,11 +29,11 @@ type ExternalProcess struct {
 }
 
 //non-instanced
-func MakeNewTaskExternal(st *State, command string, args []string) (*ExternalProcess, error) {
+func MakeNewTaskExternal(st *State, tokens []string) (*ExternalProcess, error) {
 	app.At(te, "MakeNewTaskExternal")
 	var p ExternalProcess
 
-	err := p.InitCmd(command, args)
+	err := p.InitCmd(tokens)
 	if err != nil {
 		return nil, err
 	}
@@ -44,9 +48,17 @@ func (pr *ExternalProcess) TearDown() {
 	println("TODO: tear the external process down here, no remorse :rage: :D")
 }
 
-func (pr *ExternalProcess) InitCmd(command string, args []string) error {
-	pr.Command = command
-	pr.cmd = exec.Command(pr.Command, args...)
+func (pr *ExternalProcess) InitCmd(tokens []string) error {
+	pr.Command = strings.Join(tokens, " ")
+
+	runtimeOs := runtime.GOOS
+	if runtimeOs == "linux" || runtimeOs == "darwin" {
+		pr.cmd = exec.Command(tokens[0], tokens[1:]...)
+	} else if runtimeOs == "windows" {
+		fullCommand := append([]string{"/C"}, tokens...)
+		pr.cmd = exec.Command("cmd", fullCommand...)
+	}
+
 	pr.writeMutex = &sync.Mutex{}
 
 	var err error

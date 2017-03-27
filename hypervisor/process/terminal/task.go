@@ -83,7 +83,7 @@ func (pr *Process) DetachExtProcess() {
 func (pr *Process) AddTaskExternal(tokens []string) (msg.ExtProcessId, error) {
 	app.At(path, "AddTaskExternal")
 
-	newExtProc, err := MakeNewTaskExternal(&pr.State, tokens[0], tokens[1:])
+	newExtProc, err := MakeNewTaskExternal(&pr.State, tokens)
 	if err != nil {
 		return 0, err
 	}

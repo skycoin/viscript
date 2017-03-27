@@ -47,7 +47,7 @@ func (c *CliManager) ClearTerminal(_ []string) error {
 		cmd.Stdout = os.Stdout
 		cmd.Run()
 	} else if runtimeOs == "windows" {
-		cmd := exec.Command("cls")
+		cmd := exec.Command("cmd", "/C", "cls")
 		cmd.Stdout = os.Stdout
 		cmd.Run()
 	} else {

@@ -2,11 +2,16 @@
 
 ------- NEXT THINGS TODO: -------
 
+* RPC cli:
+	add functionality to print running jobs for a given process id
+	that can be retrieved by lp or setting the process id as default
+	because that already exists
+
 * ExternalProcess:
-	attach,
-	send to background (https://repl.it/GeGn/1),
-	send to foreground,
-	list jobs (external processes)
+	Ctrl + c - detach, delete, kill probably
+	Ctrl + z - detach and let it be running or pause it (https://repl.it/GeGn/1)?,
+	jobs - list all jobs of current terminal
+	fg <id> - send to foreground
 
 * limit resizing to require at least 16 char columns
 
