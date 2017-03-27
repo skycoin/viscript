@@ -9,7 +9,7 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-var path = "hypervisor/process/terminal/process"
+var path = "hypervisor/process/terminal/task"
 
 type Process struct {
 	Id           msg.ProcessId
@@ -26,8 +26,8 @@ type Process struct {
 }
 
 //non-instanced
-func NewProcess() *Process {
-	println("<" + path + ">.NewProcess()")
+func MakeNewTask() *Process {
+	println("<" + path + ">.MakeNewTask()")
 
 	var p Process
 	p.Id = msg.NextProcessId()
@@ -36,7 +36,7 @@ func NewProcess() *Process {
 	p.InChannel = make(chan []byte, msg.ChannelCapacity)
 	p.State.Init(&p)
 
-	// means no external process is attached
+	// means no external task is attached
 	p.extProcAttached = false
 	p.extProcessId = msg.ExtProcessId(0)
 	p.extProcessCounter = 0
@@ -69,7 +69,7 @@ func (pr *Process) GetAttachedExtProcess() (*ExternalProcess, error) {
 		return extProc, nil
 	}
 
-	return nil, errors.New("External process with id " +
+	return nil, errors.New("External task with id " +
 		strconv.Itoa(int(pr.extProcessId)) + " doesn't exist.")
 }
 

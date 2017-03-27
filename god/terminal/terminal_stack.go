@@ -145,8 +145,8 @@ func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSin
 
 func (ts *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 	//create process
-	var p *termTask.Process = termTask.NewProcess()
-	var pi msg.ProcessInterface = msg.ProcessInterface(p)
+	t := termTask.MakeNewTask()
+	pi := msg.ProcessInterface(t)
 	ProcessId := hypervisor.AddProcess(pi)
 
 	//terminal dbus
@@ -163,7 +163,7 @@ func (ts *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 		dbus.ResourceTypeProcess,   //owner type
 		rid2)
 
-	p.OutChannelId = uint32(tcid)
+	t.OutChannelId = uint32(tcid)
 	ts.Terms[TerminalId].OutChannelId = uint32(pcid)
 	ts.Terms[TerminalId].AttachedProcess = ProcessId
 
@@ -172,10 +172,9 @@ func (ts *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 		tcid,
 		dbus.ResourceId(ProcessId),
 		dbus.ResourceTypeProcess,
-		ts.Terms[TerminalId].InChannel) // (a 2nd call had: p.GetIncomingChannel() as last parameter)
+		ts.Terms[TerminalId].InChannel) // (a 2nd call had: t.GetIncomingChannel() as last parameter)
 
 	// fmt.Printf("\nPubSub Channel After Adding Subscriber\n %+v\n",
-	// hypervisor.DbusGlobal.PubsubChannels[tcid])
 
 	//subscribe terminal to the process id
 	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
@@ -185,7 +184,6 @@ func (ts *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
 		pi.GetIncomingChannel()) // (a 2nd call had: ts.Terms[TerminalId].InChannel) as last parameter)
 
 	// fmt.Printf("\nPubSub Channel After Adding Subscriber\n %+v\n",
-	// hypervisor.DbusGlobal.PubsubChannels[pcid])
 }
 
 func (ts *TerminalStack) SetFocused(topmostId msg.TerminalId) {
