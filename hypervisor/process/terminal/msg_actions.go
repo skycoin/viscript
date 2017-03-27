@@ -105,6 +105,7 @@ func (st *State) actOnCommand() {
 					for i := 0; i < 5; i++ {
 						println("********* " + err.Error() + " *********")
 					}
+					st.PrintLn(err.Error())
 				}
 			}
 
