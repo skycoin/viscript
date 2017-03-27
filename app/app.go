@@ -1,5 +1,13 @@
 package app
 
+/*
+
+This package's functionality is often called "common" or "util", but
+I think it reads cleaner with this name.
+However, newcomers COULD confuse it with "package god"?
+
+*/
+
 const Name = "V I S C R I P T"
 const UvSpan = float32(1.0) / 16 //span of a tile/cell in uv space
 

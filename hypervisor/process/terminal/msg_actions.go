@@ -63,15 +63,16 @@ func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 
 func (st *State) actOnCommand() {
 	cmd, args := st.Cli.CurrentCommandAndArgs()
-	println("actOnCommand() called with:", cmd)
-
-	for _, s := range args {
-		println("and arg:", s)
+	if len(cmd) < 1 {
+		println("**** ERROR! ****   Command was empty!  Returning.")
+		return
 	}
 
-	if len(cmd) < 1 {
-		println("Command was empty, returning.")
-		return
+	s := "actOnCommand() called with"
+	println(s, "cmd:", cmd)
+
+	for _, arg := range args {
+		println(s, "arg:", arg)
 	}
 
 	if st.proc.HasExtProcessAttached() {

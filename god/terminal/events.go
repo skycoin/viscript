@@ -6,8 +6,6 @@ import (
 )
 
 func (t *Terminal) UnpackMessage(message []byte) []byte {
-	//println("viewport/terminal/events.UnpackMessage()")
-
 	//TODO/FIXME:   cache channel id wherever it may be needed
 	message = message[4:] //...for now, DISCARD the channel id prefix
 
@@ -40,7 +38,7 @@ func (t *Terminal) UnpackMessage(message []byte) []byte {
 		t.onMouseScroll(m)
 
 	default:
-		println("viewport/terminal/events.go ************ UNHANDLED MESSAGE TYPE! ************")
+		app.At("<god/terminal/msg_in>", "************ UNHANDLED MESSAGE TYPE! ************")
 	}
 
 	return message
@@ -51,8 +49,6 @@ func (t *Terminal) UnpackMessage(message []byte) []byte {
 //
 
 func (t *Terminal) onKey(m msg.MessageKey) {
-	println("viewport/terminal/events.onKey()")
-
 	switch m.Key {
 	case msg.KeyEnter:
 		t.NewLine()
@@ -60,8 +56,6 @@ func (t *Terminal) onKey(m msg.MessageKey) {
 }
 
 func (t *Terminal) onMouseScroll(m msg.MessageMouseScroll) {
-	println("viewport/terminal/events.onMouseScroll()")
-
 	if m.HoldingControl {
 		//only using m.Y because
 		//m.X is sideways scrolling (which most mice can't do)

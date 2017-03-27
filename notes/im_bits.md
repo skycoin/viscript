@@ -1090,20 +1090,12 @@ but other types of processes are for other apps and not a general type of termin
 
 
 
-dbus is partially implemented
-the terminal object is supposedt to be able to createa  pubsub channel
-and the process object can create a pubsub channel
-adn then subscribe to each other
-to relay key inputs from the terminal, to the process object
-and to relay commands back from the process to the terminal
-
-eventually the viewport will communicate to terminal over dbus but we dont need that now and we do not have dbus type server/client socket thing implemented for that
-
 we are supposed to have a resource registry, where all viewports, terminals, processes are given an id and we have ResourceId and ResourceType, but will leave it for now or ignore it and I am not sure its used for anything right now
 and it is part of dbus right now, but not sure that is best place
 dbus creates channels for communication between resources
 a resource has an in and a resource type
 so we can see that a particular channe has an id, that it is owned by a process with a particular ID and that it is to a terminal resource object, which has a particular id, etc and we can enumerate all of the resources and their types and the channels connecting them
+
 
 
 

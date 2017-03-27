@@ -141,14 +141,14 @@ func SetFrustum(r *app.Rectangle) {
 func DrawBegin() {
 	//gl.Viewport(0, 0, CurrAppWidth, CurrAppHeight) // OPTIMIZEME?  could set flag upon frame buffer size change event
 
-	// retina displays have larger frame buffers. we can't guess but just
-	// get it using window handle.
-	// darwin frame buffer width and darwin frame buffer height
-	// FIXME: should this change on framebuffer size change?
-	dbw, dbh :=
-		GlfwWindow.GetFramebufferSize()
-	// println("Frame BUFFER IN DRAW BEGIN: ", dbw, dbh)
-	gl.Viewport(0, 0, int32(dbw), int32(dbh))
+	//retina displays have larger frame buffers. we can't guess but just
+	//get it using window handle.
+	//darwin frame buffer width and darwin frame buffer height
+
+	//FIXME?: should this change on framebuffer size change?
+	w, h := //width, height
+		GlfwWindow.GetFramebufferSize() //println("Frame BUFFER IN DRAW BEGIN: ", w, h)
+	gl.Viewport(0, 0, int32(w), int32(h))
 
 	if *PrevFrustum != *CurrFrustum {
 		*PrevFrustum = *CurrFrustum

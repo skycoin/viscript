@@ -88,5 +88,5 @@ func main() {
 	}
 
 	god.TeardownScreen()
-	hypervisor.HypervisorTeardown()
+	hypervisor.Teardown()
 }

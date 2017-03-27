@@ -34,14 +34,21 @@ types of messages
 Can objects create multiple channels?
 */
 
+import (
+	"github.com/corpusc/viscript/hypervisor/dbus"
+)
+
+var DbusGlobal dbus.DbusInstance
+
 func Init() {
-	println("(hypervisor.go).Init()")
-	HypervisorInitProcessList()
-	DbusInit()
+	println("<hypervisor>    Init()")
+	initProcessList()
+	DbusGlobal.Init()
 }
 
-func HypervisorTeardown() {
-	println("(hypervisor.go).HypervisorTeardown()")
-	HypervisorProcessListTeardown()
-	DbusTeardown()
+func Teardown() {
+	println("<hypervisor>    Teardown()")
+	teardownProcessList()
+	DbusGlobal.PubsubChannels = nil
+	DbusGlobal.Resources = nil
 }

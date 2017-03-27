@@ -24,13 +24,11 @@ type ProcessList struct {
 	ProcessMap map[msg.ProcessId]msg.ProcessInterface //process id to interface
 }
 
-func HypervisorInitProcessList() {
-	println("process_list.HypervisorInitProcessList()")
+func initProcessList() {
 	ProcessListGlobal.ProcessMap = make(map[msg.ProcessId]msg.ProcessInterface)
 }
 
-func HypervisorProcessListTeardown() {
-	println("process_list.HypervisorProcessListTeardown()")
+func teardownProcessList() {
 	ProcessListGlobal.ProcessMap = nil
 	// TODO: actually call teardown methods on all the processes and also
 	// external processes. what about Alt+f4?
