@@ -6,7 +6,11 @@ import (
 	"strings"
 )
 
-var Con = CcLog{} // console log, displays runtime feedback
+var Con = CcLog{} //console log, displays runtime feedback
+//private
+var fillChar = "*"        //character used to surround/highlight text
+const numUsableChars = 79 //assumes 80 column lines.  but to still look fine
+//....with more columns, we make each a new line & reserve the last column
 
 type CcLog struct {
 	Name  string
@@ -26,13 +30,12 @@ func (log CcLog) Add(s string) {
 }
 
 // numLines: use odd number for an exact middle point
-func MakeHighlyVisibleLogHeader(s string, numLines int) {
+func MakeHighlyVisibleLogEntry(s string, numLines int) {
 	s = " " + s + " "
-	fillChar := "*"
 	osOnly := s == Name
 
 	var bar string
-	for i := 0; i < 79; i++ {
+	for i := 0; i < numUsableChars; i++ {
 		bar += fillChar
 	}
 
@@ -42,16 +45,16 @@ func MakeHighlyVisibleLogHeader(s string, numLines int) {
 	}
 
 	var bookend string
-	for i := 0; i < (79-len(s))/2; i++ {
+	for i := 0; i < (numUsableChars-len(s))/2; i++ {
 		bookend += fillChar
 	}
 
-	middle := numLines / 2
+	vMid := numLines / 2 //vertical middle
 	for i := 0; i < numLines; i++ {
 		switch {
-		case i == middle:
+		case i == vMid:
 			predPrint(osOnly, bookend+s+bookend)
-		case i == middle-1 || i == middle+1:
+		case i == vMid-1 || i == vMid+1:
 			predPrint(osOnly, bookend+spaces+bookend)
 		default:
 			predPrint(osOnly, bar)
@@ -61,8 +64,12 @@ func MakeHighlyVisibleLogHeader(s string, numLines int) {
 
 // prints only to OS console window if it's for the app's name
 func predPrint(osOnly bool, s string) {
+	if len(s) < numUsableChars {
+		s += fillChar
+	}
+
 	if osOnly {
-		fmt.Println(s)
+		println(s)
 	} else {
 		Con.Add(fmt.Sprintf("%s\n", s))
 	}

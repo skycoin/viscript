@@ -26,7 +26,7 @@ func (di *DbusInstance) AddPubsubChannelSubscriber(chanId ChannelId, resourceId 
 
 func (di *DbusInstance) PublishTo(chanId uint32, msg []byte) {
 	id := ChannelId(chanId)
-	//println("(dbus/pubsub.go).PublishTo()", id)
+	//println("<dbus/pubsub>.PublishTo()", id)
 
 	channel := di.PubsubChannels[id]
 	di.prefixMessageWithChanId(id, &msg)

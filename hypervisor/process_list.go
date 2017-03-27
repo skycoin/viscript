@@ -37,7 +37,6 @@ func teardownProcessList() {
 }
 
 func AddProcess(p msg.ProcessInterface) msg.ProcessId {
-	println("process_list.AddProcess()")
 	id := p.GetId()
 
 	_, isInTheMap := ProcessListGlobal.ProcessMap[id]

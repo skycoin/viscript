@@ -37,8 +37,8 @@ var (
 	CurrY float32
 )
 
-func InitCanvas() {
-	println("(gl/canvas.go).InitCanvas()")
+func Init() {
+	println("<gl/canvas>.Init()")
 	// one-time setup
 	PrevColor = GrayDark
 	CurrColor = GrayDark
@@ -65,7 +65,7 @@ func GetTaskbarRect() *app.Rectangle {
 }
 
 func SetSize(x, y int32) {
-	println("\n(gl/canvas.go).SetSize()", x, y)
+	println("\n<gl/canvas>.SetSize()", x, y)
 	*PrevFrustum = *CurrFrustum
 	CurrAppWidth = x
 	CurrAppHeight = y

@@ -1,7 +1,6 @@
 package gl
 
 import (
-	"fmt"
 	"github.com/corpusc/viscript/app"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
@@ -20,8 +19,8 @@ var (
 //only two gfx parameters should be eliminated
 //settings in either app or gfx
 
-func WindowInit() {
-	fmt.Printf("Gl: Init glfw \n")
+func InitGlfw() {
+	println("<gl>.InitGlfw()")
 
 	if err := glfw.Init(); err != nil {
 		log.Fatalln("failed to initialize glfw:", err)
@@ -36,7 +35,6 @@ func WindowInit() {
 	   The canonical examples are unlocking a mutex or closing a file.
 	*/
 
-	fmt.Printf("Gl: set windowhint\n")
 	glfw.WindowHint(glfw.Resizable, glfw.True)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
@@ -87,13 +85,10 @@ func SetHandPointer() {
 }
 
 func LoadTextures() {
-	fmt.Printf("GL: load texture \n")
 	Texture = NewTexture("Bisasam_24x24_Shadowed.png")
 }
 
 func InitRenderer() {
-	fmt.Println("gl.InitRenderer()")
-
 	gl.Enable(gl.DEPTH_TEST)
 	gl.Enable(gl.LIGHTING)
 	//gl.Enable(gl.ALPHA_TEST)
@@ -156,7 +151,7 @@ func DrawBegin() {
 		gl.LoadIdentity()
 		//SetFrustum(CurrFrustum)
 		SetOrtho(CurrFrustum)
-		fmt.Println("CHANGE OF FRUSTUM")
+		println("CHANGE OF FRUSTUM")
 	}
 	gl.MatrixMode(gl.MODELVIEW) //.PROJECTION) //.MODELVIEW)
 	gl.LoadIdentity()

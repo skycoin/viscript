@@ -62,20 +62,18 @@ import (
 )
 
 func main() {
-	app.MakeHighlyVisibleLogHeader(app.Name, 15)
-
+	app.MakeHighlyVisibleLogEntry(app.Name, 15)
 	hypervisor.Init()
-
-	god.DebugPrintInputEvents = true
 	god.Init() //runtime.LockOSThread()
+	//rpc concurrency can interrupt the following, so printing NOW
+	app.MakeHighlyVisibleLogEntry("Start loop", 7)
 
-	// rpc
 	go func() {
 		rpcInstance := terminalmanager.NewRPC()
 		rpcInstance.Serve()
 	}()
 
-	println("Start Loop;")
+	//actual start of loop
 	for god.CloseWindow == false {
 		god.DispatchEvents() //event channel
 

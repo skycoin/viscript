@@ -1,14 +1,16 @@
 package process
 
 import (
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/msg"
-	//"log"
 )
 
+var stPath = "hypervisor/process/terminal/state"
+
 type State struct {
-	proc                  *Process
 	DebugPrintInputEvents bool
 	Cli                   *Cli
+	proc                  *Process
 }
 
 func (st *State) Init(proc *Process) {
@@ -31,13 +33,12 @@ func (st *State) HandleMessages() {
 		switch msgCategory {
 
 		case msg.CATEGORY_Input:
-			//println("(process/terminal/state.go)-----------CATEGORY_Input")
 			st.UnpackMessage(msgType, m)
 		case msg.CATEGORY_Terminal:
-			//println("(process/terminal/state.go)-----------CATEGORY_Terminal")
+			app.At(stPath, "----CATEGORY_Terminal----FIXME? SHOULD NEVER GET THIS TYPE HERE?!?!")
 			st.UnpackMessage(msgType, m)
 		default:
-			println("(process/terminal/state.go)**************** UNHANDLED MESSAGE TYPE CATEGORY! ****************")
+			app.At(stPath, "**************** UNHANDLED MESSAGE TYPE CATEGORY! ****************")
 
 		}
 	}

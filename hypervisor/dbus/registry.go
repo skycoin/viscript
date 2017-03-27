@@ -6,7 +6,7 @@ type DbusInstance struct {
 }
 
 func (di *DbusInstance) Init() {
-	println("(dbus/registry.go).Init()")
+	println("<dbus/registry>.Init()")
 	di.PubsubChannels = make(map[ChannelId]*PubsubChannel)
 	di.Resources = make([]ResourceMeta, 0)
 }
@@ -22,7 +22,9 @@ func (di *DbusInstance) ResourceRegister(ResourceId ResourceId, ResourceType Res
 
 //remove resource from list
 func (di *DbusInstance) ResourceUnregister(ResourceID ResourceId, ResourceType ResourceType) {
-	println("(dbus/registry.go).ResourceUnregister()")
+	println("<dbus/registry>.ResourceUnregister()")
+	println("FIXME/TODO: THIS IS NOT CALLED ANYWHERE")
+
 	for i, resourceMeta := range di.Resources {
 		if resourceMeta.Id == ResourceID {
 			di.Resources = append(di.Resources[:i], di.Resources[i+1:]...)

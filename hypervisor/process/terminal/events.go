@@ -1,6 +1,7 @@
 package process
 
 import (
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -23,9 +24,11 @@ func (st *State) UnpackMessage(msgType uint16, message []byte) []byte {
 		st.onMouseScroll(m, message)
 
 	default:
-		println("UNKNOWN MESSAGE TYPE!")
-	}
+		app.At("hypervisor/process/terminal/msg_in", "UNKNOWN MESSAGE TYPE!!!")
 
+	} //end switch
+
+	//ALWAYS reached
 	if st.DebugPrintInputEvents {
 		println()
 	}

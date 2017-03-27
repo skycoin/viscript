@@ -33,7 +33,7 @@ func onKey(m msg.MessageKey) {
 		switch m.Key {
 
 		case msg.KeyEscape:
-			println("CLOSE OPENGL WINDOW")
+			println("\n\nCLOSING OPENGL WINDOW")
 			CloseWindow = true
 
 		case msg.KeyLeftShift:

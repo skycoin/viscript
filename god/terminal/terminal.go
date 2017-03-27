@@ -1,8 +1,6 @@
 package terminal
 
 import (
-	"fmt"
-
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
@@ -39,7 +37,7 @@ type Terminal struct {
 }
 
 func (t *Terminal) Init() {
-	println("Terminal.Init()")
+	println("<Terminal>.Init()")
 
 	t.TerminalId = msg.RandTerminalId()
 	t.InChannel = make(chan []byte, msg.ChannelCapacity)
@@ -64,7 +62,7 @@ func (t *Terminal) SetResizingOff() {
 }
 
 func (t *Terminal) SetSize() {
-	println("Terminal.SetSize()        --------FIXME once we allow dragging edges")
+	println("<Terminal>.SetSize()        --------FIXME once we allow dragging edges")
 	t.CharSize.X = (t.Bounds.Width() - t.BorderSize*2) / float32(t.GridSize.X)
 	t.CharSize.Y = (t.Bounds.Height() - t.BorderSize*2) / float32(t.GridSize.Y)
 }
@@ -158,7 +156,7 @@ func (t *Terminal) SetStringAt(X, Y int, S string) {
 }
 
 func (t *Terminal) SetGridSize() {
-	fmt.Printf("Terminal.SetGridSize()\n")
+	println("<Terminal>.SetGridSize() --------------------------FIXME/TODO")
 
 	// ERROR IN THIS CODE!
 	// .... but I don't see any need for this right now anyways.

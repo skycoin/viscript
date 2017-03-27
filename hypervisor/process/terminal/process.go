@@ -27,7 +27,7 @@ type Process struct {
 
 //non-instanced
 func NewProcess() *Process {
-	app.At(path, "NewProcess")
+	println("<" + path + ">.NewProcess()")
 
 	var p Process
 	p.Id = msg.NextProcessId()

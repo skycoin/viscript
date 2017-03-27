@@ -18,7 +18,9 @@ var (
 )
 
 func Init() {
-	println("<god.go>.Init()")
+	println("<god>.Init()")
+	DebugPrintInputEvents = true
+
 	// GLFW event handling must run on the main OS thread
 	// See documentation for functions that are only allowed to be called from the main thread.
 	runtime.LockOSThread()
@@ -29,28 +31,26 @@ func Init() {
 }
 
 func initScreen() {
-	println("<god.go>.initScreen()")
-	igl.InitCanvas()
-	igl.WindowInit()
+	igl.Init() //in canvas.go
+	igl.InitGlfw()
 	igl.LoadTextures()
 	igl.InitRenderer()
 }
 
 func initEvents() {
-	println("<god.go>.initEvents()")
 	igl.InitInputEvents(igl.GlfwWindow)
 	igl.InitMiscEvents(igl.GlfwWindow)
 }
 
 func initTerms() {
 	Terms.Init()
-	Terms.AddTerminal()
-	// Terms.AddTerminal()
-	// Terms.AddTerminal()
+	Terms.Add()
+	// Terms.Add()
+	// Terms.Add()
 }
 
 func TeardownScreen() {
-	println("<god.go>.TeardownScreen()")
+	println("<god>.TeardownScreen()")
 	igl.ScreenTeardown()
 }
 

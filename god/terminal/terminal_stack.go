@@ -15,9 +15,7 @@ import (
 /*
 	What operations?
 	- delete terminal
-	- draw terminal state
 	- resize terminal (in pixels or chars)
-	- move terminal
 */
 
 type TerminalStack struct {
@@ -33,8 +31,6 @@ type TerminalStack struct {
 }
 
 func (ts *TerminalStack) Init() {
-	println("TerminalStack.Init()")
-
 	w := gl.CanvasExtents.X * 1.5 //width of terminal window
 	h := gl.CanvasExtents.Y * 1.5 //height
 
@@ -49,8 +45,8 @@ func (ts *TerminalStack) Init() {
 		-gl.CanvasExtents.X}
 }
 
-func (ts *TerminalStack) AddTerminal() msg.TerminalId {
-	println("TerminalStack.AddTerminal()")
+func (ts *TerminalStack) Add() msg.TerminalId {
+	println("<TerminalStack>.Add()")
 
 	ts.nextDepth += ts.nextOffset.X / 10 // done first, cuz desktop is at 0
 
@@ -78,7 +74,7 @@ func (ts *TerminalStack) AddTerminal() msg.TerminalId {
 }
 
 func (ts *TerminalStack) RemoveTerminal(id msg.TerminalId) {
-	println("TerminalStack.RemoveTerminal() ---------------------------- FIXME/TODO")
+	println("<TerminalStack>.RemoveTerminal() ---------------------------- FIXME/TODO")
 	//what should happen here after deleting terminal from the stack?
 	// delete(ts.Terms, id)
 }
@@ -90,7 +86,6 @@ func (ts *TerminalStack) Tick() {
 }
 
 func (ts *TerminalStack) ResizeFocusedTerminalRight(newRight float32) {
-	//fmt.Printf("TerminalStack.ResizeFocusedTerminalRight()   %.2f\n", newRight)
 	ts.Focused.ResizingRight = true
 
 	if keyboard.ControlKeyIsDown {
@@ -107,7 +102,6 @@ func (ts *TerminalStack) ResizeFocusedTerminalRight(newRight float32) {
 }
 
 func (ts *TerminalStack) ResizeFocusedTerminalBottom(newBottom float32) {
-	//println("TerminalStack.ResizeFocusedTerminalBottom()")
 	ts.Focused.ResizingBottom = true
 
 	if keyboard.ControlKeyIsDown {
@@ -124,8 +118,6 @@ func (ts *TerminalStack) ResizeFocusedTerminalBottom(newBottom float32) {
 }
 
 func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSinceClick *app.Vec2F) {
-	//println("TerminalStack.MoveTerminal()")
-
 	d := mouseDeltaSinceClick
 	cs := ts.Focused.CharSize
 	fb := ts.Focused.Bounds
@@ -152,8 +144,6 @@ func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSin
 }
 
 func (ts *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
-	println("TerminalStack.SetupTerminalDbus()")
-
 	//create process
 	var p *termTask.Process = termTask.NewProcess()
 	var pi msg.ProcessInterface = msg.ProcessInterface(p)

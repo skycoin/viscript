@@ -41,13 +41,13 @@ import (
 var DbusGlobal dbus.DbusInstance
 
 func Init() {
-	println("<hypervisor>    Init()")
+	println("<hypervisor>.Init()")
 	initProcessList()
 	DbusGlobal.Init()
 }
 
 func Teardown() {
-	println("<hypervisor>    Teardown()")
+	println("<hypervisor>.Teardown()")
 	teardownProcessList()
 	DbusGlobal.PubsubChannels = nil
 	DbusGlobal.Resources = nil

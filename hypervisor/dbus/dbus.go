@@ -50,7 +50,7 @@ package dbus
 var ChannelIdGlobal ChannelId = 2 //sequential
 
 func GetChannelId() ChannelId {
-	print("(dbus/dbus.go).GetChannelId(): ")
+	print("<dbus>.GetChannelId(): ")
 	ChannelIdGlobal++
 	println(ChannelIdGlobal)
 	return ChannelIdGlobal

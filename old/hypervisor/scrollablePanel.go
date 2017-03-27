@@ -30,7 +30,7 @@ type Terminal struct {
 }
 
 func (t *Terminal) Init() {
-	fmt.Printf("Terminal.Init()\n")
+	fmt.Printf("<Terminal>.Init()\n")
 
 	t.TextBodies = append(t.TextBodies, []string{})
 
@@ -47,7 +47,7 @@ func (t *Terminal) Init() {
 }
 
 func (t *Terminal) SetSize() {
-	fmt.Printf("Terminal.SetSize()\n")
+	fmt.Printf("<Terminal>.SetSize()\n")
 
 	t.Whole = &app.Rectangle{
 		cGfx.CanvasExtents.Y - cGfx.CharHei,

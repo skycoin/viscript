@@ -166,17 +166,17 @@ func Process(feedbackWanted bool) {
 	Terms[1].TextBodies[0] = []string{}
 
 	if feedbackWanted {
-		app.MakeHighlyVisibleLogHeader(`LEXING`, 5)
+		app.MakeHighlyVisibleLogEntry(`LEXING`, 5)
 	}
 	lexAll()
 
 	//if feedbackWanted {
-	//	app.MakeHighlyVisibleLogHeader(`PARSING`, 5)
+	//	app.MakeHighlyVisibleLogEntry(`PARSING`, 5)
 	//}
 	//parseAll()
 
 	if feedbackWanted {
-		app.MakeHighlyVisibleLogHeader(`RUNNING`, 5)
+		app.MakeHighlyVisibleLogEntry(`RUNNING`, 5)
 	}
 	run(mainBlock)
 }

@@ -39,7 +39,7 @@ func (r *RPC) Serve() {
 		panic(err)
 	}
 
-	log.Println("Serving RPC on port", port)
+	log.Println("Serving RPC on port", port, "\n\n")
 	err = http.Serve(l, nil)
 	if err != nil {
 		panic(err)
