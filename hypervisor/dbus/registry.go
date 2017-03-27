@@ -13,7 +13,6 @@ func (di *DbusInstance) Init() {
 
 //register that a resource exists
 func (di *DbusInstance) ResourceRegister(ResourceId ResourceId, ResourceType ResourceType) {
-	println("(dbus/registry.go).ResourceRegister()")
 	x := ResourceMeta{}
 	x.Id = ResourceId
 	x.Type = ResourceType

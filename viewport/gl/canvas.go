@@ -52,11 +52,11 @@ func InitCanvas() {
 	PixelSize.Y = CanvasExtents.Y * 2 / float32(CurrAppHeight)
 
 	// MORE one-time setup
-	MainMenu.SetSize(GetMenuSizedRect())
+	MainMenu.SetSize(GetTaskbarRect())
 	mouse.SetSizes(CanvasExtents, PixelSize)
 }
 
-func GetMenuSizedRect() *app.Rectangle {
+func GetTaskbarRect() *app.Rectangle {
 	return &app.Rectangle{
 		CanvasExtents.Y,
 		CanvasExtents.X,
@@ -79,6 +79,6 @@ func SetSize(x, y int32) {
 	CanvasExtents.Y = DistanceFromOrigin * CurrFrustum.Top
 
 	// things that weren't initialized in this func
-	MainMenu.SetSize(GetMenuSizedRect())
+	MainMenu.SetSize(GetTaskbarRect())
 	mouse.SetSizes(CanvasExtents, PixelSize)
 }

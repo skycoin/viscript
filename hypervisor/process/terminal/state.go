@@ -12,7 +12,6 @@ type State struct {
 }
 
 func (st *State) Init(proc *Process) {
-	println("(process/terminal/state.go).Init()")
 	st.proc = proc
 	st.DebugPrintInputEvents = true
 	st.Cli = NewCli()
@@ -33,10 +32,10 @@ func (st *State) HandleMessages() {
 
 		case msg.CATEGORY_Input:
 			//println("(process/terminal/state.go)-----------CATEGORY_Input")
-			st.UnpackEvent(msgType, m)
+			st.UnpackMessage(msgType, m)
 		case msg.CATEGORY_Terminal:
 			//println("(process/terminal/state.go)-----------CATEGORY_Terminal")
-			st.UnpackEvent(msgType, m)
+			st.UnpackMessage(msgType, m)
 		default:
 			println("(process/terminal/state.go)**************** UNHANDLED MESSAGE TYPE CATEGORY! ****************")
 

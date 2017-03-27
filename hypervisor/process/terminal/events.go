@@ -4,9 +4,7 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-func (st *State) UnpackEvent(msgType uint16, message []byte) []byte {
-	println("process/terminal/events.UnpackEvent()")
-
+func (st *State) UnpackMessage(msgType uint16, message []byte) []byte {
 	switch msgType {
 
 	case msg.TypeChar:

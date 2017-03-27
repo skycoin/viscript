@@ -10,10 +10,8 @@
 
 * limit resizing to require at least 16 char columns
 
-* make command line dynamic based on terminal's .GridSize
-	should MaxCommandSize be dynamic?  i don't like the idea
-	of reserving more than 2 lines at the bottom of a terminal
-	(what happens after we've autoscrolled down a whole page)
+* make current command line autoscroll horizontally
+	* make it optional (if turned off, always truncate the left)
 
 * Resize terminals
 	* i believe we'll change the actual grid size, then get enough data
@@ -57,18 +55,19 @@
 package main
 
 import (
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/rpc/terminalmanager"
 	"github.com/corpusc/viscript/viewport"
 )
 
 func main() {
-	println("Starting...")
+	app.MakeHighlyVisibleLogHeader(app.Name, 15)
 
 	hypervisor.Init()
 
 	viewport.DebugPrintInputEvents = true
-	viewport.Init() //runtime.LockOSThread(), InitCanvas()
+	viewport.Init() //runtime.LockOSThread()
 
 	// rpc
 	go func() {

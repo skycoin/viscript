@@ -1529,3 +1529,13 @@ cxo client, skycoin daemon full node, skycoind/superwallet, meshnet daemon,
 meshnet cli and socks5 client, socks5 server.
 
 Write those down.  They are all tickets.
+
+
+
+
+
+
+
+[re: Benn's command-prompt-scrolling related questions]
+You can generally put character for carriage return on end of line and go to next line
+

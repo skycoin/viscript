@@ -19,7 +19,6 @@ type Cli struct {
 }
 
 func NewCli() *Cli {
-	println("(process/terminal/cli).init()")
 	var cli Cli
 	cli.Log = []string{}
 	cli.Commands = []string{}
@@ -56,13 +55,11 @@ func (c *Cli) DeleteCharAtCursor() {
 }
 
 func (c *Cli) EchoWholeCommand(outChanId uint32) {
-	println("(process/terminal/cli).EchoWholeCommand()")
-
-	//FIXME? actual terminal id really needed?  i just gave it 0 for now
+	termId := uint32(0) //FIXME? correct terminal id really needed?
 	//message := msg.Serialize(msg.TypePutChar, msg.MessagePutChar{0, m.Char})
 
 	m := msg.Serialize(msg.TypeCommandLine,
-		msg.MessageCommandLine{0, c.Commands[c.CurrCmd], uint32(c.CursPos)})
+		msg.MessageCommandLine{termId, c.Commands[c.CurrCmd], uint32(c.CursPos)})
 	hypervisor.DbusGlobal.PublishTo(outChanId, m) //EVERY publish action prefixes another chan id
 }
 

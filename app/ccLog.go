@@ -28,7 +28,7 @@ func (log CcLog) Add(s string) {
 // numLines: use odd number for an exact middle point
 func MakeHighlyVisibleLogHeader(s string, numLines int) {
 	s = " " + s + " "
-	fillChar := "#"
+	fillChar := "*"
 	osOnly := s == Name
 
 	var bar string

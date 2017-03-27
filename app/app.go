@@ -11,7 +11,7 @@ func At(path, s string) { //report the func location of currently running code
 	bar := ""
 
 	for i := 0; i < lp; i++ {
-		bar += "^"
+		bar += "-"
 	}
 
 	println(bar + " <" + path + ">")

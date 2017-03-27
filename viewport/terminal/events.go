@@ -5,8 +5,8 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-func (t *Terminal) UnpackEvent(message []byte) []byte {
-	//println("viewport/terminal/events.UnpackEvent()")
+func (t *Terminal) UnpackMessage(message []byte) []byte {
+	//println("viewport/terminal/events.UnpackMessage()")
 
 	//TODO/FIXME:   cache channel id wherever it may be needed
 	message = message[4:] //...for now, DISCARD the channel id prefix

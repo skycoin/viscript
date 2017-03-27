@@ -3,8 +3,7 @@ package viewport
 import (
 	"runtime"
 
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/viewport/terminal"
+	t "github.com/corpusc/viscript/viewport/terminal"
 
 	igl "github.com/corpusc/viscript/viewport/gl" //internal gl
 )
@@ -14,14 +13,12 @@ import (
 //only remaining
 
 var (
-	CloseWindow bool                   = false
-	Terms       terminal.TerminalStack = terminal.TerminalStack{}
+	CloseWindow bool            = false
+	Terms       t.TerminalStack = t.TerminalStack{}
 )
 
 func Init() {
 	println("viewport.Init()")
-	app.MakeHighlyVisibleLogHeader(app.Name, 15)
-	igl.InitCanvas()
 	// GLFW event handling must run on the main OS thread
 	// See documentation for functions that are only allowed to be called from the main thread.
 	runtime.LockOSThread()
@@ -33,6 +30,7 @@ func Init() {
 
 func initScreen() {
 	println("Viewport: init screen")
+	igl.InitCanvas()
 	igl.WindowInit()
 	igl.LoadTextures()
 	igl.InitRenderer()
@@ -66,7 +64,7 @@ func DispatchEvents() []byte {
 
 	for len(igl.InputEvents) > 0 {
 		v := <-igl.InputEvents
-		message = UnpackEvent(v)
+		message = UnpackMessage(v)
 	}
 
 	return message

@@ -71,7 +71,7 @@ func (t *Terminal) SetSize() {
 
 func (t *Terminal) Tick() {
 	for len(t.InChannel) > 0 {
-		t.UnpackEvent(<-t.InChannel)
+		t.UnpackMessage(<-t.InChannel)
 	}
 }
 
