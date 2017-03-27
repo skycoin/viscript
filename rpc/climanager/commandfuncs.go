@@ -40,13 +40,13 @@ func (c *CliManager) Quit(_ []string) error {
 
 func (c *CliManager) ClearTerminal(_ []string) error {
 
-	runtimeOs := runtime.GOOS
+	ros := runtime.GOOS
 
-	if runtimeOs == "linux" || runtimeOs == "darwin" {
+	if ros == "linux" || ros == "darwin" {
 		cmd := exec.Command("clear")
 		cmd.Stdout = os.Stdout
 		cmd.Run()
-	} else if runtimeOs == "windows" {
+	} else if ros == "windows" {
 		cmd := exec.Command("cmd", "/C", "cls")
 		cmd.Stdout = os.Stdout
 		cmd.Run()

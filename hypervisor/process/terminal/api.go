@@ -53,12 +53,12 @@ func (st *State) sendChar(c uint32) {
 		s = "Carriage Return"
 	case msg.EscBackSpace:
 		s = "BackSpace"
-	case msg.EscBackSlash:
-		s = "BackSlash"
+		// case msg.EscBackSlash:
+		// 	s = "BackSlash"
 	}
 
 	if s != "" {
-		println("TASK ENCOUNTERED ESCAPE CHARACTER FOR [" + s + "], & WON'T SEND IT TO TERMINAL!")
+		println("TASK ENCOUNTERED ESCAPE CHAR FOR [" + s + "], NOT SENDING TO TERMINAL")
 		return
 	}
 

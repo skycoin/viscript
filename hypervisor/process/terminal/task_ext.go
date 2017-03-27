@@ -17,10 +17,10 @@ import (
 const te = "hypervisor/process/terminal/task_ext" //path
 
 type ExternalProcess struct {
-	Command    string
-	cmd        *exec.Cmd
-	CmdOut     chan []byte
-	writeMutex *sync.Mutex
+	CommandLine string //not just one command/word
+	cmd         *exec.Cmd
+	CmdOut      chan []byte
+	writeMutex  *sync.Mutex
 
 	stdOutPipe io.ReadCloser
 	stdInPipe  io.WriteCloser
@@ -49,12 +49,12 @@ func (pr *ExternalProcess) TearDown() {
 }
 
 func (pr *ExternalProcess) InitCmd(tokens []string) error {
-	pr.Command = strings.Join(tokens, " ")
+	pr.CommandLine = strings.Join(tokens, " ")
 
-	runtimeOs := runtime.GOOS
-	if runtimeOs == "linux" || runtimeOs == "darwin" {
+	ros := runtime.GOOS
+	if ros == "linux" || ros == "darwin" {
 		pr.cmd = exec.Command(tokens[0], tokens[1:]...)
-	} else if runtimeOs == "windows" {
+	} else if ros == "windows" {
 		fullCommand := append([]string{"/C"}, tokens...)
 		pr.cmd = exec.Command("cmd", fullCommand...)
 	}
