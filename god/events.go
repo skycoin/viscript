@@ -1,7 +1,6 @@
 package god
 
 import (
-	"fmt"
 	"github.com/corpusc/viscript/god/gl"
 	"github.com/corpusc/viscript/msg"
 	_ "strconv"
@@ -55,7 +54,7 @@ func UnpackMessage(message []byte) []byte {
 		onFrameBufferSize(m)
 
 	default:
-		fmt.Println("********** UNKNOWN MESSAGE TYPE! ************")
+		app.At("god/msg_in", "************ UNHANDLED MESSAGE TYPE! ************")
 	}
 
 	return message
