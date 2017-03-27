@@ -3,9 +3,9 @@ package god
 import (
 	"runtime"
 
-	t "github.com/corpusc/viscript/viewport/terminal"
+	t "github.com/corpusc/viscript/god/terminal"
 
-	igl "github.com/corpusc/viscript/viewport/gl" //internal gl
+	igl "github.com/corpusc/viscript/god/gl" //internal gl
 )
 
 //glfw

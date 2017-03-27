@@ -2,9 +2,9 @@ package terminalmanager
 
 import (
 	"github.com/corpusc/viscript/god"
+	"github.com/corpusc/viscript/god/terminal"
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/hypervisor/dbus"
-	"github.com/corpusc/viscript/viewport/terminal"
 )
 
 type TerminalManager struct {

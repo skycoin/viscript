@@ -3,9 +3,9 @@ package god
 import (
 	"fmt"
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/god/gl"
 	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"
-	"github.com/corpusc/viscript/viewport/gl"
 )
 
 // triggered both by moving **AND*** by pressing buttons

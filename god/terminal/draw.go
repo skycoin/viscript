@@ -2,7 +2,7 @@ package terminal
 
 import (
 	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/viewport/gl"
+	"github.com/corpusc/viscript/god/gl"
 )
 
 func (ts *TerminalStack) Draw() {

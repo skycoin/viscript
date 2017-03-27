@@ -2,8 +2,8 @@ package god
 
 import (
 	"fmt"
+	"github.com/corpusc/viscript/god/gl"
 	"github.com/corpusc/viscript/msg"
-	"github.com/corpusc/viscript/viewport/gl"
 	_ "strconv"
 )
 
