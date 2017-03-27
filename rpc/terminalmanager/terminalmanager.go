@@ -16,7 +16,7 @@ type TerminalManager struct {
 func newTerminalManager() *TerminalManager {
 	ntm := new(TerminalManager)
 	ntm.dbus = &hypervisor.DbusGlobal
-	ntm.terminalStack = &viewport.Terms
+	ntm.terminalStack = &god.Terms
 	ntm.processList = &hypervisor.ProcessListGlobal
 	return ntm
 }
