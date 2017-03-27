@@ -50,6 +50,7 @@ func initTerms() {
 }
 
 func TeardownScreen() {
+	println("<god.go>.TeardownScreen()")
 	igl.ScreenTeardown()
 }
 

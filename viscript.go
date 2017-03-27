@@ -56,9 +56,9 @@ package main
 
 import (
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/god"
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/rpc/terminalmanager"
-	"github.com/corpusc/viscript/viewport"
 )
 
 func main() {
@@ -87,7 +87,6 @@ func main() {
 		god.SwapDrawBuffer() //with new frame
 	}
 
-	println("Closing down viewport")
 	god.TeardownScreen()
 	hypervisor.HypervisorTeardown()
 }
