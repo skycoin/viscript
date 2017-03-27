@@ -1,6 +1,7 @@
 package god
 
 import (
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/god/gl"
 	"github.com/corpusc/viscript/msg"
 	_ "strconv"

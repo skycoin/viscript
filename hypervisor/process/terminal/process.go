@@ -80,10 +80,10 @@ func (pr *Process) DetachExtProcess() {
 	pr.State.proc.extProcessId = 0
 }
 
-func (pr *Process) AddExtProcessWithCommand(command []string) (msg.ExtProcessId, error) {
-	app.At(path, "AddExtProcessWithCommand")
+func (pr *Process) AddTaskExternal(tokens []string) (msg.ExtProcessId, error) {
+	app.At(path, "AddTaskExternal")
 
-	newExtProc, err := NewExternalProcess(&pr.State, command[0], command[1:])
+	newExtProc, err := MakeNewTaskExternal(&pr.State, tokens[0], tokens[1:])
 	if err != nil {
 		return 0, err
 	}
@@ -99,10 +99,10 @@ func (pr *Process) AttachExtProcess(pID msg.ExtProcessId) {
 	pr.extProcAttached = true
 }
 
-func (pr *Process) AddAndAttach(command []string) error {
+func (pr *Process) AddAndAttach(tokens []string) error {
 	app.At(path, "AddAndAttach")
 
-	pID, err := pr.AddExtProcessWithCommand(command)
+	pID, err := pr.AddTaskExternal(tokens)
 	if err != nil {
 		return err
 	}

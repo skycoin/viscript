@@ -88,6 +88,7 @@ func (st *State) actOnCommand() {
 	} else { //internal task
 		switch cmd {
 
+		//helps
 		case "?":
 			fallthrough
 		case "h":
@@ -96,19 +97,17 @@ func (st *State) actOnCommand() {
 			st.PrintLn("Help will now work after you EXEC something, I presume...")
 
 		case "exec":
-			// extCommand := strings.Join(args, " ") //FIXME?  shouldn't this
-			//take a list of args rather than joining them into a string?  they'll need to be
-			//.Split() later right?  and from here on,
-			//they are called cmd/command/etc. rather than args...which doesn't seem right?
-			//shouldn't need to know it was "exec" that triggered this?
-
-			err := st.proc.AddAndAttach(args)
-			if err != nil {
-				println(err.Error())
+			if len(args) < 1 {
+				st.PrintLn("**** ERROR! ****   Must pass a command into EXEC!")
+			} else { //execute
+				err := st.proc.AddAndAttach(args) //(includes a command)
+				if err != nil {
+					println(err.Error())
+				}
 			}
 
 		default:
-			st.PrintLn("ERROR: \"" + cmd + "\" is an unknown command.")
+			st.PrintLn("**** ERROR! ****   \"" + cmd + "\" is an unknown command.")
 
 		}
 	}

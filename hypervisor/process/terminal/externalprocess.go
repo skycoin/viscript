@@ -10,7 +10,7 @@ import (
 	"github.com/corpusc/viscript/app"
 )
 
-const epPath = "hypervisor/process/terminal/process_ext"
+const pePath = "hypervisor/process/terminal/process_ext"
 
 type ExternalProcess struct {
 	Command    string
@@ -25,8 +25,8 @@ type ExternalProcess struct {
 }
 
 //non-instanced
-func NewExternalProcess(st *State, command string, args []string) (*ExternalProcess, error) {
-	app.At(epPath, "NewExternalProcess")
+func MakeNewTaskExternal(st *State, command string, args []string) (*ExternalProcess, error) {
+	app.At(pePath, "MakeNewTaskExternal")
 	var p ExternalProcess
 
 	err := p.InitCmd(command, args)
@@ -40,7 +40,7 @@ func NewExternalProcess(st *State, command string, args []string) (*ExternalProc
 }
 
 func (pr *ExternalProcess) TearDown() {
-	app.At(epPath, "TearDown")
+	app.At(pePath, "TearDown")
 	println("TODO: tear the external process down here, no remorse :rage: :D")
 }
 
