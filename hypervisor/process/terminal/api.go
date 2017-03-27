@@ -29,6 +29,10 @@ func (st *State) PrintLn(s string) {
 	st.NewLine()
 }
 
+func (st *State) PrintError(s string) {
+	st.PrintLn("**** ERROR! ****    " + s)
+}
+
 func (st *State) Printf(format string, vars ...interface{}) {
 	formattedString := fmt.Sprintf(format, vars)
 	for _, c := range formattedString {

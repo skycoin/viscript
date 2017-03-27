@@ -98,16 +98,18 @@ func (st *State) actOnCommand() {
 
 		case "exec":
 			if len(args) < 1 {
-				st.PrintLn("**** ERROR! ****   Must pass a command into EXEC!")
+				st.PrintError("Must pass a command into EXEC!")
 			} else { //execute
 				err := st.proc.AddAndAttach(args) //(includes a command)
 				if err != nil {
-					println(err.Error())
+					for i := 0; i < 5; i++ {
+						println("********* " + err.Error() + " *********")
+					}
 				}
 			}
 
 		default:
-			st.PrintLn("**** ERROR! ****   \"" + cmd + "\" is an unknown command.")
+			st.PrintError("\"" + cmd + "\" is an unknown command.")
 
 		}
 	}
