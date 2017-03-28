@@ -73,11 +73,53 @@ func (pr *Process) GetAttachedExtProcess() (*ExternalProcess, error) {
 		strconv.Itoa(int(pr.extProcessId)) + " doesn't exist.")
 }
 
-func (pr *Process) DetachExtProcess() {
+func (pr *Process) SendAttachedToBg() error {
+	if pr.HasExtProcessAttached() {
+		extProc, err := pr.GetAttachedExtProcess()
+		if err != nil {
+			return err
+		}
+		extProc.RunningInBg = true
+		pr.extProcAttached = false
+		pr.extProcessId = 0
+	}
+	return nil
+}
+
+func (pr *Process) SendExtToFg(extProcId msg.ExtProcessId) error {
+	// pr.State.PrintError("Proc ID: " + string(extProcId))
+	extProc, err := pr.GetAttachedExtProcess()
+	if err != nil {
+		return err
+	}
+	extProc.RunningInBg = false
+	pr.extProcAttached = true
+	pr.extProcessId = extProcId
+	return nil
+}
+
+func (pr *Process) ExitExtProcess() error {
+	if pr.HasExtProcessAttached() {
+		extProc, err := pr.GetAttachedExtProcess()
+		if err != nil {
+			return err
+		}
+		extProc.shouldEnd = true
+	}
+	return nil
+}
+
+func (pr *Process) DeleteAttachedExtProcess() error {
 	app.At(path, "DetachExtProcess")
+	extProc, err := pr.GetAttachedExtProcess()
+	if err != nil {
+		return err
+	}
+	pr.extProcessId = 0
 	pr.extProcAttached = false
+	extProc.TearDown()
 	delete(pr.extProcesses, pr.extProcessId)
-	pr.State.proc.extProcessId = 0
+	return nil
 }
 
 func (pr *Process) AddTaskExternal(tokens []string) (msg.ExtProcessId, error) {
