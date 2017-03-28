@@ -96,6 +96,10 @@ func (st *State) actOnCommand() {
 		case "help":
 			st.PrintLn("Help will now work after you EXEC something, I presume...")
 
+		case "e":
+			fallthrough
+		case "ex":
+			fallthrough
 		case "exec":
 			if len(args) < 1 {
 				st.PrintError("Must pass a command into EXEC!")
