@@ -1,11 +1,11 @@
-package god
+package viewport
 
 import (
 	"runtime"
 
-	t "github.com/corpusc/viscript/god/terminal"
+	t "github.com/corpusc/viscript/viewport/terminal"
 
-	igl "github.com/corpusc/viscript/god/gl" //internal gl
+	igl "github.com/corpusc/viscript/viewport/gl" //internal gl
 )
 
 //glfw
@@ -18,7 +18,7 @@ var (
 )
 
 func Init() {
-	println("<god>.Init()")
+	println("<viewport>.Init()")
 	DebugPrintInputEvents = true
 
 	// GLFW event handling must run on the main OS thread
@@ -50,7 +50,7 @@ func initTerms() {
 }
 
 func TeardownScreen() {
-	println("<god>.TeardownScreen()")
+	println("<viewport>.TeardownScreen()")
 	igl.ScreenTeardown()
 }
 

@@ -4,7 +4,7 @@ package app
 
 This package's functionality is often called "common" or "util", but
 I think it reads cleaner with this name.
-However, newcomers COULD confuse it with "package god"?
+However, newcomers COULD confuse it with "package viewport"?
 
 */
 

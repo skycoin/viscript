@@ -1,9 +1,9 @@
-package god
+package viewport
 
 import (
 	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/god/gl"
 	"github.com/corpusc/viscript/msg"
+	"github.com/corpusc/viscript/viewport/gl"
 	_ "strconv"
 )
 
@@ -55,7 +55,7 @@ func UnpackMessage(message []byte) []byte {
 		onFrameBufferSize(m)
 
 	default:
-		app.At("god/msg_in", "************ UNHANDLED MESSAGE TYPE! ************")
+		app.At("viewport/msg_in", "************ UNHANDLED MESSAGE TYPE! ************")
 	}
 
 	return message

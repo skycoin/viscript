@@ -4,12 +4,12 @@ import (
 	"fmt"
 
 	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/god/gl"
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/hypervisor/dbus"
 	"github.com/corpusc/viscript/hypervisor/input/keyboard"
 	termTask "github.com/corpusc/viscript/hypervisor/process/terminal"
 	"github.com/corpusc/viscript/msg"
+	"github.com/corpusc/viscript/viewport/gl"
 )
 
 /*

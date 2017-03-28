@@ -1,10 +1,10 @@
-package god
+package viewport
 
 import (
 	"fmt"
-	"github.com/corpusc/viscript/god/gl"
 	"github.com/corpusc/viscript/hypervisor/input/keyboard"
 	"github.com/corpusc/viscript/msg"
+	"github.com/corpusc/viscript/viewport/gl"
 )
 
 func onChar(m msg.MessageChar) {

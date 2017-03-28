@@ -61,15 +61,15 @@ package main
 
 import (
 	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/god"
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/rpc/terminalmanager"
+	"github.com/corpusc/viscript/viewport"
 )
 
 func main() {
 	app.MakeHighlyVisibleLogEntry(app.Name, 15)
 	hypervisor.Init()
-	god.Init() //runtime.LockOSThread()
+	viewport.Init() //runtime.LockOSThread()
 	//rpc concurrency can interrupt the following, so printing NOW
 	app.MakeHighlyVisibleLogEntry("Start loop", 7)
 
@@ -79,17 +79,17 @@ func main() {
 	}()
 
 	//actual start of loop
-	for god.CloseWindow == false {
-		god.DispatchEvents() //event channel
+	for viewport.CloseWindow == false {
+		viewport.DispatchEvents() //event channel
 
 		hypervisor.TickTasks()
 
-		god.PollUiInputEvents()
-		god.Tick()
-		god.UpdateDrawBuffer()
-		god.SwapDrawBuffer() //with new frame
+		viewport.PollUiInputEvents()
+		viewport.Tick()
+		viewport.UpdateDrawBuffer()
+		viewport.SwapDrawBuffer() //with new frame
 	}
 
-	god.TeardownScreen()
+	viewport.TeardownScreen()
 	hypervisor.Teardown()
 }
