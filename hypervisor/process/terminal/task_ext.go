@@ -1,7 +1,7 @@
 package process
 
 import (
-	"os/exec"
+	"fmt"
 
 	"sync"
 
@@ -10,6 +10,8 @@ import (
 	"runtime"
 
 	"strings"
+
+	"os/exec"
 
 	"github.com/corpusc/viscript/app"
 )
@@ -117,9 +119,16 @@ func (pr *ExternalProcess) processSend() {
 	for {
 		size, err := pr.stdOutPipe.Read(buf)
 		if err != nil {
-			println("%s exited.", pr.Command)
+			s := fmt.Sprintf("**** ERROR! ****    From \"%s\".  Returning.", pr.CommandLine)
+
+			for i := 0; i < 5; i++ {
+				println(s)
+			}
+
+			pr.State.PrintLn(s)
 			return
 		}
+
 		pr.writeToSubscribers(buf[:size])
 	}
 }
