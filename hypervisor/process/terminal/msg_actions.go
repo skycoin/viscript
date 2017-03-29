@@ -1,6 +1,7 @@
 package process
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/corpusc/viscript/hypervisor"
@@ -25,6 +26,11 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 		case msg.KeyC:
 			if m.Mod == msg.GLFW_MOD_CONTROL {
 				// FIXME: doesn't work yet, have to look into
+				// implementation of extTask should change to Tick() like structure
+				// then exiting the task will be different
+				// current implementation i.e setting flag for the for statement in goroutine
+				// doesn't work.
+
 				// st.PrintError("Ctrl+C pressed")
 				// err := st.proc.ExitExtProcess()
 				// if err != nil {
@@ -90,11 +96,11 @@ func (st *State) actOnCommand() {
 		return
 	}
 
-	s := "actOnCommand() called with"
+	s := "actOnCommand() called on"
 	println(s, "cmd:", cmd)
 
 	for _, arg := range args {
-		println(s, "arg:", arg)
+		println("with arg:", arg)
 	}
 
 	if st.proc.HasExtProcessAttached() {
@@ -119,32 +125,33 @@ func (st *State) actOnCommand() {
 			st.PrintLn("Help will now work after you EXEC something, I presume...")
 
 		case "j":
+			println("Inside the jobs")
 			for id, extProc := range st.proc.extProcesses {
 				baseCommand := strings.Split(extProc.CommandLine, " ")[0]
-				st.Printf("[%d] -> [%s]\n", id, baseCommand)
+				st.PrintLn("[ " + strconv.Itoa(int(id)) + " ] -> [ " + baseCommand + " ]")
 			}
 		case "jobs":
+			println("Inside the jobs")
 			for id, extProc := range st.proc.extProcesses {
-				st.Printf("[%d] -> [%s]\n", id, extProc.CommandLine)
+				st.PrintLn("[ " + strconv.Itoa(int(id)) + " ] -> [ " + extProc.CommandLine + " ]")
 			}
 
 		case "fg":
+			println("Inside the FG")
 			// FIXME: Buggy tomorrow I'll continue to work on this
-			// if len(args) < 1 {
-			// 	st.PrintError("Must pass the job id! eg: fg %1")
-			// } else {
-			// 	extProcIDRaw := args[0]
-			// 	st.PrintError(extProcIDRaw + " " + extProcIDRaw[1:])
-			// 	extProcID, err := strconv.Atoi(extProcIDRaw[1:])
-			// 	if err != nil {
-			// 		st.PrintError(err.Error())
-			// 	}
-			// 	st.PrintLn(string(extProcID))
-			// 	err = st.proc.SendExtToFg(msg.ExtProcessId(extProcID))
-			// 	if err != nil {
-			// 		st.PrintError(err.Error())
-			// 	}
-			// }
+			if len(args) < 1 {
+				st.PrintError("Must pass the job id! eg: fg 1")
+			} else {
+				extProcID, err := strconv.Atoi(args[0])
+				if err != nil {
+					st.PrintError(err.Error())
+				}
+
+				err = st.proc.SendExtToFg(msg.ExtProcessId(extProcID))
+				if err != nil {
+					st.PrintError(err.Error())
+				}
+			}
 
 		case "rpc":
 			tokens := []string{"go", "run", "rpc/cli/cli.go"}

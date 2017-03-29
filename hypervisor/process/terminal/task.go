@@ -64,6 +64,10 @@ func (pr *Process) HasExtProcessAttached() bool {
 func (pr *Process) GetAttachedExtProcess() (*ExternalProcess, error) {
 	app.At(path, "GetAttachedExtProcess")
 
+	if !pr.HasExtProcessAttached() {
+		return nil, errors.New("External Process is not attached.")
+	}
+
 	extProc, ok := pr.extProcesses[pr.extProcessId]
 	if ok {
 		return extProc, nil
@@ -87,10 +91,11 @@ func (pr *Process) SendAttachedToBg() error {
 }
 
 func (pr *Process) SendExtToFg(extProcId msg.ExtProcessId) error {
-	// pr.State.PrintError("Proc ID: " + string(extProcId))
-	extProc, err := pr.GetAttachedExtProcess()
-	if err != nil {
-		return err
+	// pr.State.PrintError("Proc ID: " + strconv.Itoa(int(extProcId)))
+	extProc, ok := pr.extProcesses[extProcId]
+	if !ok {
+		return errors.New("External task with id " +
+			strconv.Itoa(int(extProcId)) + " doesn't exist.")
 	}
 	extProc.RunningInBg = false
 	pr.extProcAttached = true
@@ -99,18 +104,16 @@ func (pr *Process) SendExtToFg(extProcId msg.ExtProcessId) error {
 }
 
 func (pr *Process) ExitExtProcess() error {
-	if pr.HasExtProcessAttached() {
-		extProc, err := pr.GetAttachedExtProcess()
-		if err != nil {
-			return err
-		}
-		extProc.shouldEnd = true
+	extProc, err := pr.GetAttachedExtProcess()
+	if err != nil {
+		return err
 	}
+	extProc.shouldEnd = true
 	return nil
 }
 
 func (pr *Process) DeleteAttachedExtProcess() error {
-	app.At(path, "DetachExtProcess")
+	app.At(path, "DeleteAttachedExtProcess")
 	extProc, err := pr.GetAttachedExtProcess()
 	if err != nil {
 		return err
