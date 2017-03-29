@@ -56,13 +56,13 @@ func MakeNewTaskExternal(st *State, tokens []string) (*ExternalProcess, error) {
 func (pr *ExternalProcess) TearDown() {
 	app.At(te, "TearDown")
 	close(pr.CmdOut)
+	pr.cmd.Process.Kill()
 	pr.cmd = nil
 	pr.writeMutex = nil
 	pr.stdOutPipe = nil
 	pr.stdInPipe = nil
 	pr.State = nil
 	// syscall.Kill(-pr.cmd.Process.Pid, syscall.SIGKILL)
-	pr.cmd.Process.Kill()
 }
 
 func (pr *ExternalProcess) InitCmd(tokens []string) error {
@@ -135,15 +135,18 @@ func (pr *ExternalProcess) processSend() {
 	buf := make([]byte, 2048)
 
 	for !pr.shouldEnd {
+		if pr.stdOutPipe == nil {
+			return
+		}
+
 		size, err := pr.stdOutPipe.Read(buf)
 		if err != nil {
 			s := fmt.Sprintf("**** ERROR! ****    From \"%s\".  Returning.", pr.CommandLine)
-
 			for i := 0; i < 5; i++ {
 				println(s)
 			}
-
-			pr.State.PrintLn(s)
+			// having an err set to something means the stdOutPipe was closed or process was finished
+			// unable to read again. I'll look more into the Read func doc, just to be sure.
 			return
 		}
 		if !pr.RunningInBg {
@@ -160,6 +163,9 @@ func (pr *ExternalProcess) writeToSubscribers(data []byte) {
 
 func (pr *ExternalProcess) processReceive() {
 	for !pr.shouldEnd {
+		if pr.stdInPipe == nil {
+			return
+		}
 		select {
 		case data := <-pr.CmdOut:
 			_, err := pr.stdInPipe.Write(append(data, '\n'))
