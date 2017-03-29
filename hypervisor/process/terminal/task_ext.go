@@ -13,6 +13,8 @@ import (
 
 	"os/exec"
 
+	"syscall"
+
 	"github.com/corpusc/viscript/app"
 )
 
@@ -27,7 +29,11 @@ type ExternalProcess struct {
 	stdOutPipe io.ReadCloser
 	stdInPipe  io.WriteCloser
 
+	RunningInBg bool
+
 	State *State
+
+	shouldEnd bool
 }
 
 //non-instanced
@@ -40,6 +46,8 @@ func MakeNewTaskExternal(st *State, tokens []string) (*ExternalProcess, error) {
 		return nil, err
 	}
 
+	p.shouldEnd = false
+	p.RunningInBg = false
 	p.State = st
 
 	return &p, nil
@@ -47,7 +55,14 @@ func MakeNewTaskExternal(st *State, tokens []string) (*ExternalProcess, error) {
 
 func (pr *ExternalProcess) TearDown() {
 	app.At(te, "TearDown")
-	println("TODO: tear the external process down here, no remorse :rage: :D")
+	close(pr.CmdOut)
+	pr.cmd = nil
+	pr.writeMutex = nil
+	pr.stdOutPipe = nil
+	pr.stdInPipe = nil
+	pr.State = nil
+	// syscall.Kill(-pr.cmd.Process.Pid, syscall.SIGKILL)
+	pr.cmd.Process.Kill()
 }
 
 func (pr *ExternalProcess) InitCmd(tokens []string) error {
@@ -61,6 +76,9 @@ func (pr *ExternalProcess) InitCmd(tokens []string) error {
 		pr.cmd = exec.Command("cmd", fullCommand...)
 	}
 
+	// Creates a new process group for the new process
+	// to avoid leaving orphan processes.
+	pr.cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	pr.writeMutex = &sync.Mutex{}
 
 	var err error
@@ -101,11 +119,11 @@ func (pr *ExternalProcess) InitCmd(tokens []string) error {
 
 	go func() {
 		// TODO: what happens when user closes the application
-		// and the subprocess is running still.
+		// does external process become an orphan process?
 		// should be a way around this.
 		<-exit
 		pr.cmd.Wait()
-		pr.State.proc.DetachExtProcess() // TODO: quick way to do it
+		_ = pr.State.proc.DeleteAttachedExtProcess()
 		// pr.cmd.Process.Kill()
 		// pr.cmd.Process.Signal(syscall.SIGINT)
 	}()
@@ -116,7 +134,7 @@ func (pr *ExternalProcess) InitCmd(tokens []string) error {
 func (pr *ExternalProcess) processSend() {
 	buf := make([]byte, 2048)
 
-	for {
+	for !pr.shouldEnd {
 		size, err := pr.stdOutPipe.Read(buf)
 		if err != nil {
 			s := fmt.Sprintf("**** ERROR! ****    From \"%s\".  Returning.", pr.CommandLine)
@@ -128,8 +146,9 @@ func (pr *ExternalProcess) processSend() {
 			pr.State.PrintLn(s)
 			return
 		}
-
-		pr.writeToSubscribers(buf[:size])
+		if !pr.RunningInBg {
+			pr.writeToSubscribers(buf[:size])
+		}
 	}
 }
 
@@ -140,7 +159,7 @@ func (pr *ExternalProcess) writeToSubscribers(data []byte) {
 }
 
 func (pr *ExternalProcess) processReceive() {
-	for {
+	for !pr.shouldEnd {
 		select {
 		case data := <-pr.CmdOut:
 			_, err := pr.stdInPipe.Write(append(data, '\n'))

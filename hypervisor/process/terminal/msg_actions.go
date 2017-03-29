@@ -1,6 +1,8 @@
 package process
 
 import (
+	"strings"
+
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 )
@@ -19,6 +21,26 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 		fallthrough
 	case msg.Repeat:
 		switch m.Key {
+
+		case msg.KeyC:
+			if m.Mod == msg.GLFW_MOD_CONTROL {
+				// FIXME: doesn't work yet, have to look into
+				// st.PrintError("Ctrl+C pressed")
+				// err := st.proc.ExitExtProcess()
+				// if err != nil {
+				// 	st.PrintError(err.Error())
+				// }
+			}
+
+		case msg.KeyZ:
+			if m.Mod == msg.GLFW_MOD_CONTROL {
+				// st.PrintError("Ctrl+Z pressed")
+				err := st.proc.SendAttachedToBg()
+				if err != nil {
+					st.PrintError(err.Error())
+				}
+				st.PrintLn("Attached process sent to background.")
+			}
 
 		case msg.KeyHome:
 			st.Cli.CursPos = len(st.Cli.Prompt)
@@ -95,6 +117,41 @@ func (st *State) actOnCommand() {
 			fallthrough
 		case "help":
 			st.PrintLn("Help will now work after you EXEC something, I presume...")
+
+		case "j":
+			for id, extProc := range st.proc.extProcesses {
+				baseCommand := strings.Split(extProc.CommandLine, " ")[0]
+				st.Printf("[%d] -> [%s]\n", id, baseCommand)
+			}
+		case "jobs":
+			for id, extProc := range st.proc.extProcesses {
+				st.Printf("[%d] -> [%s]\n", id, extProc.CommandLine)
+			}
+
+		case "fg":
+			// FIXME: Buggy tomorrow I'll continue to work on this
+			// if len(args) < 1 {
+			// 	st.PrintError("Must pass the job id! eg: fg %1")
+			// } else {
+			// 	extProcIDRaw := args[0]
+			// 	st.PrintError(extProcIDRaw + " " + extProcIDRaw[1:])
+			// 	extProcID, err := strconv.Atoi(extProcIDRaw[1:])
+			// 	if err != nil {
+			// 		st.PrintError(err.Error())
+			// 	}
+			// 	st.PrintLn(string(extProcID))
+			// 	err = st.proc.SendExtToFg(msg.ExtProcessId(extProcID))
+			// 	if err != nil {
+			// 		st.PrintError(err.Error())
+			// 	}
+			// }
+
+		case "rpc":
+			tokens := []string{"go", "run", "rpc/cli/cli.go"}
+			err := st.proc.AddAndAttach(tokens)
+			if err != nil {
+				st.PrintLn(err.Error())
+			}
 
 		case "e":
 			fallthrough
