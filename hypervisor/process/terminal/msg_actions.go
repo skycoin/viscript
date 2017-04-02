@@ -1,9 +1,6 @@
 package process
 
 import (
-	"strconv"
-	"strings"
-
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 )
@@ -24,13 +21,8 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 		switch m.Key {
 
 		case msg.KeyC:
+			// TODO: I guess, Doesn't work with new Implementation ! ! !
 			if m.Mod == msg.GLFW_MOD_CONTROL {
-				// FIXME: doesn't work yet, have to look into
-				// implementation of extTask should change to Tick() like structure
-				// then exiting the task will be different
-				// current implementation i.e setting flag for the for statement in goroutine
-				// doesn't work.
-
 				// st.PrintError("Ctrl+C pressed")
 				// err := st.proc.ExitExtProcess()
 				// if err != nil {
@@ -39,14 +31,15 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 			}
 
 		case msg.KeyZ:
-			if m.Mod == msg.GLFW_MOD_CONTROL {
-				// st.PrintError("Ctrl+Z pressed")
-				err := st.proc.SendAttachedToBg()
-				if err != nil {
-					st.PrintError(err.Error())
-				}
-				st.PrintLn("Attached process sent to background.")
-			}
+			// TODO: I guess, Doesn't work with new Implementation ! ! !
+			// if m.Mod == msg.GLFW_MOD_CONTROL {
+			// 	// st.PrintError("Ctrl+Z pressed")
+			// 	err := st.proc.SendAttachedToBg()
+			// 	if err != nil {
+			// 		st.PrintError(err.Error())
+			// 	}
+			// 	st.PrintLn("Attached process sent to background.")
+			// }
 
 		case msg.KeyHome:
 			st.Cli.CursPos = len(st.Cli.Prompt)
@@ -112,7 +105,7 @@ func (st *State) actOnCommand() {
 			return
 		}
 
-		extProc.CmdOut <- []byte(st.Cli.CurrentCommandLine())
+		extProc.ProcessIn <- []byte(st.Cli.CurrentCommandLine())
 	} else { //internal task
 		switch cmd {
 
@@ -125,57 +118,63 @@ func (st *State) actOnCommand() {
 			st.PrintLn("Help will now work after you EXEC something, I presume...")
 
 		case "j":
-			println("Inside the jobs")
-			for id, extProc := range st.proc.extProcesses {
-				baseCommand := strings.Split(extProc.CommandLine, " ")[0]
-				st.PrintLn("[ " + strconv.Itoa(int(id)) + " ] -> [ " + baseCommand + " ]")
-			}
+			// Doesn't work yet with new implementation ! ! !
+			// println("Inside the jobs")
+			// for id, extProc := range st.proc.extProcesses {
+			// 	baseCommand := strings.Split(extProc.CommandLine, " ")[0]
+			// 	st.PrintLn("[ " + strconv.Itoa(int(id)) + " ] -> [ " + baseCommand + " ]")
+			// }
 		case "jobs":
-			println("Inside the jobs")
-			for id, extProc := range st.proc.extProcesses {
-				st.PrintLn("[ " + strconv.Itoa(int(id)) + " ] -> [ " + extProc.CommandLine + " ]")
-			}
+			// Doesn't work yet with new implementation ! ! !
+			// println("Inside the jobs")
+			// for id, extProc := range st.proc.extProcesses {
+			// 	st.PrintLn("[ " + strconv.Itoa(int(id)) + " ] -> [ " + extProc.CommandLine + " ]")
+			// }
 
 		case "fg":
-			println("Inside the FG")
-			// FIXME: Buggy tomorrow I'll continue to work on this
-			if len(args) < 1 {
-				st.PrintError("Must pass the job id! eg: fg 1")
-			} else {
-				extProcID, err := strconv.Atoi(args[0])
-				if err != nil {
-					st.PrintError(err.Error())
-				}
+			// Doesn't work yet with new implementation ! ! !
+			// println("Inside the FG")
+			// // FIXME: Buggy tomorrow I'll continue to work on this
+			// if len(args) < 1 {
+			// 	st.PrintError("Must pass the job id! eg: fg 1")
+			// } else {
+			// 	extProcID, err := strconv.Atoi(args[0])
+			// 	if err != nil {
+			// 		st.PrintError(err.Error())
+			// 	}
 
-				err = st.proc.SendExtToFg(msg.ExtProcessId(extProcID))
-				if err != nil {
-					st.PrintError(err.Error())
-				}
-			}
+			// 	err = st.proc.SendExtToFg(msg.ExtProcessId(extProcID))
+			// 	if err != nil {
+			// 		st.PrintError(err.Error())
+			// 	}
+			// }
 
 		case "rpc":
-			tokens := []string{"go", "run", "rpc/cli/cli.go"}
-			err := st.proc.AddAndAttach(tokens)
-			if err != nil {
-				st.PrintLn(err.Error())
-			}
+			// Doesn't work yet with new implementation ! ! !
+			// tokens := []string{"go", "run", "rpc/cli/cli.go"}
+			// err := st.proc.AddAttachStart(tokens)
+			// if err != nil {
+			// 	st.PrintLn(err.Error())
+			// }
 
 		case "e":
 			fallthrough
 		case "ex":
 			fallthrough
 		case "exec":
-			if len(args) < 1 {
-				st.PrintError("Must pass a command into EXEC!")
-			} else { //execute
-				err := st.proc.AddAndAttach(args) //(includes a command)
-				if err != nil {
-					for i := 0; i < 5; i++ {
-						println("********* " + err.Error() + " *********")
-					}
-					st.PrintLn(err.Error())
-				}
-			}
+			// Doesn't work yet with new implementation ! ! !
+			st.PrintLn("Doesn't work yet with new implementation ! ! ! Please wait...")
+			// if len(args) < 1 {
+			// 	st.PrintError("Must pass a command into EXEC!")
+			// } else { //execute
+			// 	err := st.proc.AddAttachStart(args) //(includes a command)
+			// 	if err != nil {
+			// 		for i := 0; i < 5; i++ {
+			// 			println("********* " + err.Error() + " *********")
+			// 		}
+			// 		st.PrintLn(err.Error())
+			// 	}
+			// }
 
 		default:
 			st.PrintError("\"" + cmd + "\" is an unknown command.")

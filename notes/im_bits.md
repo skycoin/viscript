@@ -1531,3 +1531,12 @@ Write those down.  They are all tickets.
 [re: Benn's command-prompt-scrolling related questions]
 You can generally put character for carriage return on end of line and go to next line
 
+
+Red: Could we have an interface for external process like containing start, tick, shutdown 
+and process to use it because we have to move the external process outside of terminal 
+as in tickets, right now commented all the additional functionalities like ctrl+z for 
+running in background ctrl+c for stopping process and also it doesn't stop automatically 
+when it sees EOF from running process, cleaned up a bit and I'll work more tomorrow. 
+Main thing is that it works for now. We might even need to remove that State variable 
+from external process and have ProcessOut and have Process to watch that for output 
+sequentially and printing it to viscript terminal.
