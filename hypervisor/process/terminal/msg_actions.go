@@ -127,17 +127,20 @@ func (st *State) actOnCommand() {
 	} else { //internal task
 		switch cmd {
 
-		//helps
 		case "?":
 			fallthrough
 		case "h":
 			fallthrough
 		case "help":
-			st.PrintLn("Use EXEC to start external task.  Until then, current commands:")
-			st.PrintLn("J:      ___description goes here___")
-			st.PrintLn("JOBS:   ___description goes here___")
-			st.PrintLn("FG:     ___description goes here___")
-			st.PrintLn("RPC:    Issues command: \"go run rpc/cli/cli.go\"")
+			st.PrintLn("Current commands:")
+			st.PrintLn("    EXEC:   Start external task.")
+			st.PrintLn("    J:      ___description goes here___")
+			st.PrintLn("    JOBS:   ___description goes here___")
+			st.PrintLn("    FG:     ___description goes here___")
+			st.PrintLn("    RPC:    Issues command: \"go run rpc/cli/cli.go\"")
+			st.PrintLn("Current Hotkeys:")
+			st.PrintLn("    CTRL+C:  ___description goes here___")
+			st.PrintLn("    CTRL+Z:  ___description goes here___")
 
 		case "j":
 			println("Inside the jobs")
@@ -152,6 +155,8 @@ func (st *State) actOnCommand() {
 			}
 
 		case "fg":
+			fallthrough
+		case "foreground":
 			println("Inside the FG")
 			// FIXME: Buggy tomorrow I'll continue to work on this
 			if len(args) < 1 {
@@ -168,6 +173,8 @@ func (st *State) actOnCommand() {
 				}
 			}
 
+		case "r":
+			fallthrough
 		case "rpc":
 			tokens := []string{"go", "run", "rpc/cli/cli.go"}
 
