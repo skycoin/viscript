@@ -13,6 +13,9 @@
 	jobs - list all jobs of current terminal
 	fg <id> - send to foreground
 
+* auto-run task_ext according to os specific init
+	(doing it immediately upon first cli submission good enough?)
+
 * limit resizing to require at least 16 char columns
 
 * make current command line autoscroll horizontally

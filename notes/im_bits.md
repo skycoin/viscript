@@ -1531,3 +1531,145 @@ Write those down.  They are all tickets.
 [re: Benn's command-prompt-scrolling related questions]
 You can generally put character for carriage return on end of line and go to next line
 
+
+
+
+
+
+
+there is supposed to be thing for managing open gl window.
+and thing for managing input
+and hypervisor was supposed to manage tasks and list of running tasks
+and then thing for objects and object ids.
+eventually the viewport itself will just be an object and you can have multiple
+viewports.  on same screen or multiple screens or same computer  or across
+multiple computers
+
+
+
+
+
+
+
+eventually we will have to make viewport modular and put task management and object
+management, as its own thing that can run headless
+
+
+
+
+
+
+
+viewport handles
+- opengl window
+- keyboard events
+- terminal drawing
+
+hypervisor handles
+- object list
+- dbus, interprocess communication
+- task list etc
+
+the hypervisor could in theory, run without a viewport
+
+
+
+
+
+
+
+"in virtual desktops, the viewport is the visible portion of a 2D area which is
+larger than the visualization device"
+
+it means specific thing in virtualization
+
+
+
+
+
+
+
+!!! as soon as i type "help" it needs to print a command list
+how do i list task ids etc
+and get list of terminals, & tasks
+
+1> how do i get list of tasks from within viscript
+2> how do i get list of terminals etc, and what is attached (introspection)
+3> how do i use the viscript rpc from within viscript
+4> when will "help" print a command list
+5> what is rpc and why cant i use it from within viscript
+6> where is viscript rpc
+7> how do i use the viscript rpc from within viscript
+8> hwere is the viscript command for opening a new viscript terminal
+
+
+
+
+
+
+
+go on ticket board and create tickets
+skycoin.atlassian.net
+create ticket for what you are working on and tag the upwork work log with ticket, 
+and create tickets
+
+
+
+
+
+
+
+add command "clear"
+
+
+
+
+
+
+
+~/repo/viscript $ go run ./rpc//cli/cli.go
+~/repo/viscript $ go run ./rpc//cli/cli.go -help
+
+does nothing
+
+
+go run ./rpc/cli/cli.go -help
+
+Attempting to connect on port: -help
+dial tcp: unknown port tcp/-help
+exit status 1
+
+
+create ticket for using the default port, ip, when i run the command
+
+
+
+
+
+
+
+
+
+several steps need to be taken, before this is a working app that can be put on 
+website.  we are trying to go into production now
+and it means we need tickets for tracking bugs and ticket for tracking what works and
+what does not work
+
+
+
+
+
+
+
+
+
+George:
+CTRL+L could work for clearing it think, it wouldn't be a command thus won't
+interrupt running atached external task.
+it's like that in a normal terminal.
+
+go run rpc/cli/cli.go won't work alone as stated in README.md inside the rpc package
+https://github.com/corpusc/viscript/tree/master/rpc
+you need to have viscript running at first
+
+use "exec go run rpc/cli/cli.go"
