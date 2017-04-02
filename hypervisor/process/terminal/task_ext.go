@@ -76,19 +76,19 @@ func (pr *ExternalProcess) InitCmd(tokens []string) error {
 		pr.cmd = exec.Command("cmd", fullCommand...)
 	}
 
-	// Creates a new process group for the new process
-	// to avoid leaving orphan processes.
+	//Creates a new process group for the new process
+	//to avoid leaving orphan processes.
 	pr.cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	pr.writeMutex = &sync.Mutex{}
 
 	var err error
-	// save stdoutpipe
+	//save stdoutpipe
 	pr.stdOutPipe, err = pr.cmd.StdoutPipe()
 	if err != nil {
 		return err
 	}
 
-	// save stdinpipe
+	//save stdinpipe
 	pr.stdInPipe, err = pr.cmd.StdinPipe()
 	if err != nil {
 		return err
@@ -103,14 +103,14 @@ func (pr *ExternalProcess) InitCmd(tokens []string) error {
 
 	exit := make(chan bool, 2)
 
-	// Run Process Send
+	//Run Process Send
 	go func() {
 		defer func() { exit <- true }()
 
 		pr.processSend()
 	}()
 
-	// Run Process Receive
+	//Run Process Receive
 	go func() {
 		defer func() { exit <- true }()
 
@@ -118,9 +118,9 @@ func (pr *ExternalProcess) InitCmd(tokens []string) error {
 	}()
 
 	go func() {
-		// TODO: what happens when user closes the application
-		// does external process become an orphan process?
-		// should be a way around this.
+		//TODO: what happens when user closes the application
+		//does external process become an orphan process?
+		//should be a way around this.
 		<-exit
 		pr.cmd.Wait()
 		_ = pr.State.proc.DeleteAttachedExtProcess()
@@ -148,8 +148,8 @@ func (pr *ExternalProcess) processSend() {
 				println(s)
 			}
 
-			// having an err set to something means the stdOutPipe was closed or process was finished
-			// unable to read again. I'll look more into the Read func doc, just to be sure.
+			//having an err set to something means the stdOutPipe was closed or process was finished
+			//unable to read again. I'll look more into the Read func doc, just to be sure.
 			return
 		}
 

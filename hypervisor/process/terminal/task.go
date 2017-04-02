@@ -114,10 +114,12 @@ func (pr *Process) ExitExtProcess() error {
 
 func (pr *Process) DeleteAttachedExtProcess() error {
 	app.At(path, "DeleteAttachedExtProcess")
+
 	extProc, err := pr.GetAttachedExtProcess()
 	if err != nil {
 		return err
 	}
+
 	pr.extProcessId = 0
 	pr.extProcAttached = false
 	extProc.TearDown()
