@@ -18,69 +18,80 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 
 	switch msg.Action(m.Action) {
 
-	case msg.Press:
+	case msg.Press: //one time, when key is first pressed
+		//modifier key combos should probably never auto-repeat
+		st.actOnOneTimeInputs(m)
 		fallthrough
-	case msg.Repeat:
-		switch m.Key {
-
-		case msg.KeyC:
-			if m.Mod == msg.GLFW_MOD_CONTROL {
-				// FIXME: doesn't work yet, have to look into
-				// implementation of extTask should change to Tick() like structure
-				// then exiting the task will be different
-				// current implementation i.e setting flag for the for statement in goroutine
-				// doesn't work.
-
-				// st.PrintError("Ctrl+C pressed")
-				// err := st.proc.ExitExtProcess()
-				// if err != nil {
-				// 	st.PrintError(err.Error())
-				// }
-			}
-
-		case msg.KeyZ:
-			if m.Mod == msg.GLFW_MOD_CONTROL {
-				// st.PrintError("Ctrl+Z pressed")
-				err := st.proc.SendAttachedToBg()
-				if err != nil {
-					st.PrintError(err.Error())
-				}
-				st.PrintLn("Attached process sent to background.")
-			}
-
-		case msg.KeyHome:
-			st.Cli.CursPos = len(st.Cli.Prompt)
-		case msg.KeyEnd:
-			st.Cli.CursPos = len(st.Cli.Commands[st.Cli.CurrCmd])
-
-		case msg.KeyUp:
-			st.Cli.goUpCommandHistory(m.Mod)
-		case msg.KeyDown:
-			st.Cli.goDownCommandHistory(m.Mod)
-
-		case msg.KeyLeft:
-			st.Cli.moveOrJumpCursorLeft(m.Mod)
-		case msg.KeyRight:
-			st.Cli.moveOrJumpCursorRight(m.Mod)
-
-		case msg.KeyBackspace:
-			if st.Cli.moveCursorOneStepLeft() { //...succeeded
-				st.Cli.DeleteCharAtCursor()
-			}
-		case msg.KeyDelete:
-			if st.Cli.CursPos < len(st.Cli.Commands[st.Cli.CurrCmd]) {
-				st.Cli.DeleteCharAtCursor()
-			}
-
-		case msg.KeyEnter:
-			st.Cli.OnEnter(st, serializedMsg)
-
-		}
-
+	case msg.Repeat: //constantly repeated for as long as key is pressed
+		st.actOnRepeatableKeys(m, serializedMsg)
 		st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 
 	case msg.Release:
 		// most keys will do nothing upon release
+	}
+}
+
+func (st *State) actOnOneTimeInputs(m msg.MessageKey) {
+	switch m.Key {
+
+	case msg.KeyC:
+		if m.Mod == msg.GLFW_MOD_CONTROL {
+			// FIXME: doesn't work yet, have to look into
+			// implementation of extTask should change to Tick() like structure
+			// then exiting the task will be different
+			// current implementation i.e setting flag for the for statement in goroutine
+			// doesn't work.
+
+			// st.PrintError("Ctrl+C pressed")
+			// err := st.proc.ExitExtProcess()
+			// if err != nil {
+			// 	st.PrintError(err.Error())
+			// }
+		}
+
+	case msg.KeyZ:
+		if m.Mod == msg.GLFW_MOD_CONTROL {
+			// st.PrintError("Ctrl+Z pressed")
+			err := st.proc.SendAttachedToBg()
+			if err != nil {
+				st.PrintError(err.Error())
+			}
+			st.PrintLn("Attached process sent to background.")
+		}
+
+	}
+}
+
+func (st *State) actOnRepeatableKeys(m msg.MessageKey, serializedMsg []byte) {
+	switch m.Key {
+
+	case msg.KeyHome:
+		st.Cli.CursPos = len(st.Cli.Prompt)
+	case msg.KeyEnd:
+		st.Cli.CursPos = len(st.Cli.Commands[st.Cli.CurrCmd])
+
+	case msg.KeyUp:
+		st.Cli.goUpCommandHistory(m.Mod)
+	case msg.KeyDown:
+		st.Cli.goDownCommandHistory(m.Mod)
+
+	case msg.KeyLeft:
+		st.Cli.moveOrJumpCursorLeft(m.Mod)
+	case msg.KeyRight:
+		st.Cli.moveOrJumpCursorRight(m.Mod)
+
+	case msg.KeyBackspace:
+		if st.Cli.moveCursorOneStepLeft() { //...succeeded
+			st.Cli.DeleteCharAtCursor()
+		}
+	case msg.KeyDelete:
+		if st.Cli.CursPos < len(st.Cli.Commands[st.Cli.CurrCmd]) {
+			st.Cli.DeleteCharAtCursor()
+		}
+
+	case msg.KeyEnter:
+		st.Cli.OnEnter(st, serializedMsg)
+
 	}
 }
 
@@ -122,7 +133,11 @@ func (st *State) actOnCommand() {
 		case "h":
 			fallthrough
 		case "help":
-			st.PrintLn("Help will now work after you EXEC something, I presume...")
+			st.PrintLn("Use EXEC to start external task.  Until then, current commands:")
+			st.PrintLn("J:      ___description goes here___")
+			st.PrintLn("JOBS:   ___description goes here___")
+			st.PrintLn("FG:     ___description goes here___")
+			st.PrintLn("RPC:    Issues command: \"go run rpc/cli/cli.go\"")
 
 		case "j":
 			println("Inside the jobs")
@@ -155,6 +170,7 @@ func (st *State) actOnCommand() {
 
 		case "rpc":
 			tokens := []string{"go", "run", "rpc/cli/cli.go"}
+
 			err := st.proc.AddAndAttach(tokens)
 			if err != nil {
 				st.PrintLn(err.Error())
@@ -166,13 +182,14 @@ func (st *State) actOnCommand() {
 			fallthrough
 		case "exec":
 			if len(args) < 1 {
-				st.PrintError("Must pass a command into EXEC!")
+				st.PrintError("EXEC: Must pass a command in!")
 			} else { //execute
 				err := st.proc.AddAndAttach(args) //(includes a command)
 				if err != nil {
 					for i := 0; i < 5; i++ {
 						println("********* " + err.Error() + " *********")
 					}
+
 					st.PrintLn(err.Error())
 				}
 			}
