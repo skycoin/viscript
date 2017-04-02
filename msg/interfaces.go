@@ -1,6 +1,6 @@
 package msg
 
-const ChannelCapacity = 64 // FIXME?  might only need capacity of 2?
+const ChannelCapacity = 4096 // FIXME?  might only need capacity of 2?
 // .... onChar is always paired with an immediate onKey, making 2 entries at once
 
 type ProcessInterface interface {
