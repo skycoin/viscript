@@ -36,17 +36,17 @@ func (st *State) actOnOneTimeInputs(m msg.MessageKey) {
 
 	case msg.KeyC:
 		if m.Mod == msg.GLFW_MOD_CONTROL {
-			// FIXME: doesn't work yet, have to look into
-			// implementation of extTask should change to Tick() like structure
-			// then exiting the task will be different
-			// current implementation i.e setting flag for the for statement in goroutine
-			// doesn't work.
+			//FIXME: doesn't work yet, have to look into
+			//implementation of extTask should change to Tick() like structure
+			//then exiting the task will be different
+			//current implementation i.e setting flag for the for statement in goroutine
+			//doesn't work.
 
-			// st.PrintError("Ctrl+C pressed")
-			// err := st.proc.ExitExtProcess()
-			// if err != nil {
-			// 	st.PrintError(err.Error())
-			// }
+			//st.PrintError("Ctrl+C pressed")
+			//err := st.proc.ExitExtProcess()
+			//if err != nil {
+			//	st.PrintError(err.Error())
+			//}
 		}
 
 	case msg.KeyZ:
@@ -107,11 +107,11 @@ func (st *State) actOnCommand() {
 		return
 	}
 
-	s := "actOnCommand() called on"
+	s := "actOnCommand() called with"
 	println(s, "cmd:", cmd)
 
 	for _, arg := range args {
-		println("with arg:", arg)
+		println(s, "arg:", arg)
 	}
 
 	if st.proc.HasExtProcessAttached() {
@@ -143,13 +143,15 @@ func (st *State) actOnCommand() {
 			st.PrintLn("    CTRL+Z:  ___description goes here___")
 
 		case "j":
-			println("Inside the jobs")
+			println("Inside the j")
+
 			for id, extProc := range st.proc.extProcesses {
 				baseCommand := strings.Split(extProc.CommandLine, " ")[0]
 				st.PrintLn("[ " + strconv.Itoa(int(id)) + " ] -> [ " + baseCommand + " ]")
 			}
 		case "jobs":
 			println("Inside the jobs")
+
 			for id, extProc := range st.proc.extProcesses {
 				st.PrintLn("[ " + strconv.Itoa(int(id)) + " ] -> [ " + extProc.CommandLine + " ]")
 			}
@@ -158,7 +160,8 @@ func (st *State) actOnCommand() {
 			fallthrough
 		case "foreground":
 			println("Inside the FG")
-			// FIXME: Buggy tomorrow I'll continue to work on this
+			//FIXME: Buggy.  Tomorrow I'll continue to work on this
+
 			if len(args) < 1 {
 				st.PrintError("Must pass the job id! eg: fg 1")
 			} else {

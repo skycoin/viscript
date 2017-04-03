@@ -139,17 +139,18 @@ func (pr *ExternalProcess) processSend() {
 			return
 		}
 
+		//having an err set to something means the stdOutPipe was closed or process was finished
+		//unable to read again. I'll look more into the Read func doc, just to be sure.
 		size, err := pr.stdOutPipe.Read(buf)
 		if err != nil {
 			s := fmt.Sprintf("**** ERROR! ****    %s\n", err.Error())
 			s += fmt.Sprintf("**** ERROR! ****    (command: \"%s\").  Returning.", pr.CommandLine)
 
 			for i := 0; i < 5; i++ {
-				println(s)
+				println(s) //OS box print
 			}
 
-			//having an err set to something means the stdOutPipe was closed or process was finished
-			//unable to read again. I'll look more into the Read func doc, just to be sure.
+			pr.State.PrintLn(s) //in-terminal print
 			return
 		}
 
