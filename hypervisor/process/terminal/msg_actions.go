@@ -49,11 +49,11 @@ func (st *State) actOnOneTimeInputs(m msg.MessageKey) {
 	case msg.KeyZ:
 		if m.Mod == msg.GLFW_MOD_CONTROL {
 			// st.PrintError("Ctrl+Z pressed")
-			err := st.proc.SendAttachedToBg()
-			if err != nil {
-				st.PrintError(err.Error())
-			}
-			st.PrintLn("Attached process sent to background.")
+			// err := st.proc.SendAttachedToBg()
+			// if err != nil {
+			// 	st.PrintError(err.Error())
+			// }
+			// st.PrintLn("Attached process sent to background.")
 		}
 
 	}
