@@ -124,7 +124,7 @@ func (pr *Process) DeleteAttachedExtProcess() error {
 func (pr *Process) AddTaskExternalAndStart(tokens []string) (msg.ExtProcessId, error) {
 	app.At(path, "AddTaskExternalAndStart")
 
-	newExtProc, err := MakeNewTaskExternal(&pr.State, tokens)
+	newExtProc, err := MakeNewTaskExternal(tokens)
 	if err != nil {
 		return 0, err
 	}
@@ -177,9 +177,9 @@ func (pr *Process) GetIncomingChannel() chan []byte {
 
 func (pr *Process) Tick() {
 	pr.State.HandleMessages()
-	if pr.HasExtProcessAttached() {
-		if extProc, err := pr.GetAttachedExtProcess(); err == nil {
-			extProc.Tick()
-		}
-	}
+	// if pr.HasExtProcessAttached() {
+	// 	if extProc, err := pr.GetAttachedExtProcess(); err == nil {
+	// 		extProc.Tick()
+	// 	}
+	// }
 }

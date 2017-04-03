@@ -10,3 +10,13 @@ type ProcessInterface interface {
 	GetIncomingChannel() chan []byte //channel for incoming messages
 	Tick()                           //process the messages and emit messages
 }
+
+type ExtProcessInterface interface {
+	Tick()
+	Start() error
+	TearDown()
+	GetFullCommandLine() string
+	GetProcessInChannel() chan []byte
+	GetProcessOutChannel() chan []byte
+	GetProcessExitChannel() chan bool
+}

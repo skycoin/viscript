@@ -1,4 +1,4 @@
-package process
+package extprocess
 
 import (
 	"errors"
@@ -15,6 +15,7 @@ import (
 	"syscall"
 
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/msg"
 )
 
 const te = "hypervisor/process/terminal/task_ext" //path
@@ -22,19 +23,20 @@ const te = "hypervisor/process/terminal/task_ext" //path
 type ExternalProcess struct {
 	CommandLine string
 
-	ProcessIn chan []byte
-	CmdOut    chan []byte
-	CmdIn     chan []byte
+	ProcessIn   chan []byte
+	ProcessOut  chan []byte
+	ProcessExit chan bool
+
+	CmdOut chan []byte
+	CmdIn  chan []byte
 
 	cmd        *exec.Cmd
 	stdOutPipe io.ReadCloser
 	stdInPipe  io.WriteCloser
-
-	State *State
 }
 
 //non-instanced
-func MakeNewTaskExternal(st *State, tokens []string) (*ExternalProcess, error) {
+func MakeNewTaskExternal(tokens []string) (*ExternalProcess, error) {
 	app.At(te, "MakeNewTaskExternal")
 	var p ExternalProcess
 
@@ -43,9 +45,11 @@ func MakeNewTaskExternal(st *State, tokens []string) (*ExternalProcess, error) {
 		return nil, err
 	}
 
-	p.State = st
-
 	return &p, nil
+}
+
+func (pr *ExternalProcess) GetExtProcessInterface() msg.ExtProcessInterface {
+	return msg.ExtProcessInterface(pr)
 }
 
 func (pr *ExternalProcess) Init(tokens []string) error {
@@ -73,6 +77,8 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 	pr.CmdOut = make(chan []byte, 2048)
 	pr.CmdIn = make(chan []byte, 2048)
 	pr.ProcessIn = make(chan []byte, 2048)
+	pr.ProcessOut = make(chan []byte, 2048)
+	pr.ProcessExit = make(chan bool)
 
 	return nil
 }
@@ -89,22 +95,6 @@ func (pr *ExternalProcess) createCMDAccordingToOS(tokens []string) (*exec.Cmd, e
 	}
 
 	return nil, errors.New("Unknown Operating System. Aborting command initilization")
-}
-
-func (pr *ExternalProcess) Start() error {
-	app.At(te, "Start")
-
-	err := pr.cmd.Start()
-	if err != nil {
-		return err
-	}
-
-	// Run the routine which will read and send the data to CmdIn
-	go pr.cmdInRoutine()
-	// Run the routine which will read from Cmdout and write to process
-	go pr.cmdOutRoutine()
-
-	return nil
 }
 
 func (pr *ExternalProcess) cmdInRoutine() {
@@ -143,22 +133,6 @@ func (pr *ExternalProcess) cmdOutRoutine() {
 	}
 }
 
-func (pr *ExternalProcess) Tick() {
-	// var err error
-	pr.ProcessInput()
-	// if err = pr.ProcessInput(); err != nil {
-	// 	// return err
-	// 	app.At(te, "ProcessInput() - returned error: "+err.Error()+" ! Deleting Process")
-	// 	pr.State.proc.DeleteAttachedExtProcess()
-	// }
-	pr.ProcessOutput()
-	// if err = pr.ProcessOutput(); err != nil {
-	// 	// return err
-	// 	app.At(te, "ProcessOutput() - returned error: "+err.Error()+" ! Deleting Process")
-	// 	pr.State.proc.DeleteAttachedExtProcess()
-	// }
-}
-
 func (pr *ExternalProcess) ProcessOutput() {
 	for len(pr.ProcessIn) > 0 {
 		// println("ProcessOutput() - data := ", string(data))
@@ -171,16 +145,6 @@ func (pr *ExternalProcess) ProcessInput() {
 	for len(pr.CmdIn) > 0 {
 		// println("ProcessInput() - data := ", string(data))
 		data := <-pr.CmdIn
-		pr.State.PrintLn(string(data))
+		pr.ProcessOut <- data
 	}
-}
-
-func (pr *ExternalProcess) ShutDown() {
-	app.At(te, "ShutDown")
-	close(pr.CmdOut)
-	pr.cmd.Process.Kill()
-	pr.cmd = nil
-	pr.stdOutPipe = nil
-	pr.stdInPipe = nil
-	pr.State = nil
 }
