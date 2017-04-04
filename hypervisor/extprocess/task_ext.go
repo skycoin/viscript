@@ -21,6 +21,7 @@ import (
 const te = "hypervisor/process/terminal/task_ext" //path
 
 type ExternalProcess struct {
+	Id          msg.ExtProcessId
 	CommandLine string
 
 	ProcessIn   chan []byte
@@ -33,6 +34,8 @@ type ExternalProcess struct {
 	cmd        *exec.Cmd
 	stdOutPipe io.ReadCloser
 	stdInPipe  io.WriteCloser
+
+	runningInBg bool
 }
 
 //non-instanced
@@ -110,7 +113,7 @@ func (pr *ExternalProcess) cmdInRoutine() {
 			for i := 0; i < 5; i++ {
 				println(s) //OS box print
 			}
-			// close(pr.CmdIn)
+			pr.ProcessExit <- true
 			return
 		}
 
@@ -127,6 +130,7 @@ func (pr *ExternalProcess) cmdOutRoutine() {
 			println("RECEIVED ____ ", string(data), " IN CMDOUTROUTINE")
 			_, err := pr.stdInPipe.Write(append(data, '\n'))
 			if err != nil {
+				pr.ProcessExit <- true
 				return
 			}
 		}

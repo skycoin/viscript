@@ -112,15 +112,15 @@ func (st *State) actOnCommand() {
 	}
 
 	if st.proc.HasExtProcessAttached() {
-		// Redirect input to the attached process
-		extProc, err := st.proc.GetAttachedExtProcess()
+		// TODO: Redirect input to the attached process with new implementations
+		// extProc, err := st.proc.GetAttachedExtProcess()
 
-		if err != nil {
-			println(err.Error())
-			return
-		}
+		// if err != nil {
+		// 	println(err.Error())
+		// 	return
+		// }
 
-		extProc.ProcessIn <- []byte(st.Cli.CurrentCommandLine())
+		// extProc.ProcessIn <- []byte(st.Cli.CurrentCommandLine())
 	} else { //internal task
 		switch cmd {
 

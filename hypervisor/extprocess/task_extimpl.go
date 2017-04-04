@@ -2,6 +2,7 @@ package extprocess
 
 import (
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/msg"
 )
 
 // ExtProcessInterface implementation
@@ -42,6 +43,14 @@ func (pr *ExternalProcess) TearDown() {
 	pr.cmd = nil
 	pr.stdOutPipe = nil
 	pr.stdInPipe = nil
+}
+
+func (pr *ExternalProcess) GetId() msg.ExtProcessId {
+	return pr.Id
+}
+
+func (pr *ExternalProcess) GetRunningInBg() bool {
+	return pr.runningInBg
 }
 
 func (pr *ExternalProcess) GetFullCommandLine() string {
