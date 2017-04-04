@@ -15,6 +15,8 @@ type ExtProcessInterface interface {
 	Tick()
 	Start() error
 	TearDown()
+	GetId() ExtProcessId
+	GetRunningInBg() bool
 	GetFullCommandLine() string
 	GetProcessInChannel() chan []byte
 	GetProcessOutChannel() chan []byte
