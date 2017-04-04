@@ -1673,3 +1673,12 @@ https://github.com/corpusc/viscript/tree/master/rpc
 you need to have viscript running at first
 
 use "exec go run rpc/cli/cli.go"
+
+Could we have an interface for external process like containing start, tick, shutdown 
+and process to use it because we have to move the external process outside of terminal 
+as in tickets, right now commented all the additional functionalities like ctrl+z for 
+running in background ctrl+c for stopping process and also it doesn't stop automatically 
+when it sees EOF from running process, cleaned up a bit and I'll work more tomorrow. 
+Main thing is that it works for now. We might even need to remove that State variable 
+from external process and have ProcessOut and have Process to watch that for output 
+sequentially and printing it to viscript terminal.

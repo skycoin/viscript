@@ -62,11 +62,7 @@ func (pr *Process) HasExtProcessAttached() bool {
 }
 
 func (pr *Process) GetAttachedExtProcess() (*ExternalProcess, error) {
-	app.At(path, "GetAttachedExtProcess")
-
-	if !pr.HasExtProcessAttached() {
-		return nil, errors.New("External Process is not attached.")
-	}
+	// app.At(path, "GetAttachedExtProcess")
 
 	extProc, ok := pr.extProcesses[pr.extProcessId]
 	if ok {
@@ -79,11 +75,10 @@ func (pr *Process) GetAttachedExtProcess() (*ExternalProcess, error) {
 
 func (pr *Process) SendAttachedToBg() error {
 	if pr.HasExtProcessAttached() {
-		extProc, err := pr.GetAttachedExtProcess()
+		_, err := pr.GetAttachedExtProcess()
 		if err != nil {
 			return err
 		}
-		extProc.RunningInBg = true
 		pr.extProcAttached = false
 		pr.extProcessId = 0
 	}
@@ -92,23 +87,22 @@ func (pr *Process) SendAttachedToBg() error {
 
 func (pr *Process) SendExtToFg(extProcId msg.ExtProcessId) error {
 	// pr.State.PrintError("Proc ID: " + strconv.Itoa(int(extProcId)))
-	extProc, ok := pr.extProcesses[extProcId]
+	_, ok := pr.extProcesses[extProcId]
 	if !ok {
 		return errors.New("External task with id " +
 			strconv.Itoa(int(extProcId)) + " doesn't exist.")
 	}
-	extProc.RunningInBg = false
 	pr.extProcAttached = true
 	pr.extProcessId = extProcId
 	return nil
 }
 
 func (pr *Process) ExitExtProcess() error {
-	extProc, err := pr.GetAttachedExtProcess()
+	_, err := pr.GetAttachedExtProcess()
 	if err != nil {
 		return err
 	}
-	extProc.shouldEnd = true
+	pr.DeleteAttachedExtProcess()
 	return nil
 }
 
@@ -122,21 +116,26 @@ func (pr *Process) DeleteAttachedExtProcess() error {
 
 	pr.extProcessId = 0
 	pr.extProcAttached = false
-	extProc.TearDown()
+	extProc.ShutDown()
 	delete(pr.extProcesses, pr.extProcessId)
 	return nil
 }
 
-func (pr *Process) AddTaskExternal(tokens []string) (msg.ExtProcessId, error) {
-	app.At(path, "AddTaskExternal")
+func (pr *Process) AddTaskExternalAndStart(tokens []string) (msg.ExtProcessId, error) {
+	app.At(path, "AddTaskExternalAndStart")
 
-	newExtProc, err := MakeNewTaskExternal(&pr.State, tokens)
+	newExtProc, err := MakeNewTaskExternal(tokens)
 	if err != nil {
 		return 0, err
 	}
 
 	pr.extProcessCounter += 1 // Sequential
 	pr.extProcesses[pr.extProcessCounter] = newExtProc
+
+	if err = newExtProc.Start(); err != nil {
+		return 0, err
+	}
+
 	return pr.extProcessCounter, nil
 }
 
@@ -146,10 +145,10 @@ func (pr *Process) AttachExtProcess(pID msg.ExtProcessId) {
 	pr.extProcAttached = true
 }
 
-func (pr *Process) AddAndAttach(tokens []string) error {
-	app.At(path, "AddAndAttach")
+func (pr *Process) AddAttachStart(tokens []string) error {
+	app.At(path, "AddAttachStart")
 
-	pID, err := pr.AddTaskExternal(tokens)
+	pID, err := pr.AddTaskExternalAndStart(tokens)
 	if err != nil {
 		return err
 	}
@@ -178,4 +177,9 @@ func (pr *Process) GetIncomingChannel() chan []byte {
 
 func (pr *Process) Tick() {
 	pr.State.HandleMessages()
+	// if pr.HasExtProcessAttached() {
+	// 	if extProc, err := pr.GetAttachedExtProcess(); err == nil {
+	// 		extProc.Tick()
+	// 	}
+	// }
 }
