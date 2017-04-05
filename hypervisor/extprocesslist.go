@@ -10,11 +10,11 @@ type ExtProcessList struct {
 	ProcessMap map[msg.ExtProcessId]msg.ExtProcessInterface
 }
 
-func InitExtProcessList() {
+func initExtProcessList() {
 	ExtProcessListGlobal.ProcessMap = make(map[msg.ExtProcessId]msg.ExtProcessInterface)
 }
 
-func TeardownExtProcessList() {
+func teardownExtProcessList() {
 	ExtProcessListGlobal.ProcessMap = nil
 	// TODO: Further cleanup
 }
