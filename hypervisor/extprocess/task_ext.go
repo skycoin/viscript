@@ -74,6 +74,8 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 		return err
 	}
 
+	pr.Id = msg.NextExtProcessId()
+
 	// Creates a new process group for the new process
 	// to avoid leaving orphan processes.
 	pr.cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
@@ -84,6 +86,10 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 	pr.ProcessIn = make(chan []byte, 2048)
 	pr.ProcessOut = make(chan []byte, 2048)
 	pr.ProcessExit = make(chan bool)
+	pr.ProcessQuit = make(chan bool)
+
+	// TODO: maybe passed as an arg on the start?
+	pr.runningInBg = true
 
 	return nil
 }
