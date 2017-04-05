@@ -32,9 +32,6 @@ func AddExtProcess(ep msg.ExtProcessInterface) msg.ExtProcessId {
 
 func TickExtTasks() {
 	for _, p := range ExtProcessListGlobal.ProcessMap {
-		notRunningInBg := !p.GetRunningInBg()
-		if notRunningInBg {
-			p.Tick()
-		}
+		p.Tick()
 	}
 }
