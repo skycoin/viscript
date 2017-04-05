@@ -15,8 +15,9 @@ type Process struct {
 	InChannel    chan []byte
 	State        State
 
-	extProcAttached bool
-	extProcessId    msg.ExtProcessId
+	hasExtProcAttached bool
+	extProcessId       msg.ExtProcessId
+	attachedExtProcess msg.ExtProcessInterface
 }
 
 //non-instanced
@@ -31,7 +32,7 @@ func MakeNewTask() *Process {
 	p.State.Init(&p)
 
 	// means no external task is attached
-	p.extProcAttached = false
+	p.hasExtProcAttached = false
 	p.extProcessId = msg.ExtProcessId(0)
 
 	return &p
@@ -50,7 +51,7 @@ func (pr *Process) DeleteProcess() {
 }
 
 func (pr *Process) HasExtProcessAttached() bool {
-	return pr.extProcAttached
+	return pr.hasExtProcAttached
 }
 
 // func (pr *Process) GetAttachedExtProcess() (*ExternalProcess, error) {

@@ -40,6 +40,8 @@ func (pr *ExternalProcess) TearDown() {
 	close(pr.ProcessOut)
 	close(pr.ProcessExit)
 
+	close(pr.ProcessQuit)
+
 	pr.cmd = nil
 	pr.stdOutPipe = nil
 	pr.stdInPipe = nil
@@ -67,4 +69,8 @@ func (pr *ExternalProcess) GetProcessOutChannel() chan []byte {
 
 func (pr *ExternalProcess) GetProcessExitChannel() chan bool {
 	return pr.ProcessExit
+}
+
+func (pr *ExternalProcess) GetProcessQuitChannel() chan bool {
+	return pr.ProcessQuit
 }

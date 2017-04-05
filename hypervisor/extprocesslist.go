@@ -10,11 +10,11 @@ type ExtProcessList struct {
 	ProcessMap map[msg.ExtProcessId]msg.ExtProcessInterface
 }
 
-func InitExtProcessList() {
+func initExtProcessList() {
 	ExtProcessListGlobal.ProcessMap = make(map[msg.ExtProcessId]msg.ExtProcessInterface)
 }
 
-func TeardownExtProcessList() {
+func teardownExtProcessList() {
 	ExtProcessListGlobal.ProcessMap = nil
 	// TODO: Further cleanup
 }
@@ -32,9 +32,6 @@ func AddExtProcess(ep msg.ExtProcessInterface) msg.ExtProcessId {
 
 func TickExtTasks() {
 	for _, p := range ExtProcessListGlobal.ProcessMap {
-		notRunningInBg := !p.GetRunningInBg()
-		if notRunningInBg {
-			p.Tick()
-		}
+		p.Tick()
 	}
 }

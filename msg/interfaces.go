@@ -21,4 +21,5 @@ type ExtProcessInterface interface {
 	GetProcessInChannel() chan []byte
 	GetProcessOutChannel() chan []byte
 	GetProcessExitChannel() chan bool
+	GetProcessQuitChannel() chan bool
 }
