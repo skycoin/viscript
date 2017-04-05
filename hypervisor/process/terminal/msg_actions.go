@@ -1,7 +1,10 @@
 package process
 
 import (
+	"strconv"
+
 	"github.com/corpusc/viscript/hypervisor"
+	extTask "github.com/corpusc/viscript/hypervisor/extprocess"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -181,13 +184,11 @@ func (st *State) actOnCommand() {
 			// 	st.PrintLn(err.Error())
 			// }
 
-		case "e":
+		case "s":
 			fallthrough
-		case "ex":
-			fallthrough
-		case "exec":
+		case "start":
 			// Doesn't work yet with new implementation ! ! !
-			st.PrintLn("Doesn't work yet with new implementation ! ! ! Please wait...")
+			// st.PrintLn("Doesn't work yet with new implementation ! ! ! Please wait...")
 			// if len(args) < 1 {
 			// 	st.PrintError("Must pass a command into EXEC!")
 			// } else { //execute
@@ -199,6 +200,28 @@ func (st *State) actOnCommand() {
 			// 		st.PrintLn(err.Error())
 			// 	}
 			// }
+
+			if len(args) < 1 {
+				st.PrintError("Must pass a command into Start!")
+			} else {
+				newExtProc, err := extTask.MakeNewTaskExternal(args)
+				if err != nil {
+					st.PrintLn(err.Error())
+					break
+				}
+
+				err = newExtProc.Start()
+				if err != nil {
+					st.PrintLn(err.Error())
+					break
+				}
+
+				procId := hypervisor.AddExtProcess(newExtProc.GetExtProcessInterface())
+
+				st.PrintLn("Added External Process (ID: " +
+					strconv.Itoa(int(procId)) + ", Command: " +
+					newExtProc.CommandLine + ")")
+			}
 
 		default:
 			st.PrintError("\"" + cmd + "\" is an unknown command.")
