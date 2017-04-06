@@ -1,6 +1,9 @@
 package hypervisor
 
 import (
+	"errors"
+	"strconv"
+
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -30,8 +33,20 @@ func AddExtProcess(ep msg.ExtProcessInterface) msg.ExtProcessId {
 	return id
 }
 
+func GetExtProcess(id msg.ExtProcessId) (msg.ExtProcessInterface, error) {
+	extProc, exists := ExtProcessListGlobal.ProcessMap[id]
+	if exists {
+		return extProc, nil
+	}
+	err := errors.New("External process with id " +
+		strconv.Itoa(int(id)) + " doesn't exist!")
+	return nil, err
+}
+
 func TickExtTasks() {
 	for _, p := range ExtProcessListGlobal.ProcessMap {
-		p.Tick()
+		if !p.GetRunningInBg() {
+			p.Tick()
+		}
 	}
 }
