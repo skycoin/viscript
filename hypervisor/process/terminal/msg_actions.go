@@ -3,6 +3,8 @@ package process
 import (
 	"strconv"
 
+	"strings"
+
 	"github.com/corpusc/viscript/hypervisor"
 	extTask "github.com/corpusc/viscript/hypervisor/extprocess"
 	"github.com/corpusc/viscript/msg"
@@ -142,21 +144,32 @@ func (st *State) actOnCommand() {
 			st.PrintLn("    CTRL+C:  ___description goes here___")
 			st.PrintLn("    CTRL+Z:  ___description goes here___")
 
-		case "j":
-			// Doesn't work yet with new implementation ! ! !
-			// println("Inside the jobs")
-			// for id, extProc := range st.proc.extProcesses {
-			// 	baseCommand := strings.Split(extProc.CommandLine, " ")[0]
-			// 	st.PrintLn("[ " + strconv.Itoa(int(id)) + " ] -> [ " + baseCommand + " ]")
-			// }
-		case "jobs":
-			// Doesn't work yet with new implementation ! ! !
-			// println("Inside the jobs")
-			// for id, extProc := range st.proc.extProcesses {
-			// 	st.PrintLn("[ " + strconv.Itoa(int(id)) + " ] -> [ " + extProc.CommandLine + " ]")
-			// }
+		// listing processes
+		case "l":
+			extTaskMap := hypervisor.ExtProcessListGlobal.ProcessMap
+			if len(extTaskMap) == 0 {
+				st.PrintLn("No external processes running.\n" +
+					"Try starting one with \"start\" command (\"help\" or \"h\" for help).")
+			}
+			for procId, extProc := range extTaskMap {
+				baseCommand := strings.Split(extProc.GetFullCommandLine(), " ")[0]
+				st.PrintLn("[ " + strconv.Itoa(int(procId)) + " ] -> [ " + baseCommand + " ]")
+			}
+		case "ls":
+			fallthrough
+		case "list_processes":
+			extTaskMap := hypervisor.ExtProcessListGlobal.ProcessMap
+			if len(extTaskMap) == 0 {
+				st.PrintLn("No external processes running.\n" +
+					"Try starting one with \"start\" command (\"help\" or \"h\" for help).")
+			}
+			for procId, extProc := range extTaskMap {
+				st.PrintLn("[ " + strconv.Itoa(int(procId)) + " ] -> [ " +
+					extProc.GetFullCommandLine() + " ]")
+			}
 
-		case "fg":
+		// attach external process to terminal Process
+		case "attach":
 			// Doesn't work yet with new implementation ! ! !
 			// println("Inside the FG")
 			// // FIXME: Buggy tomorrow I'll continue to work on this
@@ -184,23 +197,10 @@ func (st *State) actOnCommand() {
 			// 	st.PrintLn(err.Error())
 			// }
 
+		// start new external process, detached running in bg by default
 		case "s":
 			fallthrough
 		case "start":
-			// Doesn't work yet with new implementation ! ! !
-			// st.PrintLn("Doesn't work yet with new implementation ! ! ! Please wait...")
-			// if len(args) < 1 {
-			// 	st.PrintError("Must pass a command into EXEC!")
-			// } else { //execute
-			// 	err := st.proc.AddAttachStart(args) //(includes a command)
-			// 	if err != nil {
-			// 		for i := 0; i < 5; i++ {
-			// 			println("********* " + err.Error() + " *********")
-			// 		}
-			// 		st.PrintLn(err.Error())
-			// 	}
-			// }
-
 			if len(args) < 1 {
 				st.PrintError("Must pass a command into Start!")
 			} else {
