@@ -135,9 +135,10 @@ func (st *State) actOnCommand() {
 			fallthrough
 		case "help":
 			st.PrintLn("Current commands:")
-			st.PrintLn("    EXEC:   Start external task.")
-			st.PrintLn("    J:      ___description goes here___")
-			st.PrintLn("    JOBS:   ___description goes here___")
+			st.PrintLn("    START:   Start external task.")
+			st.PrintLn("    l:      ___description goes here___")
+			st.PrintLn("    ls:   ___description goes here___")
+			st.PrintLn("    list_processes:   ___description goes here___")
 			st.PrintLn("    FG:     ___description goes here___")
 			st.PrintLn("    RPC:    Issues command: \"go run rpc/cli/cli.go\"")
 			st.PrintLn("Current Hotkeys:")
@@ -170,22 +171,25 @@ func (st *State) actOnCommand() {
 
 		// attach external process to terminal Process
 		case "attach":
-			// Doesn't work yet with new implementation ! ! !
-			// println("Inside the FG")
-			// // FIXME: Buggy tomorrow I'll continue to work on this
-			// if len(args) < 1 {
-			// 	st.PrintError("Must pass the job id! eg: fg 1")
-			// } else {
-			// 	extProcID, err := strconv.Atoi(args[0])
-			// 	if err != nil {
-			// 		st.PrintError(err.Error())
-			// 	}
+			if len(args) < 1 {
+				st.PrintError("No process id passed! eg: attach 1")
+			} else {
+				passedId, err := strconv.Atoi(args[0])
+				if err != nil {
+					st.PrintError("Process id must be an integer.")
+					break
+				}
 
-			// 	err = st.proc.SendExtToFg(msg.ExtProcessId(extProcID))
-			// 	if err != nil {
-			// 		st.PrintError(err.Error())
-			// 	}
-			// }
+				extProcId := msg.ExtProcessId(passedId)
+				extProc, err := hypervisor.GetExtProcess(extProcId)
+				if err != nil {
+					st.PrintError(err.Error())
+					break
+				}
+
+				// TODO: finish this
+				st.PrintLn(extProc.GetFullCommandLine())
+			}
 
 		case "r":
 			fallthrough

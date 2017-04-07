@@ -122,10 +122,9 @@ func (pr *ExternalProcess) cmdInRoutine() {
 				// 3) Remove it from the GlobalList and further cleanup whatever will be needed
 				return
 			}
-		default:
 		}
 
-		if !pr.runningInBg && pr.stdOutPipe != nil {
+		if !pr.runningInBg {
 			if pr.stdOutPipe == nil {
 				println("!!! Standard output pipe is nil. Sending Exit Request !!!")
 				pr.ProcessExit <- true
@@ -174,7 +173,6 @@ func (pr *ExternalProcess) cmdOutRoutine() {
 					return
 				}
 			}
-		default:
 		}
 	}
 }
