@@ -187,8 +187,10 @@ func (st *State) actOnCommand() {
 					break
 				}
 
-				// TODO: finish this
 				st.PrintLn(extProc.GetFullCommandLine())
+
+				// TODO: finish this
+				// st.proc.AttachExternalProcess(extProc)
 			}
 
 		case "r":

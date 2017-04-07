@@ -16,7 +16,6 @@ type Process struct {
 	State        State
 
 	hasExtProcAttached bool
-	extProcessId       msg.ExtProcessId
 	attachedExtProcess msg.ExtProcessInterface
 }
 
@@ -33,7 +32,6 @@ func MakeNewTask() *Process {
 
 	// means no external task is attached
 	p.hasExtProcAttached = false
-	p.extProcessId = msg.ExtProcessId(0)
 
 	return &p
 }
@@ -54,17 +52,11 @@ func (pr *Process) HasExtProcessAttached() bool {
 	return pr.hasExtProcAttached
 }
 
-// func (pr *Process) GetAttachedExtProcess() (*ExternalProcess, error) {
-// 	// app.At(path, "GetAttachedExtProcess")
-
-// 	extProc, ok := pr.extProcesses[pr.extProcessId]
-// 	if ok {
-// 		return extProc, nil
-// 	}
-
-// 	return nil, errors.New("External task with id " +
-// 		strconv.Itoa(int(pr.extProcessId)) + " doesn't exist.")
-// }
+func (pr *Process) AttachExternalProcess(extProc msg.ExtProcessInterface) {
+	app.At(path, "AttachExternalProcess")
+	pr.attachedExtProcess = extProc
+	pr.hasExtProcAttached = true
+}
 
 // func (pr *Process) SendAttachedToBg() error {
 // 	if pr.HasExtProcessAttached() {
@@ -75,18 +67,6 @@ func (pr *Process) HasExtProcessAttached() bool {
 // 		pr.extProcAttached = false
 // 		pr.extProcessId = 0
 // 	}
-// 	return nil
-// }
-
-// func (pr *Process) SendExtToFg(extProcId msg.ExtProcessId) error {
-// 	// pr.State.PrintError("Proc ID: " + strconv.Itoa(int(extProcId)))
-// 	_, ok := pr.extProcesses[extProcId]
-// 	if !ok {
-// 		return errors.New("External task with id " +
-// 			strconv.Itoa(int(extProcId)) + " doesn't exist.")
-// 	}
-// 	pr.extProcAttached = true
-// 	pr.extProcessId = extProcId
 // 	return nil
 // }
 
