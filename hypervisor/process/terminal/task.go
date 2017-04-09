@@ -57,19 +57,20 @@ func (pr *Process) AttachExternalProcess(extProc msg.ExtProcessInterface) {
 	app.At(path, "AttachExternalProcess")
 	pr.attachedExtProcess = extProc
 	pr.hasExtProcAttached = true
+	pr.attachedExtProcess.Attach()
 }
 
-// func (pr *Process) SendAttachedToBg() error {
-// 	if pr.HasExtProcessAttached() {
-// 		_, err := pr.GetAttachedExtProcess()
-// 		if err != nil {
-// 			return err
-// 		}
-// 		pr.extProcAttached = false
-// 		pr.extProcessId = 0
-// 	}
-// 	return nil
-// }
+func (pr *Process) DetachExternalProcess() {
+	app.At(path, "DetachExternalProcess")
+	pr.attachedExtProcess = nil
+	pr.hasExtProcAttached = false
+	pr.attachedExtProcess.Detach()
+}
+
+// In this case process should:
+// 1) Send true to the ProcessShouldEnd channel
+// 2) Call external process's TearDown
+// 3) Remove it from the GlobalList and further cleanup whatever will be needed
 
 // func (pr *Process) ExitExtProcess() error {
 // 	_, err := pr.GetAttachedExtProcess()
@@ -95,42 +96,6 @@ func (pr *Process) AttachExternalProcess(extProc msg.ExtProcessInterface) {
 // 	return nil
 // }
 
-// func (pr *Process) AddTaskExternalAndStart(tokens []string) (msg.ExtProcessId, error) {
-// 	app.At(path, "AddTaskExternalAndStart")
-
-// 	newExtProc, err := MakeNewTaskExternal(tokens)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	pr.extProcessCounter += 1 // Sequential
-// 	pr.extProcesses[pr.extProcessCounter] = newExtProc
-
-// 	if err = newExtProc.Start(); err != nil {
-// 		return 0, err
-// 	}
-
-// 	return pr.extProcessCounter, nil
-// }
-
-// func (pr *Process) AttachExtProcess(pID msg.ExtProcessId) {
-// 	app.At(path, "AttachExtProcess")
-// 	pr.extProcessId = pID
-// 	pr.extProcAttached = true
-// }
-
-// func (pr *Process) AddAttachStart(tokens []string) error {
-// 	app.At(path, "AddAttachStart")
-
-// 	pID, err := pr.AddTaskExternalAndStart(tokens)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	pr.AttachExtProcess(pID)
-// 	return nil
-// }
-
 //implement the interface
 
 func (pr *Process) GetId() msg.ProcessId {
@@ -151,4 +116,20 @@ func (pr *Process) GetIncomingChannel() chan []byte {
 
 func (pr *Process) Tick() {
 	pr.State.HandleMessages()
+
+	if !pr.hasExtProcAttached {
+		return
+	}
+
+	select {
+	case exit := <-pr.attachedExtProcess.GetProcessExitChannel():
+		if exit {
+			println("Got the exit in task, process is finished.")
+			// TODO: Exit here
+		}
+	case data := <-pr.attachedExtProcess.GetProcessOutChannel():
+		println("Received data from external process, sending to term.")
+		pr.State.PrintLn(string(data))
+	default:
+	}
 }
