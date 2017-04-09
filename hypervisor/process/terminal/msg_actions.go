@@ -229,6 +229,14 @@ func (st *State) actOnCommand() {
 					newExtProc.CommandLine + ")")
 			}
 
+		// add new temrinal
+		case "n":
+			fallthrough
+		case "new":
+			fallthrough
+		case "new_terminal":
+			// viewport.Terms.Add()
+
 		default:
 			st.PrintError("\"" + cmd + "\" is an unknown command.")
 

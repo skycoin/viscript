@@ -2,6 +2,7 @@ package viewport
 
 import (
 	"fmt"
+
 	"github.com/corpusc/viscript/hypervisor/input/keyboard"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/viewport/gl"
@@ -9,7 +10,7 @@ import (
 
 func onChar(m msg.MessageChar) {
 	if DebugPrintInputEvents {
-		fmt.Printf("\n\nTypeChar: %s\n", string(m.Char))
+		// println("\n\nTypeChar:", string(m.Char))
 	}
 }
 
@@ -21,12 +22,15 @@ func onChar(m msg.MessageChar) {
 // so you will have to handle both left & right modifier keys via the "action" variable!
 func onKey(m msg.MessageKey) {
 	if DebugPrintInputEvents {
-		fmt.Print("TypeKey")
+		if m.Action == 1 {
+			println()
+		}
+		fmt.Printf("\nTypeKey")
 		showUInt32("Key", m.Key)
 		showUInt32("Scan", m.Scan)
-		showUInt8("Action", m.Action)
+		showUInt8("Act", m.Action)
 		showUInt8("Mod", m.Mod)
-		println()
+		// println()
 	}
 
 	if msg.Action(m.Action) == msg.Release {

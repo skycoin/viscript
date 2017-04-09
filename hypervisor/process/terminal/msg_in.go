@@ -30,7 +30,7 @@ func (st *State) UnpackMessage(msgType uint16, message []byte) []byte {
 
 	//ALWAYS reached
 	if st.DebugPrintInputEvents {
-		println()
+		// println()
 	}
 
 	return message

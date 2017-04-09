@@ -2,6 +2,7 @@ package viewport
 
 import (
 	"fmt"
+
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"
@@ -205,21 +206,21 @@ func respondToAnyMenuButtonClicks() {
 
 // the rest of these funcs are almost identical, just top 2 vars customized (and string format)
 func showBool(s string, x bool) {
-	fmt.Printf("   [%s: %t]", s, x)
+	fmt.Printf(" [%s: %t]", s, x)
 }
 
 func showUInt8(s string, x uint8) {
-	fmt.Printf("   [%s: %d]", s, x)
+	fmt.Printf(" [%s: %d]", s, x)
 }
 
 func showSInt32(s string, x int32) {
-	fmt.Printf("   [%s: %d]", s, x)
+	fmt.Printf(" [%s: %d]", s, x)
 }
 
 func showUInt32(s string, x uint32) {
-	fmt.Printf("   [%s: %d]", s, x)
+	fmt.Printf(" [%s: %d]", s, x)
 }
 
 func showFloat64(s string, f float64) {
-	fmt.Printf("   [%s: %.1f]", s, f)
+	fmt.Printf(" [%s: %.1f]", s, f)
 }
