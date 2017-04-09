@@ -5,7 +5,7 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-// ExtProcessInterface implementation
+//ExtProcessInterface implementation
 
 func (pr *ExternalProcess) Tick() {
 	pr.ProcessInput()
@@ -20,9 +20,9 @@ func (pr *ExternalProcess) Start() error {
 		return err
 	}
 
-	// Run the routine which will read and send the data to CmdIn
+	//Run the routine which will read and send the data to CmdIn
 	go pr.cmdInRoutine()
-	// Run the routine which will read from Cmdout and write to process
+	//Run the routine which will read from Cmdout and write to process
 	go pr.cmdOutRoutine()
 
 	return nil
