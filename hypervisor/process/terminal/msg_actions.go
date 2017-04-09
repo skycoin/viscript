@@ -98,7 +98,6 @@ func (st *State) actOnRepeatableKeys(m msg.MessageKey, serializedMsg []byte) {
 }
 
 func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
-	//println("process/terminal/events.onMouseScroll()")
 	hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
 }
 
@@ -135,15 +134,15 @@ func (st *State) actOnCommand() {
 			fallthrough
 		case "help":
 			st.PrintLn("Current commands:")
-			st.PrintLn("    START:   Start external task.")
-			st.PrintLn("    l:      ___description goes here___")
-			st.PrintLn("    ls:   ___description goes here___")
+			st.PrintLn("    START:            Start external task.")
+			st.PrintLn("    l:                ___description goes here___")
+			st.PrintLn("    ls:               ___description goes here___")
 			st.PrintLn("    list_processes:   ___description goes here___")
-			st.PrintLn("    FG:     ___description goes here___")
-			st.PrintLn("    RPC:    Issues command: \"go run rpc/cli/cli.go\"")
-			st.PrintLn("Current Hotkeys:")
-			st.PrintLn("    CTRL+C:  ___description goes here___")
-			st.PrintLn("    CTRL+Z:  ___description goes here___")
+			st.PrintLn("    FG:               ___description goes here___")
+			st.PrintLn("    RPC:              Issues command: \"go run rpc/cli/cli.go\"")
+			st.PrintLn("Current hotkeys:")
+			st.PrintLn("    CTRL+C:           ___description goes here___")
+			st.PrintLn("    CTRL+Z:           ___description goes here___")
 
 		// listing processes
 		case "l":
@@ -189,21 +188,21 @@ func (st *State) actOnCommand() {
 
 				st.PrintLn(extProc.GetFullCommandLine())
 
-				// TODO: finish this
+				//TODO: finish this
 				// st.proc.AttachExternalProcess(extProc)
 			}
 
 		case "r":
 			fallthrough
 		case "rpc":
-			// Doesn't work yet with new implementation ! ! !
+			//Doesn't work yet with new implementation ! ! !
 			// tokens := []string{"go", "run", "rpc/cli/cli.go"}
 			// err := st.proc.AddAttachStart(tokens)
 			// if err != nil {
 			// 	st.PrintLn(err.Error())
 			// }
 
-		// start new external process, detached running in bg by default
+		//start new external process, detached running in bg by default
 		case "s":
 			fallthrough
 		case "start":
@@ -229,7 +228,7 @@ func (st *State) actOnCommand() {
 					newExtProc.CommandLine + ")")
 			}
 
-		// add new temrinal
+		//add new terminal
 		case "n":
 			fallthrough
 		case "new":

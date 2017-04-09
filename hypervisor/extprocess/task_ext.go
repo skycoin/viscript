@@ -18,7 +18,7 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-const te = "hypervisor/process/terminal/task_ext" //path
+const te = "hypervisor/extprocess/task_ext" //path
 
 type ExternalProcess struct {
 	Id          msg.ExtProcessId
@@ -76,8 +76,8 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 
 	pr.Id = msg.NextExtProcessId()
 
-	// Creates a new process group for the new process
-	// to avoid leaving orphan processes.
+	//Creates a new process group for the new process
+	//to avoid leaving orphan processes.
 	pr.cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	pr.CommandLine = strings.Join(tokens, " ")
 
@@ -88,7 +88,7 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 	pr.ProcessExit = make(chan bool)
 	pr.ProcessQuit = make(chan bool)
 
-	// TODO: maybe passed as an arg on the start?
+	//TODO: maybe passed as an arg on the start?
 	pr.runningInBg = true
 
 	return nil

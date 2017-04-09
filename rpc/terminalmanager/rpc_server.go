@@ -21,7 +21,7 @@ func NewRPC() *RPC {
 func (r *RPC) Serve() {
 	port := os.Getenv("TERMINAL_RPC_PORT")
 	if port == "" {
-		log.Println("No TERMINAL_RPC_PORT environmental variable is found, assignig default port value:", DefaultPort)
+		log.Println("No TERMINAL_RPC_PORT environmental variable is found, assigning default port value:", DefaultPort)
 		port = DefaultPort
 	}
 

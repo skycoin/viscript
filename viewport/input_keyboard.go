@@ -14,12 +14,12 @@ func onChar(m msg.MessageChar) {
 	}
 }
 
-// WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can detect a
-// shift/alt/ctrl/super key through the "mod" variable,
-// (see the top of "action == glfw.Press" section for an example)
-// regardless of left/right key used.
-// BUT for RELEASE, the "mod" variable will NOT tell you what key it is!
-// so you will have to handle both left & right modifier keys via the "action" variable!
+//WEIRD BEHAVIOUR OF KEY EVENTS.... for a PRESS, you can detect a
+//shift/alt/ctrl/super key through the "mod" variable,
+//(see the top of "action == glfw.Press" section for an example)
+//regardless of left/right key used.
+//BUT for RELEASE, the "mod" variable will NOT tell you what key it is!
+//so you will have to handle both left & right modifier keys via the "action" variable!
 func onKey(m msg.MessageKey) {
 	if DebugPrintInputEvents {
 		if m.Action == 1 {
