@@ -12,8 +12,6 @@ import (
 
 	"os/exec"
 
-	"syscall"
-
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/msg"
 )
@@ -78,7 +76,6 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 
 	//Creates a new process group for the new process
 	//to avoid leaving orphan processes.
-	pr.cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	pr.CommandLine = strings.Join(tokens, " ")
 
 	pr.CmdOut = make(chan []byte, 2048)

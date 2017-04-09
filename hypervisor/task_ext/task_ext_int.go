@@ -29,7 +29,7 @@ func (pr *ExternalProcess) Start() error {
 }
 
 func (pr *ExternalProcess) TearDown() {
-	app.At(te, "ShutDown")
+	app.At(te, "TearDown")
 
 	pr.cmd.Process.Kill()
 
