@@ -29,7 +29,7 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 		st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 
 	case msg.Release:
-		// most keys will do nothing upon release
+		//most keys will do nothing upon release
 	}
 }
 
@@ -98,7 +98,11 @@ func (st *State) actOnRepeatableKeys(m msg.MessageKey, serializedMsg []byte) {
 }
 
 func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
-	hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
+	if m.HoldingControl {
+		hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
+	} else {
+		st.Cli.AdjustBackscrollOffset(int(m.Y))
+	}
 }
 
 func (st *State) actOnCommand() {
@@ -144,7 +148,7 @@ func (st *State) actOnCommand() {
 			st.PrintLn("    CTRL+C:           ___description goes here___")
 			st.PrintLn("    CTRL+Z:           ___description goes here___")
 
-		// listing processes
+		//listing processes
 		case "l":
 			extTaskMap := hypervisor.ExtProcessListGlobal.ProcessMap
 			if len(extTaskMap) == 0 {
@@ -168,7 +172,7 @@ func (st *State) actOnCommand() {
 					extProc.GetFullCommandLine() + " ]")
 			}
 
-		// attach external process to terminal Process
+		//attach external process to terminal Process
 		case "attach":
 			if len(args) < 1 {
 				st.PrintError("No process id passed! eg: attach 1")

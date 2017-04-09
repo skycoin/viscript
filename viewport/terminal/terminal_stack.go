@@ -143,52 +143,47 @@ func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSin
 	}
 }
 
-func (ts *TerminalStack) SetupTerminalDbus(TerminalId msg.TerminalId) {
-	//create process
+func (ts *TerminalStack) SetupTerminalDbus(termId msg.TerminalId) {
 	task := termTask.MakeNewTask()
-	pi := msg.ProcessInterface(task)
-	ProcessId := hypervisor.AddProcess(pi)
+	tskIF := msg.ProcessInterface(task)
+	tskId := hypervisor.AddProcess(tskIF)
 
-	//terminal dbus
-	rid1 := fmt.Sprintf("dbus.pubsub.terminal-%d", int(TerminalId)) //ResourceIdentifier
-	tcid := hypervisor.DbusGlobal.CreatePubsubChannel(              //terminal channel id
-		dbus.ResourceId(TerminalId), //owner id
-		dbus.ResourceTypeTerminal,   //owner type
+	//terminal
+	rid1 := fmt.Sprintf("dbus.pubsub.terminal-%d", int(termId)) //ResourceIdentifier
+	tcid := hypervisor.DbusGlobal.CreatePubsubChannel(          //terminal channel id
+		dbus.ResourceId(termId),   //owner id
+		dbus.ResourceTypeTerminal, //owner type
 		rid1)
 
-	//process dbus
-	rid2 := fmt.Sprintf("dbus.pubsub.process-%d", int(ProcessId)) //ResourceIdentifier
-	pcid := hypervisor.DbusGlobal.CreatePubsubChannel(            //process channel id
-		dbus.ResourceId(ProcessId), //owner id
-		dbus.ResourceTypeProcess,   //owner type
+	//process
+	rid2 := fmt.Sprintf("dbus.pubsub.process-%d", int(tskId)) //ResourceIdentifier
+	pcid := hypervisor.DbusGlobal.CreatePubsubChannel(        //process channel id
+		dbus.ResourceId(tskId),   //owner id
+		dbus.ResourceTypeProcess, //owner type
 		rid2)
 
 	task.OutChannelId = uint32(tcid)
-	ts.Terms[TerminalId].OutChannelId = uint32(pcid)
-	ts.Terms[TerminalId].AttachedProcess = ProcessId
+	ts.Terms[termId].OutChannelId = uint32(pcid)
+	ts.Terms[termId].AttachedProcess = tskId
 
 	//subscribe process to the terminal id
 	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
 		tcid,
-		dbus.ResourceId(ProcessId),
+		dbus.ResourceId(tskId),
 		dbus.ResourceTypeProcess,
-		ts.Terms[TerminalId].InChannel) // (a 2nd call had: task.GetIncomingChannel() as last parameter)
-
-	// fmt.Printf("\nPubSub Channel After Adding Subscriber\n %+v\n",
+		ts.Terms[termId].InChannel)
 
 	//subscribe terminal to the process id
 	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
 		pcid,
-		dbus.ResourceId(TerminalId),
+		dbus.ResourceId(termId),
 		dbus.ResourceTypeTerminal,
-		pi.GetIncomingChannel()) // (a 2nd call had: ts.Terms[TerminalId].InChannel) as last parameter)
-
-	// fmt.Printf("\nPubSub Channel After Adding Subscriber\n %+v\n",
+		tskIF.GetIncomingChannel())
 }
 
 func (ts *TerminalStack) SetFocused(topmostId msg.TerminalId) {
 	//store which is focused and bring it to top
-	newZ := float32(9.9) //FIXME (for all uses of this var, IF you ever want tons of terms)
+	newZ := float32(9.9) //FIXME (for all uses of this var, IF you ever want more than (about) 50 terms)
 	ts.FocusedId = topmostId
 	ts.Focused = ts.Terms[topmostId]
 	ts.Focused.Depth = newZ
