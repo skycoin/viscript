@@ -8,8 +8,8 @@ import (
 //ExtProcessInterface implementation
 
 func (pr *ExternalProcess) Tick() {
-	pr.ProcessInput()
-	pr.ProcessOutput()
+	pr.processInput()
+	pr.processOutput()
 }
 
 func (pr *ExternalProcess) Start() error {
@@ -20,10 +20,16 @@ func (pr *ExternalProcess) Start() error {
 		return err
 	}
 
+<<<<<<< refs/remotes/corpusc/master:hypervisor/task_ext/task_ext_int.go
 	//Run the routine which will read and send the data to CmdIn
 	go pr.cmdInRoutine()
 	//Run the routine which will read from Cmdout and write to process
 	go pr.cmdOutRoutine()
+=======
+	if !pr.detached {
+		pr.startRoutines()
+	}
+>>>>>>> ...:hypervisor/extprocess/task_extimpl.go
 
 	return nil
 }
@@ -40,19 +46,24 @@ func (pr *ExternalProcess) TearDown() {
 	close(pr.ProcessOut)
 	close(pr.ProcessExit)
 
-	close(pr.ProcessQuit)
-
 	pr.cmd = nil
 	pr.stdOutPipe = nil
 	pr.stdInPipe = nil
 }
 
-func (pr *ExternalProcess) GetId() msg.ExtProcessId {
-	return pr.Id
+func (pr *ExternalProcess) Attach() {
+	app.At(te, "Attach")
+	pr.detached = false
+	pr.startRoutines()
 }
 
-func (pr *ExternalProcess) GetRunningInBg() bool {
-	return pr.runningInBg
+func (pr *ExternalProcess) Detach() {
+	app.At(te, "Detach")
+	pr.detached = true
+}
+
+func (pr *ExternalProcess) GetId() msg.ExtProcessId {
+	return pr.Id
 }
 
 func (pr *ExternalProcess) GetFullCommandLine() string {
@@ -69,8 +80,4 @@ func (pr *ExternalProcess) GetProcessOutChannel() chan []byte {
 
 func (pr *ExternalProcess) GetProcessExitChannel() chan bool {
 	return pr.ProcessExit
-}
-
-func (pr *ExternalProcess) GetProcessQuitChannel() chan bool {
-	return pr.ProcessQuit
 }

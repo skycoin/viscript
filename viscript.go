@@ -86,6 +86,7 @@ func main() {
 		viewport.DispatchEvents() //event channel
 
 		hypervisor.TickTasks()
+		hypervisor.TickExtTasks()
 
 		viewport.PollUiInputEvents()
 		viewport.Tick()
