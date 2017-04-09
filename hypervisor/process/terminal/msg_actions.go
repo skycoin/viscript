@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/corpusc/viscript/hypervisor"
-	extTask "github.com/corpusc/viscript/hypervisor/extprocess"
+	extTask "github.com/corpusc/viscript/hypervisor/task_ext"
 	"github.com/corpusc/viscript/msg"
 )
 

@@ -18,7 +18,7 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-const te = "hypervisor/extprocess/task_ext" //path
+const te = "hypervisor/task_ext/task_ext" //path
 
 type ExternalProcess struct {
 	Id          msg.ExtProcessId
