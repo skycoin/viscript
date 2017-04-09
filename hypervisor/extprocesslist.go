@@ -45,8 +45,6 @@ func GetExtProcess(id msg.ExtProcessId) (msg.ExtProcessInterface, error) {
 
 func TickExtTasks() {
 	for _, p := range ExtProcessListGlobal.ProcessMap {
-		if !p.GetRunningInBg() {
-			p.Tick()
-		}
+		p.Tick()
 	}
 }

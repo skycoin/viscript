@@ -14,12 +14,12 @@ type ProcessInterface interface {
 type ExtProcessInterface interface {
 	Tick()
 	Start() error
+	Attach()
+	Detach()
 	TearDown()
 	GetId() ExtProcessId
-	GetRunningInBg() bool
 	GetFullCommandLine() string
 	GetProcessInChannel() chan []byte
 	GetProcessOutChannel() chan []byte
 	GetProcessExitChannel() chan bool
-	GetProcessQuitChannel() chan bool
 }
