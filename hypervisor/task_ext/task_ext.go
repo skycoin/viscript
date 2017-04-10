@@ -103,16 +103,19 @@ func (pr *ExternalProcess) cmdInRoutine() {
 	app.At(te, "cmdInRoutine")
 
 	for {
-
+		println("!!! INSIDE THE CMD IN !!!")
 		if pr.detached {
+			println("!!! DETACHED IS TRUE IN CMDIN !!!")
 			return
 		}
 
 		if pr.stdOutPipe == nil {
 			println("!!! Standard output pipe is nil. Sending Exit Request !!!")
 			pr.ProcessExit <- true
+			pr.detached = true
 			return
 		}
+
 		buf := make([]byte, 2048)
 
 		size, err := pr.stdOutPipe.Read(buf)
@@ -123,6 +126,7 @@ func (pr *ExternalProcess) cmdInRoutine() {
 			// 	println(s) //OS box print
 			// }
 			pr.ProcessExit <- true
+			pr.detached = true
 			return
 		}
 
@@ -136,7 +140,9 @@ func (pr *ExternalProcess) cmdOutRoutine() {
 	app.At(te, "cmdOutRoutine")
 
 	for {
+		println("!!! INSIDE THE CMD OUT !!!")
 		if pr.detached {
+			println("!!! DETACHED IS TRUE IN CMD OUT !!!")
 			return
 		}
 
@@ -146,6 +152,7 @@ func (pr *ExternalProcess) cmdOutRoutine() {
 			if pr.stdInPipe == nil {
 				println("!!! Standard input pipe is nil. Sending Exit Request !!!")
 				pr.ProcessExit <- true
+				pr.detached = true
 				return
 			}
 
@@ -153,6 +160,7 @@ func (pr *ExternalProcess) cmdOutRoutine() {
 			_, err := pr.stdInPipe.Write(append(data, '\n'))
 			if err != nil {
 				pr.ProcessExit <- true
+				pr.detached = true
 				return
 			}
 		}

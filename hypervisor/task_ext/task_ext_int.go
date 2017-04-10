@@ -20,10 +20,6 @@ func (pr *ExternalProcess) Start() error {
 		return err
 	}
 
-	if !pr.detached {
-		pr.startRoutines()
-	}
-
 	return nil
 }
 
@@ -32,16 +28,24 @@ func (pr *ExternalProcess) TearDown() {
 
 	pr.cmd.Process.Kill()
 
-	close(pr.CmdIn)
-	close(pr.CmdOut)
+	// close(pr.CmdIn)
+	// close(pr.CmdOut)
 
-	close(pr.ProcessIn)
-	close(pr.ProcessOut)
-	close(pr.ProcessExit)
+	// close(pr.ProcessIn)
+	// close(pr.ProcessOut)
+	// close(pr.ProcessExit)
 
-	pr.cmd = nil
-	pr.stdOutPipe = nil
-	pr.stdInPipe = nil
+	if pr.cmd != nil {
+		pr.cmd = nil
+	}
+
+	// if pr.stdOutPipe != nil {
+	// 	pr.stdOutPipe = nil
+	// }
+
+	// if pr.stdInPipe != nil {
+	// 	pr.stdInPipe = nil
+	// }
 }
 
 func (pr *ExternalProcess) Attach() {

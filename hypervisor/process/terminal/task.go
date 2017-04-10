@@ -63,9 +63,9 @@ func (pr *Process) AttachExternalProcess(extProc msg.ExtProcessInterface) {
 
 func (pr *Process) DetachExternalProcess() {
 	app.At(path, "DetachExternalProcess")
+	pr.attachedExtProcess.Detach()
 	pr.attachedExtProcess = nil
 	pr.hasExtProcAttached = false
-	pr.attachedExtProcess.Detach()
 }
 
 func (pr *Process) ExitExtProcess() {
@@ -74,11 +74,14 @@ func (pr *Process) ExitExtProcess() {
 	// store the exteral process id for removing from the global list
 	extProcId := pr.attachedExtProcess.GetId()
 
-	// detach external process
-	pr.DetachExternalProcess()
-
 	// teardown and cleanup external process
 	pr.attachedExtProcess.TearDown()
+
+	// set current attachedExtProcess to nil
+	pr.attachedExtProcess = nil
+
+	// set flag false
+	pr.hasExtProcAttached = false
 
 	// remove from the ExtProcessListGlobal.ProcessMap
 	hypervisor.RemoveExtProcess(extProcId)
@@ -113,6 +116,8 @@ func (pr *Process) Tick() {
 	case exit := <-pr.attachedExtProcess.GetProcessExitChannel():
 		if exit {
 			println("Got the exit in task, process is finished.")
+			// TODO: still not working yet. looking for the best way to finish
+			// multiple goroutines at the same time to avoid any side effects
 			// pr.ExitExtProcess()
 		}
 	case data := <-pr.attachedExtProcess.GetProcessOutChannel():

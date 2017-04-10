@@ -59,6 +59,7 @@ func (st *State) actOnOneTimeInputs(m msg.MessageKey) {
 			// 	st.PrintError(err.Error())
 			// }
 			// st.PrintLn("Attached process sent to background.")
+			// st.proc.DetachExternalProcess()
 		}
 
 	}
