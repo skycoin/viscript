@@ -81,16 +81,6 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 	pr.ProcessIn = make(chan []byte, 2048)
 	pr.ProcessOut = make(chan []byte, 2048)
 	pr.ProcessExit = make(chan bool)
-<<<<<<< HEAD:hypervisor/task_ext/task_ext.go
-<<<<<<< refs/remotes/corpusc/master:hypervisor/task_ext/task_ext.go
-	pr.ProcessQuit = make(chan bool)
-
-	//TODO: maybe passed as an arg on the start?
-	pr.runningInBg = true
-=======
->>>>>>> start and attach:hypervisor/extprocess/task_ext.go
-=======
->>>>>>> master:hypervisor/extprocess/task_ext.go
 
 	return nil
 }

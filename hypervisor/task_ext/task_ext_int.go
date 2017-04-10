@@ -20,22 +20,9 @@ func (pr *ExternalProcess) Start() error {
 		return err
 	}
 
-<<<<<<< HEAD:hypervisor/task_ext/task_ext_int.go
-<<<<<<< refs/remotes/corpusc/master:hypervisor/task_ext/task_ext_int.go
-	//Run the routine which will read and send the data to CmdIn
-	go pr.cmdInRoutine()
-	//Run the routine which will read from Cmdout and write to process
-	go pr.cmdOutRoutine()
-=======
 	if !pr.detached {
 		pr.startRoutines()
 	}
->>>>>>> ...:hypervisor/extprocess/task_extimpl.go
-=======
-	if !pr.detached {
-		pr.startRoutines()
-	}
->>>>>>> master:hypervisor/extprocess/task_extimpl.go
 
 	return nil
 }
