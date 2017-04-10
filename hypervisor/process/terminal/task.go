@@ -2,6 +2,7 @@ package process
 
 import (
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -67,34 +68,21 @@ func (pr *Process) DetachExternalProcess() {
 	pr.attachedExtProcess.Detach()
 }
 
-// In this case process should:
-// 1) Send true to the ProcessShouldEnd channel
-// 2) Call external process's TearDown
-// 3) Remove it from the GlobalList and further cleanup whatever will be needed
+func (pr *Process) ExitExtProcess() {
+	app.At(path, "ExitExtProcess")
 
-// func (pr *Process) ExitExtProcess() error {
-// 	_, err := pr.GetAttachedExtProcess()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	pr.DeleteAttachedExtProcess()
-// 	return nil
-// }
+	// store the exteral process id for removing from the global list
+	extProcId := pr.attachedExtProcess.GetId()
 
-// func (pr *Process) DeleteAttachedExtProcess() error {
-// 	app.At(path, "DeleteAttachedExtProcess")
+	// detach external process
+	pr.DetachExternalProcess()
 
-// 	extProc, err := pr.GetAttachedExtProcess()
-// 	if err != nil {
-// 		return err
-// 	}
+	// teardown and cleanup external process
+	pr.attachedExtProcess.TearDown()
 
-// 	pr.extProcessId = 0
-// 	pr.extProcAttached = false
-// 	extProc.ShutDown()
-// 	delete(pr.extProcesses, pr.extProcessId)
-// 	return nil
-// }
+	// remove from the ExtProcessListGlobal.ProcessMap
+	hypervisor.RemoveExtProcess(extProcId)
+}
 
 //implement the interface
 
@@ -125,7 +113,7 @@ func (pr *Process) Tick() {
 	case exit := <-pr.attachedExtProcess.GetProcessExitChannel():
 		if exit {
 			println("Got the exit in task, process is finished.")
-			// TODO: Exit here
+			// pr.ExitExtProcess()
 		}
 	case data := <-pr.attachedExtProcess.GetProcessOutChannel():
 		println("Received data from external process, sending to term.")

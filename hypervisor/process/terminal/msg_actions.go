@@ -185,7 +185,6 @@ func (st *State) actOnCommand() {
 
 				st.PrintLn(extProc.GetFullCommandLine())
 
-				// TODO: finish this
 				st.proc.AttachExternalProcess(extProc)
 			}
 
