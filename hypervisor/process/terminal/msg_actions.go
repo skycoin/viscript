@@ -175,18 +175,19 @@ func (st *State) actOnCommand() {
 					extProc.GetFullCommandLine() + " ]")
 			}
 
-		//attach external process to terminal Process
+		//attach external task to terminal task
 		case "attach":
 			if len(args) < 1 {
-				st.PrintError("No process id passed! eg: attach 1")
+				st.PrintError("No task id passed! eg: attach 1")
 			} else {
 				passedId, err := strconv.Atoi(args[0])
 				if err != nil {
-					st.PrintError("Process id must be an integer.")
+					st.PrintError("Task id must be an integer.")
 					break
 				}
 
 				extProcId := msg.ExtProcessId(passedId)
+
 				extProc, err := hypervisor.GetExtProcess(extProcId)
 				if err != nil {
 					st.PrintError(err.Error())
@@ -194,7 +195,6 @@ func (st *State) actOnCommand() {
 				}
 
 				st.PrintLn(extProc.GetFullCommandLine())
-
 				st.proc.AttachExternalProcess(extProc)
 			}
 
@@ -205,7 +205,7 @@ func (st *State) actOnCommand() {
 			// tokens := []string{"go", "run", "rpc/cli/cli.go"}
 			// err := st.proc.AddAttachStart(tokens)
 			// if err != nil {
-			// 	st.PrintLn(err.Error())
+			// 	st.PrintError(err.Error())
 			// }
 
 		//start new external task, detached running in bg by default
@@ -223,13 +223,13 @@ func (st *State) actOnCommand() {
 
 				newExtProc, err := extTask.MakeNewTaskExternal(args, detached)
 				if err != nil {
-					st.PrintLn(err.Error())
+					st.PrintError(err.Error())
 					break
 				}
 
 				err = newExtProc.Start()
 				if err != nil {
-					st.PrintLn(err.Error())
+					st.PrintError(err.Error())
 					break
 				}
 

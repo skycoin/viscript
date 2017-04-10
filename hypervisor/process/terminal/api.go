@@ -30,7 +30,15 @@ func (st *State) PrintLn(s string) {
 }
 
 func (st *State) PrintError(s string) {
-	st.PrintLn("**** ERROR! ****    " + s)
+	s = "**** ERROR! ****    " + s
+
+	//to OS box 1st (more reliable)
+	for i := 0; i < 4; i++ {
+		println(s)
+	}
+
+	//to terminal (our code is more likely to crash, obscuring error message)
+	st.PrintLn(s)
 }
 
 func (st *State) Printf(format string, vars ...interface{}) {

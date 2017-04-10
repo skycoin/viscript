@@ -120,10 +120,9 @@ func (pr *ExternalProcess) cmdInRoutine() {
 
 		size, err := pr.stdOutPipe.Read(buf)
 		if err != nil {
-			// f := err.Error()
-			// s := fmt.Sprintf("**** ERROR! **** From \"%s\".  Returning. %s", pr.CommandLine, f)
+			// s := fmt.Sprintf("**** ERROR! **** From \"%s\".  Returning. %s", pr.CommandLine, err.Error())
 			// for i := 0; i < 5; i++ {
-			// 	println(s) //OS box print
+			// 	println(s) //to OS box
 			// }
 			pr.ProcessExit <- true
 			pr.detached = true
