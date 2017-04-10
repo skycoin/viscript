@@ -8,8 +8,8 @@ import (
 //ExtProcessInterface implementation
 
 func (pr *ExternalProcess) Tick() {
-	pr.ProcessInput()
-	pr.ProcessOutput()
+	pr.processInput()
+	pr.processOutput()
 }
 
 func (pr *ExternalProcess) Start() error {
@@ -20,11 +20,6 @@ func (pr *ExternalProcess) Start() error {
 		return err
 	}
 
-	//Run the routine which will read and send the data to CmdIn
-	go pr.cmdInRoutine()
-	//Run the routine which will read from Cmdout and write to process
-	go pr.cmdOutRoutine()
-
 	return nil
 }
 
@@ -33,26 +28,39 @@ func (pr *ExternalProcess) TearDown() {
 
 	pr.cmd.Process.Kill()
 
-	close(pr.CmdIn)
-	close(pr.CmdOut)
+	// close(pr.CmdIn)
+	// close(pr.CmdOut)
 
-	close(pr.ProcessIn)
-	close(pr.ProcessOut)
-	close(pr.ProcessExit)
+	// close(pr.ProcessIn)
+	// close(pr.ProcessOut)
+	// close(pr.ProcessExit)
 
-	close(pr.ProcessQuit)
+	if pr.cmd != nil {
+		pr.cmd = nil
+	}
 
-	pr.cmd = nil
-	pr.stdOutPipe = nil
-	pr.stdInPipe = nil
+	// if pr.stdOutPipe != nil {
+	// 	pr.stdOutPipe = nil
+	// }
+
+	// if pr.stdInPipe != nil {
+	// 	pr.stdInPipe = nil
+	// }
+}
+
+func (pr *ExternalProcess) Attach() {
+	app.At(te, "Attach")
+	pr.detached = false
+	pr.startRoutines()
+}
+
+func (pr *ExternalProcess) Detach() {
+	app.At(te, "Detach")
+	pr.detached = true
 }
 
 func (pr *ExternalProcess) GetId() msg.ExtProcessId {
 	return pr.Id
-}
-
-func (pr *ExternalProcess) GetRunningInBg() bool {
-	return pr.runningInBg
 }
 
 func (pr *ExternalProcess) GetFullCommandLine() string {
@@ -69,8 +77,4 @@ func (pr *ExternalProcess) GetProcessOutChannel() chan []byte {
 
 func (pr *ExternalProcess) GetProcessExitChannel() chan bool {
 	return pr.ProcessExit
-}
-
-func (pr *ExternalProcess) GetProcessQuitChannel() chan bool {
-	return pr.ProcessQuit
 }

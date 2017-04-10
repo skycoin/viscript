@@ -43,10 +43,12 @@ func GetExtProcess(id msg.ExtProcessId) (msg.ExtProcessInterface, error) {
 	return nil, err
 }
 
+func RemoveExtProcess(id msg.ExtProcessId) {
+	delete(ExtProcessListGlobal.ProcessMap, id)
+}
+
 func TickExtTasks() {
 	for _, p := range ExtProcessListGlobal.ProcessMap {
-		if !p.GetRunningInBg() {
-			p.Tick()
-		}
+		p.Tick()
 	}
 }

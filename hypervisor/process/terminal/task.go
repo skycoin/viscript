@@ -2,6 +2,7 @@ package process
 
 import (
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -57,79 +58,34 @@ func (pr *Process) AttachExternalProcess(extProc msg.ExtProcessInterface) {
 	app.At(path, "AttachExternalProcess")
 	pr.attachedExtProcess = extProc
 	pr.hasExtProcAttached = true
+	pr.attachedExtProcess.Attach()
 }
 
-// func (pr *Process) SendAttachedToBg() error {
-// 	if pr.HasExtProcessAttached() {
-// 		_, err := pr.GetAttachedExtProcess()
-// 		if err != nil {
-// 			return err
-// 		}
-// 		pr.extProcAttached = false
-// 		pr.extProcessId = 0
-// 	}
-// 	return nil
-// }
+func (pr *Process) DetachExternalProcess() {
+	app.At(path, "DetachExternalProcess")
+	pr.attachedExtProcess.Detach()
+	pr.attachedExtProcess = nil
+	pr.hasExtProcAttached = false
+}
 
-// func (pr *Process) ExitExtProcess() error {
-// 	_, err := pr.GetAttachedExtProcess()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	pr.DeleteAttachedExtProcess()
-// 	return nil
-// }
+func (pr *Process) ExitExtProcess() {
+	app.At(path, "ExitExtProcess")
 
-// func (pr *Process) DeleteAttachedExtProcess() error {
-// 	app.At(path, "DeleteAttachedExtProcess")
+	// store the exteral process id for removing from the global list
+	extProcId := pr.attachedExtProcess.GetId()
 
-// 	extProc, err := pr.GetAttachedExtProcess()
-// 	if err != nil {
-// 		return err
-// 	}
+	// teardown and cleanup external process
+	pr.attachedExtProcess.TearDown()
 
-// 	pr.extProcessId = 0
-// 	pr.extProcAttached = false
-// 	extProc.ShutDown()
-// 	delete(pr.extProcesses, pr.extProcessId)
-// 	return nil
-// }
+	// set current attachedExtProcess to nil
+	pr.attachedExtProcess = nil
 
-// func (pr *Process) AddTaskExternalAndStart(tokens []string) (msg.ExtProcessId, error) {
-// 	app.At(path, "AddTaskExternalAndStart")
+	// set flag false
+	pr.hasExtProcAttached = false
 
-// 	newExtProc, err := MakeNewTaskExternal(tokens)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	pr.extProcessCounter += 1 // Sequential
-// 	pr.extProcesses[pr.extProcessCounter] = newExtProc
-
-// 	if err = newExtProc.Start(); err != nil {
-// 		return 0, err
-// 	}
-
-// 	return pr.extProcessCounter, nil
-// }
-
-// func (pr *Process) AttachExtProcess(pID msg.ExtProcessId) {
-// 	app.At(path, "AttachExtProcess")
-// 	pr.extProcessId = pID
-// 	pr.extProcAttached = true
-// }
-
-// func (pr *Process) AddAttachStart(tokens []string) error {
-// 	app.At(path, "AddAttachStart")
-
-// 	pID, err := pr.AddTaskExternalAndStart(tokens)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	pr.AttachExtProcess(pID)
-// 	return nil
-// }
+	// remove from the ExtProcessListGlobal.ProcessMap
+	hypervisor.RemoveExtProcess(extProcId)
+}
 
 //implement the interface
 
@@ -151,4 +107,22 @@ func (pr *Process) GetIncomingChannel() chan []byte {
 
 func (pr *Process) Tick() {
 	pr.State.HandleMessages()
+
+	if !pr.hasExtProcAttached {
+		return
+	}
+
+	select {
+	case exit := <-pr.attachedExtProcess.GetProcessExitChannel():
+		if exit {
+			println("Got the exit in task, process is finished.")
+			// TODO: still not working yet. looking for the best way to finish
+			// multiple goroutines at the same time to avoid any side effects
+			// pr.ExitExtProcess()
+		}
+	case data := <-pr.attachedExtProcess.GetProcessOutChannel():
+		println("Received data from external process, sending to term.")
+		pr.State.PrintLn(string(data))
+	default:
+	}
 }

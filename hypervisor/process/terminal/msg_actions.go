@@ -59,6 +59,7 @@ func (st *State) actOnOneTimeInputs(m msg.MessageKey) {
 			// 	st.PrintError(err.Error())
 			// }
 			// st.PrintLn("Attached process sent to background.")
+			// st.proc.DetachExternalProcess()
 		}
 
 	}
@@ -120,15 +121,8 @@ func (st *State) actOnCommand() {
 	}
 
 	if st.proc.HasExtProcessAttached() {
-		// TODO: Redirect input to the attached process with new implementations
-		// extProc, err := st.proc.GetAttachedExtProcess()
-
-		// if err != nil {
-		// 	println(err.Error())
-		// 	return
-		// }
-
-		// extProc.ProcessIn <- []byte(st.Cli.CurrentCommandLine())
+		extProcInChannel := st.proc.attachedExtProcess.GetProcessInChannel()
+		extProcInChannel <- []byte(st.Cli.CurrentCommandLine())
 	} else { //internal task
 		switch cmd {
 
@@ -192,8 +186,7 @@ func (st *State) actOnCommand() {
 
 				st.PrintLn(extProc.GetFullCommandLine())
 
-				//TODO: finish this
-				// st.proc.AttachExternalProcess(extProc)
+				st.proc.AttachExternalProcess(extProc)
 			}
 
 		case "r":
@@ -213,7 +206,13 @@ func (st *State) actOnCommand() {
 			if len(args) < 1 {
 				st.PrintError("Must pass a command into Start!")
 			} else {
-				newExtProc, err := extTask.MakeNewTaskExternal(args)
+				detached := args[0] != "-a"
+
+				if !detached {
+					args = args[1:]
+				}
+
+				newExtProc, err := extTask.MakeNewTaskExternal(args, detached)
 				if err != nil {
 					st.PrintLn(err.Error())
 					break
@@ -225,7 +224,13 @@ func (st *State) actOnCommand() {
 					break
 				}
 
-				procId := hypervisor.AddExtProcess(newExtProc.GetExtProcessInterface())
+				extProcInterface := newExtProc.GetExtProcessInterface()
+
+				procId := hypervisor.AddExtProcess(extProcInterface)
+
+				if !detached {
+					st.proc.AttachExternalProcess(extProcInterface)
+				}
 
 				st.PrintLn("Added External Process (ID: " +
 					strconv.Itoa(int(procId)) + ", Command: " +
