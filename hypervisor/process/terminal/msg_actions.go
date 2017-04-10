@@ -16,13 +16,11 @@ func (st *State) onChar(m msg.MessageChar) {
 }
 
 func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
-	//println("process/terminal/events.onKey()")
-
 	switch msg.Action(m.Action) {
 
 	case msg.Press: //one time, when key is first pressed
 		//modifier key combos should probably never auto-repeat
-		st.actOnOneTimeInputs(m)
+		st.actOnOneTimeHotkeys(m)
 		fallthrough
 	case msg.Repeat: //constantly repeated for as long as key is pressed
 		st.actOnRepeatableKeys(m, serializedMsg)
@@ -33,7 +31,7 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 	}
 }
 
-func (st *State) actOnOneTimeInputs(m msg.MessageKey) {
+func (st *State) actOnOneTimeHotkeys(m msg.MessageKey) {
 	switch m.Key {
 
 	case msg.KeyC:
@@ -126,21 +124,25 @@ func (st *State) actOnCommand() {
 	} else { //internal task
 		switch cmd {
 
+		//GEORGE TODO: give descriptions for what these do, and keep them updated
+		//(if their functionality changes).
+		//also keep a full command list updated with what's currently working,
+		//and commented out if they are currently disabled
 		case "?":
 			fallthrough
 		case "h":
 			fallthrough
 		case "help":
 			st.PrintLn("Current commands:")
-			st.PrintLn("    START:            Start external task.")
+			st.PrintLn("    start:            Start external task.")
+			st.PrintLn("    attach:           Attach external process to terminal.")
+			st.PrintLn("    new_terminal:     Add new terminal.")
 			st.PrintLn("    l:                ___description goes here___")
-			st.PrintLn("    ls:               ___description goes here___")
 			st.PrintLn("    list_processes:   ___description goes here___")
-			st.PrintLn("    FG:               ___description goes here___")
-			st.PrintLn("    RPC:              Issues command: \"go run rpc/cli/cli.go\"")
-			st.PrintLn("Current hotkeys:")
-			st.PrintLn("    CTRL+C:           ___description goes here___")
-			st.PrintLn("    CTRL+Z:           ___description goes here___")
+			//st.PrintLn("    rpc:              Issues command: \"go run rpc/cli/cli.go\"")
+			//st.PrintLn("Current hotkeys:")
+			//st.PrintLn("    CTRL+C:           ___description goes here___")
+			//st.PrintLn("    CTRL+Z:           ___description goes here___")
 
 		//listing processes
 		case "l":
@@ -149,10 +151,16 @@ func (st *State) actOnCommand() {
 				st.PrintLn("No external processes running.\n" +
 					"Try starting one with \"start\" command (\"help\" or \"h\" for help).")
 			}
+
 			for procId, extProc := range extTaskMap {
 				baseCommand := strings.Split(extProc.GetFullCommandLine(), " ")[0]
 				st.PrintLn("[ " + strconv.Itoa(int(procId)) + " ] -> [ " + baseCommand + " ]")
 			}
+
+		//FIXME: ummm, isn't THIS listing processes?  it's a separate case from above.
+		//unless these will be diverging significantly soon, they should both use the
+		//same function, since they are copy/pasted code with small differences.
+		//you could pass in a bool to determine which of the 2 cases you want.
 		case "ls":
 			fallthrough
 		case "list_processes":
@@ -161,6 +169,7 @@ func (st *State) actOnCommand() {
 				st.PrintLn("No external processes running.\n" +
 					"Try starting one with \"start\" command (\"help\" or \"h\" for help).")
 			}
+
 			for procId, extProc := range extTaskMap {
 				st.PrintLn("[ " + strconv.Itoa(int(procId)) + " ] -> [ " +
 					extProc.GetFullCommandLine() + " ]")
@@ -199,7 +208,7 @@ func (st *State) actOnCommand() {
 			// 	st.PrintLn(err.Error())
 			// }
 
-		//start new external process, detached running in bg by default
+		//start new external task, detached running in bg by default
 		case "s":
 			fallthrough
 		case "start":
