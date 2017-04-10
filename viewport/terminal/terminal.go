@@ -3,6 +3,7 @@ package terminal
 import (
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor"
+	"github.com/corpusc/viscript/hypervisor/input/keyboard"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -10,7 +11,7 @@ const (
 	// new terminals start with these values
 	NumColumns     = 64 // num == count/number of...
 	NumRows        = 32
-	NumPromptLines = 2 //this * t.GridSize.X - 1 == max command size
+	NumPromptLines = 2
 )
 
 type Terminal struct {
@@ -18,6 +19,8 @@ type Terminal struct {
 	AttachedProcess msg.ProcessId
 	OutChannelId    uint32 //id of pubsub channel
 	InChannel       chan []byte
+	ResizingRight   bool
+	ResizingBottom  bool
 
 	//int/character grid space
 	Curr     app.Vec2I //current insert position
@@ -31,9 +34,6 @@ type Terminal struct {
 	CharSize   app.Vec2F
 	Bounds     *app.Rectangle
 	Depth      float32 //0 for lowest
-
-	ResizingRight  bool
-	ResizingBottom bool
 }
 
 func (t *Terminal) Init() {
@@ -52,6 +52,14 @@ func (t *Terminal) Init() {
 	t.ResizingBottom = false
 }
 
+func (t *Terminal) GetVisualInfo() *msg.MessageVisualInfo {
+	return &msg.MessageVisualInfo{
+		uint32(t.GridSize.X),
+		uint32(t.GridSize.Y),
+		uint32(NumPromptLines),
+		uint32(t.Curr.Y)} //FIXME?  the X component is being ignored.  never need it?
+}
+
 func (t *Terminal) IsResizing() bool {
 	return t.ResizingRight || t.ResizingBottom
 }
@@ -61,10 +69,48 @@ func (t *Terminal) SetResizingOff() {
 	t.ResizingBottom = false
 }
 
+func (t *Terminal) ResizeHorizontally(newRight float32) {
+	t.ResizingRight = true
+
+	if keyboard.ControlKeyIsDown {
+		t.Bounds.Right = newRight
+	} else {
+		delta := newRight - t.Bounds.Right
+
+		if delta > t.CharSize.X {
+			t.Bounds.Right += t.CharSize.X
+		} else if delta < -t.CharSize.X {
+			t.Bounds.Right -= t.CharSize.X
+		}
+	}
+}
+
+func (t *Terminal) ResizeVertically(newBottom float32) {
+	t.ResizingBottom = true
+
+	if keyboard.ControlKeyIsDown {
+		t.Bounds.Bottom = newBottom
+	} else {
+		delta := newBottom - t.Bounds.Bottom
+
+		if delta > t.CharSize.Y {
+			t.Bounds.Bottom += t.CharSize.Y
+		} else if delta < -t.CharSize.Y {
+			t.Bounds.Bottom -= t.CharSize.Y
+		}
+	}
+}
+
 func (t *Terminal) SetSize() {
 	println("<Terminal>.SetSize()        --------FIXME once we allow dragging edges")
 	t.CharSize.X = (t.Bounds.Width() - t.BorderSize*2) / float32(t.GridSize.X)
 	t.CharSize.Y = (t.Bounds.Height() - t.BorderSize*2) / float32(t.GridSize.Y)
+
+	m := msg.Serialize(msg.TypeVisualInfo, *t.GetVisualInfo())
+
+	if t.OutChannelId != 0 {
+		hypervisor.DbusGlobal.PublishTo(t.OutChannelId, m)
+	}
 }
 
 func (t *Terminal) Tick() {

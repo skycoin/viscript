@@ -15,7 +15,6 @@ import (
 /*
 	What operations?
 	- delete terminal
-	- resize terminal (in pixels or chars)
 */
 
 type TerminalStack struct {
@@ -67,9 +66,7 @@ func (ts *TerminalStack) Add() msg.TerminalId {
 	ts.nextRect.Bottom -= ts.nextOffset.Y
 	ts.nextRect.Left += ts.nextOffset.X
 
-	//hook up proccess
-	ts.SetupTerminalDbus(tid)
-
+	ts.SetupTerminal(tid)
 	return tid
 }
 
@@ -82,38 +79,6 @@ func (ts *TerminalStack) RemoveTerminal(id msg.TerminalId) {
 func (ts *TerminalStack) Tick() {
 	for _, term := range ts.Terms {
 		term.Tick()
-	}
-}
-
-func (ts *TerminalStack) ResizeFocusedTerminalRight(newRight float32) {
-	ts.Focused.ResizingRight = true
-
-	if keyboard.ControlKeyIsDown {
-		ts.Focused.Bounds.Right = newRight
-	} else {
-		delta := newRight - ts.Focused.Bounds.Right
-
-		if delta > ts.Focused.CharSize.X {
-			ts.Focused.Bounds.Right += ts.Focused.CharSize.X
-		} else if delta < -ts.Focused.CharSize.X {
-			ts.Focused.Bounds.Right -= ts.Focused.CharSize.X
-		}
-	}
-}
-
-func (ts *TerminalStack) ResizeFocusedTerminalBottom(newBottom float32) {
-	ts.Focused.ResizingBottom = true
-
-	if keyboard.ControlKeyIsDown {
-		ts.Focused.Bounds.Bottom = newBottom
-	} else {
-		delta := newBottom - ts.Focused.Bounds.Bottom
-
-		if delta > ts.Focused.CharSize.Y {
-			ts.Focused.Bounds.Bottom += ts.Focused.CharSize.Y
-		} else if delta < -ts.Focused.CharSize.Y {
-			ts.Focused.Bounds.Bottom -= ts.Focused.CharSize.Y
-		}
 	}
 }
 
@@ -143,10 +108,15 @@ func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSin
 	}
 }
 
-func (ts *TerminalStack) SetupTerminalDbus(termId msg.TerminalId) {
+func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
+	//make it's task
 	task := termTask.MakeNewTask()
 	tskIF := msg.ProcessInterface(task)
 	tskId := hypervisor.AddProcess(tskIF)
+
+	task.Visual = ts.Terms[termId].GetVisualInfo()
+
+	/* the rest is all DBUS related */
 
 	//terminal
 	rid1 := fmt.Sprintf("dbus.pubsub.terminal-%d", int(termId)) //ResourceIdentifier

@@ -50,11 +50,13 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 		if mouse.NearRight(foc.Bounds) && !foc.ResizingBottom {
 			gl.SetHResizePointer()
 			mouse.IncreaseNearnessThreshold()
-			Terms.ResizeFocusedTerminalRight(mouse.GlPos.X)
+
+			Terms.Focused.ResizeHorizontally(mouse.GlPos.X)
 		} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight {
 			gl.SetVResizePointer()
 			mouse.IncreaseNearnessThreshold()
-			Terms.ResizeFocusedTerminalBottom(mouse.GlPos.Y)
+
+			Terms.Focused.ResizeVertically(mouse.GlPos.Y)
 		}
 
 		if mouse.PointerIsInside(foc.Bounds) && !foc.IsResizing() {

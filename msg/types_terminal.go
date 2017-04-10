@@ -3,12 +3,20 @@ package msg
 const CATEGORY_Terminal uint16 = 0x0200 //flag
 
 const (
-	TypeCommandLine     = 1 + CATEGORY_Terminal
-	TypePutChar         = 2 + CATEGORY_Terminal
-	TypeSetCharAt       = 3 + CATEGORY_Terminal
-	TypeSetCursor       = 4 + CATEGORY_Terminal
-	TypeFrameBufferSize = 5 + CATEGORY_Terminal //start of low level events
+	TypeVisualInfo      = 1 + CATEGORY_Terminal
+	TypeCommandLine     = 2 + CATEGORY_Terminal
+	TypePutChar         = 3 + CATEGORY_Terminal
+	TypeSetCharAt       = 4 + CATEGORY_Terminal
+	TypeSetCursor       = 5 + CATEGORY_Terminal
+	TypeFrameBufferSize = 6 + CATEGORY_Terminal //start of low level events
 )
+
+type MessageVisualInfo struct {
+	NumColumns       uint32
+	NumRows          uint32
+	NumRowsForPrompt uint32
+	CurrRow          uint32
+}
 
 type MessageCommandLine struct { //updates/replaces current command line on any change
 	TermId       uint32

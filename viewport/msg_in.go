@@ -9,56 +9,56 @@ import (
 
 var DebugPrintInputEvents = true
 
-func UnpackMessage(message []byte) []byte {
-	switch msg.GetType(message) {
+func UnpackMessage(msgIn []byte) []byte {
+	switch msg.GetType(msgIn) {
 
 	case msg.TypeMousePos:
 		var m msg.MessageMousePos
-		msg.MustDeserialize(message, &m)
+		msg.MustDeserialize(msgIn, &m)
 		onMouseCursorPos(m)
 
 	case msg.TypeMouseScroll:
 		var m msg.MessageMouseScroll
-		msg.MustDeserialize(message, &m)
+		msg.MustDeserialize(msgIn, &m)
 		onMouseScroll(m)
 
 		if Terms.Focused != nil {
-			Terms.Focused.RelayToTask(message)
+			Terms.Focused.RelayToTask(msgIn)
 		}
 
 	case msg.TypeMouseButton:
 		var m msg.MessageMouseButton
-		msg.MustDeserialize(message, &m)
+		msg.MustDeserialize(msgIn, &m)
 		onMouseButton(m)
 
 	case msg.TypeChar:
 		var m msg.MessageChar
-		msg.MustDeserialize(message, &m)
+		msg.MustDeserialize(msgIn, &m)
 		onChar(m)
 
 		if Terms.Focused != nil {
-			Terms.Focused.RelayToTask(message)
+			Terms.Focused.RelayToTask(msgIn)
 		}
 
 	case msg.TypeKey:
 		var m msg.MessageKey
-		msg.MustDeserialize(message, &m)
+		msg.MustDeserialize(msgIn, &m)
 		onKey(m)
 
 		if Terms.Focused != nil {
-			Terms.Focused.RelayToTask(message)
+			Terms.Focused.RelayToTask(msgIn)
 		}
 
 	case msg.TypeFrameBufferSize:
 		var m msg.MessageFrameBufferSize
-		msg.MustDeserialize(message, &m)
+		msg.MustDeserialize(msgIn, &m)
 		onFrameBufferSize(m)
 
 	default:
 		app.At("viewport/msg_in", "************ UNHANDLED MESSAGE TYPE! ************")
 	}
 
-	return message
+	return msgIn
 }
 
 func onFrameBufferSize(m msg.MessageFrameBufferSize) {
