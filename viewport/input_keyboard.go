@@ -10,7 +10,8 @@ import (
 
 func onChar(m msg.MessageChar) {
 	if DebugPrintInputEvents {
-		// println("\n\nTypeChar:", string(m.Char))
+		println("msg.TypeChar", " ["+string(m.Char)+"]") //if they want to see what events are triggered,
+		//we shouldn't hide them without good reason (like the super spammy mouse moves)
 	}
 }
 
@@ -25,12 +26,16 @@ func onKey(m msg.MessageKey) {
 		if m.Action == 1 {
 			println()
 		}
-		fmt.Printf("\nTypeKey")
+
+		fmt.Printf("msg.TypeKey")
 		showUInt32("Key", m.Key)
 		showUInt32("Scan", m.Scan)
-		showUInt8("Act", m.Action)
+		showUInt8("Action", m.Action)
 		showUInt8("Mod", m.Mod)
-		// println()
+		println() //needed for separation between event's feedback lines.
+		//(they are composed without newlines)
+		//George: perhaps you noticed, after you disabled this, that additional feedback
+		//gets appended to the right of existing lines instead of having their own lines?
 	}
 
 	if msg.Action(m.Action) == msg.Release {
@@ -43,45 +48,45 @@ func onKey(m msg.MessageKey) {
 		case msg.KeyLeftShift:
 			fallthrough
 		case msg.KeyRightShift:
-			println("Done selecting")
+			println("Done selecting\n")
 			keyboard.ShiftKeyIsDown = false
 			//foc.Selection.CurrentlySelecting = false // TODO?  possibly flip around if selectionStart comes after selectionEnd in the page flow?
 
 		case msg.KeyLeftControl:
 			fallthrough
 		case msg.KeyRightControl:
-			println("Control RELEASED")
+			println("Control RELEASED\n")
 			keyboard.ControlKeyIsDown = false
 
 		case msg.KeyLeftAlt:
 			fallthrough
 		case msg.KeyRightAlt:
-			println("Alt RELEASED")
+			println("Alt RELEASED\n")
 			keyboard.AltKeyIsDown = false
 
 		case msg.KeyLeftSuper:
 			fallthrough
 		case msg.KeyRightSuper:
-			println("'Super' modifier key RELEASED")
+			println("'Super' modifier key RELEASED\n")
 			keyboard.SuperKeyIsDown = false
 		}
 	} else { //     .Press   or   .Repeat
 		//mods
 		switch msg.ModifierKey(m.Mod) {
 		case msg.ModShift:
-			println("PRESSED/REPEATED ModShift --- Started selection")
+			println("PRESSED/REPEATED ModShift --- Started selection\n")
 			keyboard.ShiftKeyIsDown = true
 			// foc.Selection.CurrentlySelecting = true
 			// foc.Selection.StartX = foc.CursX
 			// foc.Selection.StartY = foc.CursY
 		case msg.ModAlt:
-			println("PRESSED/REPEATED ModAlt")
+			println("PRESSED/REPEATED ModAlt\n")
 			keyboard.AltKeyIsDown = true
 		case msg.ModControl:
-			println("PRESSED/REPEATED ModControl")
+			println("PRESSED/REPEATED ModControl\n")
 			keyboard.ControlKeyIsDown = true
 		case msg.ModSuper:
-			println("PRESSED/REPEATED ModSuper")
+			println("PRESSED/REPEATED ModSuper\n")
 			keyboard.SuperKeyIsDown = true
 		}
 

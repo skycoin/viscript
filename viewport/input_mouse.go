@@ -12,7 +12,7 @@ import (
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(m msg.MessageMousePos) {
 	// if DebugPrintInputEvents {
-	// 	fmt.Print("TypeMousePos")
+	// 	fmt.Print("msg.TypeMousePos")
 	// 	showFloat64("X", m.X)
 	// 	showFloat64("Y", m.Y)
 	// 	println()
@@ -90,7 +90,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 
 func onMouseScroll(m msg.MessageMouseScroll) {
 	if DebugPrintInputEvents {
-		print("TypeMouseScroll")
+		print("msg.TypeMouseScroll")
 		showFloat64("X Offset", m.X)
 		showFloat64("Y Offset", m.Y)
 		showBool("HoldingControl", m.HoldingControl)
@@ -101,7 +101,7 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 // apparently every time this is fired, a mouse position event is ALSO fired
 func onMouseButton(m msg.MessageMouseButton) {
 	if DebugPrintInputEvents {
-		fmt.Print("TypeMouseButton")
+		fmt.Print("msg.TypeMouseButton")
 		showUInt8("Button", m.Button)
 		showUInt8("Action", m.Action)
 		showUInt8("Mod", m.Mod)
@@ -208,21 +208,21 @@ func respondToAnyMenuButtonClicks() {
 
 // the rest of these funcs are almost identical, just top 2 vars customized (and string format)
 func showBool(s string, x bool) {
-	fmt.Printf(" [%s: %t]", s, x)
+	fmt.Printf("   [%s: %t]", s, x)
 }
 
 func showUInt8(s string, x uint8) {
-	fmt.Printf(" [%s: %d]", s, x)
+	fmt.Printf("   [%s: %d]", s, x)
 }
 
 func showSInt32(s string, x int32) {
-	fmt.Printf(" [%s: %d]", s, x)
+	fmt.Printf("   [%s: %d]", s, x)
 }
 
 func showUInt32(s string, x uint32) {
-	fmt.Printf(" [%s: %d]", s, x)
+	fmt.Printf("   [%s: %d]", s, x)
 }
 
 func showFloat64(s string, f float64) {
-	fmt.Printf(" [%s: %.1f]", s, f)
+	fmt.Printf("   [%s: %.1f]", s, f)
 }

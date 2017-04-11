@@ -63,7 +63,7 @@ func UnpackMessage(msgIn []byte) []byte {
 
 func onFrameBufferSize(m msg.MessageFrameBufferSize) {
 	if DebugPrintInputEvents {
-		print("TypeFrameBufferSize")
+		print("msg.TypeFrameBufferSize")
 		showUInt32("X", m.X)
 		showUInt32("Y", m.Y)
 		println()
