@@ -42,7 +42,7 @@ func (st *State) PrintError(s string) {
 }
 
 func (st *State) Printf(format string, vars ...interface{}) {
-	formattedString := fmt.Sprintf(format, vars)
+	formattedString := fmt.Sprintf(format, vars...)
 	for _, c := range formattedString {
 		st.sendChar(uint32(c))
 	}
