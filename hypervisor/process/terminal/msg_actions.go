@@ -121,142 +121,138 @@ func (st *State) actOnCommand() {
 	if st.proc.HasExtProcessAttached() {
 		extProcInChannel := st.proc.attachedExtProcess.GetProcessInChannel()
 		extProcInChannel <- []byte(st.Cli.CurrentCommandLine())
-	} else { //internal task
-		switch cmd {
+		return
+	}
 
-		//GEORGE TODO: give descriptions for what these do, and keep them updated
-		//(if their functionality changes).
-		//also keep a full command list updated with what's currently working,
-		//and commented out if they are currently disabled
-		case "?":
-			fallthrough
-		case "h":
-			fallthrough
-		case "help":
-			st.PrintLn("Current commands:")
-			st.PrintLn("    start:            Start external task.")
-			st.PrintLn("    attach:           Attach external process to terminal.")
-			st.PrintLn("    new_terminal:     Add new terminal.")
-			st.PrintLn("    l:                ___description goes here___")
-			st.PrintLn("    list_processes:   ___description goes here___")
-			//st.PrintLn("    rpc:              Issues command: \"go run rpc/cli/cli.go\"")
-			//st.PrintLn("Current hotkeys:")
-			//st.PrintLn("    CTRL+C:           ___description goes here___")
-			//st.PrintLn("    CTRL+Z:           ___description goes here___")
+	//internal task
+	switch cmd {
+	case "?":
+		fallthrough
+	case "h":
+		fallthrough
+	case "help":
+		st.PrintLn("Current commands:")
+		st.PrintLn("    help:         This message ('?' or 'h' for short).")
+		st.PrintLn("    start:        Start external task.")
+		st.PrintLn("    attach <id>:  Attach external process with given id to terminal.")
+		st.PrintLn("    ls:           List external processes (pass -f for full commands).")
+		//st.PrintLn("    new_terminal:     Add new terminal.")
+		//st.PrintLn("    rpc:              Issues command: \"go run rpc/cli/cli.go\"")
+		//st.PrintLn("Current hotkeys:")
+		//st.PrintLn("    CTRL+C:           ___description goes here___")
+		//st.PrintLn("    CTRL+Z:           ___description goes here___")
 
-		//listing processes
-		case "l":
-			extTaskMap := hypervisor.ExtProcessListGlobal.ProcessMap
-			if len(extTaskMap) == 0 {
-				st.PrintLn("No external processes running.\n" +
-					"Try starting one with \"start\" command (\"help\" or \"h\" for help).")
-			}
-
-			for procId, extProc := range extTaskMap {
-				baseCommand := strings.Split(extProc.GetFullCommandLine(), " ")[0]
-				st.PrintLn("[ " + strconv.Itoa(int(procId)) + " ] -> [ " + baseCommand + " ]")
-			}
-
-		//FIXME: ummm, isn't THIS listing processes?  it's a separate case from above.
-		//unless these will be diverging significantly soon, they should both use the
-		//same function, since they are copy/pasted code with small differences.
-		//you could pass in a bool to determine which of the 2 cases you want.
-		case "ls":
-			fallthrough
-		case "list_processes":
-			extTaskMap := hypervisor.ExtProcessListGlobal.ProcessMap
-			if len(extTaskMap) == 0 {
-				st.PrintLn("No external processes running.\n" +
-					"Try starting one with \"start\" command (\"help\" or \"h\" for help).")
-			}
-
-			for procId, extProc := range extTaskMap {
-				st.PrintLn("[ " + strconv.Itoa(int(procId)) + " ] -> [ " +
-					extProc.GetFullCommandLine() + " ]")
-			}
-
-		//attach external task to terminal task
-		case "attach":
-			if len(args) < 1 {
-				st.PrintError("No task id passed! eg: attach 1")
-			} else {
-				passedId, err := strconv.Atoi(args[0])
-				if err != nil {
-					st.PrintError("Task id must be an integer.")
-					break
-				}
-
-				extProcId := msg.ExtProcessId(passedId)
-
-				extProc, err := hypervisor.GetExtProcess(extProcId)
-				if err != nil {
-					st.PrintError(err.Error())
-					break
-				}
-
-				st.PrintLn(extProc.GetFullCommandLine())
-				st.proc.AttachExternalProcess(extProc)
-			}
-
-		case "r":
-			fallthrough
-		case "rpc":
-			//Doesn't work yet with new implementation ! ! !
-			// tokens := []string{"go", "run", "rpc/cli/cli.go"}
-			// err := st.proc.AddAttachStart(tokens)
-			// if err != nil {
-			// 	st.PrintError(err.Error())
-			// }
-
-		//start new external task, detached running in bg by default
-		case "s":
-			fallthrough
-		case "start":
-			if len(args) < 1 {
-				st.PrintError("Must pass a command into Start!")
-			} else {
-				detached := args[0] != "-a"
-
-				if !detached {
-					args = args[1:]
-				}
-
-				newExtProc, err := extTask.MakeNewTaskExternal(args, detached)
-				if err != nil {
-					st.PrintError(err.Error())
-					break
-				}
-
-				err = newExtProc.Start()
-				if err != nil {
-					st.PrintError(err.Error())
-					break
-				}
-
-				extProcInterface := newExtProc.GetExtProcessInterface()
-
-				procId := hypervisor.AddExtProcess(extProcInterface)
-
-				if !detached {
-					st.proc.AttachExternalProcess(extProcInterface)
-				}
-
-				st.PrintLn("Added External Process (ID: " +
-					strconv.Itoa(int(procId)) + ", Command: " +
-					newExtProc.CommandLine + ")")
-			}
-
-		//add new terminal
-		case "n":
-			fallthrough
-		case "new":
-			fallthrough
-		case "new_terminal":
-			// viewport.Terms.Add()
-
-		default:
-			st.PrintError("\"" + cmd + "\" is an unknown command.")
-
+	//list external process with ls
+	case "ls":
+		extTaskMap := hypervisor.ExtProcessListGlobal.ProcessMap
+		if len(extTaskMap) == 0 {
+			st.PrintLn("No external processes running.\n" +
+				"Try starting one with \"start\" command (\"help\" or \"h\" for help).")
+			break
 		}
+
+		fullPrint := false
+
+		if len(args) > 0 && args[0] == "-f" {
+			fullPrint = true
+		}
+
+		for procId, extProc := range extTaskMap {
+
+			procCommand := ""
+
+			if fullPrint {
+				procCommand = extProc.GetFullCommandLine()
+			} else {
+				procCommand = strings.Split(
+					extProc.GetFullCommandLine(), " ")[0]
+			}
+
+			st.Printf("[ %d ] -> [ %s ]\n", int(procId), procCommand)
+		}
+
+	//attach external task to terminal task
+	case "attach":
+		if len(args) < 1 {
+			st.PrintError("No task id passed! eg: attach 1")
+			break
+		}
+
+		passedId, err := strconv.Atoi(args[0])
+		if err != nil {
+			st.PrintError("Task id must be an integer.")
+			break
+		}
+
+		extProcId := msg.ExtProcessId(passedId)
+
+		extProc, err := hypervisor.GetExtProcess(extProcId)
+		if err != nil {
+			st.PrintError(err.Error())
+			break
+		}
+
+		st.PrintLn(extProc.GetFullCommandLine())
+		st.proc.AttachExternalProcess(extProc)
+
+	case "r":
+		fallthrough
+	case "rpc":
+		//Doesn't work yet with new implementation ! ! !
+		// tokens := []string{"go", "run", "rpc/cli/cli.go"}
+		// err := st.proc.AddAttachStart(tokens)
+		// if err != nil {
+		// 	st.PrintError(err.Error())
+		// }
+
+	//start new external task, detached running in bg by default
+	case "s":
+		fallthrough
+	case "start":
+		if len(args) < 1 {
+			st.PrintError("Must pass a command into Start!")
+		} else {
+			detached := args[0] != "-a"
+
+			if !detached {
+				args = args[1:]
+			}
+
+			newExtProc, err := extTask.MakeNewTaskExternal(args, detached)
+			if err != nil {
+				st.PrintError(err.Error())
+				break
+			}
+
+			err = newExtProc.Start()
+			if err != nil {
+				st.PrintError(err.Error())
+				break
+			}
+
+			extProcInterface := newExtProc.GetExtProcessInterface()
+
+			procId := hypervisor.AddExtProcess(extProcInterface)
+
+			if !detached {
+				st.proc.AttachExternalProcess(extProcInterface)
+			}
+
+			st.PrintLn("Added External Process (ID: " +
+				strconv.Itoa(int(procId)) + ", Command: " +
+				newExtProc.CommandLine + ")")
+		}
+
+	//add new terminal
+	case "n":
+		fallthrough
+	case "new":
+		fallthrough
+	case "new_terminal":
+		// viewport.Terms.Add()
+
+	default:
+		st.PrintError("\"" + cmd + "\" is an unknown command.")
+
 	}
 }
