@@ -33,6 +33,7 @@ type ExternalProcess struct {
 	stdInPipe  io.WriteCloser
 
 	detached bool
+	shutdown chan struct{}
 }
 
 //non-instanced
@@ -81,6 +82,7 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 	pr.ProcessIn = make(chan []byte, 2048)
 	pr.ProcessOut = make(chan []byte, 2048)
 	pr.ProcessExit = make(chan bool)
+	pr.shutdown = make(chan struct{})
 
 	return nil
 }
@@ -103,16 +105,10 @@ func (pr *ExternalProcess) cmdInRoutine() {
 	app.At(te, "cmdInRoutine")
 
 	for {
-		println("!!! INSIDE THE CMD IN !!!")
-		if pr.detached {
-			println("!!! DETACHED IS TRUE IN CMDIN !!!")
-			return
-		}
-
 		if pr.stdOutPipe == nil {
 			println("!!! Standard output pipe is nil. Sending Exit Request !!!")
 			pr.ProcessExit <- true
-			pr.detached = true
+			close(pr.shutdown)
 			return
 		}
 
@@ -124,8 +120,9 @@ func (pr *ExternalProcess) cmdInRoutine() {
 			// for i := 0; i < 5; i++ {
 			// 	println(s) //to OS box
 			// }
+			println("!!! Sending exit request from cmdInRoutine !!!")
 			pr.ProcessExit <- true
-			pr.detached = true
+			close(pr.shutdown)
 			return
 		}
 
@@ -139,27 +136,23 @@ func (pr *ExternalProcess) cmdOutRoutine() {
 	app.At(te, "cmdOutRoutine")
 
 	for {
-		println("!!! INSIDE THE CMD OUT !!!")
-		if pr.detached {
-			println("!!! DETACHED IS TRUE IN CMD OUT !!!")
-			return
-		}
-
 		select {
+		case <-pr.shutdown:
+			println("!!! Shutting cmdOutRoutine down !!!")
+			return
 		case data := <-pr.CmdOut:
 
 			if pr.stdInPipe == nil {
 				println("!!! Standard input pipe is nil. Sending Exit Request !!!")
 				pr.ProcessExit <- true
-				pr.detached = true
 				return
 			}
 
 			println("--- Received input to write to external process:", string(data))
 			_, err := pr.stdInPipe.Write(append(data, '\n'))
 			if err != nil {
+				println("!!! Couldn't Write To the std in pipe of the process !!!")
 				pr.ProcessExit <- true
-				pr.detached = true
 				return
 			}
 		}
@@ -167,6 +160,7 @@ func (pr *ExternalProcess) cmdOutRoutine() {
 }
 
 func (pr *ExternalProcess) startRoutines() {
+	pr.shutdown = make(chan struct{})
 	// Run the routine which will read and send the data to CmdIn
 	go pr.cmdInRoutine()
 	// Run the routine which will read from Cmdout and write to process
