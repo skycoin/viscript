@@ -133,7 +133,7 @@ func (st *State) actOnCommand() {
 	case "help":
 		st.PrintLn("Current commands:")
 		st.PrintLn("    help:               	This message ('?' or 'h' for short).")
-		st.PrintLn("    start (-a) <command>: 	Start external task. (pass -a before command to aslo attach)")
+		st.PrintLn("    start (-a) <command>: 	Start external task. (pass -a before command to also attach).")
 		st.PrintLn("    attach <id>:       		Attach external process with given id to terminal.")
 		st.PrintLn("    ls (-f):           	    List external processes (pass -f for full commands).")
 		//st.PrintLn("    new_terminal:     Add new terminal.")
