@@ -28,24 +28,24 @@ func (pr *ExternalProcess) TearDown() {
 
 	pr.cmd.Process.Kill()
 
-	// close(pr.CmdIn)
-	// close(pr.CmdOut)
+	close(pr.CmdIn)
+	close(pr.CmdOut)
 
-	// close(pr.ProcessIn)
-	// close(pr.ProcessOut)
-	// close(pr.ProcessExit)
+	close(pr.ProcessIn)
+	close(pr.ProcessOut)
+	close(pr.ProcessExit)
 
 	if pr.cmd != nil {
 		pr.cmd = nil
 	}
 
-	// if pr.stdOutPipe != nil {
-	// 	pr.stdOutPipe = nil
-	// }
+	if pr.stdOutPipe != nil {
+		pr.stdOutPipe = nil
+	}
 
-	// if pr.stdInPipe != nil {
-	// 	pr.stdInPipe = nil
-	// }
+	if pr.stdInPipe != nil {
+		pr.stdInPipe = nil
+	}
 }
 
 func (pr *ExternalProcess) Attach() {
