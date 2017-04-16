@@ -32,7 +32,7 @@ func MakeNewTask() *Process {
 	p.InChannel = make(chan []byte, msg.ChannelCapacity)
 	p.State.Init(&p)
 
-	// means no external task is attached
+	//means no external task is attached
 	p.hasExtProcAttached = false
 
 	return &p
@@ -71,19 +71,19 @@ func (pr *Process) DetachExternalProcess() {
 func (pr *Process) ExitExtProcess() {
 	app.At(path, "ExitExtProcess")
 
-	// set flag false
+	//set flag false
 	pr.hasExtProcAttached = false
 
-	// store the exteral process id for removing from the global list
+	//store the exteral process id for removing from the global list
 	extProcId := pr.attachedExtProcess.GetId()
 
-	// teardown and cleanup external process
+	//teardown and cleanup external process
 	pr.attachedExtProcess.TearDown()
 
-	// set current attachedExtProcess to nil
+	//set current attachedExtProcess to nil
 	pr.attachedExtProcess = nil
 
-	// remove from the ExtProcessListGlobal.ProcessMap
+	//remove from the ExtProcessListGlobal.ProcessMap
 	hypervisor.RemoveExtProcess(extProcId)
 }
 
@@ -116,8 +116,8 @@ func (pr *Process) Tick() {
 	case exit := <-pr.attachedExtProcess.GetProcessExitChannel():
 		if exit {
 			println("Got the exit in task, process is finished.")
-			// TODO: still not working yet. looking for the best way to finish
-			// multiple goroutines at the same time to avoid any side effects
+			//TODO: still not working yet. looking for the best way to finish
+			//multiple goroutines at the same time to avoid any side effects
 			pr.ExitExtProcess()
 		}
 	case data := <-pr.attachedExtProcess.GetProcessOutChannel():
