@@ -1,14 +1,17 @@
 package process
 
 import (
-	"strconv"
-
-	"strings"
-
 	"github.com/corpusc/viscript/hypervisor"
-	extTask "github.com/corpusc/viscript/hypervisor/task_ext"
 	"github.com/corpusc/viscript/msg"
 )
+
+func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
+	if m.HoldingControl {
+		hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
+	} else {
+		st.Cli.AdjustBackscrollOffset(int(m.Y))
+	}
+}
 
 func (st *State) onChar(m msg.MessageChar) {
 	//println("process/terminal/events.onChar()")
@@ -96,14 +99,6 @@ func (st *State) actOnRepeatableKeys(m msg.MessageKey, serializedMsg []byte) {
 	}
 }
 
-func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
-	if m.HoldingControl {
-		hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
-	} else {
-		st.Cli.AdjustBackscrollOffset(int(m.Y))
-	}
-}
-
 func (st *State) actOnCommand() {
 	cmd, args := st.Cli.CurrentCommandAndArgs()
 	if len(cmd) < 1 {
@@ -124,76 +119,30 @@ func (st *State) actOnCommand() {
 		return
 	}
 
-	//internal task
+	//internal task handling
 	switch cmd {
 	case "?":
 		fallthrough
 	case "h":
 		fallthrough
 	case "help":
-		st.PrintLn("Current commands:")
-		st.PrintLn("    help:               	This message ('?' or 'h' for short).")
-		st.PrintLn("    start (-a) <command>: 	Start external task. (pass -a before command to also attach).")
-		st.PrintLn("    attach <id>:       		Attach external process with given id to terminal.")
-		st.PrintLn("    ls (-f):           	    List external processes (pass -f for full commands).")
+		//st.PrintLn("Current commands:")
+		st.PrintLn("help:                  This message ('?' or 'h' for short).")
+		st.PrintLn("start (-a) <command>:  Start external task. (pass -a before command to also attach).")
+		st.PrintLn("attach <id>:           Attach external task with given id to terminal.")
+		st.PrintLn("ls (-f):               List external tasks (pass -f for full commands).")
 		//st.PrintLn("    new_terminal:     Add new terminal.")
 		//st.PrintLn("    rpc:              Issues command: \"go run rpc/cli/cli.go\"")
 		//st.PrintLn("Current hotkeys:")
 		//st.PrintLn("    CTRL+C:           ___description goes here___")
 		//st.PrintLn("    CTRL+Z:           ___description goes here___")
 
-	//list external process with ls
 	case "ls":
-		extTaskMap := hypervisor.ExtProcessListGlobal.ProcessMap
-		if len(extTaskMap) == 0 {
-			st.PrintLn("No external processes running.\n" +
-				"Try starting one with \"start\" command (\"help\" or \"h\" for help).")
-			break
-		}
-
-		fullPrint := false
-
-		if len(args) > 0 && args[0] == "-f" {
-			fullPrint = true
-		}
-
-		for procId, extProc := range extTaskMap {
-
-			procCommand := ""
-
-			if fullPrint {
-				procCommand = extProc.GetFullCommandLine()
-			} else {
-				procCommand = strings.Split(
-					extProc.GetFullCommandLine(), " ")[0]
-			}
-
-			st.Printf("[ %d ] -> [ %s ]\n", int(procId), procCommand)
-		}
+		st.commandListExternalTasks(args)
 
 	//attach external task to terminal task
 	case "attach":
-		if len(args) < 1 {
-			st.PrintError("No task id passed! eg: attach 1")
-			break
-		}
-
-		passedId, err := strconv.Atoi(args[0])
-		if err != nil {
-			st.PrintError("Task id must be an integer.")
-			break
-		}
-
-		extProcId := msg.ExtProcessId(passedId)
-
-		extProc, err := hypervisor.GetExtProcess(extProcId)
-		if err != nil {
-			st.PrintError(err.Error())
-			break
-		}
-
-		st.PrintLn(extProc.GetFullCommandLine())
-		st.proc.AttachExternalProcess(extProc)
+		st.commandAttach(args)
 
 	case "r":
 		fallthrough
@@ -209,39 +158,7 @@ func (st *State) actOnCommand() {
 	case "s":
 		fallthrough
 	case "start":
-		if len(args) < 1 {
-			st.PrintError("Must pass a command into Start!")
-		} else {
-			detached := args[0] != "-a"
-
-			if !detached {
-				args = args[1:]
-			}
-
-			newExtProc, err := extTask.MakeNewTaskExternal(args, detached)
-			if err != nil {
-				st.PrintError(err.Error())
-				break
-			}
-
-			err = newExtProc.Start()
-			if err != nil {
-				st.PrintError(err.Error())
-				break
-			}
-
-			extProcInterface := newExtProc.GetExtProcessInterface()
-
-			procId := hypervisor.AddExtProcess(extProcInterface)
-
-			if !detached {
-				st.proc.AttachExternalProcess(extProcInterface)
-			}
-
-			st.PrintLn("Added External Process (ID: " +
-				strconv.Itoa(int(procId)) + ", Command: " +
-				newExtProc.CommandLine + ")")
-		}
+		st.commandStart(args)
 
 	//add new terminal
 	case "n":
