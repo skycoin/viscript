@@ -14,7 +14,7 @@ type ProcessInterface interface {
 type ExtProcessInterface interface {
 	Tick()
 	Start() error
-	Attach()
+	Attach() error
 	Detach()
 	TearDown()
 	GetId() ExtProcessId

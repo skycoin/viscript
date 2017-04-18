@@ -54,16 +54,20 @@ func (pr *Process) HasExtProcessAttached() bool {
 	return pr.hasExtProcAttached
 }
 
-func (pr *Process) AttachExternalProcess(extProc msg.ExtProcessInterface) {
+func (pr *Process) AttachExternalProcess(extProc msg.ExtProcessInterface) error {
 	app.At(path, "AttachExternalProcess")
+	err := extProc.Attach()
+	if err != nil {
+		return err
+	}
 	pr.attachedExtProcess = extProc
 	pr.hasExtProcAttached = true
-	pr.attachedExtProcess.Attach()
+	return nil
 }
 
 func (pr *Process) DetachExternalProcess() {
 	app.At(path, "DetachExternalProcess")
-	pr.attachedExtProcess.Detach()
+	// pr.attachedExtProcess.Detach()
 	pr.attachedExtProcess = nil
 	pr.hasExtProcAttached = false
 }
@@ -108,7 +112,7 @@ func (pr *Process) GetIncomingChannel() chan []byte {
 func (pr *Process) Tick() {
 	pr.State.HandleMessages()
 
-	if !pr.hasExtProcAttached {
+	if !pr.HasExtProcessAttached() {
 		return
 	}
 

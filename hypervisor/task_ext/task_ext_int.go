@@ -48,15 +48,15 @@ func (pr *ExternalProcess) TearDown() {
 	}
 }
 
-func (pr *ExternalProcess) Attach() {
+func (pr *ExternalProcess) Attach() error {
 	app.At(te, "Attach")
-	pr.detached = false
-	pr.startRoutines()
+	return pr.startRoutines()
 }
 
 func (pr *ExternalProcess) Detach() {
 	app.At(te, "Detach")
-	pr.detached = true
+	// TODO: detach using channels maybe
+	pr.stopRoutines()
 }
 
 func (pr *ExternalProcess) GetId() msg.ExtProcessId {
