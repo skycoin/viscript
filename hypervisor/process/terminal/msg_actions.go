@@ -61,6 +61,8 @@ func (st *State) actOnOneTimeHotkeys(m msg.MessageKey) {
 			// }
 			// st.PrintLn("Attached process sent to background.")
 			// st.proc.DetachExternalProcess()
+			st.PrintLn("Detaching External Process")
+			st.proc.DetachExternalProcess()
 		}
 
 	}

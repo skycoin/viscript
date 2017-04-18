@@ -1,11 +1,12 @@
 package process
 
 import (
+	"strconv"
+	"strings"
+
 	"github.com/corpusc/viscript/hypervisor"
 	extTask "github.com/corpusc/viscript/hypervisor/task_ext"
 	"github.com/corpusc/viscript/msg"
-	"strconv"
-	"strings"
 )
 
 func (st *State) commandStart(args []string) {
@@ -34,7 +35,10 @@ func (st *State) commandStart(args []string) {
 		procId := hypervisor.AddExtProcess(extProcInterface)
 
 		if !detached {
-			st.proc.AttachExternalProcess(extProcInterface)
+			err = st.proc.AttachExternalProcess(extProcInterface)
+			if err != nil {
+				st.PrintLn(err.Error())
+			}
 		}
 
 		st.PrintLn("Added External Process (ID: " +
@@ -64,7 +68,10 @@ func (st *State) commandAttach(args []string) {
 	}
 
 	st.PrintLn(extProc.GetFullCommandLine())
-	st.proc.AttachExternalProcess(extProc)
+	err = st.proc.AttachExternalProcess(extProc)
+	if err != nil {
+		st.PrintLn(err.Error())
+	}
 }
 
 func (st *State) commandListExternalTasks(args []string) {
