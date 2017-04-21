@@ -149,12 +149,8 @@ func (st *State) actOnCommand() {
 	case "r":
 		fallthrough
 	case "rpc":
-		//Doesn't work yet with new implementation ! ! !
-		// tokens := []string{"go", "run", "rpc/cli/cli.go"}
-		// err := st.proc.AddAttachStart(tokens)
-		// if err != nil {
-		// 	st.PrintError(err.Error())
-		// }
+		st.commandStart([]string{
+			"-a", "go", "run", "rpc/cli/cli.go"})
 
 	//start new external task, detached running in bg by default
 	case "s":
