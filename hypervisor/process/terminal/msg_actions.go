@@ -54,13 +54,10 @@ func (st *State) actOnOneTimeHotkeys(m msg.MessageKey) {
 
 	case msg.KeyZ:
 		if m.Mod == msg.GLFW_MOD_CONTROL {
-			// st.PrintError("Ctrl+Z pressed")
-			// err := st.proc.SendAttachedToBg()
-			// if err != nil {
-			// 	st.PrintError(err.Error())
-			// }
-			// st.PrintLn("Attached process sent to background.")
-			// st.proc.DetachExternalProcess()
+			if !st.proc.HasExtProcessAttached() {
+				return
+			}
+
 			st.PrintLn("Detaching External Process")
 			st.proc.DetachExternalProcess()
 		}
