@@ -33,7 +33,7 @@ func (pr *ExternalProcess) TearDown() {
 
 	close(pr.ProcessIn)
 	close(pr.ProcessOut)
-	close(pr.ProcessExit)
+	// close(pr.ProcessExit)
 
 	if pr.cmd != nil {
 		pr.cmd = nil
@@ -75,6 +75,6 @@ func (pr *ExternalProcess) GetProcessOutChannel() chan []byte {
 	return pr.ProcessOut
 }
 
-func (pr *ExternalProcess) GetProcessExitChannel() chan bool {
+func (pr *ExternalProcess) GetProcessExitChannel() chan struct{} {
 	return pr.ProcessExit
 }
