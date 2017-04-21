@@ -21,5 +21,5 @@ type ExtProcessInterface interface {
 	GetFullCommandLine() string
 	GetProcessInChannel() chan []byte
 	GetProcessOutChannel() chan []byte
-	GetProcessExitChannel() chan bool
+	GetProcessExitChannel() chan struct{}
 }

@@ -54,13 +54,10 @@ func (st *State) actOnOneTimeHotkeys(m msg.MessageKey) {
 
 	case msg.KeyZ:
 		if m.Mod == msg.GLFW_MOD_CONTROL {
-			// st.PrintError("Ctrl+Z pressed")
-			// err := st.proc.SendAttachedToBg()
-			// if err != nil {
-			// 	st.PrintError(err.Error())
-			// }
-			// st.PrintLn("Attached process sent to background.")
-			// st.proc.DetachExternalProcess()
+			if !st.proc.HasExtProcessAttached() {
+				return
+			}
+
 			st.PrintLn("Detaching External Process")
 			st.proc.DetachExternalProcess()
 		}
@@ -133,11 +130,11 @@ func (st *State) actOnCommand() {
 		st.PrintLn("start (-a) <command>:  Start external task. (pass -a before command to also attach).")
 		st.PrintLn("attach <id>:           Attach external task with given id to terminal.")
 		st.PrintLn("ls (-f):               List external tasks (pass -f for full commands).")
+		st.PrintLn("Current hotkeys:")
+		st.PrintLn("    CTRL+Z:            Detach currently attached process.")
 		//st.PrintLn("    new_terminal:     Add new terminal.")
 		//st.PrintLn("    rpc:              Issues command: \"go run rpc/cli/cli.go\"")
-		//st.PrintLn("Current hotkeys:")
 		//st.PrintLn("    CTRL+C:           ___description goes here___")
-		//st.PrintLn("    CTRL+Z:           ___description goes here___")
 
 	case "ls":
 		st.commandListExternalTasks(args)
@@ -149,12 +146,8 @@ func (st *State) actOnCommand() {
 	case "r":
 		fallthrough
 	case "rpc":
-		//Doesn't work yet with new implementation ! ! !
-		// tokens := []string{"go", "run", "rpc/cli/cli.go"}
-		// err := st.proc.AddAttachStart(tokens)
-		// if err != nil {
-		// 	st.PrintError(err.Error())
-		// }
+		st.commandStart([]string{
+			"-a", "go", "run", "rpc/cli/cli.go"})
 
 	//start new external task, detached running in bg by default
 	case "s":

@@ -2,6 +2,7 @@ package task_ext
 
 import (
 	"errors"
+	"sync"
 
 	"io"
 
@@ -25,7 +26,7 @@ type ExternalProcess struct {
 
 	ProcessIn   chan []byte
 	ProcessOut  chan []byte
-	ProcessExit chan bool // if process needs to exit without user interruption
+	ProcessExit chan struct{} // this way it's easy to clenup multiple places
 
 	CmdOut chan []byte
 	CmdIn  chan []byte
@@ -37,6 +38,8 @@ type ExternalProcess struct {
 	shutdown chan struct{}
 
 	routinesStarted bool
+
+	wg sync.WaitGroup
 }
 
 //non-instanced
@@ -83,7 +86,7 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 	pr.CmdIn = make(chan []byte, 2048)
 	pr.ProcessIn = make(chan []byte, 2048)
 	pr.ProcessOut = make(chan []byte, 2048)
-	pr.ProcessExit = make(chan bool)
+	pr.ProcessExit = make(chan struct{})
 	pr.shutdown = make(chan struct{})
 	pr.routinesStarted = false
 
@@ -112,7 +115,7 @@ func (pr *ExternalProcess) cmdInRoutine() {
 		size, err := pr.stdOutPipe.Read(buf[:])
 		if err != nil {
 			println("Cmd In Routine error:", err.Error())
-			pr.ProcessExit <- true
+			close(pr.ProcessExit)
 			close(pr.shutdown)
 			return
 		}
@@ -142,7 +145,8 @@ func (pr *ExternalProcess) cmdOutRoutine() {
 			_, err := pr.stdInPipe.Write(append(data, '\n'))
 			if err != nil {
 				println("!!! Couldn't Write To the std in pipe of the process !!!")
-				pr.ProcessExit <- true
+				close(pr.ProcessExit)
+				close(pr.shutdown)
 				return
 			}
 		}
@@ -160,7 +164,13 @@ func (pr *ExternalProcess) startRoutines() error {
 	}
 
 	if !pr.routinesStarted {
+
+		pr.wg = sync.WaitGroup{}
+
+		pr.ProcessExit = make(chan struct{})
 		pr.shutdown = make(chan struct{})
+
+		pr.wg.Add(2)
 
 		// Run the routine which will read and send the data to CmdIn
 		go pr.cmdInRoutine()
