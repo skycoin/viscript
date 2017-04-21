@@ -133,11 +133,11 @@ func (st *State) actOnCommand() {
 		st.PrintLn("start (-a) <command>:  Start external task. (pass -a before command to also attach).")
 		st.PrintLn("attach <id>:           Attach external task with given id to terminal.")
 		st.PrintLn("ls (-f):               List external tasks (pass -f for full commands).")
+		st.PrintLn("Current hotkeys:")
+		st.PrintLn("    CTRL+Z:            Detach currently attached process.")
 		//st.PrintLn("    new_terminal:     Add new terminal.")
 		//st.PrintLn("    rpc:              Issues command: \"go run rpc/cli/cli.go\"")
-		//st.PrintLn("Current hotkeys:")
 		//st.PrintLn("    CTRL+C:           ___description goes here___")
-		//st.PrintLn("    CTRL+Z:           ___description goes here___")
 
 	case "ls":
 		st.commandListExternalTasks(args)
