@@ -28,8 +28,8 @@ func (pr *ExternalProcess) TearDown() {
 
 	pr.cmd.Process.Kill()
 
-	close(pr.CmdIn)
-	close(pr.CmdOut)
+	close(pr.cmdIn)
+	close(pr.cmdOut)
 
 	close(pr.ProcessIn)
 	close(pr.ProcessOut)

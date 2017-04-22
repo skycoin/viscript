@@ -4,50 +4,64 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor"
 	extTask "github.com/corpusc/viscript/hypervisor/task_ext"
 	"github.com/corpusc/viscript/msg"
 )
 
+const cp = "/hypervisor/process/terminal/commands"
+
 func (st *State) commandStart(args []string) {
+	app.At(cp, "commandStart")
+
 	if len(args) < 1 {
 		st.PrintError("Must pass a command into Start!")
-	} else {
-		detached := args[0] != "-a"
-
-		if !detached {
-			args = args[1:]
-		}
-
-		newExtProc, err := extTask.MakeNewTaskExternal(args, detached)
-		if err != nil {
-			st.PrintError(err.Error())
-			return
-		}
-
-		err = newExtProc.Start()
-		if err != nil {
-			st.PrintError(err.Error())
-			return
-		}
-
-		extProcInterface := newExtProc.GetExtProcessInterface()
-		procId := hypervisor.AddExtProcess(extProcInterface)
-
-		if !detached {
-			err = st.proc.AttachExternalProcess(extProcInterface)
-			if err != nil {
-				st.PrintLn(err.Error())
-			}
-		}
-
-		st.PrintLn("Added External Process (ID: " +
-			strconv.Itoa(int(procId)) + ", Command: " +
-			newExtProc.CommandLine + ")")
+		return
 	}
+
+	detached := args[0] != "-a"
+
+	if !detached {
+		args = args[1:]
+	}
+
+	newExtProc, err := extTask.MakeNewTaskExternal(args, detached)
+	if err != nil {
+		st.PrintError(err.Error())
+		return
+	}
+
+	err = newExtProc.Start()
+	if err != nil {
+		st.PrintError(err.Error())
+		return
+	}
+
+	extProcInterface := newExtProc.GetExtProcessInterface()
+	procId := hypervisor.AddExtProcess(extProcInterface)
+
+	if !detached {
+		err = st.proc.AttachExternalProcess(extProcInterface)
+		if err != nil {
+			st.PrintLn(err.Error())
+		}
+	}
+
+	st.PrintLn("Added External Process (ID: " +
+		strconv.Itoa(int(procId)) + ", Command: " +
+		newExtProc.CommandLine + ")")
+
+}
+
+func (st *State) commandShutDown(args []string) {
+	app.At(cp, "commandShutDown")
+	// TODO: finish command shutdown
 }
 
 func (st *State) commandAttach(args []string) {
+	app.At(cp, "commandAttach")
+
 	if len(args) < 1 {
 		st.PrintError("No task id passed! eg: attach 1")
 		return
@@ -75,6 +89,8 @@ func (st *State) commandAttach(args []string) {
 }
 
 func (st *State) commandListExternalTasks(args []string) {
+	app.At(cp, "commandListExternalTasks")
+
 	extTaskMap := hypervisor.ExtProcessListGlobal.ProcessMap
 	if len(extTaskMap) == 0 {
 		st.PrintLn("No external tasks running.\n" +
