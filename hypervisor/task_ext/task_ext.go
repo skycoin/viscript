@@ -28,8 +28,8 @@ type ExternalProcess struct {
 	ProcessOut  chan []byte
 	ProcessExit chan struct{} // this way it's easy to clenup multiple places
 
-	CmdOut chan []byte
-	CmdIn  chan []byte
+	cmdOut chan []byte
+	cmdIn  chan []byte
 
 	cmd        *exec.Cmd
 	stdOutPipe io.ReadCloser
@@ -78,16 +78,17 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 
 	pr.Id = msg.NextExtProcessId()
 
-	//Creates a new process group for the new process
-	//to avoid leaving orphan processes.
 	pr.CommandLine = strings.Join(tokens, " ")
 
-	pr.CmdOut = make(chan []byte, 2048)
-	pr.CmdIn = make(chan []byte, 2048)
+	pr.cmdOut = make(chan []byte, 2048)
+	pr.cmdIn = make(chan []byte, 2048)
+
 	pr.ProcessIn = make(chan []byte, 2048)
 	pr.ProcessOut = make(chan []byte, 2048)
 	pr.ProcessExit = make(chan struct{})
+
 	pr.shutdown = make(chan struct{})
+
 	pr.routinesStarted = false
 
 	return nil
@@ -124,7 +125,7 @@ func (pr *ExternalProcess) cmdInRoutine() {
 		case <-pr.shutdown:
 			println("!!! Shutting cmdInRoutine down !!!")
 			return
-		case pr.CmdIn <- buf[:size]:
+		case pr.cmdIn <- buf[:size]:
 			fmt.Printf("-- Received data for sending to CmdIn: %s\n",
 				string(buf[:size]))
 		}
@@ -139,7 +140,7 @@ func (pr *ExternalProcess) cmdOutRoutine() {
 		case <-pr.shutdown:
 			println("!!! Shutting cmdOutRoutine down !!!")
 			return
-		case data := <-pr.CmdOut:
+		case data := <-pr.cmdOut:
 			fmt.Printf("-- Received input to write to external process: %s\n",
 				string(data))
 			_, err := pr.stdInPipe.Write(append(data, '\n'))
@@ -192,14 +193,14 @@ func (pr *ExternalProcess) processOutput() {
 	select {
 	case data := <-pr.ProcessIn:
 		println("ProcessOutput() - data := ", string(data))
-		pr.CmdOut <- data
+		pr.cmdOut <- data
 	default:
 	}
 }
 
 func (pr *ExternalProcess) processInput() {
 	select {
-	case data := <-pr.CmdIn:
+	case data := <-pr.cmdIn:
 		println("ProcessInput() - data := ", string(data))
 		pr.ProcessOut <- data
 	default:

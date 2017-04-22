@@ -39,17 +39,11 @@ func (st *State) actOnOneTimeHotkeys(m msg.MessageKey) {
 
 	case msg.KeyC:
 		if m.Mod == msg.GLFW_MOD_CONTROL {
-			//FIXME: doesn't work yet, have to look into
-			//implementation of extTask should change to Tick() like structure
-			//then exiting the task will be different
-			//current implementation i.e setting flag for the for statement in goroutine
-			//doesn't work.
-
-			//st.PrintError("Ctrl+C pressed")
-			//err := st.proc.ExitExtProcess()
-			//if err != nil {
-			//	st.PrintError(err.Error())
-			//}
+			if !st.proc.HasExtProcessAttached() {
+				return
+			}
+			// TODO: send the exit request i.e sigint or
+			//  just maybe kill the process?
 		}
 
 	case msg.KeyZ:
@@ -127,13 +121,14 @@ func (st *State) actOnCommand() {
 	case "help":
 		//st.PrintLn("Current commands:")
 		st.PrintLn("help:                  This message ('?' or 'h' for short).")
-		st.PrintLn("start (-a) <command>:  Start external task. (pass -a before command to also attach).")
-		st.PrintLn("attach <id>:           Attach external task with given id to terminal.")
+		st.PrintLn("start (-a) <command>:  Start external task. (pass -a to also attach).")
+		st.PrintLn("attach   <id>:         Attach external task with given id to terminal.")
+		st.PrintLn("shutdown <id>:         [TODO] Shutdown external task with give id.")
 		st.PrintLn("ls (-f):               List external tasks (pass -f for full commands).")
+		st.PrintLn("rpc:                   Issues command: \"go run rpc/cli/cli.go\"")
 		st.PrintLn("Current hotkeys:")
 		st.PrintLn("    CTRL+Z:            Detach currently attached process.")
 		//st.PrintLn("    new_terminal:     Add new terminal.")
-		//st.PrintLn("    rpc:              Issues command: \"go run rpc/cli/cli.go\"")
 		//st.PrintLn("    CTRL+C:           ___description goes here___")
 
 	case "ls":
@@ -154,6 +149,9 @@ func (st *State) actOnCommand() {
 		fallthrough
 	case "start":
 		st.commandStart(args)
+
+	case "shutdown":
+		st.commandShutDown(args)
 
 	//add new terminal
 	case "n":
