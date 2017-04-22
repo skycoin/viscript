@@ -163,6 +163,5 @@ func (st *State) actOnCommand() {
 
 	default:
 		st.PrintError("\"" + cmd + "\" is an unknown command.")
-
 	}
 }
