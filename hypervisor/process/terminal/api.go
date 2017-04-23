@@ -22,6 +22,8 @@ func (st *State) NewLine() {
 }
 
 func (st *State) PrintLn(s string) {
+	st.Cli.Log = append(st.Cli.Log, s)
+
 	for _, c := range s {
 		st.sendChar(uint32(c))
 	}

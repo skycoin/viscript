@@ -37,6 +37,35 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 
 func (st *State) onVisualInfo(m msg.MessageVisualInfo, serializedMsg []byte) {
 	app.At("process/terminal/msg_action", "onVisualInfo")
+	st.VisualInfo = m //maybe we actually don't need this cuz we can just use
+	//the data here, with no need to store it?
+
+	//current position was reset to home (top left corner) inside viewport/term
+
+	cl /* current line */ := len(st.Cli.Log) - 1 //start from latest log entry
+	page := []string{}
+
+	//build a page (or less if term hasn't scrolled yet)
+	for len(page) < int(m.NumRows) && cl >= 0 {
+		ll /* last line */ := st.Cli.Log[cl]
+
+		x := m.NumColumns
+		for len(ll) > int(m.NumColumns) {
+			for string(ll[x]) != " " {
+				x--
+			}
+
+			page = append(page, ll[:x])
+			ll = ll[x+2:]
+		}
+
+		page = append(page, ll)
+		cl--
+	}
+
+	for _, line := range page {
+		st.PrintLn(line)
+	}
 }
 
 func (st *State) actOnOneTimeHotkeys(m msg.MessageKey) {
@@ -47,8 +76,9 @@ func (st *State) actOnOneTimeHotkeys(m msg.MessageKey) {
 			if !st.proc.HasExtProcessAttached() {
 				return
 			}
-			// TODO: send the exit request i.e sigint or
-			//  just maybe kill the process?
+
+			//TODO: send the exit request i.e sigint or
+			//just maybe kill the process?
 		}
 
 	case msg.KeyZ:

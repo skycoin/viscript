@@ -262,6 +262,7 @@ func (t *Terminal) posIsValid(X, Y int) bool {
 }
 
 func (t *Terminal) resizeGrid() {
+	t.Curr = app.Vec2I{0, 0}
 	t.Chars = [][]uint32{}
 
 	//allocate every grid position in the "Chars" multi-dimensional slice
