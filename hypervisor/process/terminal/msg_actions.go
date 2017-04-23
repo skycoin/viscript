@@ -1,6 +1,7 @@
 package process
 
 import (
+	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
 )
@@ -32,6 +33,10 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 	case msg.Release:
 		//most keys will do nothing upon release
 	}
+}
+
+func (st *State) onVisualInfo(m msg.MessageVisualInfo, serializedMsg []byte) {
+	app.At("process/terminal/msg_action", "onVisualInfo")
 }
 
 func (st *State) actOnOneTimeHotkeys(m msg.MessageKey) {

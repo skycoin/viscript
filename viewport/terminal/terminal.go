@@ -26,7 +26,7 @@ type Terminal struct {
 	Curr     app.Vec2I //current insert position
 	Cursor   app.Vec2I
 	GridSize app.Vec2I //number of characters across
-	Chars    [NumRows][NumColumns]uint32
+	Chars    [][]uint32
 
 	//float/GL space
 	//(mouse pos events & frame buffer sizes are the only things that use pixels)
@@ -41,10 +41,9 @@ func (t *Terminal) Init() {
 
 	t.TerminalId = msg.RandTerminalId()
 	t.InChannel = make(chan []byte, msg.ChannelCapacity)
-	t.GridSize = app.Vec2I{NumColumns, NumRows}
-	t.Chars = [NumRows][NumColumns]uint32{}
 	t.BorderSize = 0.013
-	t.SetSize()
+	t.GridSize = app.Vec2I{NumColumns, NumRows}
+	t.resizeGrid()
 
 	t.PutString(">")
 	t.SetCursor(1, 0)
@@ -71,41 +70,64 @@ func (t *Terminal) SetResizingOff() {
 
 func (t *Terminal) ResizeHorizontally(newRight float32) {
 	t.ResizingRight = true
+	delta := newRight - t.Bounds.Right
+	sx := t.GridSize.X
 
 	if keyboard.ControlKeyIsDown {
 		t.Bounds.Right = newRight
 	} else {
-		delta := newRight - t.Bounds.Right
-
-		if delta > t.CharSize.X {
+		for delta > t.CharSize.X {
+			delta -= t.CharSize.X
 			t.Bounds.Right += t.CharSize.X
-		} else if delta < -t.CharSize.X {
-			t.Bounds.Right -= t.CharSize.X
+			t.GridSize.X++
 		}
+
+		for delta < -t.CharSize.X {
+			delta += t.CharSize.X
+			t.Bounds.Right -= t.CharSize.X
+			t.GridSize.X--
+		}
+	}
+
+	if /* x changed */ sx != t.GridSize.X {
+		t.resizeGrid()
 	}
 }
 
 func (t *Terminal) ResizeVertically(newBottom float32) {
 	t.ResizingBottom = true
+	delta := newBottom - t.Bounds.Bottom
+	sy := t.GridSize.Y
 
 	if keyboard.ControlKeyIsDown {
 		t.Bounds.Bottom = newBottom
 	} else {
-		delta := newBottom - t.Bounds.Bottom
-
-		if delta > t.CharSize.Y {
+		for delta > t.CharSize.Y {
+			delta -= t.CharSize.Y
 			t.Bounds.Bottom += t.CharSize.Y
-		} else if delta < -t.CharSize.Y {
-			t.Bounds.Bottom -= t.CharSize.Y
+			t.GridSize.Y++
 		}
+
+		for delta < -t.CharSize.Y {
+			delta += t.CharSize.Y
+			t.Bounds.Bottom -= t.CharSize.Y
+			t.GridSize.Y--
+		}
+	}
+
+	if /* y changed */ sy != t.GridSize.Y {
+		t.resizeGrid()
 	}
 }
 
 func (t *Terminal) SetSize() {
-	println("<Terminal>.SetSize()        --------FIXME once we allow dragging edges")
+	println("<Terminal>.SetSize()")
+
+	//set char size
 	t.CharSize.X = (t.Bounds.Width() - t.BorderSize*2) / float32(t.GridSize.X)
 	t.CharSize.Y = (t.Bounds.Height() - t.BorderSize*2) / float32(t.GridSize.Y)
 
+	//inform task of changes
 	m := msg.Serialize(msg.TypeVisualInfo, *t.GetVisualInfo())
 
 	if t.OutChannelId != 0 {
@@ -201,18 +223,6 @@ func (t *Terminal) SetStringAt(X, Y int, S string) {
 	}
 }
 
-func (t *Terminal) SetGridSize() {
-	println("<Terminal>.SetGridSize() --------------------------FIXME/TODO")
-
-	// ERROR IN THIS CODE!
-	// .... but I don't see any need for this right now anyways.
-
-	// t.Chars = make([][]uint32, t.GridSize.Y, t.GridSize.Y)
-
-	// for i := range(0, t.GridSize.X):
-	// 	t.Chars[i] = make([]uint32, t.GridSize.X, t.GridSize.X)
-}
-
 // private
 func (t *Terminal) updateCommandLine(m msg.MessageCommandLine) {
 	for i := 0; i < t.GridSize.X*2; i++ {
@@ -249,4 +259,19 @@ func (t *Terminal) posIsValid(X, Y int) bool {
 	}
 
 	return true
+}
+
+func (t *Terminal) resizeGrid() {
+	t.Chars = [][]uint32{}
+
+	//allocate every grid position in the "Chars" multi-dimensional slice
+	for y := 0; y < t.GridSize.Y; y++ {
+		t.Chars = append(t.Chars, []uint32{})
+
+		for x := 0; x < t.GridSize.X; x++ {
+			t.Chars[y] = append(t.Chars[y], 0)
+		}
+	}
+
+	t.SetSize()
 }

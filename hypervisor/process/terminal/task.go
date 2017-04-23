@@ -117,13 +117,13 @@ func (pr *Process) Tick() {
 	}
 
 	select {
-	case exit := <-pr.attachedExtProcess.GetProcessExitChannel():
-		if exit {
-			println("Got the exit in task, process is finished.")
-			//TODO: still not working yet. looking for the best way to finish
-			//multiple goroutines at the same time to avoid any side effects
-			pr.ExitExtProcess()
-		}
+	//case exit := <-pr.attachedExtProcess.GetProcessExitChannel():
+	// if exit {
+	// 	println("Got the exit in task, process is finished.")
+	// 	//TODO: still not working yet. looking for the best way to finish
+	// 	//multiple goroutines at the same time to avoid any side effects
+	// 	pr.ExitExtProcess()
+	// }
 	case data := <-pr.attachedExtProcess.GetProcessOutChannel():
 		println("Received data from external process, sending to term.")
 		pr.State.PrintLn(string(data))

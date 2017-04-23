@@ -26,7 +26,7 @@ type ExternalProcess struct {
 
 	ProcessIn   chan []byte
 	ProcessOut  chan []byte
-	ProcessExit chan struct{} // this way it's easy to clenup multiple places
+	ProcessExit chan struct{} //this way it's easy to cleanup multiple places
 
 	cmdOut chan []byte
 	cmdIn  chan []byte
@@ -173,10 +173,10 @@ func (pr *ExternalProcess) startRoutines() error {
 
 		pr.wg.Add(2)
 
-		// Run the routine which will read and send the data to CmdIn
+		//Run the routine which will read and send the data to CmdIn
 		go pr.cmdInRoutine()
 
-		// Run the routine which will read from Cmdout and write to process
+		//Run the routine which will read from Cmdout and write to process
 		go pr.cmdOutRoutine()
 
 		pr.routinesStarted = true

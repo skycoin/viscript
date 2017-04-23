@@ -35,7 +35,6 @@ func (st *State) HandleMessages() {
 		case msg.CATEGORY_Input:
 			st.UnpackMessage(msgType, m)
 		case msg.CATEGORY_Terminal:
-			app.At(stPath, "----CATEGORY_Terminal----FIXME? SHOULD NEVER GET THIS TYPE HERE?!?!")
 			st.UnpackMessage(msgType, m)
 		default:
 			app.At(stPath, "**************** UNHANDLED MESSAGE TYPE CATEGORY! ****************")
