@@ -41,7 +41,7 @@ func (t *Terminal) Init() {
 	t.InChannel = make(chan []byte, msg.ChannelCapacity)
 	t.BorderSize = 0.013
 	t.GridSize = app.Vec2I{80, 32}
-	t.setupGrid()
+	t.setupNewGrid()
 	//set char size
 	t.CharSize.X = (t.Bounds.Width() - t.BorderSize*2) / float32(t.GridSize.X)
 	t.CharSize.Y = (t.Bounds.Height() - t.BorderSize*2) / float32(t.GridSize.Y)
@@ -91,7 +91,7 @@ func (t *Terminal) ResizeHorizontally(newRight float32) {
 	}
 
 	if /* x changed */ sx != t.GridSize.X {
-		t.setupGrid()
+		t.setupNewGrid()
 	}
 }
 
@@ -117,7 +117,7 @@ func (t *Terminal) ResizeVertically(newBottom float32) {
 	}
 
 	if /* y changed */ sy != t.GridSize.Y {
-		t.setupGrid()
+		t.setupNewGrid()
 	}
 }
 
@@ -247,8 +247,8 @@ func (t *Terminal) posIsValid(X, Y int) bool {
 	return true
 }
 
-func (t *Terminal) setupGrid() {
-	app.At(path, "setupGrid")
+func (t *Terminal) setupNewGrid() {
+	app.At(path, "setupNewGrid")
 	t.Curr = app.Vec2I{0, 0}
 	t.Chars = [][]uint32{}
 
