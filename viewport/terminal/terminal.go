@@ -8,10 +8,8 @@ import (
 )
 
 const (
-	// new terminals start with these values
-	NumColumns     = 64 // num == count/number of...
-	NumRows        = 32
 	NumPromptLines = 2
+	path           = "viewport/terminal/terminal"
 )
 
 type Terminal struct {
@@ -42,8 +40,11 @@ func (t *Terminal) Init() {
 	t.TerminalId = msg.RandTerminalId()
 	t.InChannel = make(chan []byte, msg.ChannelCapacity)
 	t.BorderSize = 0.013
-	t.GridSize = app.Vec2I{NumColumns, NumRows}
-	t.resizeGrid()
+	t.GridSize = app.Vec2I{80, 32}
+	t.setupGrid()
+	//set char size
+	t.CharSize.X = (t.Bounds.Width() - t.BorderSize*2) / float32(t.GridSize.X)
+	t.CharSize.Y = (t.Bounds.Height() - t.BorderSize*2) / float32(t.GridSize.Y)
 
 	t.PutString(">")
 	t.SetCursor(1, 0)
@@ -90,7 +91,7 @@ func (t *Terminal) ResizeHorizontally(newRight float32) {
 	}
 
 	if /* x changed */ sx != t.GridSize.X {
-		t.resizeGrid()
+		t.setupGrid()
 	}
 }
 
@@ -116,22 +117,7 @@ func (t *Terminal) ResizeVertically(newBottom float32) {
 	}
 
 	if /* y changed */ sy != t.GridSize.Y {
-		t.resizeGrid()
-	}
-}
-
-func (t *Terminal) SetSize() {
-	println("<Terminal>.SetSize()")
-
-	//set char size
-	t.CharSize.X = (t.Bounds.Width() - t.BorderSize*2) / float32(t.GridSize.X)
-	t.CharSize.Y = (t.Bounds.Height() - t.BorderSize*2) / float32(t.GridSize.Y)
-
-	//inform task of changes
-	m := msg.Serialize(msg.TypeVisualInfo, *t.GetVisualInfo())
-
-	if t.OutChannelId != 0 {
-		hypervisor.DbusGlobal.PublishTo(t.OutChannelId, m)
+		t.setupGrid()
 	}
 }
 
@@ -261,7 +247,8 @@ func (t *Terminal) posIsValid(X, Y int) bool {
 	return true
 }
 
-func (t *Terminal) resizeGrid() {
+func (t *Terminal) setupGrid() {
+	app.At(path, "setupGrid")
 	t.Curr = app.Vec2I{0, 0}
 	t.Chars = [][]uint32{}
 
@@ -274,5 +261,9 @@ func (t *Terminal) resizeGrid() {
 		}
 	}
 
-	t.SetSize()
+	//inform task of changes
+	if t.OutChannelId != 0 {
+		m := msg.Serialize(msg.TypeVisualInfo, *t.GetVisualInfo())
+		hypervisor.DbusGlobal.PublishTo(t.OutChannelId, m)
+	}
 }

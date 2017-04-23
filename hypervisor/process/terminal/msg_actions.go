@@ -56,15 +56,18 @@ func (st *State) onVisualInfo(m msg.MessageVisualInfo, serializedMsg []byte) {
 			}
 
 			page = append(page, ll[:x])
-			ll = ll[x+2:]
+			ll = ll[x+1:]
 		}
 
-		page = append(page, ll)
+		if len(ll) > 0 {
+			page = append(page, ll)
+		}
+
 		cl--
 	}
 
 	for _, line := range page {
-		st.PrintLn(line)
+		st.printLnAndMAYBELogIt(line, false)
 	}
 }
 
