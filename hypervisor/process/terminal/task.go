@@ -60,8 +60,10 @@ func (pr *Process) AttachExternalProcess(extProc msg.ExtProcessInterface) error 
 	if err != nil {
 		return err
 	}
+
 	pr.attachedExtProcess = extProc
 	pr.hasExtProcAttached = true
+
 	return nil
 }
 

@@ -1,6 +1,8 @@
 package process
 
 import (
+	"fmt"
+
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
@@ -137,12 +139,13 @@ func (st *State) actOnCommand() {
 		return
 	}
 
-	s := "actOnCommand() called with"
-	println(s, "cmd:", cmd)
+	fmt.Printf("actOnCommand() called with %s args:\n", cmd)
 
 	for _, arg := range args {
-		println(s, "arg:", arg)
+		fmt.Printf("%s ", arg)
 	}
+
+	println()
 
 	if st.proc.HasExtProcessAttached() {
 		extProcInChannel := st.proc.attachedExtProcess.GetProcessInChannel()
