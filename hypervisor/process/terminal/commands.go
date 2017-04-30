@@ -10,7 +10,7 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-const cp = "/hypervisor/process/terminal/commands"
+const cp = "hypervisor/process/terminal/commands"
 
 func (st *State) commandStart(args []string) {
 	app.At(cp, "commandStart")
@@ -44,7 +44,7 @@ func (st *State) commandStart(args []string) {
 	if !detached {
 		err = st.proc.AttachExternalProcess(extProcInterface)
 		if err != nil {
-			st.PrintLn(err.Error())
+			st.PrintError(err.Error())
 		}
 	}
 
@@ -56,7 +56,9 @@ func (st *State) commandStart(args []string) {
 
 func (st *State) commandShutDown(args []string) {
 	app.At(cp, "commandShutDown")
-	// TODO: finish command shutdown
+	println("TODO: finish implementing command shutdown")
+	println("TODO: finish implementing command shutdown")
+	println("TODO: finish implementing command shutdown")
 }
 
 func (st *State) commandAttach(args []string) {
@@ -84,7 +86,7 @@ func (st *State) commandAttach(args []string) {
 	st.PrintLn(extProc.GetFullCommandLine())
 	err = st.proc.AttachExternalProcess(extProc)
 	if err != nil {
-		st.PrintLn(err.Error())
+		st.PrintError(err.Error())
 	}
 }
 
