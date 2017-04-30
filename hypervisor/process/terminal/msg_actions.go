@@ -39,13 +39,14 @@ func (st *State) onVisualInfo(m msg.MessageVisualInfo, serializedMsg []byte) {
 	app.At("process/terminal/msg_action", "onVisualInfo")
 	//current position was reset to home (top left corner) inside viewport/term
 	st.VisualInfo = m
-	cl /* current line */ := len(st.Cli.Log) - 1 //start from latest log entry
+	cl /* current log entry */ := len(st.Cli.Log) - 1 //start from latest
 	page := []string{}
-	lineSections := []string{}
 
 	//build a page (or less if term hasn't scrolled yet)
-	for len(page) < int(m.NumRows) && cl >= 0 {
+	for /* page isn't full & still more entries */ len(page) < int(m.NumRows) && cl >= 0 {
 		ll /* last line */ := st.Cli.Log[cl]
+
+		lineSections := []string{}
 
 		x := int(m.NumColumns)
 		for /* line needs breaking up */ len(ll) > int(m.NumColumns) {
@@ -58,10 +59,12 @@ func (st *State) onVisualInfo(m msg.MessageVisualInfo, serializedMsg []byte) {
 			ll = ll[x+1:]
 		}
 
+		//the last section, if anything remains
 		if len(ll) > 0 {
 			lineSections = append(lineSections, ll)
 		}
 
+		//add line or line sections to page
 		for i := len(lineSections) - 1; i >= 0; i-- {
 			page = append(page, lineSections[i])
 		}
@@ -72,6 +75,8 @@ func (st *State) onVisualInfo(m msg.MessageVisualInfo, serializedMsg []byte) {
 	for i := len(page) - 1; i >= 0; i-- {
 		st.printLnAndMAYBELogIt(page[i], false)
 	}
+
+	st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 }
 
 func (st *State) actOnOneTimeHotkeys(m msg.MessageKey) {
