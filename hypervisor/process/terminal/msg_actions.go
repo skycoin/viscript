@@ -37,37 +37,40 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 
 func (st *State) onVisualInfo(m msg.MessageVisualInfo, serializedMsg []byte) {
 	app.At("process/terminal/msg_action", "onVisualInfo")
-	st.VisualInfo = m //maybe we actually don't need this cuz we can just use
-	//the data here, with no need to store it?
-
 	//current position was reset to home (top left corner) inside viewport/term
-
+	st.VisualInfo = m
 	cl /* current line */ := len(st.Cli.Log) - 1 //start from latest log entry
 	page := []string{}
+	lineSections := []string{}
 
 	//build a page (or less if term hasn't scrolled yet)
 	for len(page) < int(m.NumRows) && cl >= 0 {
 		ll /* last line */ := st.Cli.Log[cl]
 
-		x := m.NumColumns
-		for len(ll) > int(m.NumColumns) {
-			for string(ll[x]) != " " {
+		x := int(m.NumColumns)
+		for /* line needs breaking up */ len(ll) > int(m.NumColumns) {
+			for /* decrementing towards start of word */ string(ll[x]) != " " &&
+				/* still fits on 1 line */ (len(ll)-x) < int(m.NumColumns) {
 				x--
 			}
 
-			page = append(page, ll[:x])
+			lineSections = append(lineSections, ll[:x])
 			ll = ll[x+1:]
 		}
 
 		if len(ll) > 0 {
-			page = append(page, ll)
+			lineSections = append(lineSections, ll)
+		}
+
+		for i := len(lineSections) - 1; i >= 0; i-- {
+			page = append(page, lineSections[i])
 		}
 
 		cl--
 	}
 
-	for _, line := range page {
-		st.printLnAndMAYBELogIt(line, false)
+	for i := len(page) - 1; i >= 0; i-- {
+		st.printLnAndMAYBELogIt(page[i], false)
 	}
 }
 
