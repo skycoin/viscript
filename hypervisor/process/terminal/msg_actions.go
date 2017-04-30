@@ -162,6 +162,7 @@ func (st *State) actOnCommand() {
 	case "h":
 		fallthrough
 	case "help":
+		st.PrintLn(app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)))
 		//st.PrintLn("Current commands:")
 		st.PrintLn("help:                  This message ('?' or 'h' for short).")
 		st.PrintLn("start (-a) <command>:  Start external task. (pass -a to also attach).")
@@ -173,6 +174,7 @@ func (st *State) actOnCommand() {
 		st.PrintLn("CTRL+Z:                Detach currently attached process.")
 		//st.PrintLn("    new_terminal:     Add new terminal.")
 		//st.PrintLn("    CTRL+C:           ___description goes here___")
+		st.PrintLn(app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)))
 
 	case "ls":
 		st.commandListExternalTasks(args)

@@ -29,15 +29,22 @@ func (log CcLog) Add(s string) {
 	*/
 }
 
+func GetBarOfChars(char string, howMany int) string {
+	bar := ""
+
+	for i := 0; i < howMany; i++ {
+		bar += char
+	}
+
+	return bar
+}
+
 // numLines: use odd number for an exact middle point
 func MakeHighlyVisibleLogEntry(s string, numLines int) {
 	s = " " + s + " "
 	osOnly := s == Name
 
-	var bar string
-	for i := 0; i < numUsableChars; i++ {
-		bar += fillChar
-	}
+	bar := GetBarOfChars(fillChar, numUsableChars)
 
 	var spaces string
 	for i := 0; i < len(s); i++ {

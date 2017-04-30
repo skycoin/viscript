@@ -34,7 +34,9 @@ func (st *State) printLnAndMAYBELogIt(s string, addToLog bool) {
 		st.sendChar(uint32(c))
 	}
 
-	st.NewLine()
+	if len(s) != int(st.VisualInfo.NumColumns) {
+		st.NewLine()
+	}
 }
 
 func (st *State) PrintError(s string) {
@@ -45,7 +47,7 @@ func (st *State) PrintError(s string) {
 		println(s)
 	}
 
-	//to terminal (our code is more likely to crash, obscuring error message)
+	//to terminal (our code is more likely to crash, preventing ANY error message)
 	st.PrintLn(s)
 }
 

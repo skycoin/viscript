@@ -3,12 +3,13 @@ package terminal
 import (
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor"
-	"github.com/corpusc/viscript/hypervisor/input/keyboard"
+	//"github.com/corpusc/viscript/hypervisor/input/keyboard"
 	"github.com/corpusc/viscript/msg"
 )
 
 const (
 	NumPromptLines = 2
+	MinimumColumns = 16 //don't allow resizing smaller than this
 	path           = "viewport/terminal/terminal"
 )
 
@@ -74,21 +75,26 @@ func (t *Terminal) ResizeHorizontally(newRight float32) {
 	delta := newRight - t.Bounds.Right
 	sx := t.GridSize.X
 
-	if keyboard.ControlKeyIsDown {
-		t.Bounds.Right = newRight
-	} else {
-		for delta > t.CharSize.X {
-			delta -= t.CharSize.X
-			t.Bounds.Right += t.CharSize.X
-			t.GridSize.X++
-		}
+	// if keyboard.ControlKeyIsDown {
+	// 	//if we re-enable holding CTRL for pixel resizing, will need to adjust GridSize too
+	// 	t.Bounds.Right = newRight
+	// } else {
+	for delta > t.CharSize.X {
+		delta -= t.CharSize.X
 
-		for delta < -t.CharSize.X {
-			delta += t.CharSize.X
+		t.Bounds.Right += t.CharSize.X
+		t.GridSize.X++
+	}
+
+	for delta < -t.CharSize.X {
+		delta += t.CharSize.X
+
+		if t.GridSize.X > MinimumColumns {
 			t.Bounds.Right -= t.CharSize.X
 			t.GridSize.X--
 		}
 	}
+	// }
 
 	if /* x changed */ sx != t.GridSize.X {
 		t.setupNewGrid()
@@ -100,21 +106,22 @@ func (t *Terminal) ResizeVertically(newBottom float32) {
 	delta := newBottom - t.Bounds.Bottom
 	sy := t.GridSize.Y
 
-	if keyboard.ControlKeyIsDown {
-		t.Bounds.Bottom = newBottom
-	} else {
-		for delta > t.CharSize.Y {
-			delta -= t.CharSize.Y
-			t.Bounds.Bottom += t.CharSize.Y
-			t.GridSize.Y++
-		}
-
-		for delta < -t.CharSize.Y {
-			delta += t.CharSize.Y
-			t.Bounds.Bottom -= t.CharSize.Y
-			t.GridSize.Y--
-		}
+	// if keyboard.ControlKeyIsDown {
+	// 	//if we re-enable holding CTRL for pixel resizing, will need to adjust GridSize too
+	// 	t.Bounds.Bottom = newBottom
+	// } else {
+	for delta > t.CharSize.Y {
+		delta -= t.CharSize.Y
+		t.Bounds.Bottom += t.CharSize.Y
+		t.GridSize.Y++
 	}
+
+	for delta < -t.CharSize.Y {
+		delta += t.CharSize.Y
+		t.Bounds.Bottom -= t.CharSize.Y
+		t.GridSize.Y--
+	}
+	// }
 
 	if /* y changed */ sy != t.GridSize.Y {
 		t.setupNewGrid()
