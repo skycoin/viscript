@@ -66,6 +66,10 @@ fi
 pv "Changing directory to Skycoin main file"
 cd "$localSkycoinPath/cmd/skycoin/"
 
+# Get all dependencies for skycoin.go
+pv "Getting all dependencies for Skycoin"
+go get -d ./...
+
 # Build skycoin.go 
 pv "Building Skycoin binary"
 go build -o skycoin skycoin.go
@@ -96,6 +100,10 @@ cp -R "static/" "$ROOT_DIR/bin/skycoin/"
 pv "Changing directory to Skycoin cli"
 cd "$localSkycoinPath/cmd/cli/"
 
+# Get all dependencies for cli.go
+pv "Getting all dependencies for Skycoin cli"
+go get -d ./...
+
 # Build cli.go
 pv "Building Skycoin cli"
 go build -o skycoin-cli cli.go
@@ -114,6 +122,10 @@ mv skycoin-cli "$ROOT_DIR/bin/skycoin/"
 pv "Changing directory to Skycoin rpc server"
 cd "$localSkycoinPath/src/mesh/cmd/rpc/srv/"
 
+# Get all dependencies for rpc_run.go
+pv "Getting all dependencies for meshnet server"
+go get -d ./...
+
 # Build run_rpc.go
 pv "Building Skycoin rpc server"
 go build -o meshnet-server rpc_run.go
@@ -131,6 +143,10 @@ mv meshnet-server "$ROOT_DIR/bin/meshnet/"
 # Change directory to local Skycoin mesh cli
 pv "Changing directory to Skycoin rpc mesh cli"
 cd "$localSkycoinPath/src/mesh/cmd/rpc/cli/"
+
+# Get all dependencies for meshnet cli
+pv "Getting all dependencies for meshnet cli"
+go get -d ./...
 
 # Build cli.go
 pv "Building Skycoin rpc mesh cli"
@@ -192,10 +208,3 @@ gottyCommand="gotty -w -p 9999 --reconnect ./viscript-cli"
 echo $gottyCommand > "$ROOT_DIR/viscript-cli.sh" 
 
 # TODO: zip here?
-# TODO: go get on a source file to get dependencies?
-
-
-
-
-
-
