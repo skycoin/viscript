@@ -1,8 +1,6 @@
 package process
 
 import (
-	"fmt"
-
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
@@ -139,13 +137,17 @@ func (st *State) actOnCommand() {
 		return
 	}
 
-	fmt.Printf("actOnCommand() called with %s args:\n", cmd)
+	//if having multiple lines is such a bad thing, then you should have went all
+	//the way and put it all on one line then.	that is much easier to overlook,
+	//and therefore fights against the whole purpose of printing it, however.
+	//also your feedback didn't read sensibly (in other ways) in my opinion
+	s := "actOnCommand()      command \"" + cmd + "\"      args"
 
 	for _, arg := range args {
-		fmt.Printf("%s ", arg)
+		s += " [" + arg + "]"
 	}
 
-	println()
+	println(s)
 
 	if st.proc.HasExtProcessAttached() {
 		extProcInChannel := st.proc.attachedExtProcess.GetProcessInChannel()
