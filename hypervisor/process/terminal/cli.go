@@ -15,8 +15,8 @@ type Cli struct {
 	Prompt   string
 	//FIXME to work with Terminal's dynamic self.GridSize.X
 	//assumes 64 horizontal characters, then dedicates 2 lines for each command.
-	NumLinesFromTheEnd int //backscroll offset
-	MaxCommandSize     int //reserve ending space for cursor at the end of last line
+	BackscrollAmount int //number of lines from the last
+	MaxCommandSize   int //reserve ending space for cursor at the end of last line
 }
 
 func NewCli() *Cli {
@@ -36,14 +36,14 @@ func NewCli() *Cli {
 
 func (c *Cli) AdjustBackscrollOffset(delta int) {
 	println("BACKSCROLLING delta: ", delta)
-	c.NumLinesFromTheEnd += delta
+	c.BackscrollAmount += delta
 
-	if c.NumLinesFromTheEnd >= len(c.Log) {
-		c.NumLinesFromTheEnd = len(c.Log)
+	if c.BackscrollAmount >= len(c.Log) {
+		c.BackscrollAmount = len(c.Log)
 	}
 
-	if c.NumLinesFromTheEnd < 0 {
-		c.NumLinesFromTheEnd = 0
+	if c.BackscrollAmount < 0 {
+		c.BackscrollAmount = 0
 	}
 }
 
