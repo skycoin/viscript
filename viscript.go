@@ -65,6 +65,7 @@ package main
 import (
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor"
+	"github.com/corpusc/viscript/mesh"
 	"github.com/corpusc/viscript/rpc/terminalmanager"
 	"github.com/corpusc/viscript/viewport"
 )
@@ -79,6 +80,11 @@ func main() {
 	go func() {
 		rpcInstance := terminalmanager.NewRPC()
 		rpcInstance.Serve()
+	}()
+
+	go func() {
+		meshInstance := mesh.NewMeshServer("0.0.0.0:7999")
+		meshInstance.Serve()
 	}()
 
 	//actual start of loop

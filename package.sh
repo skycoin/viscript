@@ -207,4 +207,40 @@ pv "Creating bash file to run cli with gotty: https://github.com/yudai/gotty"
 gottyCommand="gotty -w -p 9999 --reconnect ./viscript-cli"
 echo $gottyCommand > "$ROOT_DIR/viscript-cli.sh" 
 
+# Change directory to run_nm.go location
+pv "Changing directory to nodemanager creation script location"
+cd "$PWD/mesh/run_mesh/nodemanager"
+
+# Build run_nm.go
+pv "Building nodemanager creation script"
+go build -o meshnet-run-nm run_nm.go
+
+# Check if building nodemanager creation script was successfull
+if [ ! -f "meshnet-run-nm" ]; then
+    pv "Building nodemanager creation script failed. Exiting"
+    exit 1
+fi
+
+# Move nodemanager creation script to root dir
+pv "Moving nodemanager creation script to the root directory"
+mv meshnet-run-nm "$ROOT_DIR/bin/meshnet/"
+
+# Change directory to run_node.go location
+pv "Changing directory to node creation script location"
+cd "../node"
+
+# Build run_node.go
+pv "Building node creation script"
+go build -o meshnet-run-node run_node.go
+
+# Check if building node creation script was successfull
+if [ ! -f "meshnet-run-node" ]; then
+    pv "Building node creation script failed. Exiting"
+    exit 1
+fi
+
+# Move node creation script to root dir
+pv "Moving node creation script to the root directory"
+mv meshnet-run-node "$ROOT_DIR/bin/meshnet/"
+
 # TODO: zip here?
