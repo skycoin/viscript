@@ -1,4 +1,4 @@
-package mesh
+package monitor
 
 import (
 	"errors"
@@ -9,10 +9,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/skycoin/skycoin/src/mesh/messages"
+	"github.com/corpusc/viscript/msg"
 )
 
-type MeshServer struct {
+type MonitorServer struct {
 	address          string
 	lock             *sync.Mutex
 	connections      map[uint32]net.Conn
@@ -20,15 +20,15 @@ type MeshServer struct {
 	sequence         uint32
 }
 
-func NewMeshServer(address string) *MeshServer {
-	server := &MeshServer{address: address}
+func NewMonitorServer(address string) *MonitorServer {
+	server := &MonitorServer{address: address}
 	server.lock = &sync.Mutex{}
 	server.responseChannels = make(map[uint32]chan []byte)
 	server.connections = make(map[uint32]net.Conn)
 	return server
 }
 
-func (self *MeshServer) Serve() {
+func (self *MonitorServer) Serve() {
 	address := self.address
 
 	l, err := net.Listen("tcp", address)
@@ -62,8 +62,8 @@ func (self *MeshServer) Serve() {
 					}
 				}
 
-				uc := &messages.UserCommand{}
-				err = messages.Deserialize(message[:n], uc)
+				uc := &msg.UserCommand{}
+				err = msg.Deserialize(message[:n], uc)
 				if err != nil {
 					panic(err)
 				}
@@ -89,7 +89,7 @@ func (self *MeshServer) Serve() {
 	}
 }
 
-func (self *MeshServer) Send(appId uint32, msg []byte) ([]byte, error) {
+func (self *MonitorServer) Send(appId uint32, message []byte) ([]byte, error) {
 
 	respChan, sequence := self.MakeResponseChannel()
 
@@ -98,11 +98,11 @@ func (self *MeshServer) Send(appId uint32, msg []byte) ([]byte, error) {
 	self.lock.Unlock()
 
 	if !ok {
-		return nil, errors.New(fmt.Sprintf("no connection to meshnet with id %d\n", appId))
+		return nil, errors.New(fmt.Sprintf("no connection to app with id %d\n", appId))
 	}
 
-	uc := &messages.UserCommand{sequence, appId, msg}
-	ucS := messages.Serialize(messages.MsgUserCommand, uc)
+	uc := &msg.UserCommand{sequence, appId, message}
+	ucS := msg.Serialize(msg.MsgUserCommand, uc)
 	_, err := conn.Write(ucS)
 	if err != nil {
 		return nil, err
@@ -112,7 +112,7 @@ func (self *MeshServer) Send(appId uint32, msg []byte) ([]byte, error) {
 	return response, err
 }
 
-func (self *MeshServer) MakeResponseChannel() (chan []byte, uint32) {
+func (self *MonitorServer) MakeResponseChannel() (chan []byte, uint32) {
 
 	respChan := make(chan []byte)
 
@@ -125,7 +125,7 @@ func (self *MeshServer) MakeResponseChannel() (chan []byte, uint32) {
 	return respChan, sequence
 }
 
-func (self *MeshServer) Wait(respChan chan []byte, sequence uint32) ([]byte, error) {
+func (self *MonitorServer) Wait(respChan chan []byte, sequence uint32) ([]byte, error) {
 	select {
 	case response := <-respChan:
 		return response, nil
