@@ -1,0 +1,24 @@
+
+# Available applications
+apps:
+  skycoin:
+    path: /bin/skycoin/skycoin
+    args:
+      - --gui-dir=/bin/skycoin/static/
+    desc: Skycoin main binary
+  skycoin-cli:
+    path: /bin/skycoin/skycoin-cli
+    args: 
+    desc: Skycoin command line interface
+  meshnet-server:
+    path: /bin/meshnet/meshnet-server
+    args: 
+    desc: Meshnet nodes manager server
+  meshnet-cli:
+    path: /bin/meshnet/meshnet-cli
+    args:
+    desc: Command line client for meshnet nodes manager server
+
+# Additional settings
+settings:
+  verboseInput: false   # Will print key and mouse input if set to true
