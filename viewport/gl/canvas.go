@@ -66,6 +66,7 @@ func GetTaskbarRect() *app.Rectangle {
 
 func SetSize(x, y int32) {
 	println("\n<gl/canvas>.SetSize()", x, y)
+
 	*PrevFrustum = *CurrFrustum
 	CurrAppWidth = x
 	CurrAppHeight = y

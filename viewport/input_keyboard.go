@@ -3,13 +3,14 @@ package viewport
 import (
 	"fmt"
 
+	"github.com/corpusc/viscript/config"
 	"github.com/corpusc/viscript/hypervisor/input/keyboard"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/viewport/gl"
 )
 
 func onChar(m msg.MessageChar) {
-	if DebugPrintInputEvents {
+	if config.DebugPrintInputEvents() {
 		println("msg.TypeChar", " ["+string(m.Char)+"]") //if they want to see what events are triggered,
 		//we shouldn't hide them without good reason (like the super spammy mouse moves)
 	}
@@ -22,7 +23,7 @@ func onChar(m msg.MessageChar) {
 //BUT for RELEASE, the "mod" variable will NOT tell you what key it is!
 //so you will have to handle both left & right modifier keys via the "action" variable!
 func onKey(m msg.MessageKey) {
-	if DebugPrintInputEvents {
+	if config.DebugPrintInputEvents() {
 		if m.Action == 1 {
 			println()
 		}
