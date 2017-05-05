@@ -154,6 +154,7 @@ func DrawBegin() {
 		SetOrtho(CurrFrustum)
 		println("CHANGE OF FRUSTUM")
 	}
+
 	gl.MatrixMode(gl.MODELVIEW) //.PROJECTION) //.MODELVIEW)
 	gl.LoadIdentity()
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
