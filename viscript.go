@@ -64,6 +64,7 @@ package main
 
 import (
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/config"
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/monitor"
 	"github.com/corpusc/viscript/rpc/terminalmanager"
@@ -71,6 +72,12 @@ import (
 )
 
 func main() {
+	err := config.Load("config.yaml")
+	if err != nil {
+		println(err.Error())
+		return
+	}
+
 	app.MakeHighlyVisibleLogEntry(app.Name, 15)
 	hypervisor.Init()
 	viewport.Init() //runtime.LockOSThread()
