@@ -1,13 +1,13 @@
 package viewport
 
 import (
+	_ "strconv"
+
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/config"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/viewport/gl"
-	_ "strconv"
 )
-
-var DebugPrintInputEvents = true
 
 func UnpackMessage(msgIn []byte) []byte {
 	switch msg.GetType(msgIn) {
@@ -62,7 +62,7 @@ func UnpackMessage(msgIn []byte) []byte {
 }
 
 func onFrameBufferSize(m msg.MessageFrameBufferSize) {
-	if DebugPrintInputEvents {
+	if config.DebugPrintInputEvents() {
 		print("msg.TypeFrameBufferSize")
 		showUInt32("X", m.X)
 		showUInt32("Y", m.Y)

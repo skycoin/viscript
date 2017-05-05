@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/config"
 	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/viewport/gl"
@@ -11,12 +12,12 @@ import (
 
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(m msg.MessageMousePos) {
-	// if DebugPrintInputEvents {
-	// 	fmt.Print("msg.TypeMousePos")
-	// 	showFloat64("X", m.X)
-	// 	showFloat64("Y", m.Y)
-	// 	println()
-	// }
+	if config.DebugPrintInputEvents() {
+		fmt.Print("msg.TypeMousePos")
+		showFloat64("X", m.X)
+		showFloat64("Y", m.Y)
+		println()
+	}
 
 	mouse.Update(app.Vec2F{float32(m.X), float32(m.Y)})
 
@@ -66,7 +67,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 			Terms.MoveFocusedTerminal(delt, &mouse.DeltaSinceLeftClick)
 			gl.SetHandPointer()
 
-			if DebugPrintInputEvents {
+			if config.DebugPrintInputEvents() {
 				// println("\nTerminal Id:", foc.TerminalId,
 				// 	"\nTop", foc.Bounds.Top,
 				// 	"\nLeft", foc.Bounds.Left,
@@ -89,7 +90,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 }
 
 func onMouseScroll(m msg.MessageMouseScroll) {
-	if DebugPrintInputEvents {
+	if config.DebugPrintInputEvents() {
 		print("msg.TypeMouseScroll")
 		showFloat64("X Offset", m.X)
 		showFloat64("Y Offset", m.Y)
@@ -100,7 +101,7 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 
 // apparently every time this is fired, a mouse position event is ALSO fired
 func onMouseButton(m msg.MessageMouseButton) {
-	if DebugPrintInputEvents {
+	if config.DebugPrintInputEvents() {
 		fmt.Print("msg.TypeMouseButton")
 		showUInt8("Button", m.Button)
 		showUInt8("Action", m.Action)
