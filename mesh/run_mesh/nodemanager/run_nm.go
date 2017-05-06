@@ -9,7 +9,7 @@ import (
 
 func main() {
 	args := os.Args
-	if len(args) < 2 {
+	if len(args) < 3 {
 		panic("not sufficient number of args")
 	}
 
