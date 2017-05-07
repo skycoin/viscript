@@ -18,7 +18,7 @@ func (st *State) commandHelp() {
 	st.PrintLn(app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)))
 	//st.PrintLn("Current commands:")
 	st.PrintLn("help:                  This message ('?' or 'h' for short).")
-	st.PrintLn("new_terminal:     	   Add new terminal.")
+	st.PrintLn("new_terminal:          Add new terminal.")
 	st.PrintLn("start (-a) <command>:  Start external task. (pass -a to also attach).")
 	st.PrintLn("attach   <id>:         Attach external task with given id to terminal.")
 	st.PrintLn("shutdown <id>:         [TODO] Shutdown external task with given id.")
