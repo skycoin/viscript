@@ -3,19 +3,15 @@ package viewport
 import (
 	"runtime"
 
-	t "github.com/corpusc/viscript/viewport/terminal"
-
 	igl "github.com/corpusc/viscript/viewport/gl" //internal gl
+	t "github.com/corpusc/viscript/viewport/terminal"
 )
 
 //glfw
 //glfw.PollEvents()
 //only remaining
 
-var (
-	CloseWindow bool            = false
-	Terms       t.TerminalStack = t.TerminalStack{}
-)
+var CloseWindow bool = false
 
 func Init() {
 	println("<viewport>.Init()")
@@ -42,8 +38,8 @@ func initEvents() {
 }
 
 func initTerms() {
-	Terms.Init()
-	Terms.Add()
+	t.Terms.Init()
+	t.Terms.Add()
 	// Terms.Add()
 	// Terms.Add()
 }
@@ -71,12 +67,12 @@ func DispatchEvents() []byte {
 
 func Tick() {
 	igl.Curs.Tick()
-	Terms.Tick()
+	t.Terms.Tick()
 }
 
 func UpdateDrawBuffer() {
 	igl.DrawBegin()
-	Terms.Draw()
+	t.Terms.Draw()
 	igl.DrawEnd()
 }
 

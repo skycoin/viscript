@@ -12,6 +12,24 @@ import (
 
 const cp = "hypervisor/process/terminal/commands"
 
+func (st *State) commandHelp() {
+	app.At(cp, "PrintHelp")
+
+	st.PrintLn(app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)))
+	//st.PrintLn("Current commands:")
+	st.PrintLn("help:                  This message ('?' or 'h' for short).")
+	st.PrintLn("new_terminal:          Add new terminal.")
+	st.PrintLn("start (-a) <command>:  Start external task. (pass -a to also attach).")
+	st.PrintLn("attach   <id>:         Attach external task with given id to terminal.")
+	st.PrintLn("shutdown <id>:         [TODO] Shutdown external task with given id.")
+	st.PrintLn("ls (-f):               List external tasks (pass -f for full commands).")
+	st.PrintLn("rpc:                   Issues command: \"go run rpc/cli/cli.go\"")
+	//st.PrintLn("Current hotkeys:")
+	st.PrintLn("CTRL+Z:                Detach currently attached process.")
+	//st.PrintLn("    CTRL+C:           ___description goes here___")
+	st.PrintLn(app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)))
+}
+
 func (st *State) commandStart(args []string) {
 	app.At(cp, "commandStart")
 

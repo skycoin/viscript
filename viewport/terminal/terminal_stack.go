@@ -29,6 +29,9 @@ type TerminalStack struct {
 	nextOffset app.Vec2F // how far from previous terminal
 }
 
+//moved from viewport
+var Terms = TerminalStack{}
+
 func (ts *TerminalStack) Init() {
 	w := gl.CanvasExtents.X * 1.5 //width of terminal window
 	h := gl.CanvasExtents.Y * 1.5 //height
