@@ -10,10 +10,10 @@ import (
 
 func main() {
 	args := os.Args
-	if len(args) < 5 {
+	if len(args) < 7 {
 		panic("not sufficient number of args")
 	}
-	host, nmAddr, connect, appIdStr, seqStr := args[1], args[2], args[3], args[4], args[5]
+	host, nmAddr, connect, appTalkAddr, appIdStr, seqStr := args[1], args[2], args[3], args[4], args[5], args[6]
 
 	seqInt, err := strconv.Atoi(seqStr)
 	if err != nil {
@@ -37,10 +37,16 @@ func main() {
 
 	var n messages.NodeInterface
 
+	nodeConfig := &node.NodeConfig{
+		host,
+		[]string{nmAddr},
+		appTalkAddr,
+	}
+
 	if need_connect {
-		n, err = node.CreateAndConnectNode(host, nmAddr)
+		n, err = node.CreateAndConnectNode(nodeConfig)
 	} else {
-		n, err = node.CreateNode(host, nmAddr)
+		n, err = node.CreateNode(nodeConfig)
 	}
 	if err != nil {
 		panic(err)
