@@ -7,6 +7,7 @@ import (
 	"github.com/corpusc/viscript/hypervisor/input/keyboard"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/viewport/gl"
+	t "github.com/corpusc/viscript/viewport/terminal"
 )
 
 func onChar(m msg.MessageChar) {
@@ -97,7 +98,7 @@ func onKey(m msg.MessageKey) {
 		case msg.KeyLeftAlt:
 			fallthrough
 		case msg.KeyRightAlt:
-			Terms.Defocus()
+			t.Terms.Defocus()
 			gl.SetArrowPointer()
 
 			/*

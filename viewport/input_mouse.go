@@ -8,6 +8,7 @@ import (
 	"github.com/corpusc/viscript/hypervisor/input/mouse"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/viewport/gl"
+	t "github.com/corpusc/viscript/viewport/terminal"
 )
 
 // triggered both by moving **AND*** by pressing buttons
@@ -21,7 +22,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 
 	mouse.Update(app.Vec2F{float32(m.X), float32(m.Y)})
 
-	foc := Terms.Focused
+	foc := t.Terms.Focused
 
 	if foc == nil {
 		return
@@ -52,19 +53,19 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 			gl.SetHResizePointer()
 			mouse.IncreaseNearnessThreshold()
 
-			Terms.Focused.ResizeHorizontally(mouse.GlPos.X)
+			t.Terms.Focused.ResizeHorizontally(mouse.GlPos.X)
 		} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight {
 			gl.SetVResizePointer()
 			mouse.IncreaseNearnessThreshold()
 
-			Terms.Focused.ResizeVertically(mouse.GlPos.Y)
+			t.Terms.Focused.ResizeVertically(mouse.GlPos.Y)
 		}
 
 		if mouse.PointerIsInside(foc.Bounds) && !foc.IsResizing() {
 			//high resolution delta for smooth resizing
 			delt := mouse.GlPos.GetDeltaFrom(mouse.PrevGlPos)
 
-			Terms.MoveFocusedTerminal(delt, &mouse.DeltaSinceLeftClick)
+			t.Terms.MoveFocusedTerminal(delt, &mouse.DeltaSinceLeftClick)
 			gl.SetHandPointer()
 
 			if config.DebugPrintInputEvents() {
@@ -136,7 +137,7 @@ func focusOnTopmostRectThatContainsPointer() {
 	var topmostZ float32
 	var topmostId msg.TerminalId
 
-	for id, t := range Terms.Terms {
+	for id, t := range t.Terms.Terms {
 		if mouse.PointerIsInside(t.Bounds) {
 			if topmostZ < t.Depth {
 				topmostZ = t.Depth
@@ -146,7 +147,7 @@ func focusOnTopmostRectThatContainsPointer() {
 	}
 
 	if topmostZ > 0 {
-		Terms.SetFocused(topmostId)
+		t.Terms.SetFocused(topmostId)
 	}
 }
 
@@ -189,13 +190,13 @@ func respondToAnyMenuButtonClicks() {
 	// 				//script.MakeTree()
 	// 			} else { // deactivated
 	// 				// remove all terminals with trees
-	// 				b := Terms[:0]
-	// 				for _, t := range Terms {
+	// 				b := t.Terms[:0]
+	// 				for _, t := range t.Terms {
 	// 					if len(t.Trees) < 1 {
 	// 						b = append(b, t)
 	// 					}
 	// 				}
-	// 				Terms = b
+	// 				t.Terms = b
 	// 				//fmt.Printf("len of b (from Terms) after removing ones with trees: %d\n", len(b))
 	// 				//fmt.Printf("len of Terms: %d\n", len(Terms))
 	// 			}

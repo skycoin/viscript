@@ -7,6 +7,7 @@ import (
 	"github.com/corpusc/viscript/config"
 	"github.com/corpusc/viscript/msg"
 	"github.com/corpusc/viscript/viewport/gl"
+	t "github.com/corpusc/viscript/viewport/terminal"
 )
 
 func UnpackMessage(msgIn []byte) []byte {
@@ -22,8 +23,8 @@ func UnpackMessage(msgIn []byte) []byte {
 		msg.MustDeserialize(msgIn, &m)
 		onMouseScroll(m)
 
-		if Terms.Focused != nil {
-			Terms.Focused.RelayToTask(msgIn)
+		if t.Terms.Focused != nil {
+			t.Terms.Focused.RelayToTask(msgIn)
 		}
 
 	case msg.TypeMouseButton:
@@ -36,8 +37,8 @@ func UnpackMessage(msgIn []byte) []byte {
 		msg.MustDeserialize(msgIn, &m)
 		onChar(m)
 
-		if Terms.Focused != nil {
-			Terms.Focused.RelayToTask(msgIn)
+		if t.Terms.Focused != nil {
+			t.Terms.Focused.RelayToTask(msgIn)
 		}
 
 	case msg.TypeKey:
@@ -45,8 +46,8 @@ func UnpackMessage(msgIn []byte) []byte {
 		msg.MustDeserialize(msgIn, &m)
 		onKey(m)
 
-		if Terms.Focused != nil {
-			Terms.Focused.RelayToTask(msgIn)
+		if t.Terms.Focused != nil {
+			t.Terms.Focused.RelayToTask(msgIn)
 		}
 
 	case msg.TypeFrameBufferSize:
