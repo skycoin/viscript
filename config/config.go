@@ -20,6 +20,8 @@ func Load(configFileName string) error {
 		return err
 	}
 
+	defer file.Close()
+
 	buffer := make([]byte, maxBufferSize)
 	n, err := file.Read(buffer)
 	if err != nil {
