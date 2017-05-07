@@ -83,3 +83,8 @@ func (st *State) sendChar(c uint32) {
 	m := msg.Serialize(msg.TypePutChar, msg.MessagePutChar{0, c})
 	st.publishToOut(m) // EVERY publish action prefixes another chan id
 }
+
+func (st *State) SendCommand(command string) {
+	m := msg.Serialize(msg.TypeCommand, msg.MessageCommand{Command: command})
+	st.publishToOut(m)
+}

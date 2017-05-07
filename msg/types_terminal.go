@@ -5,10 +5,11 @@ const CATEGORY_Terminal uint16 = 0x0200 //flag
 const (
 	TypeVisualInfo      = 1 + CATEGORY_Terminal
 	TypeCommandLine     = 2 + CATEGORY_Terminal
-	TypePutChar         = 3 + CATEGORY_Terminal
-	TypeSetCharAt       = 4 + CATEGORY_Terminal
-	TypeSetCursor       = 5 + CATEGORY_Terminal
-	TypeFrameBufferSize = 6 + CATEGORY_Terminal //start of low level events
+	TypeCommand         = 3 + CATEGORY_Terminal
+	TypePutChar         = 4 + CATEGORY_Terminal
+	TypeSetCharAt       = 5 + CATEGORY_Terminal
+	TypeSetCursor       = 6 + CATEGORY_Terminal
+	TypeFrameBufferSize = 7 + CATEGORY_Terminal //start of low level events
 )
 
 type MessageVisualInfo struct {
@@ -22,6 +23,10 @@ type MessageCommandLine struct { //updates/replaces current command line on any 
 	TermId       uint32
 	CommandLine  string
 	CursorOffset uint32 //from first character of command line
+}
+
+type MessageCommand struct {
+	Command string
 }
 
 type MessagePutChar struct {
