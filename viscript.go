@@ -35,6 +35,8 @@
 		When you click outside terminal it can land on a background
 		terminal which then pops in front.  Blocking the resize
 
+* Sideways scroll command line when it doesn't fit the dedicated space for it
+		(atm, 2 lines are reserved along the bottom of a full screen)
 
 
 
