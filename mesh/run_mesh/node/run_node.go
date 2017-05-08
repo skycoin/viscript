@@ -13,7 +13,7 @@ func main() {
 	if len(args) < 7 {
 		panic("not sufficient number of args")
 	}
-	host, nmAddr, connect, appTalkAddr, appIdStr, seqStr := args[1], args[2], args[3], args[4], args[5], args[6]
+	nodeAddr, nmAddr, connect, appTalkPortStr, appIdStr, seqStr := args[1], args[2], args[3], args[4], args[5], args[6]
 
 	seqInt, err := strconv.Atoi(seqStr)
 	if err != nil {
@@ -23,6 +23,14 @@ func main() {
 		panic("negative sequence")
 	}
 	sequence := uint32(seqInt)
+
+	appTalkPort, err := strconv.Atoi(appTalkPortStr)
+	if err != nil {
+		panic(err)
+	}
+	if appTalkPort < 0 || appTalkPort > 65535 {
+		panic("incorrect app talk port")
+	}
 
 	appIdInt, err := strconv.Atoi(appIdStr)
 	if err != nil {
@@ -38,9 +46,9 @@ func main() {
 	var n messages.NodeInterface
 
 	nodeConfig := &node.NodeConfig{
-		host,
+		nodeAddr,
 		[]string{nmAddr},
-		appTalkAddr,
+		appTalkPort,
 	}
 
 	if need_connect {
