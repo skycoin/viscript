@@ -62,7 +62,7 @@ func (self *MonitorServer) Serve() {
 					}
 				}
 
-				uc := &msg.UserCommand{}
+				uc := &msg.MessageUserCommand{}
 				err = msg.Deserialize(message[:n], uc)
 				if err != nil {
 					panic(err)
@@ -101,8 +101,8 @@ func (self *MonitorServer) Send(appId uint32, message []byte) ([]byte, error) {
 		return nil, errors.New(fmt.Sprintf("no connection to app with id %d\n", appId))
 	}
 
-	uc := &msg.UserCommand{sequence, appId, message}
-	ucS := msg.Serialize(msg.MsgUserCommand, uc)
+	uc := &msg.MessageUserCommand{sequence, appId, message}
+	ucS := msg.Serialize(msg.TypeUserCommand, uc)
 	_, err := conn.Write(ucS)
 	if err != nil {
 		return nil, err
