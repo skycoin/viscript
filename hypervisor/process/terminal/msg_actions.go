@@ -1,6 +1,9 @@
 package process
 
 import (
+	"bytes"
+	"fmt"
+
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/hypervisor"
 	"github.com/corpusc/viscript/msg"
@@ -79,6 +82,25 @@ func (st *State) onVisualInfo(m msg.MessageVisualInfo) {
 	}
 
 	st.Cli.EchoWholeCommand(st.proc.OutChannelId)
+}
+
+func (st *State) onTerminalIds(m msg.MessageTerminalIds) {
+	var buffer bytes.Buffer
+
+	header := fmt.Sprintf("Terminals (%d) (* -> focused):\n", len(m.TermIds))
+	buffer.WriteString(header)
+
+	for index, termID := range m.TermIds {
+		var termDescription string
+		if termID == m.Focused {
+			termDescription = fmt.Sprintf("*[%d] %d\n", index, termID)
+		} else {
+			termDescription = fmt.Sprintf(" [%d] %d\n", index, termID)
+		}
+		buffer.WriteString(termDescription)
+	}
+
+	st.PrintLn(buffer.String())
 }
 
 func (st *State) actOnOneTimeHotkeys(m msg.MessageKey) {
@@ -199,10 +221,12 @@ func (st *State) actOnCommand() {
 	//add new terminal
 	case "n":
 		fallthrough
-	case "new":
-		fallthrough
-	case "new_terminal":
-		st.SendCommand("new")
+	case "new_term":
+		st.SendCommand("add_new_term")
+
+	//list all terminals marking focused with •
+	case "list_terms":
+		st.SendCommand("list_terms")
 
 	default:
 		st.PrintError("\"" + cmd + "\" is an unknown command.")
