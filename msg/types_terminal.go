@@ -6,10 +6,11 @@ const (
 	TypeVisualInfo      = 1 + CATEGORY_Terminal
 	TypeCommandLine     = 2 + CATEGORY_Terminal
 	TypeCommand         = 3 + CATEGORY_Terminal
-	TypePutChar         = 4 + CATEGORY_Terminal
-	TypeSetCharAt       = 5 + CATEGORY_Terminal
-	TypeSetCursor       = 6 + CATEGORY_Terminal
-	TypeFrameBufferSize = 7 + CATEGORY_Terminal //start of low level events
+	TypeTerminalIds     = 4 + CATEGORY_Terminal
+	TypePutChar         = 5 + CATEGORY_Terminal
+	TypeSetCharAt       = 6 + CATEGORY_Terminal
+	TypeSetCursor       = 7 + CATEGORY_Terminal
+	TypeFrameBufferSize = 8 + CATEGORY_Terminal //start of low level events
 )
 
 type MessageVisualInfo struct {
@@ -27,6 +28,11 @@ type MessageCommandLine struct { //updates/replaces current command line on any 
 
 type MessageCommand struct {
 	Command string
+}
+
+type MessageTerminalIds struct {
+	Focused TerminalId
+	TermIds []TerminalId
 }
 
 type MessagePutChar struct {

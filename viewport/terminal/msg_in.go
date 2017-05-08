@@ -19,7 +19,7 @@ func (t *Terminal) UnpackMessage(message []byte) []byte {
 	case msg.TypeCommand:
 		var m msg.MessageCommand
 		msg.MustDeserialize(message, &m)
-		Terms.ActOnCommand(m.Command)
+		Terms.ActOnCommand(t.TerminalId, m.Command)
 
 	case msg.TypeSetCharAt:
 		var m msg.MessageSetCharAt

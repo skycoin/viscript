@@ -28,6 +28,11 @@ func (st *State) UnpackMessage(msgType uint16, message []byte) []byte {
 		msg.MustDeserialize(message, &m)
 		st.onVisualInfo(m)
 
+	case msg.TypeTerminalIds:
+		var m msg.MessageTerminalIds
+		msg.MustDeserialize(message, &m)
+		st.onTerminalIds(m)
+
 	default:
 		app.At("hypervisor/process/terminal/msg_in", "UNKNOWN MESSAGE TYPE!!!")
 
