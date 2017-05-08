@@ -41,6 +41,10 @@
 
 * fill task's VisualInfo upon terminal creation (atm, only gets data after resizing)
 
+* make log entry for each command line immediately upon enter, so it comes before
+		the resulting feedback
+
+
 
 ------- OLDER TODO: ------- (everything below was for the text editor)
 
