@@ -1608,39 +1608,9 @@ and get list of terminals, & tasks
 
 
 
-go on ticket board and create tickets
+go on 
 skycoin.atlassian.net
-create ticket for what you are working on and tag the upwork work log with ticket, 
-and create tickets
-
-
-
-
-
-
-
-add command "clear"
-
-
-
-
-
-
-
-~/repo/viscript $ go run ./rpc//cli/cli.go
-~/repo/viscript $ go run ./rpc//cli/cli.go -help
-
-does nothing
-
-
-go run ./rpc/cli/cli.go -help
-
-Attempting to connect on port: -help
-dial tcp: unknown port tcp/-help
-exit status 1
-
-
-create ticket for using the default port, ip, when i run the command
+create ticket for what you are working on and tag the upwork work log with ticket
 
 
 
@@ -1682,3 +1652,174 @@ when it sees EOF from running process, cleaned up a bit and I'll work more tomor
 Main thing is that it works for now. We might even need to remove that State variable 
 from external process and have ProcessOut and have Process to watch that for output 
 sequentially and printing it to viscript terminal.
+
+
+
+
+
+
+
+
+
+George: isn't it easy to run "e srv"
+at first and then "e cli" in another terminal?
+
+
+
+
+
+
+
+
+
+George: there's 3 goroutines.  1 that reads, 1 that writes upon receiving input from
+viscript, and 1 that waits for those goroutines to end cleans up 
+
+
+
+
+
+
+
+
+
+HaltingState: if command is in folder we want it to show up in terminal
+as native command
+
+look at skycoin rep folder.  Cmd skycoin skycoin.go as example of command line
+settings and defaults.
+
+we will have viscript binary.  Then a subfolder called bin.  And exes will go in there.
+
+Then we will have script for loading the defaults into bin.
+
+Bin will be in .gitignore
+
+
+
+
+
+
+
+
+
+The external task is not attached to the terminal
+But to a list of external tasks
+
+
+
+
+
+
+
+
+there will be a program to bind the terminal to the external task
+
+or have a parameter for terminal, which if set, means foreground is attached
+to external task
+
+
+
+
+
+
+
+
+the only programs we are running are our programs.  In golang
+
+
+
+
+
+
+
+
+each exe would be in own folder and may have assets
+
+
+
+
+
+
+
+we should pass in some rpc library thing like port on local host to skycoin exe.
+
+then the exe will connect to hypervisor via tcpip local and register itself and we will
+send shutdown commands via that channel 
+
+
+can send length prefixed messages and commands between the hypervisor and the child task
+
+later we might have special log wrapper and will hack our log to send the logs over
+this channel instead of operating system terminal channel.
+
+And we will also use this channel to implement sigint and send signals or events
+back and forth without relying on OS dependent stuff
+
+Have a library we include in our special apps.  If command line parameter is set,
+then app will connect back to hypervisor over tcp/ip on local port.
+
+And we can send length prefixed message like hypervisor users.  For "shutdown" to 
+ask task to shutdown.
+
+And will use this channel for communication
+
+And eventually commands and terminal and sigint can go over this channel.  in platform
+independent way
+
+then we can ping the app every once in a while to see if its still running and responding
+
+
+
+
+
+
+
+
+
+Steve: use go vendoring, gvt
+for dependencies
+
+
+
+
+
+
+
+
+
+
+George: this is how skycoin is run inside run.sh
+--gui-dir+"${DIR}/src/gui/static/" $@
+so my guess is we only need the /src/gui/static/ directory for running skycoin right?
+
+Steve: yes
+$@ means copy the arguments given to the script
+
+
+
+
+
+
+
+
+
+
+
+HaltingState: create a channel.  in dbusm for terminal global commands.  
+and create messages for deleting terminal by id, listing terminals by id, 
+and creating a new terminal.
+Then if something wants to modify terminal it will write to that dbus channel.
+
+maybe write smalle wrapper library for terminal control over dbus
+
+
+
+
+
+
+
+
+
+if you print a line and it runs over to next line, then you must put a block character
+at the end of the line.  To visually indicate that.

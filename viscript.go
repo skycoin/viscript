@@ -37,7 +37,9 @@
 
 * Sideways scroll command line when it doesn't fit the dedicated space for it
 		(atm, 2 lines are reserved along the bottom of a full screen)
+		* block character at end to indicate continuing on next line
 
+* fill task's VisualInfo upon terminal creation (atm, only gets data after resizing)
 
 
 ------- OLDER TODO: ------- (everything below was for the text editor)

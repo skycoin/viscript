@@ -148,7 +148,7 @@ func (st *State) actOnCommand() {
 	}
 
 	//if having multiple lines is such a bad thing, then you should have went all
-	//the way and put it all on one line then.	that is much easier to overlook,
+	//the way and put it all on one line.  that is much easier to overlook,
 	//and therefore fights against the whole purpose of printing it, however.
 	//also your feedback didn't read sensibly (in other ways) in my opinion
 	s := "actOnCommand()      command \"" + cmd + "\"      args"
