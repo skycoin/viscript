@@ -243,4 +243,68 @@ fi
 pv "Moving node creation script to the root directory"
 mv meshnet-run-node "$ROOT_DIR/bin/meshnet/"
 
+# Change directory to run_vpn_client.go location
+pv "Changing directory to vpn creation scripts location"
+cd "../app/vpn"
+
+# Build run_vpn_client.go
+pv "Building vpn client creation script"
+go build -o meshnet-run-vpn-client run_vpn_client.go
+
+# Check if building vpn_client creation script was successfull
+if [ ! -f "meshnet-run-vpn-client" ]; then
+    pv "Building vpn client creation script failed. Exiting"
+    exit 1
+fi
+
+# Move node creation script to root dir
+pv "Moving vpn client creation script to the root directory"
+mv meshnet-run-vpn-client "$ROOT_DIR/bin/meshnet/"
+
+# Build run_vpn_server.go
+pv "Building vpn server creation script"
+go build -o meshnet-run-vpn-server run_vpn_server.go
+
+# Check if building vpn_server creation script was successfull
+if [ ! -f "meshnet-run-vpn-server" ]; then
+    pv "Building vpn server creation script failed. Exiting"
+    exit 1
+fi
+
+# Move node creation script to root dir
+pv "Moving vpn server creation script to the root directory"
+mv meshnet-run-vpn-server "$ROOT_DIR/bin/meshnet/"
+
+# Change directory to run_socks_client.go location
+pv "Changing directory to socks creation scripts location"
+cd "../socks"
+
+# Build run_socks_client.go
+pv "Building socks client creation script"
+go build -o meshnet-run-socks-client run_socks_client.go
+
+# Check if building socks_client creation script was successfull
+if [ ! -f "meshnet-run-socks-client" ]; then
+    pv "Building socks client creation script failed. Exiting"
+    exit 1
+fi
+
+# Move node creation script to root dir
+pv "Moving socks client creation script to the root directory"
+mv meshnet-run-socks-client "$ROOT_DIR/bin/meshnet/"
+
+# Build run_socks_server.go
+pv "Building socks server creation script"
+go build -o meshnet-run-socks-server run_socks_server.go
+
+# Check if building socks_server creation script was successfull
+if [ ! -f "meshnet-run-socks-server" ]; then
+    pv "Building socks server creation script failed. Exiting"
+    exit 1
+fi
+
+# Move node creation script to root dir
+pv "Moving socks server creation script to the root directory"
+mv meshnet-run-socks-server "$ROOT_DIR/bin/meshnet/"
+
 # TODO: zip here?
