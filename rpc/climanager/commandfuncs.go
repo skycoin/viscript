@@ -110,7 +110,7 @@ func (c *CliManager) ListProcesses(_ []string) error {
 
 func (c *CliManager) SetDefaultTerminalId(args []string) error {
 	if len(args) == 0 {
-		fmt.Printf("\n\nPass the terminal Id as arguement please.")
+		fmt.Printf("\n\nPass the terminal Id as argument please.")
 		return nil
 	}
 
