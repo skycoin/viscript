@@ -1,80 +1,78 @@
 package cGfx
 
-import (
-	//"fmt"
-	"github.com/corpusc/viscript/app"
-	//"github.com/corpusc/viscript/ui"
-)
+//"fmt"
 
-func UpdateTextBody(body []string, colors []ColorSpot, content app.Rectangle) {
-	// cX := CurrX // current drawing position
-	// cY := CurrY
-	// cW := CharWid
-	// cH := CharHei
-	// b := content.Bottom
+//"github.com/corpusc/viscript/ui"
 
-	// setup for colored text
-	//ncId := 0         // next color
-	//var nc *ColorSpot // ^
-	if /* colors exist */ len(colors) > 0 {
-		//nc = colors[ncId]
-	}
+// func UpdateTextBody(body []string, colors []ColorSpot, content app.Rectangle) {
+// cX := CurrX // current drawing position
+// cY := CurrY
+// cW := CharWid
+// cH := CharHei
+// b := content.Bottom
 
-	// iterate over lines
-	// for _ /*y*/, line := range body {
-	// 	lineVisible := cY <= content.Top+cH && cY >= b
+// setup for colored text
+//ncId := 0         // next color
+//var nc *ColorSpot // ^
+// if /* colors exist */ len(colors) > 0 {
+//nc = colors[ncId]
+// }
 
-	// 	if lineVisible {
-	// 		r := &app.PicRectangle{0, 0, 0, Pic_GradientBorder, &app.Rectangle{cY, cX + cW, cY - cH, cX}} // t, r, b, l
+// iterate over lines
+// for _ /*y*/, line := range body {
+// 	lineVisible := cY <= content.Top+cH && cY >= b
 
-	// 		// if line needs vertical adjustment
-	// 		if cY > content.Top {
-	// 			r.Top = content.Top
-	// 		}
-	// 		if cY-cH < b {
-	// 			r.Bottom = b
-	// 		}
+// 	if lineVisible {
+// 		r := &app.PicRectangle{0, 0, 0, Pic_GradientBorder, &app.Rectangle{cY, cX + cW, cY - cH, cX}} // t, r, b, l
 
-	// 		// iterate over runes
-	// 		//cGfx.SetColor(cGfx.Gray)
-	// 		for x, c := range line {
-	// 			//ncId, nc = t.changeColorIfCodeAt(x, y, ncId, nc)
+// 		// if line needs vertical adjustment
+// 		if cY > content.Top {
+// 			r.Top = content.Top
+// 		}
+// 		if cY-cH < b {
+// 			r.Bottom = b
+// 		}
 
-	// 			// drawing
-	// 			if /* char visible */ cX >= content.Left-cW && cX < content.Right {
-	// 				app.ClampLeftAndRightOf(r.Rectangle, content.Left, content.Right)
-	// 				//DrawCharAtRect(c, r.Rectangle)
+// 		// iterate over runes
+// 		//cGfx.SetColor(cGfx.Gray)
+// 		for x, c := range line {
+// 			//ncId, nc = t.changeColorIfCodeAt(x, y, ncId, nc)
 
-	// 				// if t.IsEditable {
-	// 				// 	if x == t.CursX && y == t.CursY {
-	// 				// 		gfx.SetColor(gfx.White)
-	// 				// 		gfx.Update9SlicedRect(Curs.GetAnimationModifiedRect(*r))
-	// 				// 		gfx.SetColor(gfx.PrevColor)
-	// 				// 	}
-	// 				// }
-	// 			}
+// 			// drawing
+// 			if /* char visible */ cX >= content.Left-cW && cX < content.Right {
+// 				app.ClampLeftAndRightOf(r.Rectangle, content.Left, content.Right)
+// 				//DrawCharAtRect(c, r.Rectangle)
 
-	// 			cX += cW
-	// 			r.Left = cX
-	// 			r.Right = cX + cW
-	// 		}
+// 				// if t.IsEditable {
+// 				// 	if x == t.CursX && y == t.CursY {
+// 				// 		gfx.SetColor(gfx.White)
+// 				// 		gfx.Update9SlicedRect(Curs.GetAnimationModifiedRect(*r))
+// 				// 		gfx.SetColor(gfx.PrevColor)
+// 				// 	}
+// 				// }
+// 			}
 
-	// 		// draw cursor at the end of line if needed
-	// 		//if cX < content.Right && y == t.CursY && t.CursX == len(line) {
-	// 		// if t.IsEditable {
-	// 		// 	//gfx.SetColor(gfx.White)
-	// 		// 	app.ClampLeftAndRightOf(r.Rectangle, content.Left, content.Right)
-	// 		// 	gfx.Update9SlicedRect(cGfx.Curs.GetAnimationModifiedRect(*r))
-	// 		// }
-	// 		//}
+// 			cX += cW
+// 			r.Left = cX
+// 			r.Right = cX + cW
+// 		}
 
-	// 		//cX = GoToLeftEdge()
-	// 	} else { // line not visible
-	// 		for x := range line {
-	// 			//ncId, nc = t.changeColorIfCodeAt(x, y, ncId, nc)
-	// 		}
-	// 	}
+// 		// draw cursor at the end of line if needed
+// 		//if cX < content.Right && y == t.CursY && t.CursX == len(line) {
+// 		// if t.IsEditable {
+// 		// 	//gfx.SetColor(gfx.White)
+// 		// 	app.ClampLeftAndRightOf(r.Rectangle, content.Left, content.Right)
+// 		// 	gfx.Update9SlicedRect(cGfx.Curs.GetAnimationModifiedRect(*r))
+// 		// }
+// 		//}
 
-	// 	cY -= cH // go down a line height
-	//}
-}
+// 		//cX = GoToLeftEdge()
+// 	} else { // line not visible
+// 		for x := range line {
+// 			//ncId, nc = t.changeColorIfCodeAt(x, y, ncId, nc)
+// 		}
+// 	}
+
+// 	cY -= cH // go down a line height
+//}
+// }
