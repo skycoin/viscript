@@ -2,11 +2,13 @@ package hypervisor
 
 import (
 	"fmt"
+
 	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/cGfx"
-	"github.com/corpusc/viscript/hypervisor/input/mouse"
-	"github.com/corpusc/viscript/tree"
-	"github.com/corpusc/viscript/ui"
+	"github.com/corpusc/viscript/old/tree"
+	"github.com/corpusc/viscript/old/ui"
+	// "github.com/corpusc/viscript/cGfx"
+	// "github.com/corpusc/viscript/tree"
+	// "github.com/corpusc/viscript/ui"
 	//"math"
 )
 
@@ -25,8 +27,8 @@ type Terminal struct {
 	BarHori    *ui.ScrollBar // horizontal
 	BarVert    *ui.ScrollBar // vertical
 	TextBodies [][]string
-	TextColors []*cGfx.ColorSpot
-	Trees      []*tree.Tree
+	// TextColors []*cGfx.ColorSpot
+	Trees []*tree.Tree
 }
 
 func (t *Terminal) Init() {
@@ -40,8 +42,8 @@ func (t *Terminal) Init() {
 	// scrollbars
 	t.BarHori = &ui.ScrollBar{IsHorizontal: true}
 	t.BarVert = &ui.ScrollBar{}
-	t.BarHori.Rect = &app.PicRectangle{0, 0, 0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
-	t.BarVert.Rect = &app.PicRectangle{0, 0, 0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
+	// t.BarHori.Rect = &app.PicRectangle{0, 0, 0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
+	// t.BarVert.Rect = &app.PicRectangle{0, 0, 0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
 
 	t.SetSize()
 }
@@ -49,77 +51,77 @@ func (t *Terminal) Init() {
 func (t *Terminal) SetSize() {
 	fmt.Printf("<Terminal>.SetSize()\n")
 
-	t.Whole = &app.Rectangle{
-		cGfx.CanvasExtents.Y - cGfx.CharHei,
-		cGfx.CanvasExtents.X,
-		-cGfx.CanvasExtents.Y,
-		-cGfx.CanvasExtents.X}
+	// t.Whole = &app.Rectangle{
+	// cGfx.CanvasExtents.Y - cGfx.CharHei,
+	// cGfx.CanvasExtents.X,
+	// -cGfx.CanvasExtents.Y,
+	// -cGfx.CanvasExtents.X}
 
-	if t.FractionOfStrip == runOutputTerminalFrac { // FIXME: this is hardwired for one use case for now
-		t.Whole.Top = t.Whole.Bottom + t.Whole.Height()*t.FractionOfStrip
-	} else {
-		t.Whole.Bottom = t.Whole.Bottom + t.Whole.Height()*runOutputTerminalFrac
-	}
+	// if t.FractionOfStrip == runOutputTerminalFrac { // FIXME: this is hardwired for one use case for now
+	// 	t.Whole.Top = t.Whole.Bottom + t.Whole.Height()*t.FractionOfStrip
+	// } else {
+	// 	t.Whole.Bottom = t.Whole.Bottom + t.Whole.Height()*runOutputTerminalFrac
+	// }
 
-	t.Content = &app.PicRectangle{0, 0, 0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
-	t.Content.Top = t.Whole.Top
-	t.Content.Right = t.Whole.Right - ui.ScrollBarThickness
-	t.Content.Bottom = t.Whole.Bottom + ui.ScrollBarThickness
-	t.Content.Left = t.Whole.Left
+	// t.Content = &app.PicRectangle{0, 0, 0, cGfx.Pic_GradientBorder, &app.Rectangle{}}
+	// t.Content.Top = t.Whole.Top
+	// t.Content.Right = t.Whole.Right - ui.ScrollBarThickness
+	// t.Content.Bottom = t.Whole.Bottom + ui.ScrollBarThickness
+	// t.Content.Left = t.Whole.Left
 
-	// set scrollbars' upper left corners
-	t.BarHori.Rect.Left = t.Whole.Left
-	t.BarHori.Rect.Top = t.Content.Bottom
-	t.BarVert.Rect.Left = t.Content.Right
-	t.BarVert.Rect.Top = t.Whole.Top
+	// // set scrollbars' upper left corners
+	// t.BarHori.Rect.Left = t.Whole.Left
+	// t.BarHori.Rect.Top = t.Content.Bottom
+	// t.BarVert.Rect.Left = t.Content.Right
+	// t.BarVert.Rect.Top = t.Whole.Top
 }
 
 func (t *Terminal) RespondToMouseClick() {
-	Focused = t
+	// Focused = t
 
-	// diffs/deltas from home position of panel (top left corner)
-	glDeltaFromHome := app.Vec2F{
-		mouse.GlX - t.Whole.Left,
-		mouse.GlY - t.Whole.Top}
+	// // diffs/deltas from home position of panel (top left corner)
+	// glDeltaFromHome := app.Vec2F{
+	// 	mouse.GlX - t.Whole.Left,
+	// 	mouse.GlY - t.Whole.Top}
 
-	t.MouseX = int((glDeltaFromHome.X + t.BarHori.ScrollDelta) / cGfx.CharWid)
-	t.MouseY = int(-(glDeltaFromHome.Y + t.BarVert.ScrollDelta) / cGfx.CharHei)
+	// t.MouseX = int((glDeltaFromHome.X + t.BarHori.ScrollDelta) / cGfx.CharWid)
+	// t.MouseY = int(-(glDeltaFromHome.Y + t.BarVert.ScrollDelta) / cGfx.CharHei)
 
-	if t.MouseY < 0 {
-		t.MouseY = 0
-	}
+	// if t.MouseY < 0 {
+	// 	t.MouseY = 0
+	// }
 
-	if t.MouseY >= len(t.TextBodies[0]) {
-		t.MouseY = len(t.TextBodies[0]) - 1
-	}
+	// if t.MouseY >= len(t.TextBodies[0]) {
+	// 	t.MouseY = len(t.TextBodies[0]) - 1
+	// }
 }
 
-func (t *Terminal) changeColorIfCodeAt(x, y, ncId int, nc *cGfx.ColorSpot) (int, *cGfx.ColorSpot) {
-	if /* colors exist */ len(t.TextColors) > 0 {
-		if x == nc.Pos.X &&
-			y == nc.Pos.Y {
-			//gfx.SetColor(nc.Color)
-			//fmt.Println("-------- nc-------, then 3rd():", nc, t.TextColors[2])
-			ncId++
+// func (t *Terminal) changeColorIfCodeAt(x, y, ncId int, nc *cGfx.ColorSpot) (int, *cGfx.ColorSpot) {
+// if /* colors exist */ len(t.TextColors) > 0 {
+// 	if x == nc.Pos.X &&
+// 		y == nc.Pos.Y {
+// 		//gfx.SetColor(nc.Color)
+// 		//fmt.Println("-------- nc-------, then 3rd():", nc, t.TextColors[2])
+// 		ncId++
 
-			if ncId < len(t.TextColors) {
-				nc = t.TextColors[ncId]
-			}
-		}
-	}
+// 		if ncId < len(t.TextColors) {
+// 			nc = t.TextColors[ncId]
+// 		}
+// 	}
+// }
 
-	return ncId, nc
-}
+// return ncId, nc
+// }
 
-func (t *Terminal) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float32) {
-	if mouse.PointerIsInside(t.Whole) {
-		// position increments in gl space
-		xInc := mousePixelDeltaX * cGfx.PixelSize.X
-		yInc := mousePixelDeltaY * cGfx.PixelSize.Y
-		t.BarHori.Scroll(xInc)
-		t.BarVert.Scroll(yInc)
-	}
-}
+// func (t *Terminal) ScrollIfMouseOver(mousePixelDeltaX, mousePixelDeltaY float32) {
+// 	if mouse.PointerIsInside(t.Whole) {
+// position increments in gl space
+// xInc := mousePixelDeltaX * cGfx.PixelSize.X
+// yInc := mousePixelDeltaY * cGfx.PixelSize.Y
+// 		t.BarHori.Scroll(xInc)
+// 		t.BarVert.Scroll(yInc)
+// 	}
+// }
 
 func (t *Terminal) RemoveCharacter(fromUnderCursor bool) {
 	txt := t.TextBodies[0]
@@ -137,15 +139,15 @@ func (t *Terminal) RemoveCharacter(fromUnderCursor bool) {
 }
 
 func (t *Terminal) DrawTree() {
-	if len(t.Trees) > 0 {
-		// setup main rect
-		span := float32(1.3)
-		x := -span / 2
-		y := t.Whole.Top - 0.1
-		r := &app.Rectangle{y, x + span, y - span, x}
+	// if len(t.Trees) > 0 {
+	// 	// setup main rect
+	// 	span := float32(1.3)
+	// 	x := -span / 2
+	// 	y := t.Whole.Top - 0.1
+	// 	r := &app.Rectangle{y, x + span, y - span, x}
 
-		t.drawNodeAndDescendants(r, 0)
-	}
+	// 	t.drawNodeAndDescendants(r, 0)
+	// }
 }
 
 func (t *Terminal) drawNodeAndDescendants(r *app.Rectangle, nodeId int) {
