@@ -1,4 +1,6 @@
-# viscript
+# viscript 
+
+[![GoDoc](https://godoc.org/github.com/corpusc/viscript?status.svg)](https://godoc.org/github.com/corpusc/viscript) [![Go Report Card](https://goreportcard.com/badge/github.com/corpusc/viscript)](https://goreportcard.com/report/github.com/corpusc/viscript)
 
 
 Dependencies
@@ -16,7 +18,6 @@ gvt vendors all dependencies into the repo.
 If you change the dependencies, you should update them as needed with `gvt fetch`, `gvt update`, `gvt delete`, etc.
 
 Refer to the [gvt documentation](https://github.com/FiloSottile/gvt) or `gvt help` for further instructions.
-
 
 
 
