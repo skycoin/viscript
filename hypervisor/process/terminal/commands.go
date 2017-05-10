@@ -20,6 +20,7 @@ func (st *State) commandHelp() {
 	st.PrintLn("help:                  This message ('?' or 'h' for short).")
 	st.PrintLn("new_term:              Add new terminal (n for short).")
 	st.PrintLn("list_terms:            List all terminal ids.")
+	st.PrintLn("delete_term <id>:      Delete terminal with index to the terminal id.")
 	st.PrintLn("start (-a) <command>:  Start external task. (-a to also attach).")
 	st.PrintLn("attach   <id>:         Attach external task with given id to terminal.")
 	st.PrintLn("shutdown <id>:         [TODO] Shutdown external task with given id.")
@@ -137,4 +138,36 @@ func (st *State) commandListExternalTasks(args []string) {
 
 		st.Printf("[ %d ] -> [ %s ]\n", int(procId), procCommand)
 	}
+}
+
+func (st *State) deleteTerminal(args []string) {
+	if len(args) < 1 {
+		st.PrintLn("No index to the terminal id passed.")
+		return
+	}
+
+	storedIndex, err := strconv.Atoi(args[0])
+	if err != nil {
+		st.PrintLn("Unable to converted passed index.")
+		return
+	}
+
+	if len(st.storedTerminalIds) < 1 {
+		st.PrintLn("Please use list_terms command" +
+			"at first to access terminal ids with indices.")
+		return
+	} else if len(st.storedTerminalIds) == 1 {
+		st.PrintLn("Can't delete current focused terminal")
+		return
+	}
+
+	if storedIndex > len(st.storedTerminalIds) {
+		st.PrintLn("Index not in range.")
+		return
+	}
+
+	st.SendCommand("delete_term",
+		[]string{
+			strconv.Itoa(int(st.storedTerminalIds[storedIndex]))})
+
 }
