@@ -1,15 +1,22 @@
 package terminal
 
 import (
+	"strconv"
+
 	"github.com/corpusc/viscript/msg"
 )
 
-func (ts *TerminalStack) ActOnCommand(tID msg.TerminalId, command string) {
-	switch command {
+func (ts *TerminalStack) ActOnCommand(tID msg.TerminalId, command msg.MessageCommand) {
+	switch command.Command {
 	case "add_new_term":
 		ts.Add()
 	case "list_terms":
 		ts.ListTerminalsWithIds(tID)
+	case "delete_term":
+		if len(command.Args) != 1 {
+			return
+		}
+		ts.DeleteTerminalIfExists(command.Args[0])
 	default:
 	}
 }
@@ -26,4 +33,13 @@ func (ts *TerminalStack) ListTerminalsWithIds(termId msg.TerminalId) {
 	serializedMessage := msg.Serialize(msg.TypeTerminalIds, m)
 
 	ts.Focused.RelayToTask(serializedMessage)
+}
+
+func (ts *TerminalStack) DeleteTerminalIfExists(termIdString string) {
+	termIdInt, err := strconv.Atoi(termIdString)
+	if err != nil {
+		return
+	}
+
+	ts.RemoveTerminal(msg.TerminalId(termIdInt))
 }

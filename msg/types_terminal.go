@@ -28,6 +28,7 @@ type MessageCommandLine struct { //updates/replaces current command line on any 
 
 type MessageCommand struct {
 	Command string
+	Args    []string
 }
 
 type MessageTerminalIds struct {

@@ -100,6 +100,7 @@ func (st *State) onTerminalIds(m msg.MessageTerminalIds) {
 		buffer.WriteString(termDescription)
 	}
 
+	st.storedTerminalIds = m.TermIds
 	st.PrintLn(buffer.String())
 }
 
@@ -222,11 +223,15 @@ func (st *State) actOnCommand() {
 	case "n":
 		fallthrough
 	case "new_term":
-		st.SendCommand("add_new_term")
+		st.SendCommand("add_new_term", []string{})
 
 	//list all terminals marking focused with •
 	case "list_terms":
-		st.SendCommand("list_terms")
+		st.SendCommand("list_terms", []string{})
+
+	//delete terminal with given index to the stored termIds
+	case "delete_term":
+		st.deleteTerminal(args)
 
 	default:
 		st.PrintError("\"" + cmd + "\" is an unknown command.")

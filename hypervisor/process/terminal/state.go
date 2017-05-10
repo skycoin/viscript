@@ -12,6 +12,7 @@ type State struct {
 	Cli                   *Cli
 	VisualInfo            msg.MessageVisualInfo
 	proc                  *Process
+	storedTerminalIds     []msg.TerminalId
 }
 
 func (st *State) Init(proc *Process) {
