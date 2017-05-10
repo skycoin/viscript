@@ -75,7 +75,7 @@ func (ts *TerminalStack) Add() msg.TerminalId {
 
 func (ts *TerminalStack) RemoveTerminal(id msg.TerminalId) {
 	println("<TerminalStack>.RemoveTerminal() ---------------------------- FIXME/TODO")
-	//what should happen here after deleting terminal from the stack?
+	// TODO: FIXME: what should happen here after deleting terminal from the stack?
 	// delete(ts.Terms, id)
 }
 
