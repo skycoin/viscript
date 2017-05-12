@@ -1,3 +1,4 @@
+# Viscript's configuration file that contains apps and other settings
 
 # Available applications
 apps:
@@ -18,7 +19,32 @@ apps:
     path: /bin/meshnet/meshnet-cli
     args:
     desc: Command line client for meshnet nodes manager server
+  meshnet-nm:
+    path: /bin/meshnet/meshnet-run-nm
+    args:
+    desc: Run meshnet node manager
+  meshnet-node:
+    path: /bin/meshnet/meshnet-run-node
+    args:
+    desc: Run meshnet node
+  meshnet-socks-client:
+    path: /bin/meshnet/meshnet-run-socks-client
+    args:
+    desc: Run meshnet socks client
+  meshnet-socks-server:
+    path: /bin/meshnet/meshnet-run-socks-server
+    args:
+    desc: Run meshnet socks server
+  meshnet-vpn-client:
+    path: /bin/meshnet/meshnet-run-vpn-client
+    args:
+    desc: Run meshnet vpn client
+  meshnet-vpn-server:
+    path: /bin/meshnet/meshnet-run-vpn-server
+    args:
+    desc: Run meshnet vpn server
 
 # Additional settings
 settings:
   verboseInput: false   # Will print key and mouse input if set to true
+  verifyParsingByPrinting: false  # Will print this file's contents
