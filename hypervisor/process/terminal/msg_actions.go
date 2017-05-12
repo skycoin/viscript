@@ -233,6 +233,10 @@ func (st *State) actOnCommand() {
 	case "delete_term":
 		st.deleteTerminal(args)
 
+	//display all apps with descriptions
+	case "apps":
+		st.commandDisplayApps()
+
 	default:
 		st.PrintError("\"" + cmd + "\" is an unknown command.")
 	}
