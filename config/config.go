@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 
 	"gopkg.in/yaml.v2"
@@ -37,16 +38,18 @@ func Load(configFileName string) error {
 
 	// This can be quickly used to see the contents of read config
 
-	// fmt.Printf("[ Config ]\n")
+	if Global.Settings.VerifyParsing {
+		fmt.Printf("[ Config ]\n")
 
-	// for key, app := range Global.Apps {
-	// 	fmt.Printf("[ App \"%s\" ]\n", key)
-	// 	fmt.Printf("\tPath: %s\n", app.Path)
-	// 	fmt.Printf("\tArgs: %v\n", app.Args)
-	// 	fmt.Printf("\tDescription: %s\n\n", app.Desc)
-	// }
+		for key, app := range Global.Apps {
+			fmt.Printf("[ App \"%s\" ]\n", key)
+			fmt.Printf("\tPath: %s\n", app.Path)
+			fmt.Printf("\tArgs: %v\n", app.Args)
+			fmt.Printf("\tDescription: %s\n\n", app.Desc)
+		}
 
-	// fmt.Printf("Settings: %+v\n\n", Global.Settings)
+		fmt.Printf("Settings: %+v\n\n", Global.Settings)
+	}
 
 	return nil
 }

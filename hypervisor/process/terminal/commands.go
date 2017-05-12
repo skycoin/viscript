@@ -4,7 +4,12 @@ import (
 	"strconv"
 	"strings"
 
+	"bytes"
+
+	"fmt"
+
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/config"
 	"github.com/corpusc/viscript/hypervisor"
 	extTask "github.com/corpusc/viscript/hypervisor/task_ext"
 	"github.com/corpusc/viscript/msg"
@@ -21,6 +26,7 @@ func (st *State) commandHelp() {
 	st.PrintLn("new_term:              Add new terminal (n for short).")
 	st.PrintLn("list_terms:            List all terminal ids.")
 	st.PrintLn("delete_term <id>:      Delete terminal with index to the terminal id.")
+	st.PrintLn("apps:                  Display all available apps with descriptions.")
 	st.PrintLn("start (-a) <command>:  Start external task. (-a to also attach).")
 	st.PrintLn("attach   <id>:         Attach external task with given id to terminal.")
 	st.PrintLn("shutdown <id>:         [TODO] Shutdown external task with given id.")
@@ -30,6 +36,41 @@ func (st *State) commandHelp() {
 	st.PrintLn("CTRL+Z:                Detach currently attached process.")
 	//st.PrintLn("    CTRL+C:           ___description goes here___")
 	st.PrintLn(app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)))
+}
+
+func (st *State) commandDisplayApps() {
+	app.At(cp, "commandDisplayApps")
+
+	apps := config.Global.Apps
+
+	if len(apps) == 0 {
+		st.PrintLn("No available apps found.")
+		return
+	}
+
+	maxAppKeyLength := 0
+
+	for appKey, _ := range apps {
+		appKeyLength := len(appKey)
+
+		if appKeyLength > maxAppKeyLength {
+			maxAppKeyLength = appKeyLength
+		}
+	}
+
+	var buffer bytes.Buffer
+
+	maxAppKeyLength += 4 // Space after max string length app hash
+
+	for appKey, app := range apps {
+		buffer.WriteString(appKey)
+		for i := 0; i < maxAppKeyLength-len(appKey); i++ {
+			buffer.WriteString(" ")
+		}
+		buffer.WriteString(fmt.Sprintf("-%s\n", app.Desc))
+	}
+
+	st.PrintLn(buffer.String())
 }
 
 func (st *State) commandStart(args []string) {

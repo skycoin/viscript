@@ -7,7 +7,8 @@ type App struct {
 }
 
 type Settings struct {
-	VerboseInput bool `yaml:"verboseInput"`
+	VerboseInput  bool `yaml:"verboseInput"`
+	VerifyParsing bool `yaml:"verifyParsingByPrinting"`
 }
 
 type Config struct {
