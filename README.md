@@ -1,10 +1,14 @@
 # viscript 
 
-[![GoDoc](https://godoc.org/github.com/corpusc/viscript?status.svg)](https://godoc.org/github.com/corpusc/viscript) [![Go Report Card](https://goreportcard.com/badge/github.com/corpusc/viscript)](https://goreportcard.com/report/github.com/corpusc/viscript)
-
+[![GoDoc](
+	https://godoc.org/github.com/corpusc/viscript?status.svg)](
+		https://godoc.org/github.com/corpusc/viscript)
+[![Go Report Card](
+	https://goreportcard.com/badge/github.com/corpusc/viscript)](
+		https://goreportcard.com/report/github.com/corpusc/viscript) 
 
 Dependencies
-------------
+============
 
 Dependencies are managed with [gvt](https://github.com/FiloSottile/gvt).
 
@@ -19,31 +23,26 @@ If you change the dependencies, you should update them as needed with `gvt fetch
 
 Refer to the [gvt documentation](https://github.com/FiloSottile/gvt) or `gvt help` for further instructions.
 
+OpenGL, GLFW and other dependencies:
+```
+go get github.com/go-gl/gl/v{3.2,3.3,4.1,4.4,4.5}-{core,compatibility}/gl
 
+go get github.com/go-gl/gl/v3.3-core/gl
 
+go get github.com/go-gl/glfw/v3.2/glfw
 
-
+go get github.com/skycoin/skycoin
+```
 
 Building on Debian
 =======
-sudo apt-get install libgl1-mesa-dev<br>
-sudo apt-get install libxrandr-dev<br>
-sudo apt-get install libxcursor-dev<br>
-sudo apt-get install libxinerama-dev<br>
-
-Building on Ubuntu 16.04 also requires:<br>
+```
 sudo apt-get install libxi-dev
-
-Gl, Glfw and other dependencies:<br>
-go get github.com/go-gl/gl/v{3.2,3.3,4.1,4.4,4.5}-{core,compatibility}/gl<br>
-go get github.com/go-gl/gl/v3.3-core/gl<br>
-
-go get github.com/go-gl/glfw/v3.2/glfw<br>
-
-go get github.com/skycoin/skycoin<br>
-
-
-
+sudo apt-get install libgl1-mesa-dev
+sudo apt-get install libxrandr-dev
+sudo apt-get install libxcursor-dev
+sudo apt-get install libxinerama-dev
+```
 
 Spec 
 ====
