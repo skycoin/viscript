@@ -197,6 +197,9 @@ func (st *State) actOnCommand() {
 	case "help":
 		st.commandHelp()
 
+	case "clear":
+		st.commandClearTerminal()
+
 	case "ls":
 		st.commandListExternalTasks(args)
 

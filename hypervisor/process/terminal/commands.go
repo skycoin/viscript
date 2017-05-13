@@ -23,15 +23,18 @@ func (st *State) commandHelp() {
 	st.PrintLn(app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)))
 	//st.PrintLn("Current commands:")
 	st.PrintLn("help:                  This message ('?' or 'h' for short).")
+	st.PrintLn("-- Terminals --")
 	st.PrintLn("new_term:              Add new terminal (n for short).")
 	st.PrintLn("list_terms:            List all terminal ids.")
 	st.PrintLn("delete_term <id>:      Delete terminal with index to the terminal id.")
+	st.PrintLn("clear:                 Clears currently focused terminal.")
+	st.PrintLn("-- Apps --")
 	st.PrintLn("apps:                  Display all available apps with descriptions.")
+	st.PrintLn("ls (-f):               List running tasks (-f for full commands).")
 	st.PrintLn("start (-a) <command>:  Start external task. (-a to also attach).")
 	st.PrintLn("attach   <id>:         Attach external task with given id to terminal.")
 	st.PrintLn("shutdown <id>:         [TODO] Shutdown external task with given id.")
-	st.PrintLn("ls (-f):               List external tasks (-f for full commands).")
-	st.PrintLn("rpc:                   Issues command: \"go run rpc/cli/cli.go\"")
+	// st.PrintLn("rpc:                   Issues command: \"go run rpc/cli/cli.go\"")
 	//st.PrintLn("Current hotkeys:")
 	st.PrintLn("CTRL+Z:                Detach currently attached process.")
 	//st.PrintLn("    CTRL+C:           ___description goes here___")
@@ -71,6 +74,20 @@ func (st *State) commandDisplayApps() {
 	}
 
 	st.PrintLn(buffer.String())
+}
+
+func (st *State) commandClearTerminal() {
+	app.At(cp, "commandClearTerminal")
+
+	var buffer bytes.Buffer
+
+	for i := 0; i < 100; i++ {
+		buffer.WriteString("\n")
+	}
+
+	st.PrintLn(buffer.String())
+	// st.SendCommand("clear", []string{})
+	// TODO: sending this but func should be finished in terminal_stack_commands
 }
 
 func (st *State) commandStart(args []string) {
