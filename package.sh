@@ -307,4 +307,12 @@ fi
 pv "Moving socks server creation script to the root directory"
 mv meshnet-run-socks-server "$ROOT_DIR/bin/meshnet/"
 
+# Temporarily copy bin to root bin of the repo for testing
+pv "Copying generated bin directory to root bin of the repo for testing"
+cd $ROOT_DIR/ && cd ..
+cp -rf $ROOT_DIR/bin/ ./
+
+# Print Done
+pv "Done"
+
 # TODO: zip here?
