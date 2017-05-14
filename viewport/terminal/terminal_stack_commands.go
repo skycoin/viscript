@@ -16,6 +16,7 @@ func (ts *TerminalStack) ActOnCommand(tID msg.TerminalId, command msg.MessageCom
 		if len(command.Args) != 1 {
 			return
 		}
+
 		ts.DeleteTerminalIfExists(command.Args[0])
 	case "clear":
 		ts.ClearCurrentlyFocusedTerminal()

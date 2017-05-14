@@ -47,7 +47,7 @@ func (st *State) PrintError(s string) {
 		println(s)
 	}
 
-	//to terminal (our code is more likely to crash, preventing ANY error message)
+	//THEN to terminal (our code is more likely to crash)
 	st.PrintLn(s)
 }
 

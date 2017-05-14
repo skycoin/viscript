@@ -44,7 +44,7 @@ func (c *Cli) AdjustBackscrollOffset(delta int) {
 	}
 
 	//capping on the high end needs to be done dynamically
-	//according to how many line sections/breaks there arae
+	//according to how many line sections/breaks there are
 }
 
 func (c *Cli) InsertCharIfItFits(char uint32, state *State) {

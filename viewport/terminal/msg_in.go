@@ -43,7 +43,8 @@ func (t *Terminal) UnpackMessage(message []byte) []byte {
 		t.onMouseScroll(m)
 
 	default:
-		app.At("viewport/terminal/msg_in", "************ UNHANDLED MESSAGE TYPE! ************")
+		app.At("viewport/terminal/msg_in", "*********** UNHANDLED MESSAGE TYPE! ***********")
+
 	}
 
 	return message

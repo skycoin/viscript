@@ -36,11 +36,6 @@ func (st *State) UnpackMessage(msgType uint16, message []byte) []byte {
 	default:
 		app.At("hypervisor/process/terminal/msg_in", "UNKNOWN MESSAGE TYPE!!!")
 
-	} //end switch
-
-	//ALWAYS reached
-	if st.DebugPrintInputEvents {
-		// println()
 	}
 
 	return message

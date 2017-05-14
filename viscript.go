@@ -44,6 +44,8 @@
 * make log entry for each command line immediately upon enter, so it comes before
 		the resulting feedback
 
+* make new window display on top
+		(i believe the sorting logic is only triggered by clicking right now)
 
 
 ------- OLDER TODO: ------- (everything below was for the text editor)
