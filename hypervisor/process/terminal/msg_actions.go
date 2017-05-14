@@ -234,7 +234,7 @@ func (st *State) actOnCommand() {
 	case "n":
 		fallthrough
 	case "new_term":
-		st.SendCommand("add_new_term", []string{})
+		st.SendCommand("new_term", []string{})
 
 	//list all terminals marking focused with •
 	case "list_terms":

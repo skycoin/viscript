@@ -11,15 +11,19 @@ func (t *Terminal) UnpackMessage(message []byte) []byte {
 
 	switch msg.GetType(message) {
 
-	case msg.TypeCommandLine:
-		var m msg.MessageCommandLine
-		msg.MustDeserialize(message, &m)
-		t.updateCommandLine(m)
+	case msg.TypeClear:
+		t.clear()
+		t.Curr.Y = 0
 
 	case msg.TypeCommand:
 		var m msg.MessageCommand
 		msg.MustDeserialize(message, &m)
 		Terms.ActOnCommand(t.TerminalId, m)
+
+	case msg.TypeCommandLine:
+		var m msg.MessageCommandLine
+		msg.MustDeserialize(message, &m)
+		t.updateCommandLine(m)
 
 	case msg.TypeSetCharAt:
 		var m msg.MessageSetCharAt

@@ -8,7 +8,8 @@ import (
 
 func (ts *TerminalStack) ActOnCommand(tID msg.TerminalId, command msg.MessageCommand) {
 	switch command.Command {
-	case "add_new_term":
+
+	case "new_term":
 		ts.Add()
 	case "list_terms":
 		ts.ListTerminalsWithIds(tID)
@@ -18,9 +19,8 @@ func (ts *TerminalStack) ActOnCommand(tID msg.TerminalId, command msg.MessageCom
 		}
 
 		ts.DeleteTerminalIfExists(command.Args[0])
-	case "clear":
-		ts.ClearCurrentlyFocusedTerminal()
 	default:
+
 	}
 }
 
@@ -45,9 +45,4 @@ func (ts *TerminalStack) DeleteTerminalIfExists(termIdString string) {
 	}
 
 	ts.RemoveTerminal(msg.TerminalId(termIdInt))
-}
-
-func (ts *TerminalStack) ClearCurrentlyFocusedTerminal() {
-	// TODO: tried ts.focused.PrintPrompt() and Clear() but doesn't work
-	// currently clearing by sending 100 \n characters from the hypervisor
 }

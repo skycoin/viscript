@@ -79,15 +79,9 @@ func (st *State) commandDisplayApps() {
 func (st *State) commandClearTerminal() {
 	app.At(cp, "commandClearTerminal")
 
-	var buffer bytes.Buffer
-
-	for i := 0; i < 100; i++ {
-		buffer.WriteString("\n")
-	}
-
-	st.PrintLn(buffer.String())
-	// st.SendCommand("clear", []string{})
-	// TODO: sending this but func should be finished in terminal_stack_commands
+	st.VisualInfo.CurrRow = 0
+	st.publishToOut(msg.Serialize(msg.TypeClear, msg.MessageClear{}))
+	st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 }
 
 func (st *State) commandStart(args []string) {

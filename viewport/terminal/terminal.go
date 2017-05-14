@@ -134,14 +134,6 @@ func (t *Terminal) Tick() {
 	}
 }
 
-func (t *Terminal) Clear() {
-	for y := 0; y < t.GridSize.Y; y++ {
-		for x := 0; x < t.GridSize.X; x++ {
-			t.Chars[y][x] = 0
-		}
-	}
-}
-
 func (t *Terminal) RelayToTask(message []byte) {
 	hypervisor.DbusGlobal.PublishTo(t.OutChannelId, message)
 }
@@ -216,7 +208,18 @@ func (t *Terminal) SetStringAt(X, Y int, S string) {
 	}
 }
 
+//
+//
 // private
+
+func (t *Terminal) clear() {
+	for y := 0; y < t.GridSize.Y; y++ {
+		for x := 0; x < t.GridSize.X; x++ {
+			t.Chars[y][x] = 0
+		}
+	}
+}
+
 func (t *Terminal) updateCommandLine(m msg.MessageCommandLine) {
 	for i := 0; i < t.GridSize.X*2; i++ {
 		var char uint32

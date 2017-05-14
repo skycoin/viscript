@@ -7,10 +7,6 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-func (st *State) publishToOut(message []byte) {
-	hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, message)
-}
-
 func (st *State) NewLine() {
 	keyEnter := msg.MessageKey{
 		Key:    msg.KeyEnter,
@@ -23,20 +19,6 @@ func (st *State) NewLine() {
 
 func (st *State) PrintLn(s string) {
 	st.printLnAndMAYBELogIt(s, true)
-}
-
-func (st *State) printLnAndMAYBELogIt(s string, addToLog bool) {
-	if addToLog {
-		st.Cli.Log = append(st.Cli.Log, s)
-	}
-
-	for _, c := range s {
-		st.sendChar(uint32(c))
-	}
-
-	if len(s) != int(st.VisualInfo.NumColumns) {
-		st.NewLine()
-	}
 }
 
 func (st *State) PrintError(s string) {
@@ -55,6 +37,34 @@ func (st *State) Printf(format string, vars ...interface{}) {
 	formattedString := fmt.Sprintf(format, vars...)
 	for _, c := range formattedString {
 		st.sendChar(uint32(c))
+	}
+}
+
+func (st *State) SendCommand(command string, args []string) {
+	m := msg.Serialize(msg.TypeCommand,
+		msg.MessageCommand{Command: command, Args: args})
+	st.publishToOut(m)
+}
+
+//
+//
+//private
+
+func (st *State) publishToOut(message []byte) {
+	hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, message)
+}
+
+func (st *State) printLnAndMAYBELogIt(s string, addToLog bool) {
+	if addToLog {
+		st.Cli.Log = append(st.Cli.Log, s)
+	}
+
+	for _, c := range s {
+		st.sendChar(uint32(c))
+	}
+
+	if len(s) != int(st.VisualInfo.NumColumns) {
+		st.NewLine()
 	}
 }
 
@@ -82,10 +92,4 @@ func (st *State) sendChar(c uint32) {
 
 	m := msg.Serialize(msg.TypePutChar, msg.MessagePutChar{0, c})
 	st.publishToOut(m) // EVERY publish action prefixes another chan id
-}
-
-func (st *State) SendCommand(command string, args []string) {
-	m := msg.Serialize(msg.TypeCommand,
-		msg.MessageCommand{Command: command, Args: args})
-	st.publishToOut(m)
 }
