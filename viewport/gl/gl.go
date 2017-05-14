@@ -61,7 +61,7 @@ func CreateAndSetPointer(cursorType glfw.StandardCursor) {
 		GlfwCursor.Destroy()
 	}
 
-	GlfwCursor = glfw.CreateStandardCursor(int(cursorType))
+	GlfwCursor = glfw.CreateStandardCursor(cursorType)
 	GlfwWindow.SetCursor(GlfwCursor)
 }
 
