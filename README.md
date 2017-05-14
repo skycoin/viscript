@@ -23,16 +23,15 @@ If you change the dependencies, you should update them as needed with `gvt fetch
 
 Refer to the [gvt documentation](https://github.com/FiloSottile/gvt) or `gvt help` for further instructions.
 
-OpenGL, GLFW and other dependencies:
-```
-go get github.com/go-gl/gl/v{3.2,3.3,4.1,4.4,4.5}-{core,compatibility}/gl
+[//]: # (OpenGL, GLFW and other dependencies:)
 
-go get github.com/go-gl/gl/v3.3-core/gl
+[//]: # (github.com/go-gl/gl/v{3.2,3.3,4.1,4.4,4.5}-{core,compatibility}/gl)
 
-go get github.com/go-gl/glfw/v3.2/glfw
+[//]: # (go get github.com/go-gl/gl/v2.1/gl)
 
-go get github.com/skycoin/skycoin
-```
+[//]: # (go get github.com/go-gl/glfw/v3.2/glfw)
+
+[//]: # (go get github.com/skycoin/skycoin)
 
 Building on Debian
 =======
