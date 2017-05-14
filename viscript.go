@@ -47,6 +47,9 @@
 * make new window display on top
 		(i believe the sorting logic is only triggered by clicking right now)
 
+* fix vertical position of text when resizing vertically
+
+
 
 ------- OLDER TODO: ------- (everything below was for the text editor)
 
