@@ -49,6 +49,8 @@
 
 * fix vertical position of text when resizing vertically
 
+* scan and do/fix most FIXME/TODO places in the code
+
 
 
 ------- OLDER TODO: ------- (everything below was for the text editor)

@@ -26,7 +26,7 @@ func NewCli() *Cli {
 	cli.Commands = []string{}
 	cli.Prompt = ">"
 	cli.Commands = append(cli.Commands, cli.Prompt+"OLDEST command that you typed (not really, just an example of functionality)")
-	cli.Commands = append(cli.Commands, cli.Prompt+"older line that you typed (nah, not really)")
+	cli.Commands = append(cli.Commands, cli.Prompt+"older command that you typed (nah, not really)")
 	cli.Commands = append(cli.Commands, cli.Prompt)
 	cli.CursPos = 1
 	cli.CurrCmd = 2
@@ -183,14 +183,14 @@ func (c *Cli) CurrentCommandAndArgs() (string, []string) {
 }
 
 func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
-	numLines := 1
+	numPieces := 1 //each logical line entry may be broken (word wrapped) into more visible lines
 
 	if c.CursPos >= 64 { //FIXME using Terminal's st.GridSize.X
-		numLines++
+		numPieces++
 	}
 
-	for numLines > 0 {
-		numLines--
+	for numPieces > 0 { //pass onKey to terminal (set to Enter),
+		numPieces-- //for each visible piece of a line
 		hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
 	}
 

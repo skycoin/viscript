@@ -26,16 +26,13 @@ func (ts *TerminalStack) ActOnCommand(tID msg.TerminalId, command msg.MessageCom
 
 func (ts *TerminalStack) ListTerminalsWithIds(termId msg.TerminalId) {
 	var m msg.MessageTerminalIds
-
 	m.Focused = termId
 
 	for _, term := range ts.Terms {
 		m.TermIds = append(m.TermIds, term.TerminalId)
 	}
 
-	serializedMessage := msg.Serialize(msg.TypeTerminalIds, m)
-
-	ts.Focused.RelayToTask(serializedMessage)
+	ts.Focused.RelayToTask(msg.Serialize(msg.TypeTerminalIds, m))
 }
 
 func (ts *TerminalStack) DeleteTerminalIfExists(termIdString string) {

@@ -1,7 +1,6 @@
 package process
 
 import (
-	"bytes"
 	"fmt"
 
 	"github.com/corpusc/viscript/app"
@@ -85,23 +84,20 @@ func (st *State) onVisualInfo(m msg.MessageVisualInfo) {
 }
 
 func (st *State) onTerminalIds(m msg.MessageTerminalIds) {
-	var buffer bytes.Buffer
-
-	header := fmt.Sprintf("Terminals (%d) (* -> focused):\n", len(m.TermIds))
-	buffer.WriteString(header)
+	st.storedTerminalIds = m.TermIds
+	st.PrintLn(fmt.Sprintf("Terminals (%d) (* -> focused):", len(m.TermIds)))
 
 	for index, termID := range m.TermIds {
-		var termDescription string
+		s := fmt.Sprintf("[%d] %d", index, termID)
+
 		if termID == m.Focused {
-			termDescription = fmt.Sprintf("*[%d] %d\n", index, termID)
+			st.PrintLn("*" + s)
 		} else {
-			termDescription = fmt.Sprintf(" [%d] %d\n", index, termID)
+			st.PrintLn(" " + s)
 		}
-		buffer.WriteString(termDescription)
 	}
 
-	st.storedTerminalIds = m.TermIds
-	st.PrintLn(buffer.String())
+	st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 }
 
 func (st *State) actOnOneTimeHotkeys(m msg.MessageKey) {
@@ -174,11 +170,11 @@ func (st *State) actOnCommand() {
 	//the way and put it all on one line.  that is much easier to overlook,
 	//and therefore fights against the whole purpose of printing it, however.
 	//also your feedback didn't read sensibly (in other ways) in my opinion
-	s := "actOnCommand()      command \"" + cmd + "\""
+	s := "actOnCommand()      command: \"" + cmd + "\""
 
 	for i, arg := range args {
 		if i == 0 {
-			s += "      args"
+			s += "      args:"
 		}
 
 		s += " [" + arg + "]"
