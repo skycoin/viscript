@@ -117,7 +117,7 @@ func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 	tskIF := msg.ProcessInterface(task)
 	tskId := hypervisor.AddProcess(tskIF)
 
-	task.Visual = ts.Terms[termId].GetVisualInfo()
+	task.State.VisualInfo = ts.Terms[termId].GetVisualInfo()
 
 	/* the rest is all DBUS related */
 

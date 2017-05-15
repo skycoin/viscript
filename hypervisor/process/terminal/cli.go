@@ -185,7 +185,7 @@ func (c *Cli) CurrentCommandAndArgs() (string, []string) {
 func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
 	numPieces := 1 //each logical line entry may be broken (word wrapped) into more visible lines
 
-	if c.CursPos >= 64 { //FIXME using Terminal's st.GridSize.X
+	if c.CursPos >= int(st.VisualInfo.NumColumns) {
 		numPieces++
 	}
 

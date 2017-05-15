@@ -15,7 +15,6 @@ type Process struct {
 	OutChannelId uint32
 	InChannel    chan []byte
 	State        State
-	Visual       *msg.MessageVisualInfo //if nil, headless task
 
 	hasExtProcAttached bool
 	attachedExtProcess msg.ExtProcessInterface

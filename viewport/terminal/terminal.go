@@ -53,8 +53,8 @@ func (t *Terminal) Init() {
 	t.ResizingBottom = false
 }
 
-func (t *Terminal) GetVisualInfo() *msg.MessageVisualInfo {
-	return &msg.MessageVisualInfo{
+func (t *Terminal) GetVisualInfo() msg.MessageVisualInfo {
+	return msg.MessageVisualInfo{
 		uint32(t.GridSize.X),
 		uint32(t.GridSize.Y),
 		uint32(NumPromptLines),
@@ -258,7 +258,7 @@ func (t *Terminal) posIsValid(X, Y int) bool {
 }
 
 func (t *Terminal) setupNewGrid() {
-	app.At(path, "setupNewGrid")
+	//app.At(path, "setupNewGrid")
 	t.Curr = app.Vec2I{0, 0}
 	t.Chars = [][]uint32{}
 
@@ -271,9 +271,12 @@ func (t *Terminal) setupNewGrid() {
 		}
 	}
 
-	//inform task of changes
+	t.updateVisualInfoOfTask()
+}
+
+func (t *Terminal) updateVisualInfoOfTask() {
 	if t.OutChannelId != 0 {
-		m := msg.Serialize(msg.TypeVisualInfo, *t.GetVisualInfo())
+		m := msg.Serialize(msg.TypeVisualInfo, t.GetVisualInfo())
 		hypervisor.DbusGlobal.PublishTo(t.OutChannelId, m)
 	}
 }
