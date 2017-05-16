@@ -9,7 +9,7 @@ apps:
     desc: Skycoin main binary
   skycoin-cli:
     path: /bin/skycoin/skycoin-cli
-    args: 
+    args:
     desc: Skycoin command line interface
   meshnet-server:
     path: /bin/meshnet/meshnet-server
@@ -21,30 +21,46 @@ apps:
     desc: Command line client for meshnet nodes manager server
   meshnet-nm:
     path: /bin/meshnet/meshnet-run-nm
-    args:
+    args: 
+      - 0.0.0.0:5999         # host:port for control messages exchange
     desc: Run meshnet node manager
   meshnet-node:
     path: /bin/meshnet/meshnet-run-node
     args:
+      - 111.222.123.44:5000 # host:port for control messages exchange
+      - 202.101.65.43:5999  # nodemanager external address for control messages
+      - true                # if the node needs to be connected randomly
+      - 15000               # tcp port at which node will listen app messages
     desc: Run meshnet node
   meshnet-socks-client:
     path: /bin/meshnet/meshnet-run-socks-client
-    args:
+    args: 
+      - sockscli0           # FIXME: text name of app, must be unique? 
+      - 101.202.34.56:15000 # node host:port which app will be talked with
+      - 8000                # port which socks will listen for web app messages
     desc: Run meshnet socks client
   meshnet-socks-server:
     path: /bin/meshnet/meshnet-run-socks-server
     args:
+      - sockssrv0           # FIXME: text name of app, must be unique?
+      - 101.202.34.56:15000 # node host:port which app will be talked with
+      - 8001                # port which socks server use for conn target host
     desc: Run meshnet socks server
   meshnet-vpn-client:
     path: /bin/meshnet/meshnet-run-vpn-client
     args:
+      - vpncli0             # FIXME: text name of app, must be unique?
+      - 101.202.34.56:15000 # node host:port which app will be talked with
+      - 8000                # port which vpn will listen for web app in messages
     desc: Run meshnet vpn client
   meshnet-vpn-server:
     path: /bin/meshnet/meshnet-run-vpn-server
     args:
+      - vpncli1             # FIXME: text name of app, must be unique?
+      - 101.202.34.56:15000 # node host:port which app will be talked with
     desc: Run meshnet vpn server
 
 # Additional settings
 settings:
   verboseInput: false   # Will print key and mouse input if set to true
-  verifyParsingByPrinting: false  # Will print this file's contents
+  verifyParsingByPrinting: true  # Will print this file's contents
