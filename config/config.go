@@ -54,6 +54,21 @@ func Load(configFileName string) error {
 	return nil
 }
 
+func AppExistsWithName(name string) bool {
+	_, exists := Global.Apps[name]
+	return exists
+}
+
+func GetPathWithDefaultArgsForApp(name string) []string {
+	app := Global.Apps[name]
+
+	tokens := []string{app.Path}
+
+	tokens = append(tokens, app.Args...)
+
+	return tokens
+}
+
 func DebugPrintInputEvents() bool {
 	return Global.Settings.VerboseInput
 }
