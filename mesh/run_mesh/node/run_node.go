@@ -13,7 +13,7 @@ func main() {
 	if len(args) < 7 {
 		panic("not sufficient number of args")
 	}
-	nodeAddr, nmAddr, connect, appTalkPortStr, appIdStr, seqStr := args[1], args[2], args[3], args[4], args[5], args[6]
+	nodeAddr, nmAddr, connect, appTalkPortStr, hostname, appIdStr, seqStr := args[1], args[2], args[3], args[4], args[5], args[6], args[7]
 
 	seqInt, err := strconv.Atoi(seqStr)
 	if err != nil {
@@ -49,6 +49,7 @@ func main() {
 		nodeAddr,
 		[]string{nmAddr},
 		appTalkPort,
+		hostname,
 	}
 
 	if need_connect {

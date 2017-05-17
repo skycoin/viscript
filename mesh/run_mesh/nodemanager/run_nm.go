@@ -13,9 +13,11 @@ func main() {
 		panic("not sufficient number of args")
 	}
 
-	ctrlAddr := args[1]
+	domainName := args[1]
 
-	seqStr := args[2]
+	ctrlAddr := args[2]
+
+	seqStr := args[3]
 	seqInt, err := strconv.Atoi(seqStr)
 	if err != nil {
 		panic(err)
@@ -25,7 +27,7 @@ func main() {
 	}
 	sequence := uint32(seqInt)
 
-	appIdStr := args[3]
+	appIdStr := args[4]
 	appIdInt, err := strconv.Atoi(appIdStr)
 	if err != nil {
 		panic(err)
@@ -35,6 +37,6 @@ func main() {
 	}
 	appId := uint32(appIdInt)
 
-	nm := network.NewNetwork(ctrlAddr)
+	nm := network.NewNetwork(domainName, ctrlAddr)
 	nm.TalkToViscript(sequence, appId)
 }
