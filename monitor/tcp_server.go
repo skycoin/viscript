@@ -20,12 +20,25 @@ type MonitorServer struct {
 	sequence         uint32
 }
 
+var Monitor *MonitorServer
+
+func Init(address string) *MonitorServer {
+	Monitor = NewMonitorServer(address)
+	return Monitor
+}
+
 func NewMonitorServer(address string) *MonitorServer {
 	server := &MonitorServer{address: address}
 	server.lock = &sync.Mutex{}
 	server.responseChannels = make(map[uint32]chan []byte)
 	server.connections = make(map[uint32]net.Conn)
 	return server
+}
+
+func (self *MonitorServer) Run() {
+	go func() {
+		self.Serve()
+	}()
 }
 
 func (self *MonitorServer) Serve() {
