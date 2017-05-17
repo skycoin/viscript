@@ -14,6 +14,8 @@ import (
 
 	"fmt"
 
+	"strconv"
+
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/msg"
 )
@@ -64,6 +66,13 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 
 	var err error
 
+	pr.Id = msg.NextExtProcessId()
+
+	// Append app id before creating command
+	tokens = append(tokens, strconv.Itoa(int(pr.Id)))
+
+	tokens = append(tokens, "114")
+
 	if pr.cmd, err = pr.createCMDAccordingToOS(tokens); err != nil {
 		return err
 	}
@@ -75,8 +84,6 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 	if pr.stdInPipe, err = pr.cmd.StdinPipe(); err != nil {
 		return err
 	}
-
-	pr.Id = msg.NextExtProcessId()
 
 	pr.CommandLine = strings.Join(tokens, " ")
 
