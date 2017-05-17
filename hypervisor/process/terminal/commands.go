@@ -98,7 +98,17 @@ func (st *State) commandStart(args []string) {
 		args = args[1:]
 	}
 
-	newExtProc, err := extTask.MakeNewTaskExternal(args, detached)
+	appname := args[0]
+
+	if !config.AppExistsWithName(appname) {
+		st.PrintError("App with name: " + appname + "doesn't exist. " +
+			"Try running 'apps'.")
+		return
+	}
+
+	tokens := config.GetPathWithDefaultArgsForApp(appname)
+
+	newExtProc, err := extTask.MakeNewTaskExternal(tokens, detached)
 	if err != nil {
 		st.PrintError(err.Error())
 		return
