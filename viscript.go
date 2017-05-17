@@ -102,10 +102,7 @@ func main() {
 		rpcInstance.Serve()
 	}()
 
-	go func() {
-		monitorInstance := monitor.NewMonitorServer("0.0.0.0:7999")
-		monitorInstance.Serve()
-	}()
+	monitor.Init("0.0.0.0:7999").Run() //tcp server monitor for apps
 
 	//actual start of loop
 	for viewport.CloseWindow == false {
