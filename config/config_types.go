@@ -4,6 +4,7 @@ type App struct {
 	Path string   `yaml:"path"`
 	Args []string `yaml:"args"`
 	Desc string   `yaml:"desc"`
+	Help string   `yaml:"help"`
 }
 
 type Settings struct {
