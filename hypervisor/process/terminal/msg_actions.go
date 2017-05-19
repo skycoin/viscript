@@ -195,7 +195,12 @@ func (st *State) actOnCommand() {
 	case "h":
 		fallthrough
 	case "help":
-		st.commandHelp()
+		if len(args) != 0 {
+			st.commandAppHelp(args)
+			break
+		} else {
+			st.commandHelp()
+		}
 
 	case "c":
 		fallthrough

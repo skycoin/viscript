@@ -24,6 +24,8 @@ apps:
     args: 
       - 0.0.0.0:5999         # host:port for control messages exchange
     desc: Run meshnet node manager
+    help: |
+      # TODO: write meshnet nm help
   meshnet-node:
     path: bin/meshnet/meshnet-run-node
     args:
@@ -32,6 +34,8 @@ apps:
       - true                # if the node needs to be connected randomly
       - 15000               # tcp port at which node will listen app messages
     desc: Run meshnet node
+    help: |
+      # TODO: write meshnet node help
   meshnet-socks-client:
     path: bin/meshnet/meshnet-run-socks-client
     args: 
@@ -39,6 +43,8 @@ apps:
       - 101.202.34.56:15000 # node host:port which app will be talked with
       - 8000                # port which socks will listen for web app messages
     desc: Run meshnet socks client
+    help: |
+      # TODO: write socks client help
   meshnet-socks-server:
     path: bin/meshnet/meshnet-run-socks-server
     args:
@@ -46,6 +52,8 @@ apps:
       - 101.202.34.56:15000 # node host:port which app will be talked with
       - 8001                # port which socks server use for conn target host
     desc: Run meshnet socks server
+    help: |
+      # TODO: write socks server help
   meshnet-vpn-client:
     path: bin/meshnet/meshnet-run-vpn-client
     args:
@@ -53,13 +61,16 @@ apps:
       - 101.202.34.56:15000 # node host:port which app will be talked with
       - 8000                # port which vpn will listen for web app in messages
     desc: Run meshnet vpn client
+    help: |
+      # TODO: write vpn client help
   meshnet-vpn-server:
     path: bin/meshnet/meshnet-run-vpn-server
     args:
       - vpnsrv              # text name of app, must be unique
       - 101.202.34.56:15000 # node host:port which app will be talked with
     desc: Run meshnet vpn server
-
+    help: |
+      # TODO: write vpn server help
 # Additional settings
 settings:
   verboseInput: false   # Will print key and mouse input if set to true

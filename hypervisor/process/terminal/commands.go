@@ -76,6 +76,20 @@ func (st *State) commandDisplayApps() {
 	st.PrintLn(buffer.String())
 }
 
+func (st *State) commandAppHelp(args []string) {
+	app.At(cp, "commandAppHelp")
+
+	appname := args[0]
+
+	if !config.AppExistsWithName(appname) {
+		st.PrintError("App with name: " + appname + "doesn't exist. " +
+			"Try running 'apps'.")
+		return
+	}
+
+	st.PrintLn(config.Global.Apps[appname].Help)
+}
+
 func (st *State) commandClearTerminal() {
 	app.At(cp, "commandClearTerminal")
 
