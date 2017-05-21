@@ -3,8 +3,8 @@ package viewport
 import (
 	"runtime"
 
-	igl "github.com/corpusc/viscript/viewport/gl" //internal gl
-	t "github.com/corpusc/viscript/viewport/terminal"
+	igl "github.com/corpusc/viscript/viewport/gl"         //internal gl
+	stack "github.com/corpusc/viscript/viewport/terminal" //TerminalStack
 )
 
 //glfw
@@ -16,13 +16,13 @@ var CloseWindow bool = false
 func Init() {
 	println("<viewport>.Init()")
 
-	// GLFW event handling must run on the main OS thread
-	// See documentation for functions that are only allowed to be called from the main thread.
+	//GLFW event handling must run on the main OS thread
+	//See documentation for functions that are only allowed to be called from the main thread.
 	runtime.LockOSThread()
 
 	initScreen()
 	initEvents()
-	initTerms()
+	stack.Terms.Init()
 }
 
 func initScreen() {
@@ -35,13 +35,6 @@ func initScreen() {
 func initEvents() {
 	igl.InitInputEvents(igl.GlfwWindow)
 	igl.InitMiscEvents(igl.GlfwWindow)
-}
-
-func initTerms() {
-	t.Terms.Init()
-	t.Terms.Add()
-	// Terms.Add()
-	// Terms.Add()
 }
 
 func TeardownScreen() {
@@ -67,12 +60,12 @@ func DispatchEvents() []byte {
 
 func Tick() {
 	igl.Curs.Tick()
-	t.Terms.Tick()
+	stack.Terms.Tick()
 }
 
 func UpdateDrawBuffer() {
 	igl.DrawBegin()
-	t.Terms.Draw()
+	stack.Terms.Draw()
 	igl.DrawEnd()
 }
 

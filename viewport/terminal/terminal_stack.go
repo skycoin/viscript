@@ -12,10 +12,7 @@ import (
 	"github.com/corpusc/viscript/viewport/gl"
 )
 
-/*
-	What operations?
-	- delete terminal
-*/
+var Terms = TerminalStack{}
 
 type TerminalStack struct {
 	FocusedId msg.TerminalId
@@ -28,9 +25,6 @@ type TerminalStack struct {
 	nextDepth  float32
 	nextOffset app.Vec2F // how far from previous terminal
 }
-
-//moved from viewport
-var Terms = TerminalStack{}
 
 func (ts *TerminalStack) Init() {
 	w := gl.CanvasExtents.X * 1.5 //width of terminal window
@@ -45,6 +39,9 @@ func (ts *TerminalStack) Init() {
 		-gl.CanvasExtents.X + w,
 		gl.CanvasExtents.Y - h,
 		-gl.CanvasExtents.X}
+
+	//setup a starter terminal window
+	Terms.Add()
 }
 
 func (ts *TerminalStack) Add() msg.TerminalId {

@@ -18,8 +18,6 @@ import (
 const cp = "hypervisor/process/terminal/commands"
 
 func (st *State) commandHelp() {
-	app.At(cp, "PrintHelp")
-
 	st.PrintLn(app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)))
 	//st.PrintLn("Current commands:")
 	st.PrintLn("help:                  This message ('?' or 'h' for short).")
