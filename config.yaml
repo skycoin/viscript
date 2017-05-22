@@ -1,6 +1,5 @@
 # Viscript's configuration file that contains apps and other settings
 
-# Available applications
 apps:
   # These apps are commented out because they don't talk to viscript
   # skycoin:
@@ -27,11 +26,10 @@ apps:
       - domain_name         # common domain name
       - 0.0.0.0:5999        # host:port for control messages exchange
     help: |
-      "Override default positional arguments with:"
-      "[1] Common Domain name. ex: domain.network"
-      "[2] Host for control messages exchange. ex: 0.0.0.0:5999"
-      "Full Example Command:"
-      "   start meshnet-nm domain.network 0.0.0.0:5999"
+        [1] Common Domain name. ex domain.network
+        [2] Host for control messages exchange. ex 0.0.0.0:5999
+        Full Example Command:
+            start meshnet-nm domain.network 0.0.0.0:5999
   meshnet-node:
     desc: Run meshnet node
     path: bin/meshnet/meshnet-run-node
@@ -42,14 +40,13 @@ apps:
       - 15000               # tcp port at which node will listen app messages
       - hostname            # hostname alias
     help: |
-      "Override default positional arguments with:"
-      "[1] Host for control messages exchange. ex: 111.222.123.44:5000"
-      "[2] Node manager external address for control messages exchange. ex: 202.101.65.43:5999"
-      "[3] True if node needs to be connected randomly, false otherwise."
-      "[4] TCP port at which node will listen messages from apps. ex: 15000"
-      "[5] Hostname alias. ex: hostname"
-      "Full Example Command:"
-      "    start meshnet-node 111.222.123.44:5000 202.101.65.43:5999 true 8000 hostname"
+        [1] Host for control messages exchange. ex 111.222.123.44:5000
+        [2] Node manager external address for control messages exchange. ex 202.101.65.43:5999
+        [3] True if node needs to be connected randomly, false otherwise.
+        [4] TCP port at which node will listen messages from apps. ex 15000
+        [5] Hostname alias. ex hostname
+        Full Example Command
+            start meshnet-node 111.222.123.44:5000 202.101.65.43:5999 true 8000 hostname
   meshnet-socks-client:
     desc: Run meshnet socks client
     path: bin/meshnet/meshnet-run-socks-client
@@ -58,50 +55,49 @@ apps:
       - 101.202.34.56:9000  # node host:port which app will be talked with
       - 8000                # port which socks will listen for web app messages
     help: |
-      "[1] Text name of app, must be unique"
-      "[2] Node address which app will be talked with. ex: 101.202.34.56:9000"
-      "[3] Port which socks will listen for web app incoming messages. ex: 8000"
-      "Full Example Command:"
-      "    start meshnet-socks-client sockscli0 101.202.34.56:9000 8001"
+        [1] Text name of app, must be unique
+        [2] Node address which app will be talked with. ex 101.202.34.56:9000
+        [3] Port which socks will listen for web app incoming messages. ex 8000
+        Full Example Command
+            start meshnet-socks-client sockscli0 101.202.34.56:9000 8001
   meshnet-socks-server:
     desc: Run meshnet socks server
     path: bin/meshnet/meshnet-run-socks-server
     args:
       - sockssrv            # text name of app, must be unique
-      - 101.202.34.56:9000 # node host:port which app will be talked with
+      - 101.202.34.56:9000  # node host:port which app will be talked with
       - 8001                # port which socks server use for conn target host
     help: |
-      "[1] Text name of app, must be unique"
-      "[2] Node address which app will be talked with. ex: 101.202.34.56:9000"
-      "[3] Port which socks server will use for connecting with target host. ex: 8000"
-      "Full Example Command:"
-      "    start meshnet-socks-server sockssrv0 101.202.34.56:9000 8001"
+        [1] Text name of app, must be unique
+        [2] Node address which app will be talked with. ex 101.202.34.56:9000
+        [3] Port which socks server will use for connecting with target host. ex 8000
+        Full Example Command
+            start meshnet-socks-server sockssrv0 101.202.34.56:9000 8001
   meshnet-vpn-client:
     desc: Run meshnet vpn client
-    path: bin/meshnet/meshnet-run-vpn-client
+    path: bin/meshnet/meshnet-run-vpn-server
     args:
-      - vpncli0             # text name of app, must be unique
-      - 101.202.34.56:9000 # node host:port which app will be talked with
-      - 8000                # port which vpn will listen for web app in messages
+      - vpncli0
+      - 101.202.34.56:9000
+      - 8000
     help: |
-      "[1] Text name of app, must be unique"
-      "[2] Node address which app will be talked with. ex: 101.202.34.56:9000"
-      "[3] Port which vpn will listen for web app incoming messages. ex: 8000"
-      "Full Example Command:"
-      "    start meshnet-vpn-client vpncli0 101.202.34.56:9000 8000"
+        [1] Text name of app, must be unique
+        [2] Node address which app will be talked with. ex 101.202.34.56:9000
+        [3] Port which vpn will listen for web app incoming messages. ex 8000
+        Full Example Command
+            start meshnet-vpn-client vpncli0 101.202.34.56:9000 8000
   meshnet-vpn-server:
     desc: Run meshnet vpn server
     path: bin/meshnet/meshnet-run-vpn-server
     args:
-      - vpnsrv0             # text name of app, must be unique
-      - 101.202.34.56:9000 # node host:port which app will be talked with
+        - vpnsrv0             # text name of app, must be unique
+        - 101.202.34.56:9000  # node host:port which app will be talked with
     help: |
-      "[1] Text name of app, must be unique."
-      "[2] Node address which app will be talked with. ex: 101.202.34.56:9000"
-      "Full Command: "
-      "    start meshnet-vpn-server vpnsrv0 101.202.34.56:9000"
+        [1] Text name of app, must be unique.
+        [2] Node address which app will be talked with. ex 101.202.34.56:9000
+        Full Example Command
+            start meshnet-vpn-server vpnsrv0 101.202.34.56:9000
 
-# Additional settings
 settings:
   verboseInput: false   # Will print key and mouse input if set to true
   verifyParsingByPrinting: true  # Will print this file's contents

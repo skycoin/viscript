@@ -120,6 +120,21 @@ func (st *State) commandStart(args []string) {
 
 	tokens := config.GetPathWithDefaultArgsForApp(appName)
 
+	//if there are user passed args for the app override defaults set in config
+	if len(args) > 1 {
+
+		pathToApp := config.GetPathForApp(appName)
+
+		tokens = append(tokens, pathToApp)
+
+		for _, arg := range args {
+			tokens = append(tokens, strings.ToLower(arg))
+		}
+
+	} else {
+		tokens = config.GetPathWithDefaultArgsForApp(appName)
+	}
+
 	newExtProc, err := extTask.MakeNewTaskExternal(tokens, detached)
 	if err != nil {
 		st.PrintError(err.Error())

@@ -9,7 +9,7 @@ import (
 
 var Global Config
 
-const maxBufferSize = 4096
+const maxBufferSize = 32000
 
 func Load(configFileName string) error {
 	println("Loading configuration file:", configFileName)
@@ -36,8 +36,6 @@ func Load(configFileName string) error {
 		return err
 	}
 
-	// This can be quickly used to see the contents of read config
-
 	if Global.Settings.VerifyParsing {
 		fmt.Printf("[ Config ]\n")
 
@@ -46,6 +44,7 @@ func Load(configFileName string) error {
 			fmt.Printf("\tPath: %s\n", app.Path)
 			fmt.Printf("\tArgs: %v\n", app.Args)
 			fmt.Printf("\tDescription: %s\n\n", app.Desc)
+			fmt.Printf("\tHelp: %s\n\n", app.Help)
 		}
 
 		fmt.Printf("Settings: %+v\n\n", Global.Settings)
@@ -57,6 +56,10 @@ func Load(configFileName string) error {
 func AppExistsWithName(name string) bool {
 	_, exists := Global.Apps[name]
 	return exists
+}
+
+func GetPathForApp(name string) string {
+	return Global.Apps[name].Path
 }
 
 func GetPathWithDefaultArgsForApp(name string) []string {
