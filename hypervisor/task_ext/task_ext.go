@@ -68,7 +68,7 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 
 	pr.Id = msg.NextExtProcessId()
 
-	// Append app id before creating command
+	//append app id before creating command
 	tokens = append(tokens, strconv.Itoa(int(pr.Id)))
 
 	tokens = append(tokens, "114")

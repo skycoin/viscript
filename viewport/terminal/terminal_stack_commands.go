@@ -6,19 +6,19 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-func (ts *TerminalStack) ActOnCommand(tID msg.TerminalId, command msg.MessageCommand) {
-	switch command.Command {
+func (ts *TerminalStack) ActOnCommand(tID msg.TerminalId, cmd msg.MessageCommand) {
+	switch cmd.Command {
 
 	case "new_term":
 		ts.Add()
 	case "list_terms":
 		ts.ListTerminalsWithIds(tID)
 	case "delete_term":
-		if len(command.Args) != 1 {
+		if len(cmd.Args) != 1 {
 			return
 		}
 
-		ts.DeleteTerminalIfExists(command.Args[0])
+		ts.DeleteTerminalIfExists(cmd.Args[0])
 	default:
 
 	}

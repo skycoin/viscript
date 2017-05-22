@@ -77,15 +77,15 @@ func (st *State) commandDisplayApps() {
 func (st *State) commandAppHelp(args []string) {
 	app.At(cp, "commandAppHelp")
 
-	appname := args[0]
+	appName := args[0]
 
-	if !config.AppExistsWithName(appname) {
-		st.PrintError("App with name: " + appname + "doesn't exist. " +
+	if !config.AppExistsWithName(appName) {
+		st.PrintError("App with name: " + appName + "doesn't exist. " +
 			"Try running 'apps'.")
 		return
 	}
 
-	st.PrintLn(config.Global.Apps[appname].Help)
+	st.PrintLn(config.Global.Apps[appName].Help)
 }
 
 func (st *State) commandClearTerminal() {
@@ -110,15 +110,15 @@ func (st *State) commandStart(args []string) {
 		args = args[1:]
 	}
 
-	appname := args[0]
+	appName := args[0]
 
-	if !config.AppExistsWithName(appname) {
-		st.PrintError("App with name: " + appname + "doesn't exist. " +
+	if !config.AppExistsWithName(appName) {
+		st.PrintError("App with name: " + appName + "doesn't exist. " +
 			"Try running 'apps'.")
 		return
 	}
 
-	tokens := config.GetPathWithDefaultArgsForApp(appname)
+	tokens := config.GetPathWithDefaultArgsForApp(appName)
 
 	newExtProc, err := extTask.MakeNewTaskExternal(tokens, detached)
 	if err != nil {
