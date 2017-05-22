@@ -10,6 +10,7 @@ type App struct {
 type Settings struct {
 	VerboseInput  bool `yaml:"verboseInput"`
 	VerifyParsing bool `yaml:"verifyParsingByPrinting"`
+	RunHeadless   bool `yaml:"runHeadless"`
 }
 
 type Config struct {

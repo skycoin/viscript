@@ -101,3 +101,4 @@ apps:
 settings:
   verboseInput: false   # Will print key and mouse input if set to true
   verifyParsingByPrinting: true  # Will print this file's contents
+  runHeadless: false    # Run without terminals and OpenGL front
