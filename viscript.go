@@ -76,6 +76,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/corpusc/viscript/app"
 	"github.com/corpusc/viscript/config"
 	"github.com/corpusc/viscript/hypervisor"
@@ -90,6 +92,16 @@ func main() {
 		println(err.Error())
 		return
 	}
+
+	args := os.Args[1:]
+	if len(args) == 1 {
+		if args[0] == "-h" || args[0] == "-run_headless" {
+			//override the defalt run headless no matter what it's value
+			config.Global.Settings.RunHeadless = true
+		}
+	}
+
+	println("RunHeadless:", config.Global.Settings.RunHeadless)
 
 	app.MakeHighlyVisibleLogEntry(app.Name, 15)
 	hypervisor.Init()
