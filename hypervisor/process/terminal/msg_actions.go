@@ -13,8 +13,7 @@ func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 		hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
 	} else {
 		st.Cli.AdjustBackscrollOffset(int(m.Y))
-		//st.onVisualInfo(st.VisualInfo) //refresh screen
-		//FIXME: need to clear screen, also the above line which seems insane ATM
+		st.drawScreenfulOfLog(st.VisualInfo)
 	}
 }
 
@@ -39,9 +38,13 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 	}
 }
 
-func (st *State) onVisualInfo(m msg.MessageVisualInfo) {
-	//app.At("process/terminal/msg_action", "onVisualInfo")
-	//current position was reset to home (top left corner) inside viewport/term
+func (st *State) drawScreenfulOfLog(m msg.MessageVisualInfo) {
+	//app.At("process/terminal/msg_action", "drawScreenfulOfLog")
+
+	//called by
+	//* viewport/term.setupNewGrid()
+	//* backscrolling actions
+
 	st.VisualInfo = m
 	cl /* current log entry */ := len(st.Cli.Log) - 1 - st.Cli.BackscrollAmount
 	page := []string{}
