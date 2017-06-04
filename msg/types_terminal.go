@@ -52,10 +52,11 @@ type MessageTerminalIds struct {
 }
 
 type MessageVisualInfo struct {
-	NumColumns       uint32
-	NumRows          uint32
-	NumRowsForPrompt uint32
-	CurrRow          uint32
+	NumColumns uint32
+	NumRows    uint32
+	CurrColumn uint32
+	CurrRow    uint32
+	PromptRows uint32
 }
 
 //low level events

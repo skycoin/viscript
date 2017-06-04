@@ -36,8 +36,6 @@ func onKey(m msg.MessageKey) {
 		showUInt8("Mod", m.Mod)
 		println() //needed for separation between event's feedback lines.
 		//(they are composed without newlines)
-		//George: perhaps you noticed, after you disabled this, that additional feedback
-		//gets appended to the right of existing lines instead of having their own lines?
 	}
 
 	if msg.Action(m.Action) == msg.Release {

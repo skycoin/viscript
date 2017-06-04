@@ -237,7 +237,7 @@ func (st *State) deleteTerminal(args []string) {
 
 	storedIndex, err := strconv.Atoi(args[0])
 	if err != nil {
-		st.PrintLn("Unable to converted passed index.")
+		st.PrintLn("Unable to convert passed index.")
 		return
 	}
 

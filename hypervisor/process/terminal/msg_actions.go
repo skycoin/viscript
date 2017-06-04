@@ -26,7 +26,7 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 	switch msg.Action(m.Action) {
 
 	case msg.Press: //one time, when key is first pressed
-		//modifier key combos should probably never auto-repeat
+		//modifier key combos should never auto-repeat
 		st.actOnOneTimeHotkeys(m)
 		fallthrough
 	case msg.Repeat: //constantly repeated for as long as key is pressed
@@ -34,7 +34,7 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 		st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 
 	case msg.Release:
-		//most keys will do nothing upon release
+		//most keys will probably never do anything upon release
 	}
 }
 
@@ -50,7 +50,7 @@ func (st *State) drawScreenfulOfLog(m msg.MessageVisualInfo) {
 	if //there's not a full screenful in log yet
 	st.VisualInfo.CurrRow <
 		st.VisualInfo.NumRows-
-			st.VisualInfo.NumRowsForPrompt {
+			st.VisualInfo.PromptRows {
 
 		//don't allow a setting that can't be used yet.
 		//it would give no visual feedback anyways.
@@ -61,18 +61,20 @@ func (st *State) drawScreenfulOfLog(m msg.MessageVisualInfo) {
 		st.Cli.BackscrollAmount = 0
 	}
 
-	cl /* current log entry */ := len(st.Cli.Log) - 1 - st.Cli.BackscrollAmount
-	page := []string{}
+	ei /* current log entry index */ := len(st.Cli.Log) - 1 - st.Cli.BackscrollAmount
+	page := []string{} //(screenful of visible text)
 
 	//build a page (or less if term hasn't scrolled yet)
-	for /* page isn't full & still more entries */ len(page) < int(m.NumRows) && cl >= 0 {
-		ll /* last line */ := st.Cli.Log[cl]
+	usableRows := int(m.NumRows - m.PromptRows)
+	for /* page isn't full & more entries */ len(page) < usableRows && ei >= 0 {
+		ll /* last line */ := st.Cli.Log[ei]
 
-		lineSections := []string{}
+		lineSections := []string{} //pieces of broken/divided-up lines
 
 		x := int(m.NumColumns)
 		for /* line needs breaking up */ len(ll) > int(m.NumColumns) {
-			for /* decrementing towards start of word */ string(ll[x]) != " " &&
+			/* decrement towards start of word */
+			for string(ll[x]) != " " &&
 				/* still fits on 1 line */ (len(ll)-x) < int(m.NumColumns) {
 				x--
 			}
@@ -91,7 +93,7 @@ func (st *State) drawScreenfulOfLog(m msg.MessageVisualInfo) {
 			page = append(page, lineSections[i])
 		}
 
-		cl--
+		ei--
 	}
 
 	for i := len(page) - 1; i >= 0; i-- {

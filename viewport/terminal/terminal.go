@@ -43,7 +43,7 @@ func (t *Terminal) Init() {
 	t.BorderSize = 0.013
 	t.GridSize = app.Vec2I{80, 32}
 	t.setupNewGrid()
-	//set char size
+	//char size
 	t.CharSize.X = (t.Bounds.Width() - t.BorderSize*2) / float32(t.GridSize.X)
 	t.CharSize.Y = (t.Bounds.Height() - t.BorderSize*2) / float32(t.GridSize.Y)
 
@@ -57,8 +57,9 @@ func (t *Terminal) GetVisualInfo() msg.MessageVisualInfo {
 	return msg.MessageVisualInfo{
 		uint32(t.GridSize.X),
 		uint32(t.GridSize.Y),
-		uint32(NumPromptLines),
-		uint32(t.Curr.Y)} //FIXME?  the X component is being ignored.  never need it?
+		uint32(t.Curr.X),
+		uint32(t.Curr.Y),
+		uint32(NumPromptLines)}
 }
 
 func (t *Terminal) IsResizing() bool {
