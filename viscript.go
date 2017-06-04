@@ -84,6 +84,8 @@ import (
 )
 
 func main() {
+	app.MakeHighlyVisibleLogEntry(app.Name, 15)
+
 	err := config.Load("config.yaml")
 	if err != nil {
 		println(err.Error())
@@ -100,7 +102,6 @@ func main() {
 
 	println("RunHeadless:", config.Global.Settings.RunHeadless)
 
-	app.MakeHighlyVisibleLogEntry(app.Name, 15)
 	hypervisor.Init()
 	viewport.Init() //runtime.LockOSThread()
 	//rpc concurrency can interrupt the following, so printing NOW

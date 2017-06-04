@@ -68,21 +68,21 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 			t.Terms.MoveFocusedTerminal(delt, &mouse.DeltaSinceLeftClick)
 			gl.SetHandPointer()
 
-			if config.DebugPrintInputEvents() {
-				// println("\nTerminal Id:", foc.TerminalId,
-				// 	"\nTop", foc.Bounds.Top,
-				// 	"\nLeft", foc.Bounds.Left,
-				// 	"\nRight", foc.Bounds.Right,
-				// 	"\nBottom", foc.Bounds.Bottom,
-				// 	"\n\n GL MouseX:", mouse.GlPos.X,
-				// 	"\n GL MouseY:", mouse.GlPos.Y,
-				// 	"\n\n Previous GL MouseX:", mouse.PrevGlPos.X,
-				// 	"\n Previous GL MouseY:", mouse.PrevGlPos.Y,
-				// 	"\n\n delt.X:", delt.X,
-				// 	"\n delt.Y:", delt.Y,
-				// 	"\n\n Rect Center X:", foc.Bounds.CenterX(),
-				// 	"\n Rect Center Y:", foc.Bounds.CenterY())
-			}
+			// if config.DebugPrintInputEvents() {
+			// println("\nTerminal Id:", foc.TerminalId,
+			// 	"\nTop", foc.Bounds.Top,
+			// 	"\nLeft", foc.Bounds.Left,
+			// 	"\nRight", foc.Bounds.Right,
+			// 	"\nBottom", foc.Bounds.Bottom,
+			// 	"\n\n GL MouseX:", mouse.GlPos.X,
+			// 	"\n GL MouseY:", mouse.GlPos.Y,
+			// 	"\n\n Previous GL MouseX:", mouse.PrevGlPos.X,
+			// 	"\n Previous GL MouseY:", mouse.PrevGlPos.Y,
+			// 	"\n\n delt.X:", delt.X,
+			// 	"\n delt.Y:", delt.Y,
+			// 	"\n\n Rect Center X:", foc.Bounds.CenterX(),
+			// 	"\n Rect Center Y:", foc.Bounds.CenterY())
+			// }
 		}
 	} else {
 		foc.SetResizingOff()
