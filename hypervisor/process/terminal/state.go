@@ -10,7 +10,7 @@ var stPath = "hypervisor/process/terminal/state"
 type State struct {
 	DebugPrintInputEvents bool
 	Cli                   *Cli
-	VisualInfo            msg.MessageVisualInfo
+	VisualInfo            msg.MessageVisualInfo //dimensions, etc. (Terminal sends/updates)
 	proc                  *Process
 	storedTerminalIds     []msg.TerminalId
 }

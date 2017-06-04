@@ -43,7 +43,6 @@ func (t *Terminal) Init() {
 	t.BorderSize = 0.013
 	t.GridSize = app.Vec2I{80, 32}
 	t.setupNewGrid()
-	//char size
 	t.CharSize.X = (t.Bounds.Width() - t.BorderSize*2) / float32(t.GridSize.X)
 	t.CharSize.Y = (t.Bounds.Height() - t.BorderSize*2) / float32(t.GridSize.Y)
 

@@ -27,10 +27,10 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 
 	case msg.Press: //one time, when key is first pressed
 		//modifier key combos should never auto-repeat
-		st.actOnOneTimeHotkeys(m)
+		st.onOneTimeHotkeys(m)
 		fallthrough
 	case msg.Repeat: //constantly repeated for as long as key is pressed
-		st.actOnRepeatableKeys(m, serializedMsg)
+		st.onRepeatableKeys(m, serializedMsg)
 		st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 
 	case msg.Release:
@@ -56,8 +56,8 @@ func (st *State) drawScreenfulOfLog(m msg.MessageVisualInfo) {
 		//it would give no visual feedback anyways.
 		//later it might (in a buggy way),
 		//once some random state changes.
-		//by that time, the user probably forgets they
-		//might have performed an official command (they saw no change)
+		//by that time, the user forgets they
+		//might have backscrolled (they saw no scrolling)
 		st.Cli.BackscrollAmount = 0
 	}
 
@@ -120,7 +120,7 @@ func (st *State) onTerminalIds(m msg.MessageTerminalIds) {
 	st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 }
 
-func (st *State) actOnOneTimeHotkeys(m msg.MessageKey) {
+func (st *State) onOneTimeHotkeys(m msg.MessageKey) {
 	switch m.Key {
 
 	case msg.KeyC:
@@ -146,7 +146,7 @@ func (st *State) actOnOneTimeHotkeys(m msg.MessageKey) {
 	}
 }
 
-func (st *State) actOnRepeatableKeys(m msg.MessageKey, serializedMsg []byte) {
+func (st *State) onRepeatableKeys(m msg.MessageKey, serializedMsg []byte) {
 	switch m.Key {
 
 	case msg.KeyHome:
