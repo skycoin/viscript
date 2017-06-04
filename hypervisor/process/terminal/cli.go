@@ -194,9 +194,9 @@ func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
 		hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
 	}
 
-	st.actOnCommand()
 	c.Log = append(c.Log, c.Commands[c.CurrCmd])
 	c.Commands = append(c.Commands, c.Prompt)
+	st.actOnCommand()
 	c.CurrCmd = len(c.Commands) - 1
 	c.CursPos = len(c.Commands[c.CurrCmd])
 }

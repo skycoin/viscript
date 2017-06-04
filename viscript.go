@@ -39,9 +39,6 @@
 		(atm, 2 lines are reserved along the bottom of a full screen)
 		* block character at end to indicate continuing on next line
 
-* make log entry for each command line immediately upon enter, so it comes before
-		the resulting feedback
-
 * make new window display on top
 		(i believe the sorting logic is only triggered by clicking right now)
 
