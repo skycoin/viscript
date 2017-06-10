@@ -13,7 +13,7 @@ func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 		hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
 	} else {
 		st.Cli.AdjustBackscrollOffset(int(m.Y))
-		st.drawScreenfulOfLog(st.VisualInfo)
+		st.makePageOfLog(st.VisualInfo)
 	}
 }
 
@@ -38,8 +38,8 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 	}
 }
 
-func (st *State) drawScreenfulOfLog(m msg.MessageVisualInfo) {
-	//app.At("process/terminal/msg_action", "drawScreenfulOfLog")
+func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
+	//app.At("process/terminal/msg_action", "makePageOfLog")
 
 	//called by
 	//* viewport/term.setupNewGrid()

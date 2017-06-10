@@ -26,7 +26,7 @@ func (st *State) UnpackMessage(msgType uint16, message []byte) []byte {
 	case msg.TypeVisualInfo:
 		var m msg.MessageVisualInfo
 		msg.MustDeserialize(message, &m)
-		st.drawScreenfulOfLog(m)
+		st.makePageOfLog(m)
 
 	case msg.TypeTerminalIds:
 		var m msg.MessageTerminalIds

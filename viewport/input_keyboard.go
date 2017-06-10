@@ -34,8 +34,7 @@ func onKey(m msg.MessageKey) {
 		showUInt32("Scan", m.Scan)
 		showUInt8("Action", m.Action)
 		showUInt8("Mod", m.Mod)
-		println() //needed for separation between event's feedback lines.
-		//(they are composed without newlines)
+		println() //need for separation between event's feedback lines (they are composed without newlines)
 	}
 
 	if msg.Action(m.Action) == msg.Release {
