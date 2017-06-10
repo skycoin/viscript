@@ -113,13 +113,13 @@ func (t *Terminal) ResizeVertically(newBottom float32) {
 	for delta > t.CharSize.Y {
 		delta -= t.CharSize.Y
 		t.Bounds.Bottom += t.CharSize.Y
-		t.GridSize.Y++
+		t.GridSize.Y--
 	}
 
 	for delta < -t.CharSize.Y {
 		delta += t.CharSize.Y
 		t.Bounds.Bottom -= t.CharSize.Y
-		t.GridSize.Y--
+		t.GridSize.Y++
 	}
 	// }
 

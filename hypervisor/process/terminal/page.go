@@ -7,6 +7,7 @@ import (
 
 func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 	//app.At("process/terminal/msg_action", "makePageOfLog")
+	println("st.VisualInfo.NumRows:", st.VisualInfo.NumRows)
 
 	//called by
 	//* viewport/term.setupNewGrid()
@@ -34,7 +35,7 @@ func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 	//build a page (or less if term hasn't scrolled yet)
 	usableRows := int(m.NumRows - m.PromptRows)
 	for /* page isn't full & more entries */ len(page) < usableRows && ei >= 0 {
-		tl /* last line */ := st.Cli.Log[ei]
+		tl /* temporary line to dissect */ := st.Cli.Log[ei]
 
 		lineSections := []string{} //pieces of broken/divided-up lines
 
