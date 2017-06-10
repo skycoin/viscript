@@ -47,7 +47,7 @@ func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 
 	st.VisualInfo = m
 
-	if //there's not a full screenful in log yet
+	if //...there's not a full screenful in log yet
 	st.VisualInfo.CurrRow <
 		st.VisualInfo.NumRows-
 			st.VisualInfo.PromptRows {
@@ -61,31 +61,32 @@ func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 		st.Cli.BackscrollAmount = 0
 	}
 
-	ei /* current log entry index */ := len(st.Cli.Log) - 1 - st.Cli.BackscrollAmount
+	ei // entry index (of log)
+		:= len(st.Cli.Log) - 1 - st.Cli.BackscrollAmount
 	page := []string{} //(screenful of visible text)
 
 	//build a page (or less if term hasn't scrolled yet)
 	usableRows := int(m.NumRows - m.PromptRows)
 	for /* page isn't full & more entries */ len(page) < usableRows && ei >= 0 {
-		ll /* last line */ := st.Cli.Log[ei]
+		tl /* last line */ := st.Cli.Log[ei]
 
 		lineSections := []string{} //pieces of broken/divided-up lines
 
 		x := int(m.NumColumns)
-		for /* line needs breaking up */ len(ll) > int(m.NumColumns) {
+		for /* line needs breaking up */ len(tl) > int(m.NumColumns) {
 			/* decrement towards start of word */
-			for string(ll[x]) != " " &&
-				/* still fits on 1 line */ (len(ll)-x) < int(m.NumColumns) {
+			for string(tl[x]) != " " &&
+				/* still fits on 1 line */ (len(tl)-x) < int(m.NumColumns) {
 				x--
 			}
 
-			lineSections = append(lineSections, ll[:x])
-			ll = ll[x+1:]
+			lineSections = append(lineSections, tl[:x])
+			tl = tl[x+1:]
 		}
 
 		//the last section, if anything remains
-		if len(ll) > 0 {
-			lineSections = append(lineSections, ll)
+		if len(tl) > 0 {
+			lineSections = append(lineSections, tl)
 		}
 
 		//add line or line sections to page
