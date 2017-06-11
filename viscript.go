@@ -21,12 +21,6 @@
 * make current command line autoscroll horizontally
 	* make it optional (if turned off, always truncate the left)
 
-* Resize terminals
-	* i believe we'll change the actual grid size, then get enough data
-			from the terminal task to fill the backscroll
-	* change flow of text with wrapping, so for example,
-			squeezing horizontally would cause more lines
-
 * back buffer scrolling
 	* pgup/pgdn hotkeys
 	* 1-3 lines with scrollwheel
@@ -41,8 +35,6 @@
 
 * make new window display on top
 		(i believe the sorting logic is only triggered by clicking right now)
-
-* fix vertical position of text when resizing vertically
 
 * scan and do/fix most FIXME/TODO places in the code
 

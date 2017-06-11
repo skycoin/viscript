@@ -52,15 +52,6 @@ func (t *Terminal) Init() {
 	t.ResizingBottom = false
 }
 
-func (t *Terminal) GetVisualInfo() msg.MessageVisualInfo {
-	return msg.MessageVisualInfo{
-		uint32(t.GridSize.X),
-		uint32(t.GridSize.Y),
-		uint32(t.Curr.X),
-		uint32(t.Curr.Y),
-		uint32(NumPromptLines)}
-}
-
 func (t *Terminal) IsResizing() bool {
 	return t.ResizingRight || t.ResizingBottom
 }
@@ -206,6 +197,15 @@ func (t *Terminal) SetStringAt(X, Y int, S string) {
 			t.Chars[Y][X+x] = uint32(c)
 		}
 	}
+}
+
+func (t *Terminal) GetVisualInfo() msg.MessageVisualInfo {
+	return msg.MessageVisualInfo{
+		uint32(t.GridSize.X),
+		uint32(t.GridSize.Y),
+		uint32(t.Curr.X),
+		uint32(t.Curr.Y),
+		uint32(NumPromptLines)}
 }
 
 //
