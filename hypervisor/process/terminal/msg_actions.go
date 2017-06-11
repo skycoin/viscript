@@ -182,8 +182,17 @@ func (st *State) actOnCommand() {
 	case "start":
 		st.commandStart(args)
 
+	//ping app
+	case "ping":
+		st.commandAppPing(args)
+
+	//shutdown running app
 	case "shutdown":
 		st.commandShutDown(args)
+
+	//resource usage
+	case "res_usage":
+		st.commandResourceUsage(args)
 
 	//add new terminal
 	case "n":
