@@ -12,6 +12,7 @@ import (
 	"github.com/corpusc/viscript/config"
 	"github.com/corpusc/viscript/hypervisor"
 	extTask "github.com/corpusc/viscript/hypervisor/task_ext"
+	"github.com/corpusc/viscript/monitor"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -30,8 +31,10 @@ func (st *State) commandHelp() {
 	st.PrintLn("apps:                  Display all available apps with descriptions.")
 	st.PrintLn("ls (-f):               List running tasks (-f for full commands).")
 	st.PrintLn("start (-a) <command>:  Start external task. (-a to also attach).")
-	st.PrintLn("attach   <id>:         Attach external task with given id to terminal.")
-	st.PrintLn("shutdown <id>:         [TODO] Shutdown external task with given id.")
+	st.PrintLn("attach    <id>:        Attach external task with given id to terminal.")
+	st.PrintLn("ping      <id>:        Ping app with given id.")
+	st.PrintLn("res_usage <id>:        See resource usage for app with given id.")
+	st.PrintLn("shutdown  <id>:        [TODO] Shutdown external task with given id.")
 	// st.PrintLn("rpc:                   Issues command: \"go run rpc/cli/cli.go\"")
 	// st.PrintLn("Current hotkeys:")
 	st.PrintLn("CTRL+Z:                Detach currently attached process.")
@@ -41,7 +44,6 @@ func (st *State) commandHelp() {
 
 func (st *State) commandDisplayApps() {
 	app.At(cp, "commandDisplayApps")
-
 	apps := config.Global.Apps
 
 	if len(apps) == 0 {
@@ -118,7 +120,7 @@ func (st *State) commandStart(args []string) {
 		return
 	}
 
-	tokens := config.GetPathWithDefaultArgsForApp(appName)
+	var tokens []string
 
 	//if there are user passed args for the app override defaults set in config
 	if len(args) > 1 {
@@ -135,6 +137,11 @@ func (st *State) commandStart(args []string) {
 		tokens = config.GetPathWithDefaultArgsForApp(appName)
 	}
 
+	//if the app is daemon not allow to attach to it
+	if config.Global.Apps[appName].Daemon {
+		detached = true
+	}
+
 	newExtProc, err := extTask.MakeNewTaskExternal(tokens, detached)
 	if err != nil {
 		st.PrintError(err.Error())
@@ -148,6 +155,7 @@ func (st *State) commandStart(args []string) {
 	}
 
 	extProcInterface := newExtProc.GetExtProcessInterface()
+
 	procId := hypervisor.AddExtProcess(extProcInterface)
 
 	if !detached {
@@ -163,30 +171,116 @@ func (st *State) commandStart(args []string) {
 
 }
 
+func (st *State) commandAppPing(args []string) {
+	app.At(cp, "commandAppPing")
+
+	if len(args) < 1 {
+		st.PrintError("No task id passed! e.g. ping 1")
+		return
+	}
+
+	passedID, err := strconv.Atoi(args[0])
+	if err != nil {
+		st.PrintError("Task id must be an integer.")
+		return
+	}
+
+	extProcID := msg.ExtProcessId(passedID)
+
+	if !hypervisor.ExtProcessIsRunning(extProcID) {
+		st.PrintError("Taks with given id is not running.")
+		return
+	}
+
+	msgUserCommand := msg.MessageUserCommand{
+		Sequence: monitor.GetNextMessageID(),
+		AppId:    uint32(extProcID),
+		Payload:  msg.Serialize(msg.TypePing, msg.MessagePing{})}
+
+	serializedCommand := msg.Serialize(msg.TypeUserCommand, msgUserCommand)
+
+	monitor.Monitor.Send(uint32(extProcID), serializedCommand)
+}
+
 func (st *State) commandShutDown(args []string) {
 	app.At(cp, "commandShutDown")
-	println("TODO: finish implementing command shutdown")
-	println("TODO: finish implementing command shutdown")
-	println("TODO: finish implementing command shutdown")
+
+	if len(args) < 1 {
+		st.PrintError("No task id passed! e.g. shutdown 1")
+		return
+	}
+
+	passedID, err := strconv.Atoi(args[0])
+	if err != nil {
+		st.PrintError("Task id must be an integer.")
+		return
+	}
+
+	extProcID := msg.ExtProcessId(passedID)
+
+	if !hypervisor.ExtProcessIsRunning(extProcID) {
+		st.PrintError("Task with given id is not running.")
+		return
+	}
+
+	msgUserCommand := msg.MessageUserCommand{
+		Sequence: monitor.GetNextMessageID(),
+		AppId:    uint32(extProcID),
+		Payload:  msg.Serialize(msg.TypeShutdown, msg.MessageShutdown{})}
+
+	serializedCommand := msg.Serialize(msg.TypeUserCommand, msgUserCommand)
+
+	monitor.Monitor.Send(uint32(extProcID), serializedCommand)
+}
+
+func (st *State) commandResourceUsage(args []string) {
+	app.At(cp, "commandResourceUsage")
+	if len(args) < 1 {
+		st.PrintError("No task id passed! e.g. res_usage 1")
+		return
+	}
+
+	passedID, err := strconv.Atoi(args[0])
+	if err != nil {
+		st.PrintError("Task id must be an integer.")
+		return
+	}
+
+	extProcID := msg.ExtProcessId(passedID)
+
+	if !hypervisor.ExtProcessIsRunning(extProcID) {
+		st.PrintError("Task with give id is not running.")
+		return
+	}
+
+	msgUserCommand := msg.MessageUserCommand{
+		Sequence: monitor.GetNextMessageID(),
+		AppId:    uint32(extProcID),
+		Payload: msg.Serialize(msg.TypeResourceUsage,
+			msg.MessageResourceUsage{})}
+
+	serializedCommand := msg.Serialize(msg.TypeUserCommand, msgUserCommand)
+
+	monitor.Monitor.Send(uint32(extProcID), serializedCommand)
 }
 
 func (st *State) commandAttach(args []string) {
 	app.At(cp, "commandAttach")
 
 	if len(args) < 1 {
-		st.PrintError("No task id passed! eg: attach 1")
+		st.PrintError("No task id passed! e.g. attach 1")
 		return
 	}
 
-	passedId, err := strconv.Atoi(args[0])
+	passedID, err := strconv.Atoi(args[0])
 	if err != nil {
 		st.PrintError("Task id must be an integer.")
 		return
 	}
 
-	extProcId := msg.ExtProcessId(passedId)
+	extProcID := msg.ExtProcessId(passedID)
 
-	extProc, err := hypervisor.GetExtProcess(extProcId)
+	extProc, err := hypervisor.GetExtProcess(extProcID)
 	if err != nil {
 		st.PrintError(err.Error())
 		return
