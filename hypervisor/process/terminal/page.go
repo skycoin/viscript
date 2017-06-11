@@ -7,13 +7,13 @@ import (
 
 func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 	//app.At("process/terminal/msg_action", "makePageOfLog")
-	println("st.VisualInfo.NumRows:", st.VisualInfo.NumRows)
 
 	//called by
 	//* viewport/term.setupNewGrid()
 	//* backscrolling actions
 
 	st.VisualInfo = m
+	println("st.VisualInfo.NumRows:", st.VisualInfo.NumRows)
 
 	if //...there's not a full screenful in log yet
 	st.VisualInfo.CurrRow <
@@ -26,10 +26,11 @@ func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 		//once some random state changes.
 		//by that time, the user forgets they
 		//might have backscrolled (they saw no scrolling)
-		st.Cli.BackscrollAmount = 0
+
+		//st.Cli.BackscrollAmount = 0
 	}
 
-	ei /* entry index (of log) */ := len(st.Cli.Log) - 1 - st.Cli.BackscrollAmount
+	ei /* entry index (of log) */ := len(st.Cli.Log) - 1
 	page := []string{} //(screenful of visible text)
 
 	//build a page (or less if term hasn't scrolled yet)
@@ -64,9 +65,15 @@ func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 		ei--
 	}
 
-	for i := len(page) - 1; i >= 0; i-- {
+	if st.Cli.BackscrollAmount > len(page) {
+		st.Cli.BackscrollAmount = len(page)
+	}
+
+	for i := len(page) - 1; i >= /*0*/ st.Cli.BackscrollAmount; i-- {
 		st.printLnAndMAYBELogIt(page[i], false)
 	}
 
+	//it's nice to be able to see/interact with the command prompt even while
+	//backscrolled
 	st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 }

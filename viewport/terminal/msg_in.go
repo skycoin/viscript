@@ -18,7 +18,7 @@ func (t *Terminal) UnpackMessage(message []byte) []byte {
 	case msg.TypeCommand:
 		var m msg.MessageCommand
 		msg.MustDeserialize(message, &m)
-		Terms.ActOnCommand(t.TerminalId, m)
+		Terms.OnUserCommand(t.TerminalId, m)
 
 	case msg.TypeCommandLine:
 		var m msg.MessageCommandLine

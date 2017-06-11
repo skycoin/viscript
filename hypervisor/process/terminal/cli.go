@@ -15,8 +15,8 @@ type Cli struct {
 	Prompt   string
 	//FIXME to work with Terminal's dynamic self.GridSize.X
 	//assumes 64 horizontal characters, then dedicates 2 lines for each command.
-	BackscrollAmount int //number of line sections from the last (can be more than
-	// number of line entries, because lines could be wrapped or broken up)
+	BackscrollAmount int //number of VISUAL LINES...
+	//(each could be merely a SECTION of a larger (than NumColumns) log entry)
 	MaxCommandSize int //reserve ending space for cursor at the end of last line
 }
 
@@ -36,7 +36,6 @@ func NewCli() *Cli {
 }
 
 func (c *Cli) AdjustBackscrollOffset(delta int) {
-	println("BACKSCROLLING delta: ", delta)
 	c.BackscrollAmount += delta
 
 	if c.BackscrollAmount < 0 {
@@ -45,6 +44,7 @@ func (c *Cli) AdjustBackscrollOffset(delta int) {
 
 	//capping on the high end needs to be done dynamically
 	//according to how many line sections/breaks there are
+	println("BACKSCROLLING --- delta:", delta, " --- NUM:", c.BackscrollAmount)
 }
 
 func (c *Cli) InsertCharIfItFits(char uint32, state *State) {
@@ -196,7 +196,7 @@ func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
 
 	c.Log = append(c.Log, c.Commands[c.CurrCmd])
 	c.Commands = append(c.Commands, c.Prompt)
-	st.actOnCommand()
+	st.onUserCommand()
 	c.CurrCmd = len(c.Commands) - 1
 	c.CursPos = len(c.Commands[c.CurrCmd])
 }

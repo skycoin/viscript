@@ -7,6 +7,8 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
+var numOOB int // number of out of bound characters
+
 const (
 	NumPromptLines = 2
 	MinimumColumns = 16 //don't allow resizing smaller than this
@@ -241,7 +243,6 @@ func (t *Terminal) updateCommandLine(m msg.MessageCommandLine) {
 	}
 }
 
-var numOOB int // number of out of bound characters
 func (t *Terminal) posIsValid(X, Y int) bool {
 	if X < 0 || X >= t.GridSize.X ||
 		Y < 0 || Y >= t.GridSize.Y {

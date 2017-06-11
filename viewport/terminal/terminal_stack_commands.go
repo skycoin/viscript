@@ -6,7 +6,7 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
-func (ts *TerminalStack) ActOnCommand(tID msg.TerminalId, cmd msg.MessageCommand) {
+func (ts *TerminalStack) OnUserCommand(tID msg.TerminalId, cmd msg.MessageCommand) {
 	switch cmd.Command {
 
 	case "new_term":

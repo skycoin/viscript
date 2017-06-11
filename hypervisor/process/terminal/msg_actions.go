@@ -114,7 +114,7 @@ func (st *State) onRepeatableKeys(m msg.MessageKey, serializedMsg []byte) {
 	}
 }
 
-func (st *State) actOnCommand() {
+func (st *State) onUserCommand() {
 	cmd, args := st.Cli.CurrentCommandAndArgs()
 	if len(cmd) < 1 {
 		println("**** ERROR! ****   Command was empty!  Returning.")
@@ -124,7 +124,7 @@ func (st *State) actOnCommand() {
 	//if having multiple lines is such a bad thing, then you should have went all
 	//the way and put it all on one line.  it is much easier to overlook,
 	//and therefore fights against the whole purpose of printing it, however.
-	s := "actOnCommand()      command: \"" + cmd + "\""
+	s := "onUserCommand()      command: \"" + cmd + "\""
 
 	for i, arg := range args {
 		if i == 0 {
