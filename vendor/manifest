@@ -38,69 +38,6 @@
 			"notests": true
 		},
 		{
-			"importpath": "github.com/skycoin/skycoin/src/mesh/app",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "/src/mesh/app",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/src/mesh/messages",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "src/mesh/messages",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/src/mesh/node",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "/src/mesh/node",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/src/mesh/nodemanager",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "/src/mesh/nodemanager",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/src/mesh/proxy/go-socks5",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "src/mesh/proxy/go-socks5",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/src/mesh/transport",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "src/mesh/transport",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/src/mesh/viscript",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "src/mesh/viscript",
-			"notests": true
-		},
-		{
 			"importpath": "github.com/skycoin/skycoin/src/util",
 			"repository": "https://github.com/skycoin/skycoin",
 			"vcs": "git",
@@ -179,6 +116,105 @@
 			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
 			"branch": "master",
 			"path": "vendor/golang.org/x/sys/windows",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/skycoin/skywire/vendor/github.com/corpusc/viscript/hypervisor/dbus",
+			"repository": "https://github.com/skycoin/skywire",
+			"vcs": "git",
+			"revision": "faadaf639e3034203bbf9d95e990530e39940b12",
+			"branch": "master",
+			"path": "vendor/github.com/corpusc/viscript/hypervisor/dbus",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/skycoin/skywire/vendor/github.com/corpusc/viscript/msg",
+			"repository": "https://github.com/skycoin/skywire",
+			"vcs": "git",
+			"revision": "faadaf639e3034203bbf9d95e990530e39940b12",
+			"branch": "master",
+			"path": "vendor/github.com/corpusc/viscript/msg",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/skycoin/skywire/vendor/github.com/corpusc/viscript/vendor/github.com/skycoin/skycoin/src/cipher",
+			"repository": "https://github.com/skycoin/skywire",
+			"vcs": "git",
+			"revision": "faadaf639e3034203bbf9d95e990530e39940b12",
+			"branch": "master",
+			"path": "vendor/github.com/corpusc/viscript/vendor/github.com/skycoin/skycoin/src/cipher",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/skycoin/skywire/vendor/github.com/corpusc/viscript/vendor/github.com/skycoin/skycoin/src/util",
+			"repository": "https://github.com/skycoin/skywire",
+			"vcs": "git",
+			"revision": "faadaf639e3034203bbf9d95e990530e39940b12",
+			"branch": "master",
+			"path": "vendor/github.com/corpusc/viscript/vendor/github.com/skycoin/skycoin/src/util",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/skycoin/skywire/vendor/github.com/corpusc/viscript/vendor/github.com/skycoin/skycoin/vendor/github.com/op/go-logging",
+			"repository": "https://github.com/skycoin/skywire",
+			"vcs": "git",
+			"revision": "faadaf639e3034203bbf9d95e990530e39940b12",
+			"branch": "master",
+			"path": "vendor/github.com/corpusc/viscript/vendor/github.com/skycoin/skycoin/vendor/github.com/op/go-logging",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/skycoin/skywire/vendor/github.com/corpusc/viscript/vendor/github.com/skycoin/skycoin/vendor/github.com/tang0th/go-chacha20/chacha",
+			"repository": "https://github.com/skycoin/skywire",
+			"vcs": "git",
+			"revision": "faadaf639e3034203bbf9d95e990530e39940b12",
+			"branch": "master",
+			"path": "vendor/github.com/corpusc/viscript/vendor/github.com/skycoin/skycoin/vendor/github.com/tang0th/go-chacha20/chacha",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/skycoin/skywire/vendor/github.com/corpusc/viscript/vendor/github.com/skycoin/skycoin/vendor/github.com/toqueteos/webbrowser",
+			"repository": "https://github.com/skycoin/skywire",
+			"vcs": "git",
+			"revision": "faadaf639e3034203bbf9d95e990530e39940b12",
+			"branch": "master",
+			"path": "vendor/github.com/corpusc/viscript/vendor/github.com/skycoin/skycoin/vendor/github.com/toqueteos/webbrowser",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/skycoin/skywire/vendor/github.com/corpusc/viscript/vendor/github.com/skycoin/skycoin/vendor/golang.org/x/crypto/pbkdf2",
+			"repository": "https://github.com/skycoin/skywire",
+			"vcs": "git",
+			"revision": "faadaf639e3034203bbf9d95e990530e39940b12",
+			"branch": "master",
+			"path": "vendor/github.com/corpusc/viscript/vendor/github.com/skycoin/skycoin/vendor/golang.org/x/crypto/pbkdf2",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/skycoin/skywire/vendor/golang.org/x/net/context",
+			"repository": "https://github.com/skycoin/skywire",
+			"vcs": "git",
+			"revision": "faadaf639e3034203bbf9d95e990530e39940b12",
+			"branch": "master",
+			"path": "vendor/golang.org/x/net/context",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/skycoin/skywire/vendor/gopkg.in/gcfg.v1",
+			"repository": "https://github.com/skycoin/skywire",
+			"vcs": "git",
+			"revision": "faadaf639e3034203bbf9d95e990530e39940b12",
+			"branch": "master",
+			"path": "vendor/gopkg.in/gcfg.v1",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/skycoin/skywire/vendor/gopkg.in/warnings.v0",
+			"repository": "https://github.com/skycoin/skywire",
+			"vcs": "git",
+			"revision": "faadaf639e3034203bbf9d95e990530e39940b12",
+			"branch": "master",
+			"path": "vendor/gopkg.in/warnings.v0",
 			"notests": true
 		},
 		{

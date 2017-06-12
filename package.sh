@@ -43,6 +43,25 @@ mkdir $ROOT_DIR/bin/skycoin
 pv "Creating meshnet dir inside root/bin"
 mkdir $ROOT_DIR/bin/meshnet
 
+# Set the Skywire path from github
+githubSkywirePath="github.com/skycoin/skywire"
+
+# Go get skywire
+pv "Go getting Skywire: $githubSkywirePath"
+go get -u -d $githubSkywirePath &>/dev/null
+
+# Set local skywire path
+localSkywirePath="$GOPATH/src/$githubSkywirePath"
+pv "Local Skywire path set to: $localSkywirePath"
+
+# Check if skywire directory exists in gopath
+if [ ! -d "$localSkywirePath" ]; then
+    pv "Skywire directory doesn't exist in $GOPATH/src/github.com/"
+    exit 1
+else
+    pv "Skywire directory verified" 
+fi
+
 # Set the Skycoin path from github
 githubSkycoinPath="github.com/skycoin/skycoin"
 
@@ -118,48 +137,48 @@ fi
 pv "Moving Skycoin cli to the root directory"
 mv skycoin-cli "$ROOT_DIR/bin/skycoin/"
 
-# Change directory to local Skycoin mesh server
-pv "Changing directory to Skycoin rpc server"
-cd "$localSkycoinPath/src/mesh/cmd/rpc/srv/"
+# Change directory to local Skywire mesh server
+pv "Changing directory to Skywire rpc server"
+cd "$localSkywirePath/src/cmd/rpc/srv/"
 
 # Get all dependencies for rpc_run.go
 pv "Getting all dependencies for meshnet server"
 go get -d ./...
 
 # Build run_rpc.go
-pv "Building Skycoin rpc server"
+pv "Building Skywire rpc server"
 go build -o meshnet-server rpc_run.go
 
 # Check if building cli was successfull
 if [ ! -f "meshnet-server" ]; then
-    pv "Building Skycoin rpc server failed. Exiting"
+    pv "Building Skywire rpc server failed. Exiting"
     exit 1
 fi
 
-# Move Skycoin mesh server to root dir
-pv "Moving Skycoin rpc server to the root directory"
+# Move Skywire mesh server to root dir
+pv "Moving Skywire rpc server to the root directory"
 mv meshnet-server "$ROOT_DIR/bin/meshnet/"
 
-# Change directory to local Skycoin mesh cli
-pv "Changing directory to Skycoin rpc mesh cli"
-cd "$localSkycoinPath/src/mesh/cmd/rpc/cli/"
+# Change directory to local Skywire mesh cli
+pv "Changing directory to Skywire rpc mesh cli"
+cd "$localSkywirePath/src/cmd/rpc/cli/"
 
 # Get all dependencies for meshnet cli
 pv "Getting all dependencies for meshnet cli"
 go get -d ./...
 
 # Build cli.go
-pv "Building Skycoin rpc mesh cli"
+pv "Building Skywire rpc mesh cli"
 go build -o meshnet-cli cli.go
 
 # Check if building cli was successfull
 if [ ! -f "meshnet-cli" ]; then
-    pv "Building Skycoin rpc mesh cli failed. Exiting"
+    pv "Building Skywire rpc mesh cli failed. Exiting"
     exit 1
 fi
 
-# Move Skycoin mesh cli to root dir
-pv "Moving Skycoin rpc mesh cli to the root directory"
+# Move Skywire mesh cli to root dir
+pv "Moving Skywire rpc mesh cli to the root directory"
 mv meshnet-cli "$ROOT_DIR/bin/meshnet/"
 
 # Change directory to root
@@ -207,9 +226,27 @@ pv "Creating bash file to run cli with gotty: https://github.com/yudai/gotty"
 gottyCommand="gotty -w -p 9999 --reconnect ./viscript-cli"
 echo $gottyCommand > "$ROOT_DIR/viscript-cli.sh" 
 
+# Change directory to run_apptracker.go location
+pv "Changing directory to apptracker creation script location"
+cd "$PWD/mesh/run_mesh/apptracker"
+
+# Build run_apptracker.go
+pv "Building apptracker creation script"
+go build -o meshnet-run-apptracker run_apptracker.go
+
+# Check if building apptracker creation script was successfull
+if [ ! -f "meshnet-run-apptracker" ]; then
+    pv "Building apptracker creation script failed. Exiting"
+    exit 1
+fi
+
+# Move apptracker creation script to root dir
+pv "Moving apptracker creation script to the root directory"
+mv meshnet-run-apptracker "$ROOT_DIR/bin/meshnet/"
+
 # Change directory to run_nm.go location
 pv "Changing directory to nodemanager creation script location"
-cd "$PWD/mesh/run_mesh/nodemanager"
+cd "../nodemanager"
 
 # Build run_nm.go
 pv "Building nodemanager creation script"
