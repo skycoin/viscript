@@ -36,7 +36,7 @@ apps:
     desc: Run meshnet node
     path: bin/meshnet/meshnet-run-node
     args:
-      - 111.222.123.44:5000 # host:port for control messages exchange
+      - 111.222.123.44:5000 # host:port for control messages exchange. WHY IS THIS PRESENT HERE? DATA FROM EXAMPLES IS ALWAYS WEIRD, THERE ARE NO DEFAULTS AT ALL
       - 202.101.65.43:5999  # nodemanager external address for control messages
       - true                # if the node needs to be connected randomly
       - 15000               # tcp port at which node will listen app messages
