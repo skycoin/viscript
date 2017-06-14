@@ -17,6 +17,7 @@ import (
 	"strconv"
 
 	"github.com/corpusc/viscript/app"
+	"github.com/corpusc/viscript/monitor"
 	"github.com/corpusc/viscript/msg"
 )
 
@@ -71,7 +72,9 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 	//append app id before creating command
 	tokens = append(tokens, strconv.Itoa(int(pr.Id)))
 
-	tokens = append(tokens, "114")
+	tokens = append(tokens, strconv.Itoa(int(monitor.GetNextMessageID())))
+
+	// TODO: think about this here if we have daemon should we attach anything?
 
 	if pr.cmd, err = pr.createCMDAccordingToOS(tokens); err != nil {
 		return err

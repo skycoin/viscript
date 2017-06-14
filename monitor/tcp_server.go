@@ -12,6 +12,13 @@ import (
 	"github.com/corpusc/viscript/msg"
 )
 
+var Sequence uint32 = 1
+
+func GetNextMessageID() uint32 {
+	Sequence++
+	return Sequence
+}
+
 type MonitorServer struct {
 	address          string
 	lock             *sync.Mutex
@@ -99,6 +106,29 @@ func (self *MonitorServer) Serve() {
 				respChan <- uc.Payload // respond to it
 			}
 		}()
+	}
+}
+
+func (self *MonitorServer) ReadFrom(appId msg.ExtProcessId) ([]byte, error) {
+	appMessageChannel, exists := self.responseChannels[uint32(appId)]
+	if !exists {
+		errString := fmt.Sprintf("Channel with ID: %d doesn't exist.", appId)
+		err := errors.New(errString)
+		return []byte{}, err
+	}
+
+	select {
+	case data := <-appMessageChannel:
+		return data, nil
+	default:
+	}
+
+	return []byte{}, errors.New(string(appId) + " app channel is empty.")
+}
+
+func (self *MonitorServer) PrintAll() {
+	for key, _ := range self.responseChannels {
+		println(key)
 	}
 }
 
