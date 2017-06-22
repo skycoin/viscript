@@ -3,7 +3,7 @@ package config
 type App struct {
 	Daemon bool     `yaml:"daemon"`
 	Path   string   `yaml:"path"`
-	Args   []string `yaml:"args"`
+	Args   []string `yaml:"default_args"`
 	Desc   string   `yaml:"desc"`
 	Help   string   `yaml:"help"`
 }

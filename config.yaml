@@ -3,60 +3,44 @@
 apps:
   # These apps are commented out because they don't talk to viscript
   # skycoin:
+  #   daemon: false
   #   path: /bin/skycoin/skycoin
-  #   args:
+  #   default_args:
   #     - --gui-dir=/bin/skycoin/static/
   #   desc: Skycoin main binary
   # skycoin-cli:
+  #   daemon: false
   #   path: /bin/skycoin/skycoin-cli
-  #   args:
+  #   default_args:
   #   desc: Skycoin command line interface
   # meshnet-server:
+  #   daemon: false
   #   path: /bin/meshnet/meshnet-server
-  #   args:
+  #   default_args:
   #   desc: Meshnet nodes manager server
   # meshnet-cli:
+  #   daemon: false
   #   path: /bin/meshnet/meshnet-cli
-  #   args:
+  #   default_args:
   #   desc: Command line client for meshnet nodes manager server
-  meshnet-nm:
-    daemon: true
-    desc: Run meshnet node manager
-    path: bin/meshnet/meshnet-run-nm
-    args: 
-      - domain_name         # common domain name
-      - 0.0.0.0:5999        # host:port for control messages exchange
-    help: |
-        [1] Common Domain name. ex domain.network
-        [2] Host for control messages exchange. ex 0.0.0.0:5999
-        Full Example Command:
-            start meshnet-nm domain.network 0.0.0.0:5999
   meshnet-node:
     daemon: true
     desc: Run meshnet node
     path: bin/meshnet/meshnet-run-node
-    args:
-      - 111.222.123.44:5000 # host:port for control messages exchange. WHY IS THIS PRESENT HERE? DATA FROM EXAMPLES IS ALWAYS WEIRD, THERE ARE NO DEFAULTS AT ALL
-      - 202.101.65.43:5999  # nodemanager external address for control messages
-      - true                # if the node needs to be connected randomly
-      - 15000               # tcp port at which node will listen app messages
-      - hostname            # hostname alias
+    default_args: []
     help: |
-        [1] Host for control messages exchange. ex 111.222.123.44:5000
-        [2] Node manager external address for control messages exchange. ex 202.101.65.43:5999
+        [1] Host for control messages exchange.
+        [2] Alternative hostname which can be used instead of pubkey.
         [3] True if node needs to be connected randomly, false otherwise.
-        [4] TCP port at which node will listen messages from apps. ex 15000
-        [5] Hostname alias. ex hostname
+        [4] TCP port at which node will listen messages from apps.
+        [5] Hostname alias.
         Full Example Command
-            start meshnet-node 111.222.123.44:5000 202.101.65.43:5999 true 8000 hostname
+            start meshnet-node 111.222.123.44:5000 202.101.65.43:5999 true 8000 node0
   meshnet-socks-client:
     daemon: true
     desc: Run meshnet socks client
     path: bin/meshnet/meshnet-run-socks-client
-    args:
-      - sockscli            # text name of app, must be unique 
-      - 101.202.34.56:9000  # node host:port which app will be talked with
-      - 8000                # port which socks will listen for web app messages
+    default_args: []
     help: |
         [1] Text name of app, must be unique
         [2] Node address which app will be talked with. ex 101.202.34.56:9000
@@ -67,10 +51,7 @@ apps:
     daemon: true
     desc: Run meshnet socks server
     path: bin/meshnet/meshnet-run-socks-server
-    args:
-      - sockssrv            # text name of app, must be unique
-      - 101.202.34.56:9000  # node host:port which app will be talked with
-      - 8001                # port which socks server use for conn target host
+    default_args: []
     help: |
         [1] Text name of app, must be unique
         [2] Node address which app will be talked with. ex 101.202.34.56:9000
@@ -81,10 +62,7 @@ apps:
     daemon: true
     desc: Run meshnet vpn client
     path: bin/meshnet/meshnet-run-vpn-server
-    args:
-      - vpncli0
-      - 101.202.34.56:9000
-      - 8000
+    default_args: []
     help: |
         [1] Text name of app, must be unique
         [2] Node address which app will be talked with. ex 101.202.34.56:9000
@@ -95,16 +73,22 @@ apps:
     daemon: true
     desc: Run meshnet vpn server
     path: bin/meshnet/meshnet-run-vpn-server
-    args:
-        - vpnsrv0             # text name of app, must be unique
-        - 101.202.34.56:9000  # node host:port which app will be talked with
+    default_args: []
     help: |
         [1] Text name of app, must be unique.
         [2] Node address which app will be talked with. ex 101.202.34.56:9000
         Full Example Command
             start meshnet-vpn-server vpnsrv0 101.202.34.56:9000
+  apptracker:
+    daemon: true
+    desc: Run apptracker
+    path: bin/meshnet/meshnet-run-apptracker.exe
+    default_args: []
+    help: |
+        [1] Host:port on which apptracker will listen for incoming messages
 
 settings:
   verboseInput: false   # Will print key and mouse input if set to true
   verifyParsingByPrinting: true  # Will print this file's contents
   runHeadless: false    # Run without terminals and OpenGL front
+
