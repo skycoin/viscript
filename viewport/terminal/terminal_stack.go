@@ -3,13 +3,13 @@ package terminal
 import (
 	"fmt"
 
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/hypervisor"
-	"github.com/corpusc/viscript/hypervisor/dbus"
-	"github.com/corpusc/viscript/hypervisor/input/keyboard"
-	termTask "github.com/corpusc/viscript/hypervisor/process/terminal"
-	"github.com/corpusc/viscript/msg"
-	"github.com/corpusc/viscript/viewport/gl"
+	"github.com/skycoin/viscript/app"
+	"github.com/skycoin/viscript/hypervisor"
+	"github.com/skycoin/viscript/hypervisor/dbus"
+	"github.com/skycoin/viscript/hypervisor/input/keyboard"
+	termTask "github.com/skycoin/viscript/hypervisor/process/terminal"
+	"github.com/skycoin/viscript/msg"
+	"github.com/skycoin/viscript/viewport/gl"
 )
 
 var Terms = TerminalStack{}

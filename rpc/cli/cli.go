@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	cm "github.com/corpusc/viscript/rpc/climanager"
+	cm "github.com/skycoin/viscript/rpc/climanager"
 )
 
 var cliManager cm.CliManager

@@ -1,8 +1,8 @@
 package process
 
 import (
-	//"github.com/corpusc/viscript/hypervisor"
-	"github.com/corpusc/viscript/msg"
+	//"github.com/skycoin/viscript/hypervisor"
+	"github.com/skycoin/viscript/msg"
 )
 
 func (st *State) makePageOfLog(m msg.MessageVisualInfo) {

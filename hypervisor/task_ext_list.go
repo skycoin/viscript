@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/corpusc/viscript/msg"
+	"github.com/skycoin/viscript/msg"
 )
 
 var ExtProcessListGlobal ExtProcessList

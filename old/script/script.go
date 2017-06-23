@@ -1,17 +1,16 @@
 package script
 
-import (
 /*
 	"fmt"
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/gfx"
-	"github.com/corpusc/viscript/tree"
+	"github.com/skycoin/viscript/app"
+	"github.com/skycoin/viscript/gfx"
+	"github.com/skycoin/viscript/tree"
 	"strings"
-	//"github.com/corpusc/viscript/ui"
+	//"github.com/skycoin/viscript/ui"
 	"math"
 	"regexp"
 	"strconv"
-*/)
+*/
 
 /*
 

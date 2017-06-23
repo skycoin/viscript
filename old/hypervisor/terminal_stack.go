@@ -1,7 +1,7 @@
 package hypervisor
 
 import (
-	"github.com/corpusc/viscript/msg"
+	"github.com/skycoin/viscript/msg"
 )
 
 func onMouseScroll(m msg.MessageMouseScroll) {

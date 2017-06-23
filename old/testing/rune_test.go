@@ -1,6 +1,6 @@
 package testing
 
-// "github.com/corpusc/viscript/gl"
+// "github.com/skycoin/viscript/gl"
 
 // func TestRuneMsgFlow(t *testing.T) {
 // 	var m msg.MessageChar

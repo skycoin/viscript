@@ -2,7 +2,7 @@ package app
 
 import (
 	"fmt"
-	//"github.com/corpusc/viscript/hypervisor"
+	//"github.com/skycoin/viscript/hypervisor"
 	"strings"
 )
 

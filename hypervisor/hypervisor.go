@@ -35,7 +35,7 @@ Can objects create multiple channels?
 */
 
 import (
-	"github.com/corpusc/viscript/hypervisor/dbus"
+	"github.com/skycoin/viscript/hypervisor/dbus"
 )
 
 var DbusGlobal dbus.DbusInstance

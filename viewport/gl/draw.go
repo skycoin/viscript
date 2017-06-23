@@ -1,8 +1,8 @@
 package gl
 
 import (
-	"github.com/corpusc/viscript/app"
 	"github.com/go-gl/gl/v2.1/gl"
+	"github.com/skycoin/viscript/app"
 )
 
 var PrevColor []float32 // previous

@@ -6,7 +6,7 @@ Then have a scripting language. like one action is "execute for one line" or "ex
 
 
 we are going to make a little scripting language, where you edit the abstract syntax tree of the language directly
- 
+
 [6/14/2016 10:33:19 PM] HaltingState: send events, then the application on other side, will respond with length prefixed messages, to set the display
 
 
@@ -57,11 +57,11 @@ then we need
 
 The language will be all structs and everything will be structs and abstract syntax trees. the written part, will be auto correction.
 
-Look at XL programming language. 
+Look at XL programming language.
 
 https://en.wikipedia.org/wiki/XL_(programming_language)
 
-and do S syntax syntax. 
+and do S syntax syntax.
 - look at current thing or choices
 - then look at what valid choices are for context, then do dropdown to allow selection or autocompletion
 - all choices or actions mut be enumerable at each step
@@ -88,12 +88,12 @@ So do (u32.add 3 5) (add 3+5), etc, each expression should be typed (inputs and 
 line 1
 line 2
 } etc
-[8/3/2016 6:56:25 PM] HaltingState: a function is a 
+[8/3/2016 6:56:25 PM] HaltingState: a function is a
 1> name (text)
 2> input tuple (name, type) pair list
 3> output tuple (list of types/signatures returned)
 4> an array of lines/statements
-[8/3/2016 6:56:51 PM] HaltingState: a struct is a 
+[8/3/2016 6:56:51 PM] HaltingState: a struct is a
 1> name
 2> list of (name, type) pairs
 3> later list of functions on the struct but ignore this for now
@@ -132,10 +132,10 @@ we will have an internal language, which is the s-expressions and parens and (fu
 [8/10/2016 9:38:40 AM] HaltingState: it will be golang like
 [8/10/2016 9:38:46 AM] HaltingState: the back end is trees and S expression
 [8/10/2016 9:38:56 AM] HaltingState: but to user and editor, it will displayed as golang type
-[8/10/2016 9:41:42 AM] HaltingState: create an "object" type for embedding in the document. These are like software objects or code.  Then for (add32, x, 3), have a type that is like a list and have element1, element2, element3; store the type, and "tag" 
+[8/10/2016 9:41:42 AM] HaltingState: create an "object" type for embedding in the document. These are like software objects or code.  Then for (add32, x, 3), have a type that is like a list and have element1, element2, element3; store the type, and "tag"
 
 like 3 is int32 literal (or literal and then store type and value in the literal type sruct)
-add32 is func or operation 
+add32 is func or operation
 x is int32 variable or variable and store the type in variable
 
 and (add32 5 (add32 4 5))
@@ -177,7 +177,7 @@ https://en.wikipedia.org/wiki/Lisp_(programming_language)#Conses_and_lists
 
 
 [8/10/2016 9:43:29 PM] HaltingState: this is how lisp does it, but not sure  we need this, but might help, but not sure if its best way. I like the struct, func, module, lines as basic units. then each line is an "expression"
-[8/10/2016 9:47:40 PM] HaltingState: lisp does not have "objects". I want to focus on objects (essentially structs) and focus on the functions of (things that dont modify) and functions on (things that modify) the objects. 
+[8/10/2016 9:47:40 PM] HaltingState: lisp does not have "objects". I want to focus on objects (essentially structs) and focus on the functions of (things that dont modify) and functions on (things that modify) the objects.
 
 So that the modules are object, the structs in the modules are objects, the functions in the modules are objects and the expressions in the functions are objects
 
@@ -252,7 +252,7 @@ or it can be an array, that can contain structs or types. And the text lines are
 
 So if you have struct A {int x, int y}, then you do A.y, then it looks at the object metadata and looks at what offset for y is and then adds the pointer to the offset and casts to int; i guess
 [8/23/2016 11:55:27 AM] HaltingState: another important thing or very important thing; I need to be able to see all the objects in the program.
-[8/23/2016 11:56:05 AM] HaltingState: 
+[8/23/2016 11:56:05 AM] HaltingState:
 so all the variables that have been allocated in the program, all the types. I want to be able to browse through them and have an "object browser" and look at the programs state and interograte it
 [8/23/2016 12:01:06 PM] HaltingState: using notation (func <NAME> (<TYPE> <NAME>) .... code)
 
@@ -263,13 +263,13 @@ ex.
 A func def op, takes NAME, then array of (TYPE, NAME) for inputs and then array of (TYPE) for outputs for functions.
 
 A pointer type is struct POINTER { type TYPE, index uint32)
-[8/23/2016 12:05:55 PM] HaltingState: except, i want to be able to do 
+[8/23/2016 12:05:55 PM] HaltingState: except, i want to be able to do
 
 (VAR X INT32) //defines variables
 (uint32.add X 3) //next line,expression, that uses a variable defined in local scope
 
 Then go line by line, executing but maybe write the lines in infix
-[8/23/2016 12:06:22 PM] HaltingState: or just do 
+[8/23/2016 12:06:22 PM] HaltingState: or just do
 
 (+ X 3) and that is shorthand
 [8/23/2016 12:10:38 PM] HaltingState: So like BASIC (Where it executes line 1, then line 2, line 3 etc and one expression per line
@@ -343,7 +343,7 @@ http://stackoverflow.com/questions/21965738/what-is-virtual-dom
 
 
 
-[8/29/2016 6:30:06 AM] HaltingState: eventually may have multiple "windows" as an abstraction you might do; 
+[8/29/2016 6:30:06 AM] HaltingState: eventually may have multiple "windows" as an abstraction you might do;
 
 But windows are really recursive. there is a window and then another window in the windows and its windows all the way down; because each box or grid, is contained within the parent
 [8/29/2016 7:11:08 AM] HaltingState: A "DOM" is a datastructure. that represents the document. So you can have a "function" DOM element or a "struct" DOM element, or a "Code box" DOM element, or a "text paragraph" DOM element
@@ -371,12 +371,12 @@ https://media.8ch.net/file_store/182f81c50b3263c84c2269056bde7221026adc7971d119b
 
 
 
-[9/27/2016 7:05:12 AM] HaltingState: 
+[9/27/2016 7:05:12 AM] HaltingState:
 1> All code must be in a function
 2> you call function
-[9/27/2016 7:07:42 AM] HaltingState: 
+[9/27/2016 7:07:42 AM] HaltingState:
 3> functions have line 1, line 2, line 3, line 4 etc.
-4> Functions have "blocks" which are like "if X, block Y else Block Y" the blocks are embedded recursively. So there is a top block, then subblocks. 
+4> Functions have "blocks" which are like "if X, block Y else Block Y" the blocks are embedded recursively. So there is a top block, then subblocks.
 5> each line is an expression. start with basic things like "introduce variable X" and "set x value" and (set x (add32 5 8))   , (new x int32), or (int32.new x) //introduce type int32, with label x
 
 
@@ -428,7 +428,7 @@ But doesnt matter for now
 [10/11/2016 5:11:50 AM] HaltingState: https://pad.riseup.net/
 [10/11/2016 6:37:45 AM] HaltingState: write down what you think it is
 [10/11/2016 6:37:56 AM] HaltingState: and then i will make notes or reply
-[10/11/2016 6:40:40 AM] HaltingState: basicly, you are implementing 
+[10/11/2016 6:40:40 AM] HaltingState: basicly, you are implementing
 1> a very simply "base language"
 2> the more complicated things will be in the base language itself, written in terms of itself, instead of golang
 
@@ -488,7 +488,7 @@ and then can script in the box
 
 when I put my cursor over an object, I want to see its type.
 
-you can have "4" and 4 can be displayed the same way, but could be "uint32 4" or could be "uint64 4" etc. 
+you can have "4" and 4 can be displayed the same way, but could be "uint32 4" or could be "uint64 4" etc.
 
 There are "nodes" and you put your cursor over the node and want to know what its type is.
 
@@ -764,7 +764,7 @@ and then we want a bash like terminal with just "print line" type API functional
 
 push as much state as you can into the process object.
 
-and terminal only has 
+and terminal only has
 
 > set cursor
 > set char
@@ -1121,7 +1121,7 @@ where there is a server and you get a "connection" and its one to one, and bidir
 
 -------------------------------WECHAT transition---------------------------------
 
-if the terminal publishes messsage to its pubsub channel (it is out channel), 
+if the terminal publishes messsage to its pubsub channel (it is out channel),
 that message gets written to the subscribers (the process) instantly
 
 
@@ -1139,12 +1139,12 @@ terminal sends messages about how to render it, etc
 process is implemented as an interface because we might have several types of processes
 or implementations.
 
-for instance, a bash type printf driven process.  Then have another process 
+for instance, a bash type printf driven process.  Then have another process
 implementation that has gui with widgets etc
 
 
 
-we will have a background terminal, that takes up whole screen and is behind all 
+we will have a background terminal, that takes up whole screen and is behind all
 terminals.  this is our "virtual desktop"
 
 Then we will have a widget library, for drawing buttons
@@ -1163,7 +1163,7 @@ but this is separate
 
 
 
-the process instance is self contained and not allow to import objects like terminals; 
+the process instance is self contained and not allow to import objects like terminals;
 it only communicates over the channel where messages come in and messages leave on the channel.
 
 api should be a module imported by process instance.  because multiple process
@@ -1177,7 +1177,7 @@ the sprintf function would write a series of commands to the command channel (ou
 
 
 
-does terminal write input messages to its out channel?  and does process read those input 
+does terminal write input messages to its out channel?  and does process read those input
 messages?  and can process write messages to its out channel via dbus?
 
 it should only communicate through dbus
@@ -1210,7 +1210,7 @@ wrote the message
 
 skycoin/skycoin
 
-the CLI for skycoin.  you will write a lib for task to run a cli like that inside of 
+the CLI for skycoin.  you will write a lib for task to run a cli like that inside of
 the viscript terminal but als in normal terminal with same lib
 
 and look in src mesh and run node for that and cli
@@ -1251,7 +1251,7 @@ back scroll through history
 
 
 [i believe this was a quote from Vyacheslav Zgord...]: you can just use web interface for
-command-line client - the manual for it is in skycoin/src/mesh/README.md and it let's you 
+command-line client - the manual for it is in skycoin/src/mesh/README.md and it let's you
 run web interface on port 9999.
 
 
@@ -1318,7 +1318,7 @@ George:
 
 
 
-HaltingState: 
+HaltingState:
 for CLI apps/daemons, getting self inspection terminal to run inside of viscript,
 for listing the tasks etc
 
@@ -1385,7 +1385,7 @@ we will replace all fmt and log imports with our library
 
 
 
-it has 2 options.  
+it has 2 options.
 just use printf normally
 unless it is configured for viscript.  then send to channel
 
@@ -1608,7 +1608,7 @@ and get list of terminals, & tasks
 
 
 
-go on 
+go on
 skycoin.atlassian.net
 create ticket for what you are working on and tag the upwork work log with ticket
 
@@ -1620,7 +1620,7 @@ create ticket for what you are working on and tag the upwork work log with ticke
 
 
 
-several steps need to be taken, before this is a working app that can be put on 
+several steps need to be taken, before this is a working app that can be put on
 website.  we are trying to go into production now
 and it means we need tickets for tracking bugs and ticket for tracking what works and
 what does not work
@@ -1639,18 +1639,18 @@ interrupt running atached external task.
 it's like that in a normal terminal.
 
 go run rpc/cli/cli.go won't work alone as stated in README.md inside the rpc package
-https://github.com/corpusc/viscript/tree/master/rpc
+https://github.com/skycoin/viscript/tree/master/rpc
 you need to have viscript running at first
 
 use "exec go run rpc/cli/cli.go"
 
-Could we have an interface for external process like containing start, tick, shutdown 
-and process to use it because we have to move the external process outside of terminal 
-as in tickets, right now commented all the additional functionalities like ctrl+z for 
-running in background ctrl+c for stopping process and also it doesn't stop automatically 
-when it sees EOF from running process, cleaned up a bit and I'll work more tomorrow. 
-Main thing is that it works for now. We might even need to remove that State variable 
-from external process and have ProcessOut and have Process to watch that for output 
+Could we have an interface for external process like containing start, tick, shutdown
+and process to use it because we have to move the external process outside of terminal
+as in tickets, right now commented all the additional functionalities like ctrl+z for
+running in background ctrl+c for stopping process and also it doesn't stop automatically
+when it sees EOF from running process, cleaned up a bit and I'll work more tomorrow.
+Main thing is that it works for now. We might even need to remove that State variable
+from external process and have ProcessOut and have Process to watch that for output
 sequentially and printing it to viscript terminal.
 
 
@@ -1673,7 +1673,7 @@ at first and then "e cli" in another terminal?
 
 
 George: there's 3 goroutines.  1 that reads, 1 that writes upon receiving input from
-viscript, and 1 that waits for those goroutines to end cleans up 
+viscript, and 1 that waits for those goroutines to end cleans up
 
 
 
@@ -1745,7 +1745,7 @@ each exe would be in own folder and may have assets
 we should pass in some rpc library thing like port on local host to skycoin exe.
 
 then the exe will connect to hypervisor via tcpip local and register itself and we will
-send shutdown commands via that channel 
+send shutdown commands via that channel
 
 
 can send length prefixed messages and commands between the hypervisor and the child task
@@ -1759,7 +1759,7 @@ back and forth without relying on OS dependent stuff
 Have a library we include in our special apps.  If command line parameter is set,
 then app will connect back to hypervisor over tcp/ip on local port.
 
-And we can send length prefixed message like hypervisor users.  For "shutdown" to 
+And we can send length prefixed message like hypervisor users.  For "shutdown" to
 ask task to shutdown.
 
 And will use this channel for communication
@@ -1806,8 +1806,8 @@ $@ means copy the arguments given to the script
 
 
 
-HaltingState: create a channel.  in dbusm for terminal global commands.  
-and create messages for deleting terminal by id, listing terminals by id, 
+HaltingState: create a channel.  in dbusm for terminal global commands.
+and create messages for deleting terminal by id, listing terminals by id,
 and creating a new terminal.
 Then if something wants to modify terminal it will write to that dbus channel.
 

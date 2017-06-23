@@ -2,7 +2,7 @@ package cGfx
 
 //"fmt"
 
-// "github.com/corpusc/viscript/ui"
+// "github.com/skycoin/viscript/ui"
 
 // func DrawMenu() {
 // 	for _, bu := range ui.MainMenu.Buttons {

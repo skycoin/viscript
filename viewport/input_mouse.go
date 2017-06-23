@@ -3,12 +3,12 @@ package viewport
 import (
 	"fmt"
 
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/config"
-	"github.com/corpusc/viscript/hypervisor/input/mouse"
-	"github.com/corpusc/viscript/msg"
-	"github.com/corpusc/viscript/viewport/gl"
-	t "github.com/corpusc/viscript/viewport/terminal"
+	"github.com/skycoin/viscript/app"
+	"github.com/skycoin/viscript/config"
+	"github.com/skycoin/viscript/hypervisor/input/mouse"
+	"github.com/skycoin/viscript/msg"
+	"github.com/skycoin/viscript/viewport/gl"
+	t "github.com/skycoin/viscript/viewport/terminal"
 )
 
 // triggered both by moving **AND*** by pressing buttons

@@ -3,8 +3,8 @@ package viewport
 import (
 	"runtime"
 
-	igl "github.com/corpusc/viscript/viewport/gl"         //internal gl
-	stack "github.com/corpusc/viscript/viewport/terminal" //TerminalStack
+	igl "github.com/skycoin/viscript/viewport/gl"         //internal gl
+	stack "github.com/skycoin/viscript/viewport/terminal" //TerminalStack
 )
 
 //glfw

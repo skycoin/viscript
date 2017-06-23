@@ -1,11 +1,11 @@
-# viscript 
+# viscript
 
 [![GoDoc](
-	https://godoc.org/github.com/corpusc/viscript?status.svg)](
-		https://godoc.org/github.com/corpusc/viscript)
+	https://godoc.org/github.com/skycoin/viscript?status.svg)](
+		https://godoc.org/github.com/skycoin/viscript)
 [![Go Report Card](
-	https://goreportcard.com/badge/github.com/corpusc/viscript)](
-		https://goreportcard.com/report/github.com/corpusc/viscript) 
+	https://goreportcard.com/badge/github.com/skycoin/viscript)](
+		https://goreportcard.com/report/github.com/skycoin/viscript)
 
 Dependencies
 ============
@@ -43,7 +43,7 @@ sudo apt-get install libxcursor-dev
 sudo apt-get install libxinerama-dev
 ```
 
-Spec 
+Spec
 ====
 
 Macros + Reflection
@@ -84,7 +84,7 @@ A union
 
 A function has an array of "statements" or "blocks" (an array of statements) or a control flow (if/then, for)
 
-(def_func, NAME, (u32 a, u32 b), (u32), 
+(def_func, NAME, (u32 a, u32 b), (u32),
 	(u32_add a, b)
 	)
 
@@ -153,7 +153,7 @@ A "choice" is a place where A or B (where program can choose A or B)
 - the choice operator, is a special function, that takes in the current context (state of program)
 
 (def_func, NAME, (uint a, uint b), (uint),
-	(choice, 
+	(choice,
 		(true, (u32_add a, b)),
 		(true, (u32_add b,a)))
 	)
@@ -238,13 +238,13 @@ Atomic types
 
 ====
 
-A function is a 
+A function is a
 1> name (text)
 2> input tuple (name, type) pair list
 3> output tuple (list of types/signatures returned)
 4> an array of lines/statements
 
-A struct is a 
+A struct is a
 1> name
 2> list of (name, type) pairs
 3> later list of functions on the struct but ignore this for now

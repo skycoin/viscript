@@ -2,7 +2,7 @@ package ui
 
 import (
 	//"fmt"
-	"github.com/corpusc/viscript/app"
+	"github.com/skycoin/viscript/app"
 )
 
 var ScrollBarThickness float32 = 0.14 // FUTURE FIXME: base this on screen size, so UHD+ users get thick enough bars

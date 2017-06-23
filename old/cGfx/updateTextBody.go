@@ -2,7 +2,7 @@ package cGfx
 
 //"fmt"
 
-//"github.com/corpusc/viscript/ui"
+//"github.com/skycoin/viscript/ui"
 
 // func UpdateTextBody(body []string, colors []ColorSpot, content app.Rectangle) {
 // cX := CurrX // current drawing position

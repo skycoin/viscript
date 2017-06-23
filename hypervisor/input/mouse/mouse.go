@@ -1,8 +1,9 @@
 package mouse
 
 import (
-	"github.com/corpusc/viscript/app"
 	"math"
+
+	"github.com/skycoin/viscript/app"
 )
 
 var (

@@ -3,12 +3,12 @@ package hypervisor
 import (
 	"fmt"
 
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/old/tree"
-	"github.com/corpusc/viscript/old/ui"
-	// "github.com/corpusc/viscript/cGfx"
-	// "github.com/corpusc/viscript/tree"
-	// "github.com/corpusc/viscript/ui"
+	"github.com/skycoin/viscript/app"
+	"github.com/skycoin/viscript/old/tree"
+	"github.com/skycoin/viscript/old/ui"
+	// "github.com/skycoin/viscript/cGfx"
+	// "github.com/skycoin/viscript/tree"
+	// "github.com/skycoin/viscript/ui"
 	//"math"
 )
 

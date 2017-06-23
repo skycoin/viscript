@@ -16,9 +16,9 @@ import (
 
 	"strconv"
 
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/monitor"
-	"github.com/corpusc/viscript/msg"
+	"github.com/skycoin/viscript/app"
+	"github.com/skycoin/viscript/monitor"
+	"github.com/skycoin/viscript/msg"
 )
 
 const te = "hypervisor/task_ext/task_ext" //path

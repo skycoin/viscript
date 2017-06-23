@@ -1,8 +1,8 @@
 package terminal
 
 import (
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/viewport/gl"
+	"github.com/skycoin/viscript/app"
+	"github.com/skycoin/viscript/viewport/gl"
 )
 
 func (ts *TerminalStack) Draw() {

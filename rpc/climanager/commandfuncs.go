@@ -7,9 +7,9 @@ import (
 	"runtime"
 	"strconv"
 
-	"github.com/corpusc/viscript/hypervisor/dbus"
-	"github.com/corpusc/viscript/msg"
-	tm "github.com/corpusc/viscript/rpc/terminalmanager"
+	"github.com/skycoin/viscript/hypervisor/dbus"
+	"github.com/skycoin/viscript/msg"
+	tm "github.com/skycoin/viscript/rpc/terminalmanager"
 )
 
 func (c *CliManager) PrintHelp(_ []string) error {

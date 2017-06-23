@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/corpusc/viscript/hypervisor"
-	"github.com/corpusc/viscript/hypervisor/dbus"
-	"github.com/corpusc/viscript/msg"
+	"github.com/skycoin/viscript/hypervisor"
+	"github.com/skycoin/viscript/hypervisor/dbus"
+	"github.com/skycoin/viscript/msg"
 )
 
 type RPCReceiver struct {

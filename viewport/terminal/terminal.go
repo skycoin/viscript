@@ -1,10 +1,10 @@
 package terminal
 
 import (
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/hypervisor"
-	//"github.com/corpusc/viscript/hypervisor/input/keyboard"
-	"github.com/corpusc/viscript/msg"
+	"github.com/skycoin/viscript/app"
+	"github.com/skycoin/viscript/hypervisor"
+	//"github.com/skycoin/viscript/hypervisor/input/keyboard"
+	"github.com/skycoin/viscript/msg"
 )
 
 var numOOB int // number of out of bound characters

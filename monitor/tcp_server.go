@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/corpusc/viscript/msg"
+	"github.com/skycoin/viscript/msg"
 )
 
 var Sequence uint32 = 1
