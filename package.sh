@@ -402,10 +402,21 @@ if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 
 fi
 
-# Temporarily copy bin to root bin of the repo for testing
-pv "Copying generated bin directory to root bin of the repo for testing"
+# TemporArily copy bin to root bin of the repo for testing
+pv "CopyiNg generated bin directory to root bin of the repo for testing"
 cd $ROOT_DIR/ && cd ..
 cp -rf $ROOT_DIR/bin/ ./
+
+# Copy appropriate platform dependent config file to for viscript to use
+pv "Copying viscript os dependentent config yaml file"
+if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ] \
+    || [ "$(expr substr $(uname -s) 1 6)" == "Darwin" ]; 
+then
+    cp "config.yaml" "$ROOT_DIR/config.yaml"
+else
+    cp "config-win.yaml" "$ROOT_DIR/config-win.yaml"
+    mv "$ROOT_DIR/config-win.yaml" "$ROOT_DIR/config.yaml"
+fi
 
 # Print Done
 pv "Done"
