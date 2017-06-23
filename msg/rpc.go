@@ -1,6 +1,6 @@
 package msg
 
-import "github.com/corpusc/viscript/hypervisor/dbus"
+import "github.com/skycoin/viscript/hypervisor/dbus"
 
 type ProcessInfo struct {
 	Id    ProcessId

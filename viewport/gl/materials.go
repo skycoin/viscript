@@ -1,7 +1,7 @@
 package gl
 
 import (
-	"github.com/corpusc/viscript/app"
+	"github.com/skycoin/viscript/app"
 )
 
 // pics (cell/tile positions in atlas)

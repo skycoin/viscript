@@ -1,8 +1,8 @@
 package gl
 
 import (
-	"github.com/corpusc/viscript/msg"
 	"github.com/go-gl/glfw/v3.2/glfw"
+	"github.com/skycoin/viscript/msg"
 )
 
 var InputEvents = make(chan []byte, 256) //event channel

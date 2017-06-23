@@ -1,8 +1,8 @@
 package process
 
 import (
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/msg"
+	"github.com/skycoin/viscript/app"
+	"github.com/skycoin/viscript/msg"
 )
 
 func (st *State) UnpackMessage(msgType uint16, message []byte) []byte {

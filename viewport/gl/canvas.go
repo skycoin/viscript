@@ -2,8 +2,8 @@
 package gl
 
 import (
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/hypervisor/input/mouse"
+	"github.com/skycoin/viscript/app"
+	"github.com/skycoin/viscript/hypervisor/input/mouse"
 )
 
 var (

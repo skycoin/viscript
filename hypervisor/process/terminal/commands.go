@@ -8,12 +8,12 @@ import (
 
 	"fmt"
 
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/config"
-	"github.com/corpusc/viscript/hypervisor"
-	extTask "github.com/corpusc/viscript/hypervisor/task_ext"
-	"github.com/corpusc/viscript/monitor"
-	"github.com/corpusc/viscript/msg"
+	"github.com/skycoin/viscript/app"
+	"github.com/skycoin/viscript/config"
+	"github.com/skycoin/viscript/hypervisor"
+	extTask "github.com/skycoin/viscript/hypervisor/task_ext"
+	"github.com/skycoin/viscript/monitor"
+	"github.com/skycoin/viscript/msg"
 )
 
 const cp = "hypervisor/process/terminal/commands"

@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"github.com/corpusc/viscript/app"
+	"github.com/skycoin/viscript/app"
 )
 
 type Button struct {

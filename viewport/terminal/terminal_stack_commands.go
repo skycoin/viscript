@@ -3,7 +3,7 @@ package terminal
 import (
 	"strconv"
 
-	"github.com/corpusc/viscript/msg"
+	"github.com/skycoin/viscript/msg"
 )
 
 func (ts *TerminalStack) OnUserCommand(tID msg.TerminalId, cmd msg.MessageCommand) {

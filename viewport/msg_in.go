@@ -3,11 +3,11 @@ package viewport
 import (
 	_ "strconv"
 
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/config"
-	"github.com/corpusc/viscript/msg"
-	"github.com/corpusc/viscript/viewport/gl"
-	t "github.com/corpusc/viscript/viewport/terminal"
+	"github.com/skycoin/viscript/app"
+	"github.com/skycoin/viscript/config"
+	"github.com/skycoin/viscript/msg"
+	"github.com/skycoin/viscript/viewport/gl"
+	t "github.com/skycoin/viscript/viewport/terminal"
 )
 
 func UnpackMessage(msgIn []byte) []byte {

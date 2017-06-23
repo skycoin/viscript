@@ -3,8 +3,8 @@ package process
 import (
 	"strings"
 
-	"github.com/corpusc/viscript/hypervisor"
-	"github.com/corpusc/viscript/msg"
+	"github.com/skycoin/viscript/hypervisor"
+	"github.com/skycoin/viscript/msg"
 )
 
 type Cli struct {

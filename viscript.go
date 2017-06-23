@@ -65,12 +65,12 @@ package main
 import (
 	"os"
 
-	"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/config"
-	"github.com/corpusc/viscript/hypervisor"
-	"github.com/corpusc/viscript/monitor"
-	"github.com/corpusc/viscript/rpc/terminalmanager"
-	"github.com/corpusc/viscript/viewport"
+	"github.com/skycoin/viscript/app"
+	"github.com/skycoin/viscript/config"
+	"github.com/skycoin/viscript/hypervisor"
+	"github.com/skycoin/viscript/monitor"
+	"github.com/skycoin/viscript/rpc/terminalmanager"
+	"github.com/skycoin/viscript/viewport"
 )
 
 func main() {

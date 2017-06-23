@@ -3,8 +3,8 @@ package climanager
 import (
 	"os"
 
-	"github.com/corpusc/viscript/msg"
-	tm "github.com/corpusc/viscript/rpc/terminalmanager"
+	"github.com/skycoin/viscript/msg"
+	tm "github.com/skycoin/viscript/rpc/terminalmanager"
 )
 
 type CliManager struct {

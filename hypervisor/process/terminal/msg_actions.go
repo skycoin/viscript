@@ -3,9 +3,9 @@ package process
 import (
 	"fmt"
 
-	//"github.com/corpusc/viscript/app"
-	"github.com/corpusc/viscript/hypervisor"
-	"github.com/corpusc/viscript/msg"
+	//"github.com/skycoin/viscript/app"
+	"github.com/skycoin/viscript/hypervisor"
+	"github.com/skycoin/viscript/msg"
 )
 
 func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {

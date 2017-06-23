@@ -3,9 +3,9 @@ package gl
 import (
 	"log"
 
-	"github.com/corpusc/viscript/app"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
+	"github.com/skycoin/viscript/app"
 )
 
 var goldenRatio = 1.61803398875

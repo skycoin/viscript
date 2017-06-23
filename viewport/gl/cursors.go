@@ -1,8 +1,9 @@
 package gl
 
 import (
-	"github.com/corpusc/viscript/app"
 	"time"
+
+	"github.com/skycoin/viscript/app"
 )
 
 var Curs Cursors = Cursors{nextFrame: time.Now()}
