@@ -5,160 +5,18 @@
 			"importpath": "github.com/go-gl/gl/v2.1/gl",
 			"repository": "https://github.com/go-gl/gl",
 			"vcs": "git",
-			"revision": "887577e03012940ff715b6af70a9ea1b9f9e60bb",
+			"revision": "39ef8e959f4050148ec5a59816a93b9e65b4528f",
 			"branch": "master",
 			"path": "/v2.1/gl",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/go-gl/gl/v3.3-core/gl",
-			"repository": "https://github.com/go-gl/gl",
-			"vcs": "git",
-			"revision": "887577e03012940ff715b6af70a9ea1b9f9e60bb",
-			"branch": "master",
-			"path": "/v3.3-core/gl",
 			"notests": true
 		},
 		{
 			"importpath": "github.com/go-gl/glfw/v3.2/glfw",
 			"repository": "https://github.com/go-gl/glfw",
 			"vcs": "git",
-			"revision": "45517cf5568747f99bb4b0b4abae9fa3cd5f85ed",
+			"revision": "55847fe4ded3fbee15191a625f3305a1fad48b67",
 			"branch": "master",
 			"path": "/v3.2/glfw",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/src/cipher",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "src/cipher",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/src/util",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "src/util",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/vendor/github.com/op/go-logging",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "vendor/github.com/op/go-logging",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/vendor/github.com/songgao/water",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "vendor/github.com/songgao/water",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/vendor/github.com/tang0th/go-chacha20/chacha",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "vendor/github.com/tang0th/go-chacha20/chacha",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/vendor/github.com/toqueteos/webbrowser",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "vendor/github.com/toqueteos/webbrowser",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/vendor/golang.org/x/crypto/pbkdf2",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "vendor/golang.org/x/crypto/pbkdf2",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/vendor/golang.org/x/net/context",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "vendor/golang.org/x/net/context",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/vendor/golang.org/x/net/proxy",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "vendor/golang.org/x/net/proxy",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skycoin/vendor/golang.org/x/sys/windows",
-			"repository": "https://github.com/skycoin/skycoin",
-			"vcs": "git",
-			"revision": "e6411168ca0dcc3b8f2134791718ac9564712d28",
-			"branch": "master",
-			"path": "vendor/golang.org/x/sys/windows",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skywire/vendor/golang.org/x/net/context",
-			"repository": "https://github.com/skycoin/skywire",
-			"vcs": "git",
-			"revision": "faadaf639e3034203bbf9d95e990530e39940b12",
-			"branch": "master",
-			"path": "vendor/golang.org/x/net/context",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skywire/vendor/gopkg.in/gcfg.v1",
-			"repository": "https://github.com/skycoin/skywire",
-			"vcs": "git",
-			"revision": "faadaf639e3034203bbf9d95e990530e39940b12",
-			"branch": "master",
-			"path": "vendor/gopkg.in/gcfg.v1",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/skycoin/skywire/vendor/gopkg.in/warnings.v0",
-			"repository": "https://github.com/skycoin/skywire",
-			"vcs": "git",
-			"revision": "faadaf639e3034203bbf9d95e990530e39940b12",
-			"branch": "master",
-			"path": "vendor/gopkg.in/warnings.v0",
-			"notests": true
-		},
-		{
-			"importpath": "gopkg.in/gcfg.v1",
-			"repository": "https://gopkg.in/gcfg.v1",
-			"vcs": "git",
-			"revision": "27e4946190b4a327b539185f2b5b1f7c84730728",
-			"branch": "master",
-			"notests": true
-		},
-		{
-			"importpath": "gopkg.in/warnings.v0",
-			"repository": "https://gopkg.in/warnings.v0",
-			"vcs": "git",
-			"revision": "8a331561fe74dadba6edfc59f3be66c22c3b065d",
-			"branch": "master",
 			"notests": true
 		},
 		{
