@@ -26,42 +26,6 @@
   revision = "3ed8a7f74cfa1d294cfc9d2975278ce28de9c21d"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/skycoin/skywire"
-  packages = ["src/app","src/apptracker","src/messages","src/node","src/nodemanager","src/proxy/go-socks5","src/transport","src/viscript"]
-  revision = "190947bdf369ea63dadf9519aefca50cf2b81b99"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/songgao/water"
-  packages = ["."]
-  revision = "99d07fc117afd4d997bc5ebca77c241644ffe24a"
-
-[[projects]]
-  branch = "master"
-  name = "golang.org/x/net"
-  packages = ["context","proxy"]
-  revision = "5f8847ae0d0e90b6a9dc8148e7ad616874625171"
-
-[[projects]]
-  branch = "master"
-  name = "golang.org/x/sys"
-  packages = ["windows","windows/registry"]
-  revision = "f7928cfef4d09d1b080aa2b6fd3ca9ba1567c733"
-
-[[projects]]
-  name = "gopkg.in/gcfg.v1"
-  packages = [".","scanner","token","types"]
-  revision = "27e4946190b4a327b539185f2b5b1f7c84730728"
-  version = "v1.2.0"
-
-[[projects]]
-  name = "gopkg.in/warnings.v0"
-  packages = ["."]
-  revision = "8a331561fe74dadba6edfc59f3be66c22c3b065d"
-  version = "v0.1.1"
-
-[[projects]]
   branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
@@ -70,6 +34,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c7a438614831d8910c11cc54ea822f52dc181f2573a67118a84d183f98205240"
+  inputs-digest = "64ab7c494446b5a170178003b2fd99955fa3f92b73576a66e389c4e28ff55f1c"
   solver-name = "gps-cdcl"
   solver-version = 1
