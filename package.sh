@@ -402,7 +402,7 @@ if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 
 fi
 
-# TemporArily copy bin to root bin of the repo for testing
+# Temporarily copy bin to root bin of the repo for testing
 pv "Copying generated bin directory to root bin of the repo for testing"
 cd $ROOT_DIR/ && cd ..
 cp -rf $ROOT_DIR/bin/ ./

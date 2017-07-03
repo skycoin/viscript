@@ -36,6 +36,8 @@
 
 * scan and do/fix most FIXME/TODO places in the code
 
+* move onUserCommand() to command_cases.go?
+
 
 
 ------- OLDER TODO: ------- (everything below was for the text editor)
