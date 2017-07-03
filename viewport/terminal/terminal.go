@@ -24,8 +24,8 @@ type Terminal struct {
 	ResizingBottom  bool
 
 	//int/character grid space
-	Curr     app.Vec2I //current insert position
-	Cursor   app.Vec2I
+	Curr     app.Vec2I //current flow insert position
+	Cursor   app.Vec2I //user controlled position (within command prompt row/s)
 	GridSize app.Vec2I //number of characters across
 	Chars    [][]uint32
 
@@ -157,21 +157,25 @@ func (t *Terminal) NewLine() {
 }
 
 func (t *Terminal) SetCursor(x, y int) {
-	if t.posIsValid(x, y) {
+	if t.posIsValidElsePrint(x, y) {
 		t.Cursor.X = x
 		t.Cursor.Y = y
 	}
 }
 
-// there should be 2 paradigms for adding chars/strings:
+//2 paradigms for adding chars/strings:
 //
-// (1) full manual control/management.  (explicitly tell terminal exactly
-//			where to place something, without disrupting current position.
-//			must make sure there is space for it)
-// (2) automated flow control.  (just tell what char/string to put into the current flow
-//			and Terminal manages it's placement & wrapping)
+//(1) Set___At() ------ full manual control/management.
+//			explicitly tell terminal exactly where to place
+//			something, without disrupting current position.
+//			must make sure there is space for it.
+//
+//(2) Put___() -------- automated flow control.
+//			just tell what char/string to put into the current...
+//			... flow.  then Terminal manages it's placement & wrapping
+//
 func (t *Terminal) PutCharacter(char uint32) {
-	if t.posIsValid(t.Curr.X, t.Curr.Y) {
+	if t.posIsValidElsePrint(t.Curr.X, t.Curr.Y) {
 		t.SetCharacterAt(t.Curr.X, t.Curr.Y, char)
 		t.MoveRight()
 	}
@@ -180,7 +184,7 @@ func (t *Terminal) PutCharacter(char uint32) {
 func (t *Terminal) SetCharacterAt(x, y int, Char uint32) {
 	numOOB = 0
 
-	if t.posIsValid(x, y) {
+	if t.posIsValidElsePrint(x, y) {
 		t.Chars[y][x] = Char
 	}
 }
@@ -195,7 +199,7 @@ func (t *Terminal) SetStringAt(X, Y int, S string) {
 	numOOB = 0
 
 	for x, c := range S {
-		if t.posIsValid(X+x, Y) {
+		if t.posIsValidElsePrint(X+x, Y) {
 			t.Chars[Y][X+x] = uint32(c)
 		}
 	}
@@ -243,7 +247,8 @@ func (t *Terminal) updateCommandLine(m msg.MessageCommandLine) {
 	}
 }
 
-func (t *Terminal) posIsValid(X, Y int) bool {
+func (t *Terminal) posIsValidElsePrint(X, Y int) bool { //...any errors to OS box
+
 	if X < 0 || X >= t.GridSize.X ||
 		Y < 0 || Y >= t.GridSize.Y {
 		numOOB++

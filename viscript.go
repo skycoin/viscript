@@ -76,7 +76,7 @@ import (
 )
 
 func main() {
-	app.MakeHighlyVisibleLogEntry(app.Name, 15)
+	app.MakeHighlyVisibleLogEntry(app.Name, 13)
 
 	err := config.Load("config.yaml")
 	if err != nil {

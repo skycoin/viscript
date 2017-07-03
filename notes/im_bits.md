@@ -1327,19 +1327,6 @@ for listing the tasks etc
 
 
 
-
-corpusc: For integrating CLI apps into terminal, i guess all it's files go into
-process/terminal?
-
-HaltingState: yes.  you create a new process implementation
-and each one has a type or identifier and you choose which type to start
-
-
-
-
-
-
-
 skycoind
 terminald
 cxod

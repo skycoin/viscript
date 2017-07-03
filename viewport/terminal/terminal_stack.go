@@ -58,8 +58,7 @@ func (ts *TerminalStack) Add() msg.TerminalId {
 			ts.nextRect.Bottom,
 			ts.nextRect.Left}}
 	ts.Terms[tid].Init()
-	ts.FocusedId = tid
-	ts.Focused = ts.Terms[tid]
+	ts.SetFocused(tid)
 
 	ts.nextRect.Top -= ts.nextOffset.Y
 	ts.nextRect.Right += ts.nextOffset.X
@@ -153,12 +152,12 @@ func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 
 func (ts *TerminalStack) SetFocused(topmostId msg.TerminalId) {
 	//store which is focused and bring it to top
-	newZ := float32(9.9) //FIXME (for all uses of this var, IF you ever want more than (about) 50 terms)
+	newZ := float32(9.9) //FIXME (@ all places of this var) IF you ever want more than (about) 50 terms
 	ts.FocusedId = topmostId
 	ts.Focused = ts.Terms[topmostId]
 	ts.Focused.Depth = newZ
 
-	//store the REST of the terms
+	//REST of the terms
 	theRest := []*Terminal{}
 
 	for id, t := range ts.Terms {
