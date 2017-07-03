@@ -34,8 +34,8 @@ func (st *State) PrintError(s string) {
 }
 
 func (st *State) Printf(format string, vars ...interface{}) {
-	formattedString := fmt.Sprintf(format, vars...)
-	for _, c := range formattedString {
+	s := fmt.Sprintf(format, vars...)
+	for _, c := range s {
 		st.sendChar(uint32(c))
 	}
 }

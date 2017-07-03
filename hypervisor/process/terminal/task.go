@@ -75,21 +75,11 @@ func (pr *Process) DetachExternalProcess() {
 
 func (pr *Process) ExitExtProcess() {
 	app.At(path, "ExitExtProcess")
-
-	//set flag false
 	pr.hasExtProcAttached = false
-
-	//store the exteral process id for removing from the global list
-	extProcId := pr.attachedExtProcess.GetId()
-
-	//teardown and cleanup external process
-	pr.attachedExtProcess.TearDown()
-
-	//set current attachedExtProcess to nil
+	extProcId := pr.attachedExtProcess.GetId() //for removing from global list
+	pr.attachedExtProcess.TearDown()           //...and cleanup
 	pr.attachedExtProcess = nil
-
-	//remove from the ExtProcessListGlobal.ProcessMap
-	hypervisor.RemoveExtProcess(extProcId)
+	hypervisor.RemoveExtProcess(extProcId) //...from ExtProcessListGlobal.ProcessMap
 }
 
 //implement the interface

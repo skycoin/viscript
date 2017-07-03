@@ -26,7 +26,7 @@ func (st *State) UnpackMessage(msgType uint16, message []byte) []byte {
 	case msg.TypeVisualInfo:
 		var m msg.MessageVisualInfo
 		msg.MustDeserialize(message, &m)
-		st.makePageOfLog(m)
+		st.makePageOfLog(m) //propogate Terminal changes to task
 
 	case msg.TypeTerminalIds:
 		var m msg.MessageTerminalIds

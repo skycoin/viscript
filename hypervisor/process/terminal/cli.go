@@ -8,43 +8,82 @@ import (
 )
 
 type Cli struct {
-	Log      []string
-	Commands []string
-	CurrCmd  int //index
-	CursPos  int //cursor/insert position, local to 1 commands space (2 lines)
-	Prompt   string
+	Log        []string
+	Commands   []string
+	VisualRows []string //each log entry can be multiple fragments/rows to fit current columns
+	CurrCmd    int      //index
+	CursPos    int      //cursor/insert position, local to command space (2 lines dedicated ATM)
+	Prompt     string
 	//FIXME to work with Terminal's dynamic self.GridSize.X
 	//assumes 64 horizontal characters, then dedicates 2 lines for each command.
 	BackscrollAmount int //number of VISUAL LINES...
 	//(each could be merely a SECTION of a larger (than NumColumns) log entry)
-	MaxCommandSize int //reserve ending space for cursor at the end of last line
+	MaxCommandSize int
 }
 
 func NewCli() *Cli {
 	var cli Cli
 	cli.Log = []string{}
 	cli.Commands = []string{}
+	cli.VisualRows = []string{}
 	cli.Prompt = ">"
 	cli.Commands = append(cli.Commands, cli.Prompt+"OLDEST command that you typed (not really, just an example of functionality)")
 	cli.Commands = append(cli.Commands, cli.Prompt+"older command that you typed (nah, not really)")
 	cli.Commands = append(cli.Commands, cli.Prompt)
 	cli.CursPos = 1
 	cli.CurrCmd = 2
-	cli.MaxCommandSize = 128 - 1
+	cli.MaxCommandSize = 128 - 1 //results in 2 lines at current initial default
+	//of 64 columns.  -1 reserves space for cursor at the end of last line.
 
 	return &cli
 }
 
-func (c *Cli) AdjustBackscrollOffset(delta int) {
-	c.BackscrollAmount += delta
+func (c *Cli) BuildRowsFromLogEntryFragments(vi msg.MessageVisualInfo) {
+	//println("BuildRowsFromLogEntryFragments()   START")
+	c.VisualRows = []string{}
 
-	if c.BackscrollAmount < 0 {
-		c.BackscrollAmount = 0
+	for _, entry := range c.Log { // 'entry' shrinks as we cut out fitting fragments
+		for len(entry) > int(vi.NumColumns) {
+			lff := "" /* largest fitting fragment */
+			lff, entry = c.breakStringIn2(entry, int(vi.NumColumns))
+			c.VisualRows = append(c.VisualRows, lff)
+		}
+
+		//what remains here is less than .NumColumns
+		if len(entry) > 0 {
+			println("what's left of current log 'entry':", entry)
+			c.VisualRows = append(c.VisualRows, entry)
+		}
 	}
 
-	//capping on the high end needs to be done dynamically
-	//according to how many line sections/breaks there are
-	println("BACKSCROLLING --- delta:", delta, " --- NUM:", c.BackscrollAmount)
+	//c.printLogInOsBox(vi)
+}
+
+func (c *Cli) printLogInOsBox(vi msg.MessageVisualInfo) {
+	println("printLogInOsBox()")
+
+	for _, entry := range c.VisualRows {
+		for len(entry) < int(vi.NumColumns) {
+			entry += "*"
+		}
+
+		println(entry)
+	}
+}
+
+func (c *Cli) AdjustBackscrollOffset(delta int) {
+	c.BackscrollAmount += delta
+	println("BACKSCROLLING --- delta:", delta, " --- amount:", c.BackscrollAmount)
+
+	switch {
+
+	case c.BackscrollAmount < 0:
+		c.BackscrollAmount = 0
+
+	case c.BackscrollAmount > len(c.VisualRows):
+		c.BackscrollAmount = len(c.VisualRows)
+
+	}
 }
 
 func (c *Cli) InsertCharIfItFits(char uint32, state *State) {
@@ -75,6 +114,77 @@ func (c *Cli) EchoWholeCommand(outChanId uint32) {
 	m := msg.Serialize(msg.TypeCommandLine,
 		msg.MessageCommandLine{termId, c.Commands[c.CurrCmd], uint32(c.CursPos)})
 	hypervisor.DbusGlobal.PublishTo(outChanId, m) //EVERY publish action prefixes another chan id
+}
+
+func (c *Cli) CurrentCommandLine() string {
+	return strings.ToLower(c.Commands[c.CurrCmd][len(c.Prompt):])
+}
+
+func (c *Cli) CurrentCommandAndArgs() (string, []string) {
+	tokens := strings.Split(c.CurrentCommandLine(), " ")
+	return tokens[0], tokens[1:]
+}
+
+func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
+	//FIXME IF we ever want more than 2 rows dedicated to command prompt.
+	numRows := 1 //...to advance
+	if c.CursPos >= int(st.VisualInfo.NumColumns) {
+		numRows++
+	}
+
+	for numRows > 0 { //for each row of command prompt:
+		numRows-- //...pass key event (value: Enter) to terminal
+		//...(which advances it's y position).
+		hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
+	}
+
+	c.Log = append(c.Log, c.Commands[c.CurrCmd])
+	c.Commands = append(c.Commands, c.Prompt)
+	st.onUserCommand()
+	c.CurrCmd = len(c.Commands) - 1
+	c.CursPos = len(c.Commands[c.CurrCmd])
+}
+
+//
+//
+//private
+
+//num == number of columns
+//a == leftmost fragment that fits num columns
+//b == remaining fragment which still may need breaking
+func (c *Cli) breakStringIn2(s string, num int) (a, b string) {
+	x := num - 1
+	fb /* feedback */ := "breakStringIn2 () "
+	foundSpaceChar := false
+
+	println(fb+"STARTING   -   x:", x, "   -   num(columns):", num)
+	println(fb+"passed string:", s)
+
+	for /* fragment A is smaller than a row */ len(s[x:num]) < num {
+		//scan for line break
+		if s[x] == ' ' {
+			foundSpaceChar = true
+			break
+		}
+
+		x--
+	}
+
+	//show both frags with no space removed
+	println(x, " \"", s[:x], "\" \"", s[x:], "\"")
+
+	if foundSpaceChar {
+		a = s[:x]
+		b = s[x+1:] //eliminate space between final 2 pieces
+	} else {
+		a = s[:num]
+		b = s[num:]
+	}
+
+	println("fragment: \"", a, "\"", len(a))
+	println("remainder: \"", b, "\"", len(b))
+
+	return a, b
 }
 
 func (c *Cli) traverseCommands(delta int) {
@@ -171,32 +281,4 @@ func (c *Cli) goDownCommandHistory(mod uint8) {
 	} else {
 		c.traverseCommands(+1)
 	}
-}
-
-func (c *Cli) CurrentCommandLine() string {
-	return strings.ToLower(c.Commands[c.CurrCmd][len(c.Prompt):])
-}
-
-func (c *Cli) CurrentCommandAndArgs() (string, []string) {
-	tokens := strings.Split(c.CurrentCommandLine(), " ")
-	return tokens[0], tokens[1:]
-}
-
-func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
-	numPieces := 1 //each logical line entry may be broken (word wrapped) into more visible lines
-
-	if c.CursPos >= int(st.VisualInfo.NumColumns) {
-		numPieces++
-	}
-
-	for numPieces > 0 { //pass onKey to terminal (set to Enter),
-		numPieces-- //for each visible piece of a line
-		hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
-	}
-
-	c.Log = append(c.Log, c.Commands[c.CurrCmd])
-	c.Commands = append(c.Commands, c.Prompt)
-	st.onUserCommand()
-	c.CurrCmd = len(c.Commands) - 1
-	c.CursPos = len(c.Commands[c.CurrCmd])
 }

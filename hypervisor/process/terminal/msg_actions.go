@@ -10,9 +10,15 @@ import (
 
 func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 	if m.HoldingControl {
+		//send message to 'Terminal'
+		//(i believe this was only used for sidescrolling in the text editor,
+		//but we might want to use this as an alternative to PGUP/PGDN keys
+		//when focused on a CLI terminal)
 		hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
 	} else {
 		st.Cli.AdjustBackscrollOffset(int(m.Y))
+		//just pass unchanged VisualInfo
+		//(which is acted upon like a boolean flag)
 		st.makePageOfLog(st.VisualInfo)
 	}
 }
@@ -30,6 +36,7 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 		st.onOneTimeHotkeys(m)
 		fallthrough
 	case msg.Repeat: //constantly repeated for as long as key is pressed
+		//THIS IS ALSO DONE ON 'PRESS' EVENTS, due to FALLTHROUGH!
 		st.onRepeatableKeys(m, serializedMsg)
 		st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 
@@ -82,6 +89,8 @@ func (st *State) onOneTimeHotkeys(m msg.MessageKey) {
 }
 
 func (st *State) onRepeatableKeys(m msg.MessageKey, serializedMsg []byte) {
+	//ALSO EXECUTED ON PRESS EVENTS due to case fallthrough!
+
 	switch m.Key {
 
 	case msg.KeyHome:
@@ -144,6 +153,7 @@ func (st *State) onUserCommand() {
 
 	//internal task handling
 	switch cmd {
+
 	case "?":
 		fallthrough
 	case "h":
@@ -173,8 +183,7 @@ func (st *State) onUserCommand() {
 	case "r":
 		fallthrough
 	case "rpc":
-		st.commandStart([]string{
-			"-a", "go", "run", "rpc/cli/cli.go"})
+		st.commandStart([]string{"-a", "go", "run", "rpc/cli/cli.go"})
 
 	//start new external task, detached running in bg by default
 	case "s":
@@ -214,5 +223,6 @@ func (st *State) onUserCommand() {
 
 	default:
 		st.PrintError("\"" + cmd + "\" is an unknown command.")
+
 	}
 }

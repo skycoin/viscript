@@ -34,9 +34,11 @@
 * make new window display on top
 		(i believe the sorting logic is only triggered by clicking right now)
 
-* scan and do/fix most FIXME/TODO places in the code
-
 * move onUserCommand() to command_cases.go?
+
+* improve BACKSCROLL indicator line
+
+* scan and do/fix most FIXME/TODO places in the code
 
 
 
