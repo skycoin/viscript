@@ -21,18 +21,14 @@
 
 * back buffer scrolling
 	* pgup/pgdn hotkeys
-	* 1-3 lines with scrollwheel
 
 * Fix getting a resizing pointer outside of focused terminal.
 		When you click outside terminal it can land on a background
 		terminal which then pops in front.  Blocking the resize
 
-* Sideways scroll command line when it doesn't fit the dedicated space for it
+* Sideways auto-scroll command line when it doesn't fit the dedicated space for it
 		(atm, 2 lines are reserved along the bottom of a full screen)
 		* block character at end to indicate continuing on next line
-
-* make new window display on top
-		(i believe the sorting logic is only triggered by clicking right now)
 
 * move onUserCommand() to command_cases.go?
 

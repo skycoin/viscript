@@ -26,12 +26,12 @@ func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 }
 
 func (st *State) printVisibleRows(vi msg.MessageVisualInfo) {
-	println("printVisibleRows()") //+ backscrolled indication if needed
+	println("printVisibleRows()") //...and indicator if backscrolled
 
 	num := len(st.Cli.VisualRows)
 	println("len of st.Cli.VisualRows:", num)
 
-	//number of visible rows (that current Terminal height allows)
+	//(n)umber of (v)isible (r)ows   (that current Terminal height allows)
 	nvr := int(vi.NumRows - vi.PromptRows)
 
 	if st.Cli.BackscrollAmount > 0 {

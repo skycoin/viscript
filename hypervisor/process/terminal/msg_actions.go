@@ -24,7 +24,7 @@ func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 }
 
 func (st *State) onChar(m msg.MessageChar) {
-	//println("process/terminal/events.onChar()")
+	//println("process/terminal/msg_actions.onChar()")
 	st.Cli.InsertCharIfItFits(m.Char, st)
 }
 
@@ -32,12 +32,13 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 	switch msg.Action(m.Action) {
 
 	case msg.Press: //one time, when key is first pressed
-		//modifier key combos should never auto-repeat
-		st.onOneTimeHotkeys(m)
+		//modifier key combos should never auto-repeat?
+		st.onNONRepeatableKey(m)
 		fallthrough
+		//^^^^^^^^^^
 	case msg.Repeat: //constantly repeated for as long as key is pressed
-		//THIS IS ALSO DONE ON 'PRESS' EVENTS, due to FALLTHROUGH!
-		st.onRepeatableKeys(m, serializedMsg)
+		//THIS IS ALSO DONE ON 'PRESS' EVENTS, via FALLTHROUGH!
+		st.onRepeatableKey(m, serializedMsg)
 		st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 
 	case msg.Release:
@@ -62,7 +63,7 @@ func (st *State) onTerminalIds(m msg.MessageTerminalIds) {
 	st.Cli.EchoWholeCommand(st.proc.OutChannelId)
 }
 
-func (st *State) onOneTimeHotkeys(m msg.MessageKey) {
+func (st *State) onNONRepeatableKey(m msg.MessageKey) {
 	switch m.Key {
 
 	case msg.KeyC:
@@ -88,8 +89,8 @@ func (st *State) onOneTimeHotkeys(m msg.MessageKey) {
 	}
 }
 
-func (st *State) onRepeatableKeys(m msg.MessageKey, serializedMsg []byte) {
-	//ALSO EXECUTED ON PRESS EVENTS due to case fallthrough!
+func (st *State) onRepeatableKey(m msg.MessageKey, serializedMsg []byte) {
+	//ALSO EXECUTED ON PRESS EVENTS via case fallthrough!
 
 	switch m.Key {
 
