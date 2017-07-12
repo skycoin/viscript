@@ -161,7 +161,7 @@ mv $skycoinCliExeName "$ROOT_DIR/bin/skycoin/"
 
 # Change directory to local Skywire mesh server
 pv "Changing directory to Skywire rpc server"
-cd "$localSkywirePath/src/cmd/rpc/srv/"
+cd "$localSkywirePath/cmd/rpc/server/"
 
 # Get all dependencies for rpc_run.go
 pv "Getting all dependencies for meshnet server"
@@ -172,7 +172,7 @@ meshnetServerExeName=$(getPlatformExeName "meshnet-server")
 
 # Build run_rpc.go
 pv "Building Skywire rpc server"
-go build -o $meshnetServerExeName rpc_run.go
+go build -o $meshnetServerExeName rpc-server.go
 
 # Check if building cli was successfull
 if [ ! -f "$meshnetServerExeName" ]; then
@@ -186,7 +186,7 @@ mv $meshnetServerExeName "$ROOT_DIR/bin/meshnet/"
 
 # Change directory to local Skywire mesh cli
 pv "Changing directory to Skywire rpc mesh cli"
-cd "$localSkywirePath/src/cmd/rpc/cli/"
+cd "$localSkywirePath/cmd/rpc/cli/"
 
 # Get all dependencies for meshnet cli
 pv "Getting all dependencies for meshnet cli"
@@ -197,7 +197,7 @@ meshnetCliExeName=$(getPlatformExeName "meshnet-cli")
 
 # Build cli.go
 pv "Building Skywire rpc mesh cli"
-go build -o $meshnetCliExeName cli.go
+go build -o $meshnetCliExeName rpc-cli.go
 
 # Check if building cli was successfull
 if [ ! -f "$meshnetCliExeName" ]; then
@@ -261,146 +261,147 @@ gottyCommand="gotty -w -p 9999 --reconnect ./viscript-cli"
 echo $gottyCommand > "$ROOT_DIR/viscript-cli.sh" 
 
 # Change directory to run_apptracker.go location
-pv "Changing directory to apptracker creation script location"
-cd "$PWD/mesh/run_mesh/apptracker"
+# pv "Changing directory to apptracker creation script location"
+# cd "$PWD/mesh/run_mesh/apptracker"
+# cd "$localSkywirePath/apptracker"
 
 # Get meshnet run apptracker platform independent binary name
-meshnetAppTrackerExeName=$(getPlatformExeName "meshnet-run-apptracker")
+# meshnetAppTrackerExeName=$(getPlatformExeName "meshnet-run-apptracker")
 
 # Build run_apptracker.go
-pv "Building apptracker creation script"
-go build -o $meshnetAppTrackerExeName run_apptracker.go
+# pv "Building apptracker creation script"
+# go build -o $meshnetAppTrackerExeName apptracker.go
 
 # Check if building apptracker creation script was successfull
-if [ ! -f "$meshnetAppTrackerExeName" ]; then
-    pv "Building apptracker creation script failed. Exiting"
-    exit 1
-fi
+# if [ ! -f "$meshnetAppTrackerExeName" ]; then
+    # pv "Building apptracker creation script failed. Exiting"
+    # exit 1
+# fi
 
 # Move apptracker creation script to root dir
-pv "Moving apptracker creation script to the root directory"
-mv $meshnetAppTrackerExeName "$ROOT_DIR/bin/meshnet/"
+# pv "Moving apptracker creation script to the root directory"
+# mv $meshnetAppTrackerExeName "$ROOT_DIR/bin/meshnet/"
 
 # Change directory to run_nm.go location
-pv "Changing directory to nodemanager creation script location"
-cd "../nodemanager"
+# pv "Changing directory to nodemanager creation script location"
+# cd "../nodemanager"
 
-# Get meshnet run nm platform independent binary name
-meshnetRunNMExeName=$(getPlatformExeName "meshnet-run-nm")
+# # Get meshnet run nm platform independent binary name
+# meshnetRunNMExeName=$(getPlatformExeName "meshnet-run-nm")
 
-# Build run_nm.go
-pv "Building nodemanager creation script"
-go build -o $meshnetRunNMExeName run_nm.go
+# # Build run_nm.go
+# pv "Building nodemanager creation script"
+# go build -o $meshnetRunNMExeName run_nm.go
 
-# Check if building nodemanager creation script was successfull
-if [ ! -f "$meshnetRunNMExeName" ]; then
-    pv "Building nodemanager creation script failed. Exiting"
-    exit 1
-fi
+# # Check if building nodemanager creation script was successfull
+# if [ ! -f "$meshnetRunNMExeName" ]; then
+#     pv "Building nodemanager creation script failed. Exiting"
+#     exit 1
+# fi
 
-# Move nodemanager creation script to root dir
-pv "Moving nodemanager creation script to the root directory"
-mv $meshnetRunNMExeName "$ROOT_DIR/bin/meshnet/"
+# # Move nodemanager creation script to root dir
+# pv "Moving nodemanager creation script to the root directory"
+# mv $meshnetRunNMExeName "$ROOT_DIR/bin/meshnet/"
 
-# Change directory to run_node.go location
-pv "Changing directory to node creation script location"
-cd "../node"
+# # Change directory to run_node.go location
+# pv "Changing directory to node creation script location"
+# cd "../node"
 
-# Get meshnet run node platform independent binary name
-meshnetNodeExeName=$(getPlatformExeName "meshnet-run-node")
+# # Get meshnet run node platform independent binary name
+# meshnetNodeExeName=$(getPlatformExeName "meshnet-run-node")
 
-# Build run_node.go
-pv "Building node creation script"
-go build -o $meshnetNodeExeName run_node.go
+# # Build run_node.go
+# pv "Building node creation script"
+# go build -o $meshnetNodeExeName run_node.go
 
-# Check if building node creation script was successfull
-if [ ! -f "$meshnetNodeExeName" ]; then
-    pv "Building node creation script failed. Exiting"
-    exit 1
-fi
+# # Check if building node creation script was successfull
+# if [ ! -f "$meshnetNodeExeName" ]; then
+#     pv "Building node creation script failed. Exiting"
+#     exit 1
+# fi
 
-# Move node creation script to root dir
-pv "Moving node creation script to the root directory"
-mv $meshnetNodeExeName "$ROOT_DIR/bin/meshnet/"
+# # Move node creation script to root dir
+# pv "Moving node creation script to the root directory"
+# mv $meshnetNodeExeName "$ROOT_DIR/bin/meshnet/"
 
-# Change directory to run_vpn_client.go location
-pv "Changing directory to vpn creation scripts location"
-cd "../app/vpn"
+# # Change directory to run_vpn_client.go location
+# pv "Changing directory to vpn creation scripts location"
+# cd "../app/vpn"
 
-if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-    # Get meshnet run vpn client platform independent binary name
-    meshnetVpnClientExeName=$(getPlatformExeName "meshnet-run-vpn-client")
+# if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+#     # Get meshnet run vpn client platform independent binary name
+#     meshnetVpnClientExeName=$(getPlatformExeName "meshnet-run-vpn-client")
 
-    # Build run_vpn_client.go
-    pv "Building vpn client creation script"
-    go build -o $meshnetVpnClientExeName run_vpn_client.go
+#     # Build run_vpn_client.go
+#     pv "Building vpn client creation script"
+#     go build -o $meshnetVpnClientExeName run_vpn_client.go
 
-    # Check if building vpn_client creation script was successfull
-    if [ ! -f "$meshnetVpnClientExeName" ]; then
-        pv "Building vpn client creation script failed. Exiting"
-        exit 1
-    fi
+#     # Check if building vpn_client creation script was successfull
+#     if [ ! -f "$meshnetVpnClientExeName" ]; then
+#         pv "Building vpn client creation script failed. Exiting"
+#         exit 1
+#     fi
 
-    # Move node creation script to root dir
-    pv "Moving vpn client creation script to the root directory"
-    mv $meshnetVpnClientExeName "$ROOT_DIR/bin/meshnet/"
+#     # Move node creation script to root dir
+#     pv "Moving vpn client creation script to the root directory"
+#     mv $meshnetVpnClientExeName "$ROOT_DIR/bin/meshnet/"
 
-    # Get meshnet run vpn server platform independent binary name
-    meshnetVpnServerExeName=$(getPlatformExeName "meshnet-run-vpn-server")
+#     # Get meshnet run vpn server platform independent binary name
+#     meshnetVpnServerExeName=$(getPlatformExeName "meshnet-run-vpn-server")
 
-    # Build run_vpn_server.go
-    pv "Building vpn server creation script"
-    go build -o $meshnetVpnServerExeName run_vpn_server.go
+#     # Build run_vpn_server.go
+#     pv "Building vpn server creation script"
+#     go build -o $meshnetVpnServerExeName run_vpn_server.go
 
-    # Check if building vpn_server creation script was successfull
-    if [ ! -f "$meshnetVpnServerExeName" ]; then
-        pv "Building vpn server creation script failed. Exiting"
-        exit 1
-    fi
+#     # Check if building vpn_server creation script was successfull
+#     if [ ! -f "$meshnetVpnServerExeName" ]; then
+#         pv "Building vpn server creation script failed. Exiting"
+#         exit 1
+#     fi
 
-    # Move node creation script to root dir
-    pv "Moving vpn server creation script to the root directory"
-    mv $meshnetVpnServerExeName "$ROOT_DIR/bin/meshnet/"
+#     # Move node creation script to root dir
+#     pv "Moving vpn server creation script to the root directory"
+#     mv $meshnetVpnServerExeName "$ROOT_DIR/bin/meshnet/"
 
-    # Change directory to run_socks_client.go location
-    pv "Changing directory to socks creation scripts location"
-    cd "../socks"
+#     # Change directory to run_socks_client.go location
+#     pv "Changing directory to socks creation scripts location"
+#     cd "../socks"
 
-    # Get meshnet run socks client platform independent name
-    meshnetSocksClientExeName=$(getPlatformExeName "meshnet-run-socks-client")
+#     # Get meshnet run socks client platform independent name
+#     meshnetSocksClientExeName=$(getPlatformExeName "meshnet-run-socks-client")
 
-    # Build run_socks_client.go
-    pv "Building socks client creation script"
-    go build -o $meshnetSocksClientExeName run_socks_client.go
+#     # Build run_socks_client.go
+#     pv "Building socks client creation script"
+#     go build -o $meshnetSocksClientExeName run_socks_client.go
 
-    # Check if building socks_client creation script was successfull
-    if [ ! -f "$meshnetSocksClientExeName" ]; then
-        pv "Building socks client creation script failed. Exiting"
-        exit 1
-    fi
+#     # Check if building socks_client creation script was successfull
+#     if [ ! -f "$meshnetSocksClientExeName" ]; then
+#         pv "Building socks client creation script failed. Exiting"
+#         exit 1
+#     fi
 
-    # Move node creation script to root dir
-    pv "Moving socks client creation script to the root directory"
-    mv $meshnetSocksClientExeName "$ROOT_DIR/bin/meshnet/"
+#     # Move node creation script to root dir
+#     pv "Moving socks client creation script to the root directory"
+#     mv $meshnetSocksClientExeName "$ROOT_DIR/bin/meshnet/"
 
-    # Get meshnet socks server platform independent binary name
-    meshnetSocksServerExeName=$(getPlatformExeName "meshnet-run-socks-server")
+#     # Get meshnet socks server platform independent binary name
+#     meshnetSocksServerExeName=$(getPlatformExeName "meshnet-run-socks-server")
 
-    # Build run_socks_server.go
-    pv "Building socks server creation script"
-    go build -o $meshnetSocksServerExeName run_socks_server.go
+#     # Build run_socks_server.go
+#     pv "Building socks server creation script"
+#     go build -o $meshnetSocksServerExeName run_socks_server.go
 
-    # Check if building socks_server creation script was successfull
-    if [ ! -f "$meshnetSocksServerExeName" ]; then
-        pv "Building socks server creation script failed. Exiting"
-        exit 1
-    fi
+#     # Check if building socks_server creation script was successfull
+#     if [ ! -f "$meshnetSocksServerExeName" ]; then
+#         pv "Building socks server creation script failed. Exiting"
+#         exit 1
+#     fi
 
-    # Move node creation script to root dir
-    pv "Moving socks server creation script to the root directory"
-    mv $meshnetSocksServerExeName "$ROOT_DIR/bin/meshnet/"
+#     # Move node creation script to root dir
+#     pv "Moving socks server creation script to the root directory"
+#     mv $meshnetSocksServerExeName "$ROOT_DIR/bin/meshnet/"
 
-fi
+# fi
 
 # Temporarily copy bin to root bin of the repo for testing
 pv "Copying generated bin directory to root bin of the repo for testing"
