@@ -8,8 +8,8 @@ import (
 
 var Con = CcLog{} //console log, displays runtime feedback
 //private
-var fillChar = "*"        //character used to surround/highlight text
-const numUsableChars = 79 //assumes 80 column lines.  but to still look fine
+var fillChar = "*"         //character used to surround/highlight text
+const numOSBoxColumns = 79 //assumes 80 column lines.  but to still look fine
 //....with more columns, we make each a new line & reserve the last column
 
 type CcLog struct {
@@ -44,15 +44,15 @@ func MakeHighlyVisibleLogEntry(s string, numLines int) {
 	s = " " + s + " "
 	osOnly := s == Name
 
-	bar := GetBarOfChars(fillChar, numUsableChars)
+	bar := GetBarOfChars(fillChar, numOSBoxColumns)
 
 	var spaces string
 	for i := 0; i < len(s); i++ {
 		spaces += " "
 	}
 
-	var bookend string
-	for i := 0; i < (numUsableChars-len(s))/2; i++ {
+	bookend := ""
+	for i := 0; i < (numOSBoxColumns-len(s))/2; i++ {
 		bookend += fillChar
 	}
 
@@ -71,7 +71,7 @@ func MakeHighlyVisibleLogEntry(s string, numLines int) {
 
 // prints only to OS console window if it's for the app's name
 func predPrint(osOnly bool, s string) {
-	if len(s) < numUsableChars {
+	if len(s) < numOSBoxColumns {
 		s += fillChar
 	}
 

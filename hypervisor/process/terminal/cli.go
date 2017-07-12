@@ -73,7 +73,7 @@ func (c *Cli) printLogInOsBox(vi msg.MessageVisualInfo) {
 
 func (c *Cli) AdjustBackscrollOffset(delta int) {
 	c.BackscrollAmount += delta
-	println("BACKSCROLLING --- delta:", delta, " --- amount:", c.BackscrollAmount)
+	println("BACKSCROLLING --- delta:", delta)
 
 	switch {
 
@@ -84,6 +84,8 @@ func (c *Cli) AdjustBackscrollOffset(delta int) {
 		c.BackscrollAmount = len(c.VisualRows)
 
 	}
+
+	println("BACKSCROLLING --- amount:", c.BackscrollAmount)
 }
 
 func (c *Cli) InsertCharIfItFits(char uint32, state *State) {
