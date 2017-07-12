@@ -161,7 +161,7 @@ mv $skycoinCliExeName "$ROOT_DIR/bin/skycoin/"
 
 # Change directory to local Skywire mesh server
 pv "Changing directory to Skywire rpc server"
-cd "$localSkywirePath/src/cmd/rpc/srv/"
+cd "$localSkywirePath/cmd/rpc/server/"
 
 # Get all dependencies for rpc_run.go
 pv "Getting all dependencies for meshnet server"
@@ -172,7 +172,7 @@ meshnetServerExeName=$(getPlatformExeName "meshnet-server")
 
 # Build run_rpc.go
 pv "Building Skywire rpc server"
-go build -o $meshnetServerExeName rpc_run.go
+go build -o $meshnetServerExeName rpc-server.go
 
 # Check if building cli was successfull
 if [ ! -f "$meshnetServerExeName" ]; then
@@ -186,7 +186,7 @@ mv $meshnetServerExeName "$ROOT_DIR/bin/meshnet/"
 
 # Change directory to local Skywire mesh cli
 pv "Changing directory to Skywire rpc mesh cli"
-cd "$localSkywirePath/src/cmd/rpc/cli/"
+cd "$localSkywirePath/cmd/rpc/cli/"
 
 # Get all dependencies for meshnet cli
 pv "Getting all dependencies for meshnet cli"
@@ -197,7 +197,7 @@ meshnetCliExeName=$(getPlatformExeName "meshnet-cli")
 
 # Build cli.go
 pv "Building Skywire rpc mesh cli"
-go build -o $meshnetCliExeName cli.go
+go build -o $meshnetCliExeName rpc-cli.go
 
 # Check if building cli was successfull
 if [ ! -f "$meshnetCliExeName" ]; then
@@ -262,14 +262,15 @@ echo $gottyCommand > "$ROOT_DIR/viscript-cli.sh"
 
 # Change directory to run_apptracker.go location
 pv "Changing directory to apptracker creation script location"
-cd "$PWD/mesh/run_mesh/apptracker"
+# cd "$PWD/mesh/run_mesh/apptracker"
+cd "$localSkywirePath/apptracker"
 
 # Get meshnet run apptracker platform independent binary name
 meshnetAppTrackerExeName=$(getPlatformExeName "meshnet-run-apptracker")
 
 # Build run_apptracker.go
 pv "Building apptracker creation script"
-go build -o $meshnetAppTrackerExeName run_apptracker.go
+go build -o $meshnetAppTrackerExeName apptracker.go
 
 # Check if building apptracker creation script was successfull
 if [ ! -f "$meshnetAppTrackerExeName" ]; then
