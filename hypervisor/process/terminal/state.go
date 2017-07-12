@@ -19,6 +19,7 @@ func (st *State) Init(proc *Process) {
 	st.proc = proc
 	st.DebugPrintInputEvents = true
 	st.Cli = NewCli()
+	st.Cli.Log = append(st.Cli.Log, app.HelpText)
 }
 
 func (st *State) HandleMessages() {

@@ -48,8 +48,11 @@ func (t *Terminal) Init() {
 	t.CharSize.X = (t.Bounds.Width() - t.BorderSize*2) / float32(t.GridSize.X)
 	t.CharSize.Y = (t.Bounds.Height() - t.BorderSize*2) / float32(t.GridSize.Y)
 
-	t.PutString(">")
-	t.SetCursor(1, 0)
+	t.PutString(app.HelpText)
+	t.SetStringAt(0, 1, ">")
+	t.SetCursor(1, 1)
+	t.Curr.X = 1
+	t.Curr.Y = 1
 	t.ResizingRight = false
 	t.ResizingBottom = false
 }
@@ -195,12 +198,12 @@ func (t *Terminal) PutString(s string) {
 	}
 }
 
-func (t *Terminal) SetStringAt(X, Y int, S string) {
+func (t *Terminal) SetStringAt(x, y int, s string) {
 	numOOB = 0
 
-	for x, c := range S {
-		if t.posIsValidElsePrint(X+x, Y) {
-			t.Chars[Y][X+x] = uint32(c)
+	for col /* column */, c := range s {
+		if t.posIsValidElsePrint(x+col, y) {
+			t.Chars[y][x+col] = uint32(c)
 		}
 	}
 }

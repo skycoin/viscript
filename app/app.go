@@ -10,6 +10,7 @@ However, newcomers COULD confuse it with "package viewport"?
 
 const Name = "V I S C R I P T"
 const UvSpan = float32(1.0) / 16 //span of a tile/cell in uv space
+const HelpText = "? for help"
 
 func At(path, s string) { //report the func location of currently running code
 	//centering assumes 80 columns
