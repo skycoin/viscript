@@ -152,21 +152,20 @@ func drawDesktop() {
 }
 
 func Draw9SlicedRect(tile app.Vec2I, r *app.Rectangle, z float32) {
-	// (sometimes called 9 Slicing)
-	// draw 9 quads which keep a predictable frame/margin/edge undistorted,
-	// while stretching the middle to fit the desired space
+	//draw 9 quads which keep a predictable frame/margin/edge undistorted,
+	//while stretching the middle to fit the desired space
 
 	w := r.Width()
 	h := r.Height()
 
-	// skip invisible or inverted rects
+	//skip invisible or inverted rects
 	if w <= 0 || h <= 0 {
 		return
 	}
 
 	//var uvEdgeFraction float32 = 0.125 // 1/8
 	var uvEdgeFraction float32 = 0.125 / 2 // 1/16
-	// we're gonna draw from top to bottom (positivemost to negativemost)
+	//we're gonna draw from top to bottom (positivemost to negativemost)
 
 	sp /* span */ := app.UvSpan
 	u := float32(tile.X) * sp
@@ -174,7 +173,7 @@ func Draw9SlicedRect(tile app.Vec2I, r *app.Rectangle, z float32) {
 
 	gl.Normal3f(0, 0, 1)
 
-	// setup the 4 lines needed (for 3 spanning sections)
+	//setup the 4 lines needed (for 3 spanning sections)
 	uSpots := []float32{}
 	uSpots = append(uSpots, (u))
 	uSpots = append(uSpots, (u)+sp*uvEdgeFraction)
@@ -215,22 +214,18 @@ func Draw9SlicedRect(tile app.Vec2I, r *app.Rectangle, z float32) {
 
 	for iX := 0; iX < 3; iX++ {
 		for iY := 0; iY < 3; iY++ {
-			// draw 1 of 9 rects
+			//draw 1 of 9 rects
+			gl.TexCoord2f(uSpots[iX], vSpots[iY+1]) //left bottom
+			gl.Vertex3f(xSpots[iX], ySpots[iY+1], z)
 
-			if false { //iX == 1 && iY == 1 {
-			} else {
-				gl.TexCoord2f(uSpots[iX], vSpots[iY+1]) // left bottom
-				gl.Vertex3f(xSpots[iX], ySpots[iY+1], z)
+			gl.TexCoord2f(uSpots[iX+1], vSpots[iY+1]) //right bottom
+			gl.Vertex3f(xSpots[iX+1], ySpots[iY+1], z)
 
-				gl.TexCoord2f(uSpots[iX+1], vSpots[iY+1]) // right bottom
-				gl.Vertex3f(xSpots[iX+1], ySpots[iY+1], z)
+			gl.TexCoord2f(uSpots[iX+1], vSpots[iY]) //right top
+			gl.Vertex3f(xSpots[iX+1], ySpots[iY], z)
 
-				gl.TexCoord2f(uSpots[iX+1], vSpots[iY]) // right top
-				gl.Vertex3f(xSpots[iX+1], ySpots[iY], z)
-
-				gl.TexCoord2f(uSpots[iX], vSpots[iY]) // left top
-				gl.Vertex3f(xSpots[iX], ySpots[iY], z)
-			}
+			gl.TexCoord2f(uSpots[iX], vSpots[iY]) //left top
+			gl.Vertex3f(xSpots[iX], ySpots[iY], z)
 		}
 	}
 }

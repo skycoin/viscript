@@ -205,7 +205,7 @@ func (st *State) onUserCommand() {
 		st.commandResourceUsage(args)
 
 	//add new terminal
-	case "n":
+	case "nt":
 		fallthrough
 	case "new_term":
 		st.SendCommand("new_term", []string{})
