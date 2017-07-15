@@ -82,7 +82,7 @@ apps:
   apptracker:
     daemon: true
     desc: Run apptracker
-    path: bin/meshnet/meshnet-run-apptracker.exe
+    path: bin/meshnet/meshnet-run-apptracker
     default_args: []
     help: |
         [1] Host:port on which apptracker will listen for incoming messages
