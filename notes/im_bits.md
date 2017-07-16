@@ -1058,7 +1058,6 @@ and this terminal always covers the whole screen
 
 we have a special, terminal or terminal 0, that is size of whole viewport and is behind the other terminals (the desktop background viewport)
 
-hold key like control and drag border of terminal to move it, or something
 
 
 
@@ -1066,22 +1065,7 @@ hold key like control and drag border of terminal to move it, or something
 
 
 
-
-when we have 1 working terminal, we can have commands like
-
-terminal_list - list all terminal ids
-terminal_move - move terminal by x,y
-terminal_new - createnew terminal
-terminal_close - close terminal by id
-terminal_focus - set focus to terminal by id
-
-and then will have command line to test the resize and movement stuff and opening/closing etc
-
-
-
-
-
- there is a general app or process type for bash type commands like this
+there is a general app or process type for bash type commands like this
 but other types of processes are for other apps and not a general type of terminal
 
 

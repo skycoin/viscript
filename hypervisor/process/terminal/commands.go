@@ -21,7 +21,6 @@ const cp = "hypervisor/process/terminal/commands"
 func (st *State) commandHelp() {
 	st.PrintLn(app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)))
 	//st.PrintLn("Current commands:")
-	st.PrintLn("help:                  This message ('?' or 'h' for short).")
 	st.PrintLn("------ Terminals ------")
 	st.PrintLn("new_term:              Add new terminal (n for short).")
 	st.PrintLn("list_terms:            List all terminal ids.")

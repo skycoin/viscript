@@ -74,7 +74,7 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 
 	tokens = append(tokens, strconv.Itoa(int(monitor.GetNextMessageID())))
 
-	// TODO: think about this here if we have daemon should we attach anything?
+	//TODO: think about this here if we have daemon should we attach anything?
 
 	if pr.cmd, err = pr.createCMDAccordingToOS(tokens); err != nil {
 		return err

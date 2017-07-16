@@ -49,10 +49,10 @@ func (c *Cli) BuildRowsFromLogEntryFragments(vi msg.MessageVisualInfo) {
 			c.VisualRows = append(c.VisualRows, lff)
 		}
 
-		//what remains here is less than .NumColumns
-		if len(entry) > 0 {
+		//last fragment is less than .NumColumns
+		if /* something remains */ len(entry) > 0 {
 			println("what's left of current log entry:", entry)
-			c.VisualRows = append(c.VisualRows, entry)
+			c.VisualRows = append(c.VisualRows, entry) //add last fragment
 		}
 	}
 

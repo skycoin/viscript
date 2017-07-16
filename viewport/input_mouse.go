@@ -31,25 +31,14 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 	setPointerBasedOnPosition()
 
 	if mouse.LeftButtonIsDown {
-		// Determination should be here if the mouse is over scrollbar or over the
-		// area where terminal can be moved. Moving windows happens in GL space
-		// coordinates because I thought pixel delta was used for scrollbar scrolling
-
-		// REFACTORME: cause I made it messy i guess
-		// FIXME: Also the context in this case text is left there and
-		// allowed to write outside the bounds
-		// should resize or it should be using characters as kind of measures
+		// REFACTORME: cause I made it messy i guess   -Red
 
 		if mouse.NearRight(foc.Bounds) && !foc.ResizingBottom {
-			gl.SetHResizePointer()
 			mouse.IncreaseNearnessThreshold()
-
-			t.Terms.Focused.ResizeHorizontally(mouse.GlPos.X)
+			foc.ResizeHorizontally(mouse.GlPos.X)
 		} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight {
-			gl.SetVResizePointer()
 			mouse.IncreaseNearnessThreshold()
-
-			t.Terms.Focused.ResizeVertically(mouse.GlPos.Y)
+			foc.ResizeVertically(mouse.GlPos.Y)
 		}
 
 		if mouse.PointerIsInside(foc.Bounds) && !foc.IsResizing() {
@@ -75,7 +64,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 			// 	"\n Rect Center Y:", foc.Bounds.CenterY())
 			// }
 		}
-	} else {
+	} else { // LMB NOT pressed
 		foc.SetResizingOff()
 		mouse.DecreaseNearnessThreshold()
 	}
@@ -138,7 +127,10 @@ func setPointerBasedOnPosition() {
 	}
 
 	if mouse.PointerIsInside(foc.Bounds) {
-		gl.SetIBeamPointer()
+		gl.SetHandPointer()
+		//gl.SetIBeamPointer() //IBeam is harder to see...
+		//...and probably only makes sense when you can click to type anywhere on screen.
+		//Terminals currently limit the animated cursor position to be within the last 2 lines of onscreen text
 	} else {
 		gl.SetArrowPointer()
 	}

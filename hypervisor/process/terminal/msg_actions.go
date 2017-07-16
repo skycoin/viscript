@@ -48,15 +48,15 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 
 func (st *State) onTerminalIds(m msg.MessageTerminalIds) {
 	st.storedTerminalIds = m.TermIds
-	st.PrintLn(fmt.Sprintf("Terminals (%d) (* -> focused):", len(m.TermIds)))
+	st.PrintLn(fmt.Sprintf("Terminals (%d):", len(m.TermIds)))
 
-	for index, termID := range m.TermIds {
-		s := fmt.Sprintf("[%d] %d", index, termID)
+	for i, termID := range m.TermIds {
+		s := fmt.Sprintf("[%d] %d", i, termID)
 
 		if termID == m.Focused {
-			st.PrintLn("*" + s)
+			st.PrintLn(s + "    (FOCUSED)")
 		} else {
-			st.PrintLn(" " + s)
+			st.PrintLn(s)
 		}
 	}
 
@@ -167,6 +167,14 @@ func (st *State) onUserCommand() {
 			st.commandHelp()
 		}
 
+	//display all apps with descriptions
+	case "apps":
+		st.commandDisplayApps()
+
+	//attach external task to terminal task
+	case "attach":
+		st.commandAttach(args)
+
 	case "c":
 		fallthrough
 	case "cls":
@@ -174,35 +182,20 @@ func (st *State) onUserCommand() {
 	case "clear":
 		st.commandClearTerminal()
 
+	//delete terminal with given index to the stored termIds
+	case "dt":
+		fallthrough
+	case "delete_term":
+		st.deleteTerminal(args)
+
 	case "ls":
 		st.commandListExternalTasks(args)
 
-	//attach external task to terminal task
-	case "attach":
-		st.commandAttach(args)
-
-	case "r":
+	//list all terminals marking focused with •
+	case "lt":
 		fallthrough
-	case "rpc":
-		st.commandStart([]string{"-a", "go", "run", "rpc/cli/cli.go"})
-
-	//start new external task, detached running in bg by default
-	case "s":
-		fallthrough
-	case "start":
-		st.commandStart(args)
-
-	//ping app
-	case "ping":
-		st.commandAppPing(args)
-
-	//shutdown running app
-	case "shutdown":
-		st.commandShutDown(args)
-
-	//resource usage
-	case "res_usage":
-		st.commandResourceUsage(args)
+	case "list_terms":
+		st.SendCommand("list_terms", []string{})
 
 	//add new terminal
 	case "nt":
@@ -210,17 +203,48 @@ func (st *State) onUserCommand() {
 	case "new_term":
 		st.SendCommand("new_term", []string{})
 
-	//list all terminals marking focused with •
-	case "list_terms":
-		st.SendCommand("list_terms", []string{})
+	//ping app
+	case "ping":
+		st.commandAppPing(args)
 
-	//delete terminal with given index to the stored termIds
-	case "delete_term":
-		st.deleteTerminal(args)
+	//resource usage
+	case "ru":
+		fallthrough
+	case "res_usage":
+		st.commandResourceUsage(args)
 
-	//display all apps with descriptions
-	case "apps":
-		st.commandDisplayApps()
+	case "r":
+		fallthrough
+	case "rpc":
+		st.commandStart([]string{"-a", "go", "run", "rpc/cli/cli.go"})
+
+	//shutdown running app
+	case "sd":
+		fallthrough
+	case "shutdown":
+		st.commandShutDown(args)
+
+	//start new external task, detached running in bg by default
+	case "s":
+		fallthrough
+	case "start":
+		st.commandStart(args)
+
+	//
+	//
+	//
+	//
+	//
+	//
+	//terminal_move - move terminal by x,y
+	//terminal_close - close terminal by id
+	//terminal_focus - set focus to terminal by id
+	//
+	//
+	//
+	//
+	//
+	//
 
 	default:
 		st.PrintError("\"" + cmd + "\" is an unknown command.")
