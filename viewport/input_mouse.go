@@ -28,16 +28,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 		return
 	}
 
-	// set pointer appropriately
-	if mouse.NearRight(foc.Bounds) && !foc.ResizingBottom && !mouse.LeftButtonIsDown {
-		gl.SetHResizePointer()
-	} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight && !mouse.LeftButtonIsDown {
-		gl.SetVResizePointer()
-	} else if mouse.PointerIsInside(foc.Bounds) {
-		gl.SetIBeamPointer()
-	} else {
-		gl.SetArrowPointer()
-	}
+	actBasedOnPosition()
 
 	if mouse.LeftButtonIsDown {
 		// Determination should be here if the mouse is over scrollbar or over the
@@ -130,6 +121,26 @@ func onMouseButton(m msg.MessageMouseButton) {
 		case msg.MouseButtonLeft:
 			mouse.LeftButtonIsDown = false
 		}
+	}
+}
+
+func actBasedOnPosition() {
+	// set pointer appropriately
+
+	if !foc.FixedSize {
+		if /****/ mouse.NearRight(foc.Bounds) && !foc.ResizingBottom && !mouse.LeftButtonIsDown {
+			gl.SetHResizePointer()
+			return
+		} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight && !mouse.LeftButtonIsDown {
+			gl.SetVResizePointer()
+			return
+		}
+	}
+
+	if mouse.PointerIsInside(foc.Bounds) {
+		gl.SetIBeamPointer()
+	} else {
+		gl.SetArrowPointer()
 	}
 }
 

@@ -14,7 +14,7 @@ type Cli struct {
 	CurrCmd    int      //index
 	CursPos    int      //cursor/insert position, local to command space (2 lines dedicated ATM)
 	Prompt     string
-	//FIXME to work with Terminal's dynamic self.GridSize.X
+	//FIXME to work with Terminal's dynamic .GridSize.X
 	//assumes 64 horizontal characters, then dedicates 2 lines for each command.
 	BackscrollAmount int //number of VISUAL LINES...
 	//(each could be merely a SECTION of a larger (than NumColumns) log entry)
@@ -51,12 +51,12 @@ func (c *Cli) BuildRowsFromLogEntryFragments(vi msg.MessageVisualInfo) {
 
 		//what remains here is less than .NumColumns
 		if len(entry) > 0 {
-			println("what's left of current log 'entry':", entry)
+			println("what's left of current log entry:", entry)
 			c.VisualRows = append(c.VisualRows, entry)
 		}
 	}
 
-	//c.printLogInOsBox(vi)
+	c.printLogInOsBox(vi)
 }
 
 func (c *Cli) printLogInOsBox(vi msg.MessageVisualInfo) {

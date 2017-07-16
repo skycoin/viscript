@@ -17,6 +17,7 @@ const (
 
 type Terminal struct {
 	TerminalId      msg.TerminalId
+	FixedSize       bool
 	AttachedProcess msg.ProcessId
 	OutChannelId    uint32 //id of pubsub channel
 	InChannel       chan []byte
