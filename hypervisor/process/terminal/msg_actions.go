@@ -188,10 +188,10 @@ func (st *State) onUserCommand() {
 	case "delete_term":
 		st.deleteTerminal(args)
 
-	case "ls":
+	case "list_tasks":
 		st.commandListExternalTasks(args)
 
-	//list all terminals marking focused with •
+	//list all terminals
 	case "lt":
 		fallthrough
 	case "list_terms":
