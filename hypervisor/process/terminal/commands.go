@@ -23,7 +23,7 @@ func (st *State) commandHelp() {
 	//st.PrintLn("Current commands:")
 	st.PrintLn("------ Terminals ------")
 	st.PrintLn("clear:                 Clears currently focused terminal.")
-	st.PrintLn("delete_term <id>:      Delete terminal with index to the terminal id.")
+	st.PrintLn("del_term <id>:         Delete terminal with index to the terminal id.")
 	st.PrintLn("list_terms:            List all terminal ids.")
 	st.PrintLn("new_term:              Add new terminal (n for short).")
 	st.PrintLn("------ Apps -----------")
@@ -348,7 +348,7 @@ func (st *State) deleteTerminal(args []string) {
 		return
 	}
 
-	st.SendCommand("delete_term",
+	st.SendCommand("del_term",
 		[]string{
 			strconv.Itoa(int(st.storedTerminalIds[storedIndex]))})
 

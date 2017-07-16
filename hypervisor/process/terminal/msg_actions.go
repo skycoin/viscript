@@ -182,17 +182,21 @@ func (st *State) onUserCommand() {
 	case "clear":
 		st.commandClearTerminal()
 
-	//delete terminal with given index to the stored termIds
+	//delete terminal with given index
 	case "dt":
 		fallthrough
-	case "delete_term":
+	case "del_term":
 		st.deleteTerminal(args)
 
+	case "lp":
+		fallthrough
 	case "list_tasks":
 		st.commandListExternalTasks(args)
 
 	//list all terminals
 	case "lt":
+		fallthrough
+	case "list_term":
 		fallthrough
 	case "list_terms":
 		st.SendCommand("list_terms", []string{})

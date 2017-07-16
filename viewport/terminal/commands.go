@@ -13,7 +13,7 @@ func (ts *TerminalStack) OnUserCommand(tID msg.TerminalId, cmd msg.MessageComman
 		ts.Add()
 	case "list_terms":
 		ts.ListTerminalsWithIds(tID)
-	case "delete_term":
+	case "del_term":
 		if len(cmd.Args) != 1 {
 			return
 		}
