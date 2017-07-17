@@ -1293,7 +1293,7 @@ we should have a task type id and a text label for each task interface implement
 
 
 
-George:
+Red:
 1) go install && viscript
 2) go run rpc/cli.go
 
@@ -1389,7 +1389,7 @@ and we will throw the daemons and meshnet etc in the bin folder
 
 
 
-George:
+Red:
 so I run: "go install" at first in the skycoin server directory and once it's installed
 I use same package as gotty it's called pty and I run 2 routines that wait for the output
 from the skycoin server as you can see
@@ -1411,7 +1411,7 @@ and we could run apps from source if needed and not just exe
 
 
 
-Brad:
+HaltingState:
 And good api for attachment and detachment etc
 
 But we could do more advanced.
@@ -1424,7 +1424,6 @@ Other runs in current window and sets parent which will resume.
 
 Another or third opens process in background
 
-Also keep code clean. And refactoring is important.
 
 
 
@@ -1439,7 +1438,7 @@ can we get the meshnet daemon and clie packaged in there by default
 
 
 
-George: i was thinking of one api that could provide basics to all the
+Red: i was thinking of one api that could provide basics to all the
 process types
 
 HaltingState: i like being able to import one thing
@@ -1476,7 +1475,7 @@ and good api for attachment and detachment etc
 
 
 
-Benjamin: but we need to be using inheritance
+CorpusC: but we need to be using inheritance
 
 HaltingState: we have api standard interface abd library to import.
 could also use some type of inheritance but api thing is better
@@ -1499,7 +1498,7 @@ Write those down.  They are all tickets.
 
 
 
-[re: Benn's command-prompt-scrolling related questions]
+[re: CorpusC's command-prompt-scrolling related questions]
 You can generally put character for carriage return on end of line and go to next line
 
 
@@ -1604,7 +1603,7 @@ what does not work
 
 
 
-George:
+Red:
 CTRL+L could work for clearing it think, it wouldn't be a command thus won't
 interrupt running atached external task.
 it's like that in a normal terminal.
@@ -1632,7 +1631,7 @@ sequentially and printing it to viscript terminal.
 
 
 
-George: isn't it easy to run "e srv"
+Red: isn't it easy to run "e srv"
 at first and then "e cli" in another terminal?
 
 
@@ -1643,7 +1642,7 @@ at first and then "e cli" in another terminal?
 
 
 
-George: there's 3 goroutines.  1 that reads, 1 that writes upon receiving input from
+Red: there's 3 goroutines.  1 that reads, 1 that writes upon receiving input from
 viscript, and 1 that waits for those goroutines to end cleans up
 
 
@@ -1760,7 +1759,7 @@ for dependencies
 
 
 
-George: this is how skycoin is run inside run.sh
+Red: this is how skycoin is run inside run.sh
 --gui-dir+"${DIR}/src/gui/static/" $@
 so my guess is we only need the /src/gui/static/ directory for running skycoin right?
 
