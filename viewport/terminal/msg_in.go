@@ -15,15 +15,15 @@ func (t *Terminal) UnpackMessage(message []byte) []byte {
 		t.clear()
 		t.Curr.Y = 0
 
-	case msg.TypeCommand:
+	case msg.TypeTokenizedCommands:
 		var m msg.MessageTokenizedCommand
 		msg.MustDeserialize(message, &m)
 		Terms.OnUserCommandFinalStage(t.TerminalId, m)
 
-	case msg.TypeCommandLine:
+	case msg.TypeCommandPrompt:
 		var m msg.MessageCommandPrompt
 		msg.MustDeserialize(message, &m)
-		t.updateCommandLine(m)
+		t.updateCommandPrompt(m)
 
 	case msg.TypeSetCharAt:
 		var m msg.MessageSetCharAt

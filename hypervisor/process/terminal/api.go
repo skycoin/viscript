@@ -41,7 +41,7 @@ func (st *State) Printf(format string, vars ...interface{}) {
 }
 
 func (st *State) SendCommand(command string, args []string) {
-	m := msg.Serialize(msg.TypeCommand,
+	m := msg.Serialize(msg.TypeTokenizedCommands,
 		msg.MessageTokenizedCommand{Command: command, Args: args})
 	st.publishToOut(m)
 }
