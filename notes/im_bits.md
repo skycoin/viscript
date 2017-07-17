@@ -1484,16 +1484,6 @@ not sure how to use interface for this
 
 
 
-Then second thing is packaging viscript for website deployment
-
-But right now it needs to launch process for cxo daemon,
-cxo client, skycoin daemon full node, skycoind/superwallet, meshnet daemon,
-meshnet cli and socks5 client, socks5 server.
-
-Write those down.  They are all tickets.
-
-
-
 
 
 
