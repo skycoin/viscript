@@ -1,25 +1,20 @@
 package terminal
 
 import (
-	"strconv"
-
 	"github.com/skycoin/viscript/msg"
 )
 
-func (ts *TerminalStack) OnUserCommand(tID msg.TerminalId, cmd msg.MessageCommand) {
+func (ts *TerminalStack) OnUserCommandFinalStage(tID msg.TerminalId, cmd msg.MessageTokenizedCommand) {
 	switch cmd.Command {
 
 	case "new_term":
-		ts.Add()
+		ts.AddWithFixedSizeState(true)
 	case "list_terms":
 		ts.ListTerminalsWithIds(tID)
 	case "del_term":
-		if len(cmd.Args) != 1 {
-			return
-		}
-
-		ts.DeleteTerminalIfExists(cmd.Args[0])
+		ts.commandDeleteTerminalsFinalStage(tID)
 	default:
+		//nope
 
 	}
 }
@@ -35,11 +30,8 @@ func (ts *TerminalStack) ListTerminalsWithIds(termId msg.TerminalId) {
 	ts.Focused.RelayToTask(msg.Serialize(msg.TypeTerminalIds, m))
 }
 
-func (ts *TerminalStack) DeleteTerminalIfExists(termIdString string) {
-	termIdInt, err := strconv.Atoi(termIdString)
-	if err != nil {
-		return
-	}
-
-	ts.RemoveTerminal(msg.TerminalId(termIdInt))
+//for simplicity, we'll try to handle all the edge cases in the first stage, so that
+//THIS SHOULD NEVER BE RUN WITHOUT A VALID ID
+func (ts *TerminalStack) commandDeleteTerminalsFinalStage(id msg.TerminalId) {
+	ts.Remove(id)
 }

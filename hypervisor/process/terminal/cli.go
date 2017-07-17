@@ -114,7 +114,7 @@ func (c *Cli) EchoWholeCommand(outChanId uint32) {
 	//message := msg.Serialize(msg.TypePutChar, msg.MessagePutChar{0, m.Char})
 
 	m := msg.Serialize(msg.TypeCommandLine,
-		msg.MessageCommandLine{termId, c.Commands[c.CurrCmd], uint32(c.CursPos)})
+		msg.MessageCommandPrompt{termId, c.Commands[c.CurrCmd], uint32(c.CursPos)})
 	hypervisor.DbusGlobal.PublishTo(outChanId, m) //EVERY publish action prefixes another chan id
 }
 
@@ -140,9 +140,11 @@ func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
 		hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
 	}
 
+	//add to log & command histories
 	c.Log = append(c.Log, c.Commands[c.CurrCmd])
 	c.Commands = append(c.Commands, c.Prompt)
 	st.onUserCommand()
+	//reset prompt & position
 	c.CurrCmd = len(c.Commands) - 1
 	c.CursPos = len(c.Commands[c.CurrCmd])
 }

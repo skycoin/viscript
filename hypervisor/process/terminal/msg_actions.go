@@ -141,7 +141,9 @@ func (st *State) onUserCommand() {
 			s += "      args:"
 		}
 
-		s += " [" + arg + "]"
+		s += "   [" +
+			fmt.Sprintf("%d", i) +
+			"] \"" + arg + "\""
 	}
 
 	println(s)
@@ -186,7 +188,7 @@ func (st *State) onUserCommand() {
 	case "dt":
 		fallthrough
 	case "del_term":
-		st.deleteTerminal(args)
+		st.commandDeleteTerminalFirstStage(args)
 
 	case "lp":
 		fallthrough

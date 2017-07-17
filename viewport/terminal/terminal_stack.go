@@ -44,8 +44,13 @@ func (ts *TerminalStack) Init() {
 	Terms.Add()
 }
 
+//these are visually grouped, because they're used as 1 unit (to allow for a sort of default argument)
 func (ts *TerminalStack) Add() msg.TerminalId {
 	println("<TerminalStack>.Add()")
+	return ts.AddWithFixedSizeState(false)
+}
+func (ts *TerminalStack) AddWithFixedSizeState(fixedSize bool) msg.TerminalId { //^^^
+	println("<TerminalStack>.AddWithFixedSizeState()")
 
 	ts.nextDepth += ts.nextOffset.X / 10 // done first, cuz desktop is at 0
 
@@ -58,6 +63,7 @@ func (ts *TerminalStack) Add() msg.TerminalId {
 			ts.nextRect.Bottom,
 			ts.nextRect.Left}}
 	ts.Terms[tid].Init()
+	ts.Terms[tid].FixedSize = fixedSize
 	ts.SetFocused(tid)
 
 	ts.nextRect.Top -= ts.nextOffset.Y
@@ -69,10 +75,17 @@ func (ts *TerminalStack) Add() msg.TerminalId {
 	return tid
 }
 
-func (ts *TerminalStack) RemoveTerminal(id msg.TerminalId) {
-	println("<TerminalStack>.RemoveTerminal() ---------------------------- FIXME/TODO")
-	// TODO: FIXME: what should happen here after deleting terminal from the stack?
-	// delete(ts.Terms, id)
+func (ts *TerminalStack) Remove(id msg.TerminalId) {
+	println("<TerminalStack>.Remove():", id)
+	//TODO: FIXME:
+	//what should happen here after deleting terminal from the stack?                          -Red
+	//well BEFORE removal, we'll want to unsub to update/cleanup dsub (not sure what else atm) -CC
+
+	for _, term := range ts.Terms {
+		if id == term.TerminalId {
+			delete(ts.Terms, id)
+		}
+	}
 }
 
 func (ts *TerminalStack) Tick() {

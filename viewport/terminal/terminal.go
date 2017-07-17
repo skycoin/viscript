@@ -230,7 +230,7 @@ func (t *Terminal) clear() {
 	}
 }
 
-func (t *Terminal) updateCommandLine(m msg.MessageCommandLine) {
+func (t *Terminal) updateCommandLine(m msg.MessageCommandPrompt) {
 	for i := 0; i < t.GridSize.X*2; i++ {
 		var char uint32
 		x := i % t.GridSize.X

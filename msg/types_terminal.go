@@ -17,15 +17,15 @@ const (
 type MessageClear struct { //this type simply signals that we need a .clear() call in terminal
 }
 
-type MessageCommand struct {
+type MessageTokenizedCommand struct {
 	Command string
 	Args    []string
 }
 
-type MessageCommandLine struct { //updates/replaces current command line on any change
+type MessageCommandPrompt struct { //updates/replaces current command prompt on any change
 	TermId       uint32
 	CommandLine  string
-	CursorOffset uint32 //from first character of command line
+	CursorOffset uint32 //from first character of command prompt
 }
 
 type MessagePutChar struct {

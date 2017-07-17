@@ -322,34 +322,38 @@ func (st *State) commandListExternalTasks(args []string) {
 	}
 }
 
-func (st *State) deleteTerminal(args []string) {
-	if len(args) < 1 {
-		st.PrintLn("No index to the terminal id passed.")
+func (st *State) commandDeleteTerminalFirstStage(args []string) {
+	if len(args) == 1 {
+		//case out storedTerminalIds
+		if /****/ len(st.storedTerminalIds) < 1 {
+			st.PrintError("Use 'list_terms' command to see their IDs")
+			return
+		} else if len(st.storedTerminalIds) == 1 {
+			st.PrintError("Shouldn't delete when only 1 remains (UNTIL GUI IS MADE)")
+			return
+		}
+
+		storedId, err := strconv.Atoi(args[0])
+		if err != nil {
+			st.PrintError("Unable to convert passed index.")
+			s := "err.Error(): \"" + err.Error() + "\""
+			st.PrintError(s)
+			return
+		}
+
+		//validate index range
+		if storedId < 0 ||
+			storedId >= len(st.storedTerminalIds) {
+			st.PrintError("Index not in range.")
+			return
+		}
+
+		st.SendCommand("del_term", []string{strconv.Itoa(int(st.storedTerminalIds[storedId]))})
+	} else { //args failure (too many/few passed)
+		st.PrintError("Must supply ONE valid ID argument")
+		//IDEALLY we'd want to use ANY VALID index at position 0,
+		//but i think you'd want us to occasionally prioritize simplicity
+		//above doing extra coding to handle nitpickiness like that.
 		return
 	}
-
-	storedIndex, err := strconv.Atoi(args[0])
-	if err != nil {
-		st.PrintLn("Unable to convert passed index.")
-		return
-	}
-
-	if len(st.storedTerminalIds) < 1 {
-		st.PrintLn("Please use list_terms command" +
-			"at first to access terminal ids with indices.")
-		return
-	} else if len(st.storedTerminalIds) == 1 {
-		st.PrintLn("Can't delete current focused terminal")
-		return
-	}
-
-	if storedIndex > len(st.storedTerminalIds) {
-		st.PrintLn("Index not in range.")
-		return
-	}
-
-	st.SendCommand("del_term",
-		[]string{
-			strconv.Itoa(int(st.storedTerminalIds[storedIndex]))})
-
 }
