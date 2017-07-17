@@ -17,8 +17,8 @@ import (
 	"strconv"
 
 	"github.com/skycoin/viscript/app"
-	"github.com/skycoin/viscript/monitor"
 	"github.com/skycoin/viscript/msg"
+	"github.com/skycoin/viscript/signal"
 )
 
 const te = "hypervisor/task_ext/task_ext" //path
@@ -72,7 +72,7 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 	//append app id before creating command
 	tokens = append(tokens, strconv.Itoa(int(pr.Id)))
 
-	tokens = append(tokens, strconv.Itoa(int(monitor.GetNextMessageID())))
+	tokens = append(tokens, strconv.Itoa(int(signal.GetNextMessageID())))
 
 	//TODO: think about this here if we have daemon should we attach anything?
 

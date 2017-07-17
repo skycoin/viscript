@@ -1774,6 +1774,12 @@ Then if something wants to modify terminal it will write to that dbus channel.
 maybe write smalle wrapper library for terminal control over dbus
 
 
+HaltingState:
+after signal is working, you are going to make a demo game app; that communicates back set terminal command and takes mouse/keyboard input and is displayed on viscript (but possibly running on another machine)
+HaltingState:
+like snake or ticktac toe or dwarf fortress 2d or something
+
+
 
 
 
