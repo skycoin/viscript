@@ -28,6 +28,8 @@
 
 * move onUserCommand() to command_cases.go?
 
+* rename all instances of "process" to "task"
+
 * improve BACKSCROLL indicator line
 
 * scan and do/fix most FIXME/TODO places in the code

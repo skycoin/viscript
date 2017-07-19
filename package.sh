@@ -408,7 +408,7 @@ cd $ROOT_DIR/ && cd ..
 cp -rf $ROOT_DIR/bin/ ./
 
 # Copy appropriate platform dependent config file to for viscript to use
-pv "Copying viscript os dependentent config yaml file"
+pv "Copying viscript os dependent config yaml file"
 if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ] \
     || [ "$(expr substr $(uname -s) 1 6)" == "Darwin" ]; 
 then

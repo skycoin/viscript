@@ -190,8 +190,6 @@ func (st *State) onUserCommand() {
 	case "del_term":
 		st.commandDeleteTerminalFirstStage(args)
 
-	case "lp":
-		fallthrough
 	case "list_tasks":
 		st.commandListExternalTasks(args)
 
@@ -241,7 +239,7 @@ func (st *State) onUserCommand() {
 	//
 	//
 	//
-	//
+	//commands TODO:
 	//terminal_move - move terminal by x,y
 	//terminal_close - close terminal by id
 	//terminal_focus - set focus to terminal by id
