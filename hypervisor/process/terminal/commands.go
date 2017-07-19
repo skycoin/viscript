@@ -12,8 +12,8 @@ import (
 	"github.com/skycoin/viscript/config"
 	"github.com/skycoin/viscript/hypervisor"
 	extTask "github.com/skycoin/viscript/hypervisor/task_ext"
-	"github.com/skycoin/viscript/monitor"
 	"github.com/skycoin/viscript/msg"
+	"github.com/skycoin/viscript/signal"
 )
 
 const cp = "hypervisor/process/terminal/commands"
@@ -192,13 +192,13 @@ func (st *State) commandAppPing(args []string) {
 	}
 
 	msgUserCommand := msg.MessageUserCommand{
-		Sequence: monitor.GetNextMessageID(),
+		Sequence: signal.GetNextMessageID(),
 		AppId:    uint32(extProcID),
 		Payload:  msg.Serialize(msg.TypePing, msg.MessagePing{})}
 
 	serializedCommand := msg.Serialize(msg.TypeUserCommand, msgUserCommand)
 
-	monitor.Monitor.Send(uint32(extProcID), serializedCommand)
+	signal.Monitor.Send(uint32(extProcID), serializedCommand)
 }
 
 func (st *State) commandShutDown(args []string) {
@@ -223,13 +223,13 @@ func (st *State) commandShutDown(args []string) {
 	}
 
 	msgUserCommand := msg.MessageUserCommand{
-		Sequence: monitor.GetNextMessageID(),
+		Sequence: signal.GetNextMessageID(),
 		AppId:    uint32(extProcID),
 		Payload:  msg.Serialize(msg.TypeShutdown, msg.MessageShutdown{})}
 
 	serializedCommand := msg.Serialize(msg.TypeUserCommand, msgUserCommand)
 
-	monitor.Monitor.Send(uint32(extProcID), serializedCommand)
+	signal.Monitor.Send(uint32(extProcID), serializedCommand)
 }
 
 func (st *State) commandResourceUsage(args []string) {
@@ -253,14 +253,14 @@ func (st *State) commandResourceUsage(args []string) {
 	}
 
 	msgUserCommand := msg.MessageUserCommand{
-		Sequence: monitor.GetNextMessageID(),
+		Sequence: signal.GetNextMessageID(),
 		AppId:    uint32(extProcID),
 		Payload: msg.Serialize(msg.TypeResourceUsage,
 			msg.MessageResourceUsage{})}
 
 	serializedCommand := msg.Serialize(msg.TypeUserCommand, msgUserCommand)
 
-	monitor.Monitor.Send(uint32(extProcID), serializedCommand)
+	signal.Monitor.Send(uint32(extProcID), serializedCommand)
 }
 
 func (st *State) commandAttach(args []string) {

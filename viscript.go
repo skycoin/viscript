@@ -66,8 +66,8 @@ import (
 	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/config"
 	"github.com/skycoin/viscript/hypervisor"
-	"github.com/skycoin/viscript/monitor"
 	"github.com/skycoin/viscript/rpc/terminalmanager"
+	"github.com/skycoin/viscript/signal"
 	"github.com/skycoin/viscript/viewport"
 )
 
@@ -100,7 +100,7 @@ func main() {
 		rpcInstance.Serve()
 	}()
 
-	monitor.Init("0.0.0.0:7999").Run() //tcp server monitor for apps
+	signal.Init("0.0.0.0:7999").Run() //tcp server for apps
 
 	//actual start of loop
 	for viewport.CloseWindow == false {
