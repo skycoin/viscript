@@ -20,20 +20,26 @@
   version = "v1"
 
 [[projects]]
-  branch = "develop"
   name = "github.com/skycoin/skycoin"
-  packages = ["src/cipher","src/cipher/base58","src/cipher/chacha20","src/cipher/encoder","src/cipher/ripemd160","src/cipher/secp256k1-go","src/cipher/secp256k1-go/secp256k1-go2"]
-  revision = "3ed8a7f74cfa1d294cfc9d2975278ce28de9c21d"
+  packages = ["src/cipher","src/cipher/base58","src/cipher/chacha20","src/cipher/encoder","src/cipher/ripemd160","src/cipher/secp256k1-go","src/cipher/secp256k1-go/secp256k1-go2","src/util/logging"]
+  revision = "dd924e1f2de8fab945e05b3245dbeabf267f2910"
+  version = "v0.19.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/skycoin/viscript"
+  packages = ["app","config","hypervisor","hypervisor/dbus","hypervisor/input/keyboard","hypervisor/input/mouse","hypervisor/task/terminal","hypervisor/task_ext","msg","old/tree","old/ui","rpc/climanager","rpc/terminalmanager","signal","viewport","viewport/gl","viewport/terminal"]
+  revision = "e2cfb7ccb7f1ba2f4085d140b6dd8aa1eef91dfe"
 
 [[projects]]
   branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "cd8b52f8269e0feb286dfeef29f8fe4d5b397e0b"
+  revision = "3b4ad1db5b2a649883ff3782f5f9f6fb52be71af"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "64ab7c494446b5a170178003b2fd99955fa3f92b73576a66e389c4e28ff55f1c"
+  inputs-digest = "d63c00c5ca8f0ad4f48f8bd2f3a998084c499c25ff4f392ce0cab5271918dfaf"
   solver-name = "gps-cdcl"
   solver-version = 1
