@@ -7,12 +7,12 @@ import (
 
 //ExtTaskInterface implementation
 
-func (pr *ExternalProcess) Tick() {
+func (pr *ExternalTask) Tick() {
 	pr.processInput()
 	pr.processOutput()
 }
 
-func (pr *ExternalProcess) Start() error {
+func (pr *ExternalTask) Start() error {
 	app.At(te, "Start")
 
 	err := pr.cmd.Start()
@@ -23,7 +23,7 @@ func (pr *ExternalProcess) Start() error {
 	return nil
 }
 
-func (pr *ExternalProcess) TearDown() {
+func (pr *ExternalTask) TearDown() {
 	app.At(te, "TearDown")
 
 	pr.cmd.Process.Kill()
@@ -48,33 +48,33 @@ func (pr *ExternalProcess) TearDown() {
 	}
 }
 
-func (pr *ExternalProcess) Attach() error {
+func (pr *ExternalTask) Attach() error {
 	app.At(te, "Attach")
 	return pr.startRoutines()
 }
 
-func (pr *ExternalProcess) Detach() {
+func (pr *ExternalTask) Detach() {
 	app.At(te, "Detach")
 	// TODO: detach using channels maybe
 	pr.stopRoutines()
 }
 
-func (pr *ExternalProcess) GetId() msg.ExtProcessId {
+func (pr *ExternalTask) GetId() msg.ExtProcessId {
 	return pr.Id
 }
 
-func (pr *ExternalProcess) GetFullCommandLine() string {
+func (pr *ExternalTask) GetFullCommandLine() string {
 	return pr.CommandLine
 }
 
-func (pr *ExternalProcess) GetTaskInChannel() chan []byte {
+func (pr *ExternalTask) GetTaskInChannel() chan []byte {
 	return pr.ProcessIn
 }
 
-func (pr *ExternalProcess) GetTaskOutChannel() chan []byte {
+func (pr *ExternalTask) GetTaskOutChannel() chan []byte {
 	return pr.ProcessOut
 }
 
-func (pr *ExternalProcess) GetTaskExitChannel() chan struct{} {
+func (pr *ExternalTask) GetTaskExitChannel() chan struct{} {
 	return pr.ProcessExit
 }

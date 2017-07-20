@@ -23,7 +23,7 @@ import (
 
 const te = "hypervisor/task_ext/task_ext" //path
 
-type ExternalProcess struct {
+type ExternalTask struct {
 	Id          msg.ExtProcessId
 	CommandLine string
 
@@ -46,9 +46,9 @@ type ExternalProcess struct {
 }
 
 //non-instanced
-func MakeNewTaskExternal(tokens []string, detached bool) (*ExternalProcess, error) {
+func MakeNewTaskExternal(tokens []string, detached bool) (*ExternalTask, error) {
 	app.At(te, "MakeNewTaskExternal")
-	var p ExternalProcess
+	var p ExternalTask
 
 	err := p.Init(tokens)
 	if err != nil {
@@ -58,11 +58,11 @@ func MakeNewTaskExternal(tokens []string, detached bool) (*ExternalProcess, erro
 	return &p, nil
 }
 
-func (pr *ExternalProcess) GetExtTaskInterface() msg.ExtTaskInterface {
+func (pr *ExternalTask) GetExtTaskInterface() msg.ExtTaskInterface {
 	return msg.ExtTaskInterface(pr)
 }
 
-func (pr *ExternalProcess) Init(tokens []string) error {
+func (pr *ExternalTask) Init(tokens []string) error {
 	app.At(te, "Init")
 
 	var err error
@@ -104,7 +104,7 @@ func (pr *ExternalProcess) Init(tokens []string) error {
 	return nil
 }
 
-func (pr *ExternalProcess) createCMDAccordingToOS(tokens []string) (*exec.Cmd, error) {
+func (pr *ExternalTask) createCMDAccordingToOS(tokens []string) (*exec.Cmd, error) {
 	app.At(te, "createCMDAccordingToOS")
 
 	ros := runtime.GOOS
@@ -118,7 +118,7 @@ func (pr *ExternalProcess) createCMDAccordingToOS(tokens []string) (*exec.Cmd, e
 	return nil, errors.New("Unknown Operating System. Aborting command initilization")
 }
 
-func (pr *ExternalProcess) cmdInRoutine() {
+func (pr *ExternalTask) cmdInRoutine() {
 	app.At(te, "cmdInRoutine")
 
 	for {
@@ -142,7 +142,7 @@ func (pr *ExternalProcess) cmdInRoutine() {
 	}
 }
 
-func (pr *ExternalProcess) cmdOutRoutine() {
+func (pr *ExternalTask) cmdOutRoutine() {
 	app.At(te, "cmdOutRoutine")
 
 	for {
@@ -164,7 +164,7 @@ func (pr *ExternalProcess) cmdOutRoutine() {
 	}
 }
 
-func (pr *ExternalProcess) startRoutines() error {
+func (pr *ExternalTask) startRoutines() error {
 
 	if pr.stdOutPipe == nil {
 		return errors.New("Standard out pipe of process is nil")
@@ -195,11 +195,11 @@ func (pr *ExternalProcess) startRoutines() error {
 	return nil
 }
 
-func (pr *ExternalProcess) stopRoutines() {
+func (pr *ExternalTask) stopRoutines() {
 	close(pr.shutdown)
 }
 
-func (pr *ExternalProcess) processOutput() {
+func (pr *ExternalTask) processOutput() {
 	select {
 	case data := <-pr.ProcessIn:
 		println("ProcessOutput() - data := ", string(data))
@@ -208,7 +208,7 @@ func (pr *ExternalProcess) processOutput() {
 	}
 }
 
-func (pr *ExternalProcess) processInput() {
+func (pr *ExternalTask) processInput() {
 	select {
 	case data := <-pr.cmdIn:
 		println("ProcessInput() - data := ", string(data))

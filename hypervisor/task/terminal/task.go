@@ -53,8 +53,8 @@ func (pr *Process) HasExtProcessAttached() bool {
 	return pr.hasExtProcAttached
 }
 
-func (pr *Process) AttachExternalProcess(extProc msg.ExtTaskInterface) error {
-	app.At(path, "AttachExternalProcess")
+func (pr *Process) AttachExternalTask(extProc msg.ExtTaskInterface) error {
+	app.At(path, "AttachExternalTask")
 	err := extProc.Attach()
 	if err != nil {
 		return err
@@ -66,8 +66,8 @@ func (pr *Process) AttachExternalProcess(extProc msg.ExtTaskInterface) error {
 	return nil
 }
 
-func (pr *Process) DetachExternalProcess() {
-	app.At(path, "DetachExternalProcess")
+func (pr *Process) DetachExternalTask() {
+	app.At(path, "DetachExternalTask")
 	// pr.attachedExtProcess.Detach()
 	pr.attachedExtProcess = nil
 	pr.hasExtProcAttached = false

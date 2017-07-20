@@ -3,11 +3,11 @@
 ------- NEXT THINGS TODO: -------
 
 * RPC cli:
-	add functionality to print running jobs for a given process id
-	that can be retrieved by lp or setting the process id as default
+	add functionality to print running jobs for a given task id
+	that can be retrieved by lp or setting the task id as default
 	because that already exists
 
-* ExternalProcess:
+* ExternalTask:
 	Ctrl + c - detach, delete, kill probably
 	Ctrl + z - detach and let it be running or pause it (https://repl.it/GeGn/1)?,
 	jobs - list all jobs of current terminal

@@ -158,7 +158,7 @@ func (st *State) commandStart(args []string) {
 	procId := hypervisor.AddExtTask(extProcInterface)
 
 	if !detached {
-		err = st.proc.AttachExternalProcess(extProcInterface)
+		err = st.proc.AttachExternalTask(extProcInterface)
 		if err != nil {
 			st.PrintError(err.Error())
 		}
@@ -286,7 +286,7 @@ func (st *State) commandAttach(args []string) {
 	}
 
 	st.PrintLn(extProc.GetFullCommandLine())
-	err = st.proc.AttachExternalProcess(extProc)
+	err = st.proc.AttachExternalTask(extProc)
 	if err != nil {
 		st.PrintError(err.Error())
 	}

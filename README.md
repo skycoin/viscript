@@ -357,8 +357,8 @@ System Level Enumerations
 - give me list of programs running on a node
 - give me a list of channels (communication channels) between nodes
 
-- deploy a process on a node
-- shutdown process on node
+- deploy a task on a node
+- shutdown task on a node
 
 - get CPU/ ram usage, etc
 
