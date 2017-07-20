@@ -149,7 +149,7 @@ func (st *State) onUserCommand() {
 	println(s)
 
 	if st.proc.HasExtProcessAttached() {
-		extProcInChannel := st.proc.attachedExtProcess.GetProcessInChannel()
+		extProcInChannel := st.proc.attachedExtProcess.GetTaskInChannel()
 		extProcInChannel <- []byte(st.Cli.CurrentCommandLine())
 		return
 	}

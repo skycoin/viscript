@@ -67,14 +67,14 @@ func (pr *ExternalProcess) GetFullCommandLine() string {
 	return pr.CommandLine
 }
 
-func (pr *ExternalProcess) GetProcessInChannel() chan []byte {
+func (pr *ExternalProcess) GetTaskInChannel() chan []byte {
 	return pr.ProcessIn
 }
 
-func (pr *ExternalProcess) GetProcessOutChannel() chan []byte {
+func (pr *ExternalProcess) GetTaskOutChannel() chan []byte {
 	return pr.ProcessOut
 }
 
-func (pr *ExternalProcess) GetProcessExitChannel() chan struct{} {
+func (pr *ExternalProcess) GetTaskExitChannel() chan struct{} {
 	return pr.ProcessExit
 }

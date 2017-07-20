@@ -90,7 +90,7 @@ func (c *CliManager) ListTermIDsWithAttachedProcesses(_ []string) error {
 }
 
 func (c *CliManager) ListProcesses(_ []string) error {
-	processInfos, err := GetProcesses(c.Client)
+	processInfos, err := GetTasks(c.Client)
 	if err != nil {
 		return err
 	}
@@ -225,7 +225,7 @@ func GetTermIDsWithProcessIDs(client *tm.RPCClient) ([]msg.TermAndAttachedProces
 	return termsAndAttachedProcesses, nil
 }
 
-func GetProcesses(client *tm.RPCClient) ([]msg.ProcessInfo, error) {
+func GetTasks(client *tm.RPCClient) ([]msg.ProcessInfo, error) {
 	response, err := client.SendToRPC("ListProcesses", []string{})
 	if err != nil {
 		return []msg.ProcessInfo{}, err

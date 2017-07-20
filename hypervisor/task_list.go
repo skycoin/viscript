@@ -46,8 +46,8 @@ func AddProcess(p msg.ProcessInterface) msg.ProcessId {
 	return id
 }
 
-func GetProcessEvents() {
-	println("process_list.GetProcessEvents()   ---------------- TODO !!!!!!!!!!!")
+func GetTaskEvents() {
+	println("process_list.GetTaskEvents()   ---------------- TODO !!!!!!!!!!!")
 }
 
 func TickTasks() {

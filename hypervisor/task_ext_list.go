@@ -71,7 +71,7 @@ func TickExtTasks() {
 	// }
 
 	// select {
-	// case <-p.GetProcessExitChannel():
+	// case <-p.GetTaskExitChannel():
 	// 	println("Got the exit in task ext list")
 	// default:
 	// }

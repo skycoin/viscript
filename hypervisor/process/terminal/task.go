@@ -37,8 +37,8 @@ func MakeNewTask() *Process {
 	return &p
 }
 
-func (pr *Process) GetProcessInterface() msg.ProcessInterface {
-	app.At(path, "GetProcessInterface")
+func (pr *Process) GetTaskInterface() msg.ProcessInterface {
+	app.At(path, "GetTaskInterface")
 	return msg.ProcessInterface(pr)
 }
 
@@ -108,14 +108,14 @@ func (pr *Process) Tick() {
 	}
 
 	select {
-	//case exit := <-pr.attachedExtProcess.GetProcessExitChannel():
+	//case exit := <-pr.attachedExtProcess.GetTaskExitChannel():
 	// if exit {
 	// 	println("Got the exit in task, process is finished.")
 	// 	//TODO: still not working yet. looking for the best way to finish
 	// 	//multiple goroutines at the same time to avoid any side effects
 	// 	pr.ExitExtProcess()
 	// }
-	case data := <-pr.attachedExtProcess.GetProcessOutChannel():
+	case data := <-pr.attachedExtProcess.GetTaskOutChannel():
 		println("Received data from external process, sending to term.")
 		pr.State.PrintLn(string(data))
 	default:

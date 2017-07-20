@@ -19,7 +19,7 @@ type ExtProcessInterface interface {
 	TearDown()
 	GetId() ExtProcessId
 	GetFullCommandLine() string
-	GetProcessInChannel() chan []byte
-	GetProcessOutChannel() chan []byte
-	GetProcessExitChannel() chan struct{}
+	GetTaskInChannel() chan []byte
+	GetTaskOutChannel() chan []byte
+	GetTaskExitChannel() chan struct{}
 }
