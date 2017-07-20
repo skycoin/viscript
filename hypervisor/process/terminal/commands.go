@@ -153,7 +153,7 @@ func (st *State) commandStart(args []string) {
 		return
 	}
 
-	extProcInterface := newExtProc.GetExtProcessInterface()
+	extProcInterface := newExtProc.GetExtTaskInterface()
 
 	procId := hypervisor.AddExtTask(extProcInterface)
 

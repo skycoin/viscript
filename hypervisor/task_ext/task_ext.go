@@ -58,8 +58,8 @@ func MakeNewTaskExternal(tokens []string, detached bool) (*ExternalProcess, erro
 	return &p, nil
 }
 
-func (pr *ExternalProcess) GetExtProcessInterface() msg.ExtProcessInterface {
-	return msg.ExtProcessInterface(pr)
+func (pr *ExternalProcess) GetExtTaskInterface() msg.ExtTaskInterface {
+	return msg.ExtTaskInterface(pr)
 }
 
 func (pr *ExternalProcess) Init(tokens []string) error {

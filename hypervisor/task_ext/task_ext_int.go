@@ -5,7 +5,7 @@ import (
 	"github.com/skycoin/viscript/msg"
 )
 
-//ExtProcessInterface implementation
+//ExtTaskInterface implementation
 
 func (pr *ExternalProcess) Tick() {
 	pr.processInput()

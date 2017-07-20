@@ -17,7 +17,7 @@ type Process struct {
 	State        State
 
 	hasExtProcAttached bool
-	attachedExtProcess msg.ExtProcessInterface
+	attachedExtProcess msg.ExtTaskInterface
 }
 
 //non-instanced
@@ -37,9 +37,9 @@ func MakeNewTask() *Process {
 	return &p
 }
 
-func (pr *Process) GetTaskInterface() msg.ProcessInterface {
+func (pr *Process) GetTaskInterface() msg.TaskInterface {
 	app.At(path, "GetTaskInterface")
-	return msg.ProcessInterface(pr)
+	return msg.TaskInterface(pr)
 }
 
 func (pr *Process) DeleteProcess() {
@@ -53,7 +53,7 @@ func (pr *Process) HasExtProcessAttached() bool {
 	return pr.hasExtProcAttached
 }
 
-func (pr *Process) AttachExternalProcess(extProc msg.ExtProcessInterface) error {
+func (pr *Process) AttachExternalProcess(extProc msg.ExtTaskInterface) error {
 	app.At(path, "AttachExternalProcess")
 	err := extProc.Attach()
 	if err != nil {

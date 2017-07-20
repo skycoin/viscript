@@ -123,7 +123,7 @@ func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSin
 func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 	//make it's task
 	task := termTask.MakeNewTask()
-	tskIF := msg.ProcessInterface(task)
+	tskIF := msg.TaskInterface(task)
 	tskId := hypervisor.AddProcess(tskIF)
 
 	task.State.VisualInfo = ts.Terms[termId].GetVisualInfo()

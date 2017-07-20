@@ -21,11 +21,11 @@ import (
 var ProcessListGlobal ProcessList
 
 type ProcessList struct {
-	ProcessMap map[msg.ProcessId]msg.ProcessInterface //process id to interface
+	ProcessMap map[msg.ProcessId]msg.TaskInterface //process id to interface
 }
 
 func initProcessList() {
-	ProcessListGlobal.ProcessMap = make(map[msg.ProcessId]msg.ProcessInterface)
+	ProcessListGlobal.ProcessMap = make(map[msg.ProcessId]msg.TaskInterface)
 }
 
 func teardownProcessList() {
@@ -36,7 +36,7 @@ func teardownProcessList() {
 	// and external processes
 }
 
-func AddProcess(p msg.ProcessInterface) msg.ProcessId {
+func AddProcess(p msg.TaskInterface) msg.ProcessId {
 	id := p.GetId()
 
 	_, isInTheMap := ProcessListGlobal.ProcessMap[id]

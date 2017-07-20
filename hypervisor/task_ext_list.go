@@ -10,11 +10,11 @@ import (
 var ExtTaskListGlobal ExtTaskList
 
 type ExtTaskList struct {
-	ProcessMap map[msg.ExtProcessId]msg.ExtProcessInterface
+	ProcessMap map[msg.ExtProcessId]msg.ExtTaskInterface
 }
 
 func initExtTaskList() {
-	ExtTaskListGlobal.ProcessMap = make(map[msg.ExtProcessId]msg.ExtProcessInterface)
+	ExtTaskListGlobal.ProcessMap = make(map[msg.ExtProcessId]msg.ExtTaskInterface)
 }
 
 func teardownExtTaskList() {
@@ -27,7 +27,7 @@ func ExtProcessIsRunning(procId msg.ExtProcessId) bool {
 	return exists
 }
 
-func AddExtTask(ep msg.ExtProcessInterface) msg.ExtProcessId {
+func AddExtTask(ep msg.ExtTaskInterface) msg.ExtProcessId {
 	id := ep.GetId()
 
 	if !ExtProcessIsRunning(id) {
@@ -37,7 +37,7 @@ func AddExtTask(ep msg.ExtProcessInterface) msg.ExtProcessId {
 	return id
 }
 
-func GetExtProcess(id msg.ExtProcessId) (msg.ExtProcessInterface, error) {
+func GetExtProcess(id msg.ExtProcessId) (msg.ExtTaskInterface, error) {
 	extProc, exists := ExtTaskListGlobal.ProcessMap[id]
 	if exists {
 		return extProc, nil
