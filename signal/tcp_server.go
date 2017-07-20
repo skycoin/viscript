@@ -14,6 +14,13 @@ import (
 
 var Sequence uint32 = 1
 
+var K uint32 = 0 //just for demo
+
+func incrK() uint32 {
+	K++
+	return K
+}
+
 func GetNextMessageID() uint32 {
 	Sequence++
 	return Sequence
@@ -69,9 +76,9 @@ func (self *MonitorServer) Serve() {
 		remoteAddr := appConn.RemoteAddr().String()
 		go func() { // run listening the connection for user command exchange between viscript and app (ping, shutdown, resources request etc.)
 			for {
-				message := make([]byte, 16384)
+				message := make([]byte, 42)
 
-				n, err := appConn.Read(message)
+				_, err := appConn.Read(message)
 				if err != nil {
 					return
 					if err == io.EOF {
@@ -81,24 +88,23 @@ func (self *MonitorServer) Serve() {
 						break
 					}
 				}
-
-				uc := &msg.MessageUserCommand{}
-				err = msg.Deserialize(message[:n], uc)
+				uc := &msg.MessageUserCommandAck{}
+				err = msg.Deserialize(message, uc)
 				if err != nil {
 					panic(err)
 				}
-				log.Println("received message for sequence", uc.Sequence)
+				//log.Println("received message for sequence", uc.Sequence)
 
 				appId := uc.AppId
-				sequence := uc.Sequence
+				//sequence := uc.Sequence
 
 				self.lock.Lock()
 				if _, ok := self.connections[appId]; !ok { // if viscript already created an app, this connection is already in the map
 					self.connections[appId] = appConn // if no, then add current connection to the map; so next iterations will skip this step
 				}
-				respChan, ok0 := self.responseChannels[sequence] // take response channel for responding to it
+				respChan, ok0 := self.responseChannels[K] // take response channel for responding to it
 				self.lock.Unlock()
-
+				incrK()
 				if !ok0 {
 					log.Println("no response channel", err)
 					continue
@@ -132,27 +138,49 @@ func (self *MonitorServer) PrintAll() {
 	}
 }
 
-func (self *MonitorServer) Send(appId uint32, message []byte) ([]byte, error) {
-
+func (self *MonitorServer) Send(appId uint32, message []byte) ([]byte, string, error) {
 	respChan, sequence := self.MakeResponseChannel()
 
 	self.lock.Lock()
-	conn, ok := self.connections[appId]
-	self.lock.Unlock()
-
-	if !ok {
-		return nil, errors.New(fmt.Sprintf("no connection to app with id %d\n", appId))
+	conn, e := net.Dial("tcp", "0.0.0.0:8001")
+	if e != nil {
+		log.Println("bad conn")
 	}
+	self.lock.Unlock()
+	var n uint32 = appId
+	str := fmt.Sprint(n)
 
 	uc := &msg.MessageUserCommand{sequence, appId, message}
 	ucS := msg.Serialize(msg.TypeUserCommand, uc)
+	sendTime := time.Now()
 	_, err := conn.Write(ucS)
 	if err != nil {
-		return nil, err
+		return nil, str, err
 	}
-
 	response, err := self.Wait(respChan, sequence)
-	return response, err
+
+		switch msg.GetType(response) {
+
+		case msg.TypeResourceUsageAck:
+			answer := msg.MessageResourceUsageAck{}
+			err = msg.Deserialize(response, &answer)
+			if err != nil {
+				panic(err)
+			}
+			log.Println("cpu: ",answer.CPU, "memory: ", answer.Memory)
+
+		case msg.TypePingAck:
+			getTime := time.Now()
+			log.Print(getTime.Sub(sendTime).Seconds()*1000, " ms")
+
+		case msg.TypeShutdownAck:
+			log.Println("app is closed.")
+
+		default:
+			log.Println("Incorrect command type")
+		}
+
+	return response, "end", err
 }
 
 func (self *MonitorServer) MakeResponseChannel() (chan []byte, uint32) {
