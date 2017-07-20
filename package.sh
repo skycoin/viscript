@@ -15,13 +15,14 @@ pv () {
     fi
 }
 
+os=$(uname -s)
 # Get executable program name depending on running shell environment
 getPlatformExeName () {
     local platformExeName=$1;
 
-    if [ "$(substr "$(uname -s)" 1 10)" == "MINGW32_NT" ]; then
+    if [ "${os:0:10}" == "MINGW32_NT" ]; then
         echo "$platformExeName.exe";
-    elif [ "$(substr "$(uname -s)" 1 10)" == "MINGW64_NT" ]; then
+    elif [ "${os:0:10}" == "MINGW64_NT" ]; then
         echo "$platformExeName.exe";
     else
         echo "$platformExeName";
@@ -34,7 +35,7 @@ echo "$skycoinName"
 echo "Start of packaging viscript and binaries:"
 
 # Set Root directory name
-readonly ROOT_DIR="$PWD/Viscript"
+readonly ROOT_DIR="$PWD/viscript.d"
 pv "Setting root directory to $ROOT_DIR"
 
 # Make directory for Viscript
@@ -236,7 +237,7 @@ cp "README.md" "$ROOT_DIR/"
 
 # Move all assets that are required for viscript
 pv "Copying assets folder inside the root directory for viscript"
-cp -R "assets/" "$ROOT_DIR/"
+cp -R "assets" "$ROOT_DIR/"
 
 # Get viscript cli platform independent binary name
 viscriptCliExeName=$(getPlatformExeName "viscript-cli")
@@ -327,8 +328,8 @@ mv "$meshnetNodeExeName" "$ROOT_DIR/bin/meshnet/"
 pv "Changing directory to vpn creation scripts location"
 cd "../app/vpn" || exit
 
-if [ "$(substr "$(uname -s)" 1 5)" == "Linux" ] \
-    || [ "$(substr "$(uname -s)" 1 6)" == "Darwin" ]; then
+if [ "${os:0:5}" == "Linux" ] \
+    || [ "${os:0:6}" == "Darwin" ]; then
     # Get meshnet run vpn client platform independent binary name
     meshnetVpnClientExeName=$(getPlatformExeName "meshnet-run-vpn-client")
 
@@ -411,13 +412,11 @@ cp -rf "$ROOT_DIR/bin/" ./
 
 # Copy appropriate platform dependent config file to for viscript to use
 pv "Copying viscript os dependent config yaml file"
-if [ "$(substr "$(uname -s)" 1 5)" == "Linux" ] \
-    || [ "$(substr "$(uname -s)" 1 6)" == "Darwin" ]; 
-then
+if [ "${os:0:5}" == "Linux" ] \
+    || [ "${os:0:6}" == "Darwin" ]; then
     cp "config.yaml" "$ROOT_DIR/config.yaml"
 else
-    cp "config-win.yaml" "$ROOT_DIR/config-win.yaml"
-    mv "$ROOT_DIR/config-win.yaml" "$ROOT_DIR/config.yaml"
+    cp "config-win.yaml" "$ROOT_DIR/config.yaml"
 fi
 
 # Print Done
