@@ -23,7 +23,7 @@ func (st *State) commandHelp() {
 	//st.PrintLn("Current commands:")
 	st.PrintLn("------ Terminals ------")
 	st.PrintLn("clear:                 Clears currently focused terminal.")
-	st.PrintLn("del_term <id>:         Delete terminal with index to the terminal id.")
+	st.PrintLn("close_term <id>:         Delete terminal with index to the terminal id.")
 	st.PrintLn("list_terms:            List all terminal ids.")
 	st.PrintLn("new_term:              Add new terminal (n for short).")
 	st.PrintLn("------ Apps -----------")
@@ -155,7 +155,7 @@ func (st *State) commandStart(args []string) {
 
 	extProcInterface := newExtProc.GetExtProcessInterface()
 
-	procId := hypervisor.AddExtProcess(extProcInterface)
+	procId := hypervisor.AddExtTask(extProcInterface)
 
 	if !detached {
 		err = st.proc.AttachExternalProcess(extProcInterface)
@@ -295,7 +295,7 @@ func (st *State) commandAttach(args []string) {
 func (st *State) commandListExternalTasks(args []string) {
 	app.At(cp, "commandListExternalTasks")
 
-	extTaskMap := hypervisor.ExtProcessListGlobal.ProcessMap
+	extTaskMap := hypervisor.ExtTaskListGlobal.ProcessMap
 	if len(extTaskMap) == 0 {
 		st.PrintLn("No external tasks running.\n" +
 			"Try starting one with \"start\" command (\"help\" or \"h\" for help).")
@@ -322,9 +322,9 @@ func (st *State) commandListExternalTasks(args []string) {
 	}
 }
 
-func (st *State) commandDeleteTerminalFirstStage(args []string) {
+func (st *State) commandCloseTerminalFirstStage(args []string) {
 	if len(args) == 1 {
-		//case out storedTerminalIds
+		//handle storedTerminalIds errors
 		if /****/ len(st.storedTerminalIds) < 1 {
 			st.PrintError("Use 'list_terms' command to see their IDs")
 			return
@@ -333,6 +333,7 @@ func (st *State) commandDeleteTerminalFirstStage(args []string) {
 			return
 		}
 
+		//handle arg conversion errors
 		storedId, err := strconv.Atoi(args[0])
 		if err != nil {
 			st.PrintError("Unable to convert passed index.")
@@ -341,18 +342,19 @@ func (st *State) commandDeleteTerminalFirstStage(args []string) {
 			return
 		}
 
-		//validate index range
+		//handle index errors
 		if storedId < 0 ||
 			storedId >= len(st.storedTerminalIds) {
 			st.PrintError("Index not in range.")
 			return
 		}
 
-		st.SendCommand("del_term", []string{strconv.Itoa(int(st.storedTerminalIds[storedId]))})
+		//everything should be valid here
+		st.SendCommand("close_term", []string{strconv.Itoa(int(st.storedTerminalIds[storedId]))})
 	} else { //args failure (too many/few passed)
 		st.PrintError("Must supply ONE valid ID argument")
-		//IDEALLY we'd want to use ANY VALID index at position 0,
-		//but i think you'd want us to occasionally prioritize simplicity
+		//IDEALLY we'd use ANY VALID index at position 0,
+		//but i think you'd want us to prioritize simplicity
 		//above doing extra coding to handle nitpickiness like that.
 		return
 	}

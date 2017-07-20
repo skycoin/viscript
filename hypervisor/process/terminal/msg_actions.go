@@ -185,10 +185,12 @@ func (st *State) onUserCommand() {
 		st.commandClearTerminal()
 
 	//delete terminal with given index
-	case "dt":
+	case "xt":
 		fallthrough
-	case "del_term":
-		st.commandDeleteTerminalFirstStage(args)
+	case "ct":
+		fallthrough
+	case "close_term":
+		st.commandCloseTerminalFirstStage(args)
 
 	case "list_tasks":
 		st.commandListExternalTasks(args)

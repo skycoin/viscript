@@ -7,12 +7,12 @@ import (
 func (ts *TerminalStack) OnUserCommandFinalStage(tID msg.TerminalId, cmd msg.MessageTokenizedCommand) {
 	switch cmd.Command {
 
-	case "new_term":
-		ts.AddWithFixedSizeState(true)
+	case "close_term":
+		ts.commandCloseTerminalFinalStage(tID)
 	case "list_terms":
 		ts.ListTerminalsWithIds(tID)
-	case "del_term":
-		ts.commandDeleteTerminalsFinalStage(tID)
+	case "new_term":
+		ts.AddWithFixedSizeState(true)
 	default:
 		//nope
 
@@ -30,8 +30,8 @@ func (ts *TerminalStack) ListTerminalsWithIds(termId msg.TerminalId) {
 	ts.Focused.RelayToTask(msg.Serialize(msg.TypeTerminalIds, m))
 }
 
-//for simplicity, we'll try to handle all the edge cases in the first stage, so that
-//THIS SHOULD NEVER BE RUN WITHOUT A VALID ID
-func (ts *TerminalStack) commandDeleteTerminalsFinalStage(id msg.TerminalId) {
+func (ts *TerminalStack) commandCloseTerminalFinalStage(id msg.TerminalId) {
+	//for simplicity, all edge cases are to be handled in the first stage, so that...
+	//THIS SHOULD NEVER BE RUN WITHOUT A VALID ID
 	ts.Remove(id)
 }

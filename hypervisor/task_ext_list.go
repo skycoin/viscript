@@ -7,38 +7,38 @@ import (
 	"github.com/skycoin/viscript/msg"
 )
 
-var ExtProcessListGlobal ExtProcessList
+var ExtTaskListGlobal ExtTaskList
 
-type ExtProcessList struct {
+type ExtTaskList struct {
 	ProcessMap map[msg.ExtProcessId]msg.ExtProcessInterface
 }
 
-func initExtProcessList() {
-	ExtProcessListGlobal.ProcessMap = make(map[msg.ExtProcessId]msg.ExtProcessInterface)
+func initExtTaskList() {
+	ExtTaskListGlobal.ProcessMap = make(map[msg.ExtProcessId]msg.ExtProcessInterface)
 }
 
-func teardownExtProcessList() {
-	ExtProcessListGlobal.ProcessMap = nil
+func teardownExtTaskList() {
+	ExtTaskListGlobal.ProcessMap = nil
 	// TODO: Further cleanup
 }
 
 func ExtProcessIsRunning(procId msg.ExtProcessId) bool {
-	_, exists := ExtProcessListGlobal.ProcessMap[procId]
+	_, exists := ExtTaskListGlobal.ProcessMap[procId]
 	return exists
 }
 
-func AddExtProcess(ep msg.ExtProcessInterface) msg.ExtProcessId {
+func AddExtTask(ep msg.ExtProcessInterface) msg.ExtProcessId {
 	id := ep.GetId()
 
 	if !ExtProcessIsRunning(id) {
-		ExtProcessListGlobal.ProcessMap[id] = ep
+		ExtTaskListGlobal.ProcessMap[id] = ep
 	}
 
 	return id
 }
 
 func GetExtProcess(id msg.ExtProcessId) (msg.ExtProcessInterface, error) {
-	extProc, exists := ExtProcessListGlobal.ProcessMap[id]
+	extProc, exists := ExtTaskListGlobal.ProcessMap[id]
 	if exists {
 		return extProc, nil
 	}
@@ -50,12 +50,12 @@ func GetExtProcess(id msg.ExtProcessId) (msg.ExtProcessInterface, error) {
 }
 
 func RemoveExtProcess(id msg.ExtProcessId) {
-	delete(ExtProcessListGlobal.ProcessMap, id)
+	delete(ExtTaskListGlobal.ProcessMap, id)
 }
 
 func TickExtTasks() {
 	// TODO: Read from response channels if they contain any new messages
-	// for _, p := range ExtProcessListGlobal.ProcessMap {
+	// for _, p := range ExtTaskListGlobal.ProcessMap {
 	// data, err := monitor.Monitor.ReadFrom(p.GetId())
 	// if err != nil {
 	// 	// println(err.Error())
