@@ -6,7 +6,7 @@ import (
 	"github.com/skycoin/viscript/msg"
 )
 
-var path = "hypervisor/process/terminal/task"
+var path = "hypervisor/task/terminal/task"
 
 type Process struct {
 	Id           msg.ProcessId

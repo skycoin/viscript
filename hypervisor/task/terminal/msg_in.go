@@ -34,7 +34,7 @@ func (st *State) UnpackMessage(msgType uint16, message []byte) []byte {
 		st.onTerminalIds(m)
 
 	default:
-		app.At("hypervisor/process/terminal/msg_in", "UNKNOWN MESSAGE TYPE!!!")
+		app.At("hypervisor/task/terminal/msg_in", "UNKNOWN MESSAGE TYPE!!!")
 
 	}
 

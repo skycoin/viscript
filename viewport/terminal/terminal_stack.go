@@ -7,7 +7,7 @@ import (
 	"github.com/skycoin/viscript/hypervisor"
 	"github.com/skycoin/viscript/hypervisor/dbus"
 	"github.com/skycoin/viscript/hypervisor/input/keyboard"
-	termTask "github.com/skycoin/viscript/hypervisor/process/terminal"
+	termTask "github.com/skycoin/viscript/hypervisor/task/terminal"
 	"github.com/skycoin/viscript/msg"
 	"github.com/skycoin/viscript/viewport/gl"
 )

@@ -16,7 +16,7 @@ import (
 	"github.com/skycoin/viscript/signal"
 )
 
-const cp = "hypervisor/process/terminal/commands"
+const cp = "hypervisor/task/terminal/commands"
 
 func (st *State) commandHelp() {
 	st.PrintLn(app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)))

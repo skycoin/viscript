@@ -5,7 +5,7 @@ import (
 	"github.com/skycoin/viscript/msg"
 )
 
-var stPath = "hypervisor/process/terminal/state"
+var stPath = "hypervisor/task/terminal/state"
 
 type State struct {
 	DebugPrintInputEvents bool
