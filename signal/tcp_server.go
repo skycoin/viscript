@@ -115,22 +115,22 @@ func (self *MonitorServer) Serve() {
 	}
 }
 
-func (self *MonitorServer) ReadFrom(appId msg.ExtTaskId) ([]byte, error) {
-	appMessageChannel, exists := self.responseChannels[uint32(appId)]
-	if !exists {
-		errString := fmt.Sprintf("Channel with ID: %d doesn't exist.", appId)
-		err := errors.New(errString)
-		return []byte{}, err
-	}
-
-	select {
-	case data := <-appMessageChannel:
-		return data, nil
-	default:
-	}
-
-	return []byte{}, errors.New(string(appId) + " app channel is empty.")
-}
+//func (self *MonitorServer) ReadFrom(appId msg.ExtTaskId) ([]byte, error) {
+//	appMessageChannel, exists := self.responseChannels[uint32(appId)]
+//	if !exists {
+//		errString := fmt.Sprintf("Channel with ID: %d doesn't exist.", appId)
+//		err := errors.New(errString)
+//		return []byte{}, err
+//	}
+//
+//	select {
+//	case data := <-appMessageChannel:
+//		return data, nil
+//	default:
+//	}
+//
+//	return []byte{}, errors.New(string(appId) + " app channel is empty.")
+//}
 
 func (self *MonitorServer) PrintAll() {
 	for key, _ := range self.responseChannels {
