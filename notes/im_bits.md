@@ -550,11 +550,11 @@ we have provide an api through hypevisor.
 that will allow a task bar to exist.
 and task bar is just another program.
 we do not need a task bar, but do need method to get the GUI windows.
-and then methods to get the running processes and will eventually have terminal app for that.
-I will do a process list, and a method for running multiple processes and message dispatch.
+and then methods to get the running tasks and will eventually have terminal app for that.
+I will do a process list, and a method for running multiple tasks and message dispatch.
 
-eventually the processes need to be in the scripting language, along with the UI library and handling and processing.
-we have one computer process in golang, but inside that, we have "terminals" or discrete processes (can accept messages and can emit messages).
+eventually the tasks need to be in the scripting language, along with the UI library and handling and processing.
+we have one computer process in golang, but inside that, we have "terminals" or discrete tasks (can accept messages and can emit messages).
 
 for menu button, make a 3x3 or 4x4 button of characters, no text.
 look at uplink, hacker elite for interface.
@@ -616,7 +616,7 @@ and is terminal a process object?
 
 i have a thing called a process and it accepts length prefixed messages and it emits them.
 do we want it setting cursor and screen with the length prefixed messages?
-and we have a screen or terminal thing, which might be different type of resource than a process, but the processes may drive the screens or terminals.
+and we have a screen or terminal thing, which might be different type of resource than a process, but the tasks may drive the screens or terminals.
 
 how do we do this?
 
@@ -776,10 +776,10 @@ and terminal only has
 
 
 do you see what I did with process list?
-processes receive messages
-processes communicate back with messages
+tasks receive messages
+tasks communicate back with messages
 888888888888888888888888888888888888888888888888888888888
-processes control the terminal via message api; processes get the inputs from a terminal object
+tasks control the terminal via message api; tasks get the inputs from a terminal object
 and almost all of the terminal state, has to be pushed into a process interface implementatoin; and the state is specific to a process
 etc its type and what it does
 while set character, get screen size, set cursor etc, is generic to the terminal
@@ -840,7 +840,7 @@ and the process responds with length prefixed messages.
 
 
 there is no reason a process needs a terminal, but i do not have any process instances right now that are not using the terminal interface to set gui.
-it is impossible to start a process without a terminal, because processes that take in user input and have termial, exist.
+it is impossible to start a process without a terminal, because tasks that take in user input and have termial, exist.
 becuase you need a process with a terminal, to run a process that does not have a terminal
 
 
@@ -896,17 +896,17 @@ a terminal is a rectangle in the window, drawn by hypervisor
 
 I would be happy if
 - terminals draw to screen
-- the processes can animate the terminals
+- the tasks can animate the terminals
 - the proecess user input handle is already implemented
 
-the process gets events in on the events in channel, you call tick and it processes them and events go out on the events out channel
+the process gets events in on the events in channel, you call tick and it tasks them and events go out on the events out channel
 and the process is determinstic.
 go into /process/example/api.go
 
 that is function that writes terminal messages to the output event channel
 
 issues:
-2> the terminals are not associated to processes yet
+2> the terminals are not associated to tasks yet
 
 
 
@@ -969,7 +969,7 @@ needs:
 once we have bash terminal setup
 then we do commands for
 list terminals
-list processes
+list tasks
 start process
 and we do reflection/introspection self tests
 so system self boot straps
@@ -1066,7 +1066,7 @@ we have a special, terminal or terminal 0, that is size of whole viewport and is
 
 
 there is a general app or process type for bash type commands like this
-but other types of processes are for other apps and not a general type of terminal
+but other types of tasks are for other apps and not a general type of terminal
 
 
 
@@ -1074,7 +1074,7 @@ but other types of processes are for other apps and not a general type of termin
 
 
 
-we are supposed to have a resource registry, where all viewports, terminals, processes are given an id and we have ResourceId and ResourceType, but will leave it for now or ignore it and I am not sure its used for anything right now
+we are supposed to have a resource registry, where all viewports, terminals, tasks are given an id and we have ResourceId and ResourceType, but will leave it for now or ignore it and I am not sure its used for anything right now
 and it is part of dbus right now, but not sure that is best place
 dbus creates channels for communication between resources
 a resource has an in and a resource type
@@ -1120,7 +1120,7 @@ and update the terminal state etc
 the process has a document object model, then you scroll through it and the
 terminal sends messages about how to render it, etc
 
-process is implemented as an interface because we might have several types of processes
+process is implemented as an interface because we might have several types of tasks
 or implementations.
 
 for instance, a bash type printf driven process.  Then have another process
@@ -1251,7 +1251,7 @@ for scrolling the terminal task needs to store internal redundant text backlog e
 
 
 eventually we need master api
-to list all terminals and attached processes
+to list all terminals and attached tasks
 or list all dbus objects and subscribers and publishers
 and to start a new terminal or process of a specific type from a list.
 it might only need one packet type.  for receiving text and another for responding

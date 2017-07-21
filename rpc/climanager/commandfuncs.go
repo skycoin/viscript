@@ -57,7 +57,7 @@ func (c *CliManager) ClearTerminal(_ []string) error {
 	return nil
 }
 
-func (c *CliManager) ListTermIDsWithAttachedProcesses(_ []string) error {
+func (c *CliManager) ListTermIDsWithAttachedTasks(_ []string) error {
 	termsWithTaskIds, err := GetTermIDsWithTaskIds(c.Client)
 
 	if err != nil {
@@ -89,13 +89,13 @@ func (c *CliManager) ListTermIDsWithAttachedProcesses(_ []string) error {
 	return nil
 }
 
-func (c *CliManager) ListProcesses(_ []string) error {
+func (c *CliManager) ListTasks(_ []string) error {
 	processInfos, err := GetTasks(c.Client)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Processes (%d) default marked with {}:\n", len(processInfos))
+	fmt.Printf("Tasks (%d) default marked with {}:\n", len(processInfos))
 	fmt.Println("\nIdx\t Id\t Type\t\t Label")
 	for index, processInfo := range processInfos {
 		if processInfo.Id == c.ChosenTaskId {
@@ -217,16 +217,16 @@ func GetTermIDsWithTaskIds(client *tm.RPCClient) ([]msg.TermAndAttachedTaskId, e
 		return []msg.TermAndAttachedTaskId{}, err
 	}
 
-	var termsAndAttachedProcesses []msg.TermAndAttachedTaskId
-	err = msg.Deserialize(response, &termsAndAttachedProcesses)
+	var termsAndAttachedTasks []msg.TermAndAttachedTaskId
+	err = msg.Deserialize(response, &termsAndAttachedTasks)
 	if err != nil {
 		return []msg.TermAndAttachedTaskId{}, err
 	}
-	return termsAndAttachedProcesses, nil
+	return termsAndAttachedTasks, nil
 }
 
 func GetTasks(client *tm.RPCClient) ([]msg.ProcessInfo, error) {
-	response, err := client.SendToRPC("ListProcesses", []string{})
+	response, err := client.SendToRPC("ListTasks", []string{})
 	if err != nil {
 		return []msg.ProcessInfo{}, err
 	}

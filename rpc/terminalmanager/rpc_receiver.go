@@ -112,12 +112,12 @@ func (receiver *RPCReceiver) StartTerminalWithProcess(_ []string, result *[]byte
 	return nil
 }
 
-func (receiver *RPCReceiver) ListProcesses(_ []string, result *[]byte) error {
+func (receiver *RPCReceiver) ListTasks(_ []string, result *[]byte) error {
 	println("\nHandling Request: List all process Ids")
-	processes := receiver.TerminalManager.taskList.TaskMap
+	tasks := receiver.TerminalManager.taskList.TaskMap
 	processInfos := make([]msg.ProcessInfo, 0)
 
-	for _, process := range processes {
+	for _, process := range tasks {
 		processInfos = append(processInfos, msg.ProcessInfo{
 			Id:    process.GetId(),
 			Type:  process.GetType(),
@@ -125,7 +125,7 @@ func (receiver *RPCReceiver) ListProcesses(_ []string, result *[]byte) error {
 	}
 
 	println("[==============================]")
-	println("Processes:")
+	println("Tasks:")
 	for _, processInfo := range processInfos {
 		fmt.Printf("Id:%6d\tType:%6d\tLabel:%s\n", processInfo.Id, processInfo.Type, processInfo.Label)
 	}
