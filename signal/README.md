@@ -1,27 +1,15 @@
-## Running CLI
+## package "signal"
 
-In order to be able to run CLI client for viscript RPC server should be running.
-At this point simple RPC server is run using goroutine with the viscript runtime when installing
-and running the viscript:
+Able to create signal-server that can communicate with running nodes. Node must run func:
+signal.InitSignalNode("port", appId).ListenForSignals()
+And when signal-server can connect to this node with func:
+AddSignalNodeConn(address string, port string)
 
-```
-go install && viscript
-```
+After connection is set signal-server can send commands to node like ping, res_usage, shutdown.
 
-Once the server is listening we can just type:
+Also see demo in signal/demo. First run  signal-client.go in signal/demo/client signal/demo/client2.
+When run signal-server.go in signal/demo/server. Add running nodes by typing:
+add_node 0.0.0.0 8001
+add_node 0.0.0.0 8008
 
-```
-go run rpc/cli/cli.go
-```
-
-And the CLI connects to the RPC server which is ready to serve.
-
-## Running with gotty
-
-You could also try launching `cli.sh` script like:
-
-```
-chmod +x cli.sh
-./cli.sh
-```
-to be able to interact with cli using the web interface (uses gotty).
+Use commands with appIds 1,2.
