@@ -12,9 +12,9 @@ import (
 	"github.com/skycoin/viscript/msg"
 )
 
-var Sequence uint32 = 1
+var Sequence uint32 = 0
 
-var K uint32 = 0 //just for demo
+var K uint32 = 1 //just for demo
 
 func incrK() uint32 {
 	K++
@@ -46,6 +46,7 @@ func NewMonitorServer(address string) *MonitorServer {
 	server.lock = &sync.Mutex{}
 	server.responseChannels = make(map[uint32]chan []byte)
 	server.connections = make(map[uint32]net.Conn)
+	server.sequence = Sequence
 	return server
 }
 
@@ -102,9 +103,8 @@ func (self *MonitorServer) Serve() {
 				if _, ok := self.connections[appId]; !ok { // if viscript already created an app, this connection is already in the map
 					self.connections[appId] = appConn // if no, then add current connection to the map; so next iterations will skip this step
 				}
-				respChan, ok0 := self.responseChannels[K] // take response channel for responding to it
+				respChan, ok0 := self.responseChannels[uc.Sequence] // take response channel for responding to it
 				self.lock.Unlock()
-				incrK()
 				if !ok0 {
 					log.Println("no response channel", err)
 					continue
@@ -142,8 +142,8 @@ func (self *MonitorServer) Send(appId uint32, message []byte) ([]byte, string, e
 	respChan, sequence := self.MakeResponseChannel()
 
 	self.lock.Lock()
-	conn, e := net.Dial("tcp", "0.0.0.0:8001")
-	if e != nil {
+	conn, e := self.connections[appId]
+	if !e {
 		log.Println("bad conn")
 	}
 	self.lock.Unlock()
@@ -183,8 +183,23 @@ func (self *MonitorServer) Send(appId uint32, message []byte) ([]byte, string, e
 	return response, "end", err
 }
 
-func (self *MonitorServer) MakeResponseChannel() (chan []byte, uint32) {
+func (self *MonitorServer) AddSignalNodeConn(address string, port string) {
+	str := address + ":" + port
+	conn, e := net.Dial("tcp", str)
+	if e != nil {
+		log.Println("Can't add this node.")
+	}
+	self.connections[K] = conn
+	incrK()
+}
 
+func (self *MonitorServer) ListNodes() {
+	for i:=1; i<=len(self.connections); i++ {
+		log.Println("appId: ", i+1, "remote addres: ", self.connections[uint32(i)].RemoteAddr())
+	}
+}
+
+func (self *MonitorServer) MakeResponseChannel() (chan []byte, uint32) {
 	respChan := make(chan []byte)
 
 	self.lock.Lock()

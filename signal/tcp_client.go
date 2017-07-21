@@ -8,13 +8,25 @@ import (
 	"runtime"
 )
 
-func ListenForSignals(port string) {
-	listenAddress := "0.0.0.0:" + port
+type SignalNode struct {
+	port         string
+	appId        uint32
+}
+
+func InitSignalNode(port string, appId uint32) *SignalNode {
+	client := &SignalNode{port: port,
+		appId: appId,
+	}
+	return client
+}
+
+func (self *SignalNode) ListenForSignals() {
+	listenAddress := "0.0.0.0:" + self.port
 	l, err := net.Listen("tcp", listenAddress)
 	if err != nil {
 		panic(err)
 	}
-	log.Println("Listen for incoming message on port: " + port)
+	log.Println("Listen for incoming message on port: " + self.port)
 	for {
 		appConn, err := l.Accept() // create a connection with the user app (e.g. browser)
 		if err != nil {
@@ -42,12 +54,13 @@ func ListenForSignals(port string) {
 				case msg.TypeUserCommand:
 					uc := msg.MessageUserCommand{}
 					err = msg.Deserialize(sizeMessage, &uc)
+					log.Println(uc.Sequence)
 					if err != nil {
 						log.Println("Incorrect UserCommand:", sizeMessage)
 						continue
 					}
 
-					handleUserCommand(&uc)
+					self.handleUserCommand(&uc)
 
 				default:
 					log.Println("Bad command")
@@ -57,9 +70,9 @@ func ListenForSignals(port string) {
 	}
 }
 
-func handleUserCommand(uc *msg.MessageUserCommand) {
+func (self *SignalNode) handleUserCommand(uc *msg.MessageUserCommand) {
 	log.Println("command received:", uc)
-	//sequence := uc.Sequence
+	sequence := uc.Sequence
 	//appId := uc.AppId
 	message := uc.Payload
 
@@ -75,7 +88,7 @@ func handleUserCommand(uc *msg.MessageUserCommand) {
 			log.Println("ping command")
 			ack := &msg.MessagePingAck{}
 			ackS := msg.Serialize(msg.TypePingAck, ack)
-			SendAck(ackS, 2, 1)
+			self.SendAck(ackS, sequence, self.appId)
 
 		case msg.TypeResourceUsage:
 			log.Println("res_usage command")
@@ -86,14 +99,14 @@ func handleUserCommand(uc *msg.MessageUserCommand) {
 					memory,
 				}
 				ackS := msg.Serialize(msg.TypeResourceUsageAck, ack)
-				SendAck(ackS, 2, 1)
+				self.SendAck(ackS, sequence, self.appId)
 			}
 
 		case msg.TypeShutdown:
 			log.Println("shutdown command")
 			ack := &msg.MessageShutdownAck{}
 			ackS := msg.Serialize(msg.TypeShutdownAck, ack)
-			SendAck(ackS, 2, 1)
+			self.SendAck(ackS, sequence, self.appId)
 			panic("goodbye")
 
 		default:
@@ -102,17 +115,17 @@ func handleUserCommand(uc *msg.MessageUserCommand) {
 		}
 }
 
-func SendAck(ackS []byte, sequence, appId uint32) {
+func (self *SignalNode) SendAck(ackS []byte, sequence, appId uint32) {
 	ucAck := &msg.MessageUserCommandAck{
 		sequence,
-		appId,
+		self.appId,
 		ackS,
 	}
 	ucAckS := msg.Serialize(msg.TypeUserCommandAck, ucAck)
-	send(ucAckS)
+	self.send(ucAckS)
 }
 
-func send(data []byte) {
+func (self *SignalNode) send(data []byte) {
 	conn, e := net.Dial("tcp", "127.0.0.1:7999")
 	if e != nil {
 		log.Println("bad conn")
