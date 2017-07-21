@@ -7,15 +7,15 @@ import (
 
 //ExtTaskInterface implementation
 
-func (pr *ExternalTask) Tick() {
-	pr.taskInput()
-	pr.taskOutput()
+func (et *ExternalTask) Tick() {
+	et.taskInput()
+	et.taskOutput()
 }
 
-func (pr *ExternalTask) Start() error {
+func (et *ExternalTask) Start() error {
 	app.At(te, "Start")
 
-	err := pr.cmd.Start()
+	err := et.cmd.Start()
 	if err != nil {
 		return err
 	}
@@ -23,58 +23,58 @@ func (pr *ExternalTask) Start() error {
 	return nil
 }
 
-func (pr *ExternalTask) TearDown() {
+func (et *ExternalTask) TearDown() {
 	app.At(te, "TearDown")
 
-	pr.cmd.Process.Kill()
+	et.cmd.Process.Kill()
 
-	close(pr.cmdIn)
-	close(pr.cmdOut)
+	close(et.cmdIn)
+	close(et.cmdOut)
 
-	close(pr.TaskIn)
-	close(pr.TaskOut)
-	// close(pr.ProcessExit)
+	close(et.TaskIn)
+	close(et.TaskOut)
+	// close(et.TaskExit)
 
-	if pr.cmd != nil {
-		pr.cmd = nil
+	if et.cmd != nil {
+		et.cmd = nil
 	}
 
-	if pr.stdOutPipe != nil {
-		pr.stdOutPipe = nil
+	if et.stdOutPipe != nil {
+		et.stdOutPipe = nil
 	}
 
-	if pr.stdInPipe != nil {
-		pr.stdInPipe = nil
+	if et.stdInPipe != nil {
+		et.stdInPipe = nil
 	}
 }
 
-func (pr *ExternalTask) Attach() error {
+func (et *ExternalTask) Attach() error {
 	app.At(te, "Attach")
-	return pr.startRoutines()
+	return et.startRoutines()
 }
 
-func (pr *ExternalTask) Detach() {
+func (et *ExternalTask) Detach() {
 	app.At(te, "Detach")
 	// TODO: detach using channels maybe
-	pr.stopRoutines()
+	et.stopRoutines()
 }
 
-func (pr *ExternalTask) GetId() msg.ExtTaskId {
-	return pr.Id
+func (et *ExternalTask) GetId() msg.ExtTaskId {
+	return et.Id
 }
 
-func (pr *ExternalTask) GetFullCommandLine() string {
-	return pr.CommandLine
+func (et *ExternalTask) GetFullCommandLine() string {
+	return et.CommandLine
 }
 
-func (pr *ExternalTask) GetTaskInChannel() chan []byte {
-	return pr.TaskIn
+func (et *ExternalTask) GetTaskInChannel() chan []byte {
+	return et.TaskIn
 }
 
-func (pr *ExternalTask) GetTaskOutChannel() chan []byte {
-	return pr.TaskOut
+func (et *ExternalTask) GetTaskOutChannel() chan []byte {
+	return et.TaskOut
 }
 
-func (pr *ExternalTask) GetTaskExitChannel() chan struct{} {
-	return pr.ProcessExit
+func (et *ExternalTask) GetTaskExitChannel() chan struct{} {
+	return et.TaskExit
 }

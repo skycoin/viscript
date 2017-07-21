@@ -27,9 +27,9 @@ type ExternalTask struct {
 	Id          msg.ExtTaskId
 	CommandLine string
 
-	TaskIn      chan []byte
-	TaskOut     chan []byte
-	ProcessExit chan struct{} //this way it's easy to cleanup multiple places
+	TaskIn   chan []byte
+	TaskOut  chan []byte
+	TaskExit chan struct{} //this way it's easy to cleanup multiple places
 
 	cmdOut chan []byte
 	cmdIn  chan []byte
@@ -95,7 +95,7 @@ func (pr *ExternalTask) Init(tokens []string) error {
 
 	pr.TaskIn = make(chan []byte, 2048)
 	pr.TaskOut = make(chan []byte, 2048)
-	pr.ProcessExit = make(chan struct{})
+	pr.TaskExit = make(chan struct{})
 
 	pr.shutdown = make(chan struct{})
 
@@ -126,7 +126,7 @@ func (pr *ExternalTask) cmdInRoutine() {
 		size, err := pr.stdOutPipe.Read(buf[:])
 		if err != nil {
 			println("Cmd In Routine error:", err.Error())
-			close(pr.ProcessExit)
+			close(pr.TaskExit)
 			close(pr.shutdown)
 			return
 		}
@@ -156,7 +156,7 @@ func (pr *ExternalTask) cmdOutRoutine() {
 			_, err := pr.stdInPipe.Write(append(data, '\n'))
 			if err != nil {
 				println("!!! Couldn't Write To the std in pipe of the process !!!")
-				close(pr.ProcessExit)
+				close(pr.TaskExit)
 				close(pr.shutdown)
 				return
 			}
@@ -178,7 +178,7 @@ func (pr *ExternalTask) startRoutines() error {
 
 		pr.wg = sync.WaitGroup{}
 
-		pr.ProcessExit = make(chan struct{})
+		pr.TaskExit = make(chan struct{})
 		pr.shutdown = make(chan struct{})
 
 		pr.wg.Add(2)
