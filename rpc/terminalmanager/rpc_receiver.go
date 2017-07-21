@@ -115,10 +115,10 @@ func (receiver *RPCReceiver) StartTerminalWithProcess(_ []string, result *[]byte
 func (receiver *RPCReceiver) ListTasks(_ []string, result *[]byte) error {
 	println("\nHandling Request: List all process Ids")
 	tasks := receiver.TerminalManager.taskList.TaskMap
-	processInfos := make([]msg.ProcessInfo, 0)
+	taskInfos := make([]msg.TaskInfo, 0)
 
 	for _, process := range tasks {
-		processInfos = append(processInfos, msg.ProcessInfo{
+		taskInfos = append(taskInfos, msg.TaskInfo{
 			Id:    process.GetId(),
 			Type:  process.GetType(),
 			Label: process.GetLabel()})
@@ -126,9 +126,9 @@ func (receiver *RPCReceiver) ListTasks(_ []string, result *[]byte) error {
 
 	println("[==============================]")
 	println("Tasks:")
-	for _, processInfo := range processInfos {
+	for _, processInfo := range taskInfos {
 		fmt.Printf("Id:%6d\tType:%6d\tLabel:%s\n", processInfo.Id, processInfo.Type, processInfo.Label)
 	}
-	*result = msg.Serialize((uint16)(0), processInfos)
+	*result = msg.Serialize((uint16)(0), taskInfos)
 	return nil
 }

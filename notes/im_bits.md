@@ -1610,7 +1610,7 @@ as in tickets, right now commented all the additional functionalities like ctrl+
 running in background ctrl+c for stopping process and also it doesn't stop automatically
 when it sees EOF from running process, cleaned up a bit and I'll work more tomorrow.
 Main thing is that it works for now. We might even need to remove that State variable
-from external process and have ProcessOut and have Process to watch that for output
+from external process and have TaskOut and have Process to watch that for output
 sequentially and printing it to viscript terminal.
 
 

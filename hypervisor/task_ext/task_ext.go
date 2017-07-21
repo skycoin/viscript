@@ -27,8 +27,8 @@ type ExternalTask struct {
 	Id          msg.ExtTaskId
 	CommandLine string
 
-	ProcessIn   chan []byte
-	ProcessOut  chan []byte
+	TaskIn      chan []byte
+	TaskOut     chan []byte
 	ProcessExit chan struct{} //this way it's easy to cleanup multiple places
 
 	cmdOut chan []byte
@@ -93,8 +93,8 @@ func (pr *ExternalTask) Init(tokens []string) error {
 	pr.cmdOut = make(chan []byte, 2048)
 	pr.cmdIn = make(chan []byte, 2048)
 
-	pr.ProcessIn = make(chan []byte, 2048)
-	pr.ProcessOut = make(chan []byte, 2048)
+	pr.TaskIn = make(chan []byte, 2048)
+	pr.TaskOut = make(chan []byte, 2048)
 	pr.ProcessExit = make(chan struct{})
 
 	pr.shutdown = make(chan struct{})
@@ -201,7 +201,7 @@ func (pr *ExternalTask) stopRoutines() {
 
 func (pr *ExternalTask) taskOutput() {
 	select {
-	case data := <-pr.ProcessIn:
+	case data := <-pr.TaskIn:
 		println("taskOutput() - data := ", string(data))
 		pr.cmdOut <- data
 	default:
@@ -212,7 +212,7 @@ func (pr *ExternalTask) taskInput() {
 	select {
 	case data := <-pr.cmdIn:
 		println("taskInput() - data := ", string(data))
-		pr.ProcessOut <- data
+		pr.TaskOut <- data
 	default:
 	}
 }

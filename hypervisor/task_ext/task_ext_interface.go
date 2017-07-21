@@ -31,8 +31,8 @@ func (pr *ExternalTask) TearDown() {
 	close(pr.cmdIn)
 	close(pr.cmdOut)
 
-	close(pr.ProcessIn)
-	close(pr.ProcessOut)
+	close(pr.TaskIn)
+	close(pr.TaskOut)
 	// close(pr.ProcessExit)
 
 	if pr.cmd != nil {
@@ -68,11 +68,11 @@ func (pr *ExternalTask) GetFullCommandLine() string {
 }
 
 func (pr *ExternalTask) GetTaskInChannel() chan []byte {
-	return pr.ProcessIn
+	return pr.TaskIn
 }
 
 func (pr *ExternalTask) GetTaskOutChannel() chan []byte {
-	return pr.ProcessOut
+	return pr.TaskOut
 }
 
 func (pr *ExternalTask) GetTaskExitChannel() chan struct{} {

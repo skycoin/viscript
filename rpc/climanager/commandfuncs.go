@@ -90,14 +90,14 @@ func (c *CliManager) ListTermIDsWithAttachedTasks(_ []string) error {
 }
 
 func (c *CliManager) ListTasks(_ []string) error {
-	processInfos, err := GetTasks(c.Client)
+	taskInfos, err := GetTasks(c.Client)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Tasks (%d) default marked with {}:\n", len(processInfos))
+	fmt.Printf("Tasks (%d) default marked with {}:\n", len(taskInfos))
 	fmt.Println("\nIdx\t Id\t Type\t\t Label")
-	for index, processInfo := range processInfos {
+	for index, processInfo := range taskInfos {
 		if processInfo.Id == c.ChosenTaskId {
 			fmt.Printf("[ %d ]\t{ %6d } %6d \t%s\n", index, processInfo.Id, processInfo.Type, processInfo.Label)
 		} else {
@@ -225,16 +225,16 @@ func GetTermIDsWithTaskIds(client *tm.RPCClient) ([]msg.TermAndAttachedTaskId, e
 	return termsAndAttachedTasks, nil
 }
 
-func GetTasks(client *tm.RPCClient) ([]msg.ProcessInfo, error) {
+func GetTasks(client *tm.RPCClient) ([]msg.TaskInfo, error) {
 	response, err := client.SendToRPC("ListTasks", []string{})
 	if err != nil {
-		return []msg.ProcessInfo{}, err
+		return []msg.TaskInfo{}, err
 	}
 
-	var processInfos []msg.ProcessInfo
-	err = msg.Deserialize(response, &processInfos)
+	var taskInfos []msg.TaskInfo
+	err = msg.Deserialize(response, &taskInfos)
 	if err != nil {
-		return []msg.ProcessInfo{}, err
+		return []msg.TaskInfo{}, err
 	}
-	return processInfos, nil
+	return taskInfos, nil
 }
