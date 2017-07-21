@@ -4,7 +4,7 @@ package hypervisor
 	Hypervisor
 	- routes messages
 	- maintains resource lists
-	-- processes
+	-- tasks
 	-- network connections?
 	-- file system access?
 
@@ -42,14 +42,14 @@ var DbusGlobal dbus.DbusInstance
 
 func Init() {
 	println("<hypervisor>.Init()")
-	initProcessList()
+	initTaskList()
 	initExtTaskList()
 	DbusGlobal.Init()
 }
 
 func Teardown() {
 	println("<hypervisor>.Teardown()")
-	teardownProcessList()
+	teardownTaskList()
 	teardownExtTaskList()
 	DbusGlobal.PubsubChannels = nil
 	DbusGlobal.Resources = nil

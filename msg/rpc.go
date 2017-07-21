@@ -3,14 +3,14 @@ package msg
 import "github.com/skycoin/viscript/hypervisor/dbus"
 
 type ProcessInfo struct {
-	Id    ProcessId
+	Id    TaskId
 	Type  ProcessType
 	Label string
 }
 
-type TermAndAttachedProcessID struct {
-	TerminalId        TerminalId
-	AttachedProcessId ProcessId
+type TermAndAttachedTaskId struct {
+	TerminalId     TerminalId
+	AttachedTaskId TaskId
 }
 
 type ChannelInfo struct {

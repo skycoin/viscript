@@ -10,7 +10,7 @@ import (
 type CliManager struct {
 	Commands         map[string]func(args []string) error
 	ChosenTerminalId msg.TerminalId
-	ChosenProcessId  msg.ProcessId
+	ChosenTaskId     msg.TaskId
 
 	Client     *tm.RPCClient
 	SessionEnd bool
@@ -49,7 +49,7 @@ func (c *CliManager) initCommands() {
 	c.setCommand("ltp", c.ListTermIDsWithAttachedProcesses)
 	c.setCommand("lp", c.ListProcesses)
 	c.setCommand("sett", c.SetDefaultTerminalId)
-	c.setCommand("setp", c.SetDefaultProcessId)
+	c.setCommand("setp", c.SetDefaultTaskId)
 
 	c.setCommand("cft", c.ShowChosenTermChannelInfo)
 

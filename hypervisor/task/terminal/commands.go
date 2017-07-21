@@ -184,7 +184,7 @@ func (st *State) commandAppPing(args []string) {
 		return
 	}
 
-	extProcID := msg.ExtProcessId(passedID)
+	extProcID := msg.ExtTaskId(passedID)
 
 	if !hypervisor.ExtProcessIsRunning(extProcID) {
 		st.PrintError("Taks with given id is not running.")
@@ -215,7 +215,7 @@ func (st *State) commandShutDown(args []string) {
 		return
 	}
 
-	extProcID := msg.ExtProcessId(passedID)
+	extProcID := msg.ExtTaskId(passedID)
 
 	if !hypervisor.ExtProcessIsRunning(extProcID) {
 		st.PrintError("Task with given id is not running.")
@@ -245,7 +245,7 @@ func (st *State) commandResourceUsage(args []string) {
 		return
 	}
 
-	extProcID := msg.ExtProcessId(passedID)
+	extProcID := msg.ExtTaskId(passedID)
 
 	if !hypervisor.ExtProcessIsRunning(extProcID) {
 		st.PrintError("Task with give id is not running.")
@@ -277,7 +277,7 @@ func (st *State) commandAttach(args []string) {
 		return
 	}
 
-	extProcID := msg.ExtProcessId(passedID)
+	extProcID := msg.ExtTaskId(passedID)
 
 	extProc, err := hypervisor.GetExtProcess(extProcID)
 	if err != nil {

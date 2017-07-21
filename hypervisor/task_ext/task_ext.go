@@ -24,7 +24,7 @@ import (
 const te = "hypervisor/task_ext/task_ext" //path
 
 type ExternalTask struct {
-	Id          msg.ExtProcessId
+	Id          msg.ExtTaskId
 	CommandLine string
 
 	ProcessIn   chan []byte
@@ -67,7 +67,7 @@ func (pr *ExternalTask) Init(tokens []string) error {
 
 	var err error
 
-	pr.Id = msg.NextExtProcessId()
+	pr.Id = msg.NextExtTaskId()
 
 	//append app id before creating command
 	tokens = append(tokens, strconv.Itoa(int(pr.Id)))

@@ -59,7 +59,7 @@ func (pr *ExternalTask) Detach() {
 	pr.stopRoutines()
 }
 
-func (pr *ExternalTask) GetId() msg.ExtProcessId {
+func (pr *ExternalTask) GetId() msg.ExtTaskId {
 	return pr.Id
 }
 

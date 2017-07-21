@@ -58,15 +58,15 @@ func (c *CliManager) ClearTerminal(_ []string) error {
 }
 
 func (c *CliManager) ListTermIDsWithAttachedProcesses(_ []string) error {
-	termsWithProcessIDs, err := GetTermIDsWithProcessIDs(c.Client)
+	termsWithTaskIds, err := GetTermIDsWithTaskIds(c.Client)
 
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Terminals (%d) defaults marked with {}:\n", len(termsWithProcessIDs))
+	fmt.Printf("Terminals (%d) defaults marked with {}:\n", len(termsWithTaskIds))
 	fmt.Println("\nIdx\tTerminal Id\t\tAttached Process Id")
-	for index, term := range termsWithProcessIDs {
+	for index, term := range termsWithTaskIds {
 		fmt.Printf("[ %d ]\t", index)
 
 		// mark selected default terminal id
@@ -77,10 +77,10 @@ func (c *CliManager) ListTermIDsWithAttachedProcesses(_ []string) error {
 		}
 
 		// mark selected default process id
-		if term.AttachedProcessId == c.ChosenProcessId {
-			fmt.Printf("{ %d }\t", term.AttachedProcessId)
+		if term.AttachedTaskId == c.ChosenTaskId {
+			fmt.Printf("{ %d }\t", term.AttachedTaskId)
 		} else {
-			fmt.Printf("  %d\t", term.AttachedProcessId)
+			fmt.Printf("  %d\t", term.AttachedTaskId)
 		}
 		fmt.Printf("\n")
 	}
@@ -98,7 +98,7 @@ func (c *CliManager) ListProcesses(_ []string) error {
 	fmt.Printf("Processes (%d) default marked with {}:\n", len(processInfos))
 	fmt.Println("\nIdx\t Id\t Type\t\t Label")
 	for index, processInfo := range processInfos {
-		if processInfo.Id == c.ChosenProcessId {
+		if processInfo.Id == c.ChosenTaskId {
 			fmt.Printf("[ %d ]\t{ %6d } %6d \t%s\n", index, processInfo.Id, processInfo.Type, processInfo.Label)
 		} else {
 			fmt.Printf("[ %d ]\t  %6d   %6d \t%s\n", index, processInfo.Id, processInfo.Type, processInfo.Label)
@@ -124,18 +124,18 @@ func (c *CliManager) SetDefaultTerminalId(args []string) error {
 	return nil
 }
 
-func (c *CliManager) SetDefaultProcessId(args []string) error {
+func (c *CliManager) SetDefaultTaskId(args []string) error {
 	if len(args) == 0 {
 		fmt.Printf("\n\nArgument should be a number > 0, not %s\n\n", args[0])
 		return nil
 	}
 
-	processId, err := strconv.Atoi(args[0])
-	if err != nil || processId < 1 {
+	taskId, err := strconv.Atoi(args[0])
+	if err != nil || taskId < 1 {
 		fmt.Printf("\n\nArgument should be a number > 0, not %s\n\n", args[0])
 	}
 
-	c.ChosenProcessId = msg.ProcessId(processId)
+	c.ChosenTaskId = msg.TaskId(taskId)
 	return nil
 }
 
@@ -211,16 +211,16 @@ func GetTerminalIDs(client *tm.RPCClient) ([]msg.TerminalId, error) {
 	return termIDs, nil
 }
 
-func GetTermIDsWithProcessIDs(client *tm.RPCClient) ([]msg.TermAndAttachedProcessID, error) {
-	response, err := client.SendToRPC("ListTIDsWithProcessIDs", []string{})
+func GetTermIDsWithTaskIds(client *tm.RPCClient) ([]msg.TermAndAttachedTaskId, error) {
+	response, err := client.SendToRPC("ListTIDsWithTaskIds", []string{})
 	if err != nil {
-		return []msg.TermAndAttachedProcessID{}, err
+		return []msg.TermAndAttachedTaskId{}, err
 	}
 
-	var termsAndAttachedProcesses []msg.TermAndAttachedProcessID
+	var termsAndAttachedProcesses []msg.TermAndAttachedTaskId
 	err = msg.Deserialize(response, &termsAndAttachedProcesses)
 	if err != nil {
-		return []msg.TermAndAttachedProcessID{}, err
+		return []msg.TermAndAttachedTaskId{}, err
 	}
 	return termsAndAttachedProcesses, nil
 }

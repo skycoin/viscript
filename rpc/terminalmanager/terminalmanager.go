@@ -9,13 +9,13 @@ import (
 type TerminalManager struct {
 	dbus          *dbus.DbusInstance
 	terminalStack *terminal.TerminalStack
-	processList   *hypervisor.ProcessList
+	taskList      *hypervisor.TaskList
 }
 
 func newTerminalManager() *TerminalManager {
 	ntm := new(TerminalManager)
 	ntm.dbus = &hypervisor.DbusGlobal
 	ntm.terminalStack = &terminal.Terms
-	ntm.processList = &hypervisor.ProcessListGlobal
+	ntm.taskList = &hypervisor.TaskListGlobal
 	return ntm
 }

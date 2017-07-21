@@ -4,7 +4,7 @@ const ChannelCapacity = 4096 // FIXME?  might only need capacity of 2?
 // .... onChar is always paired with an immediate onKey, making 2 entries at once
 
 type TaskInterface interface {
-	GetId() ProcessId
+	GetId() TaskId
 	GetType() ProcessType
 	GetLabel() string
 	GetIncomingChannel() chan []byte //channel for incoming messages
@@ -17,7 +17,7 @@ type ExtTaskInterface interface {
 	Attach() error
 	Detach()
 	TearDown()
-	GetId() ExtProcessId
+	GetId() ExtTaskId
 	GetFullCommandLine() string
 	GetTaskInChannel() chan []byte
 	GetTaskOutChannel() chan []byte

@@ -115,7 +115,7 @@ func (self *MonitorServer) Serve() {
 	}
 }
 
-func (self *MonitorServer) ReadFrom(appId msg.ExtProcessId) ([]byte, error) {
+func (self *MonitorServer) ReadFrom(appId msg.ExtTaskId) ([]byte, error) {
 	appMessageChannel, exists := self.responseChannels[uint32(appId)]
 	if !exists {
 		errString := fmt.Sprintf("Channel with ID: %d doesn't exist.", appId)
@@ -159,26 +159,26 @@ func (self *MonitorServer) Send(appId uint32, message []byte) ([]byte, string, e
 	}
 	response, err := self.Wait(respChan, sequence)
 
-		switch msg.GetType(response) {
+	switch msg.GetType(response) {
 
-		case msg.TypeResourceUsageAck:
-			answer := msg.MessageResourceUsageAck{}
-			err = msg.Deserialize(response, &answer)
-			if err != nil {
-				panic(err)
-			}
-			log.Println("cpu: ",answer.CPU, "memory: ", answer.Memory)
-
-		case msg.TypePingAck:
-			getTime := time.Now()
-			log.Print(getTime.Sub(sendTime).Seconds()*1000, " ms")
-
-		case msg.TypeShutdownAck:
-			log.Println("app is closed.")
-
-		default:
-			log.Println("Incorrect command type")
+	case msg.TypeResourceUsageAck:
+		answer := msg.MessageResourceUsageAck{}
+		err = msg.Deserialize(response, &answer)
+		if err != nil {
+			panic(err)
 		}
+		log.Println("cpu: ", answer.CPU, "memory: ", answer.Memory)
+
+	case msg.TypePingAck:
+		getTime := time.Now()
+		log.Print(getTime.Sub(sendTime).Seconds()*1000, " ms")
+
+	case msg.TypeShutdownAck:
+		log.Println("app is closed.")
+
+	default:
+		log.Println("Incorrect command type")
+	}
 
 	return response, "end", err
 }

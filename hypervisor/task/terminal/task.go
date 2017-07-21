@@ -9,7 +9,7 @@ import (
 var path = "hypervisor/task/terminal/task"
 
 type Process struct {
-	Id           msg.ProcessId
+	Id           msg.TaskId
 	Type         msg.ProcessType
 	Label        string
 	OutChannelId uint32
@@ -25,7 +25,7 @@ func MakeNewTask() *Process {
 	println("<" + path + ">.MakeNewTask()")
 
 	var p Process
-	p.Id = msg.NextProcessId()
+	p.Id = msg.NextTaskId()
 	p.Type = 0
 	p.Label = "TestLabel"
 	p.InChannel = make(chan []byte, msg.ChannelCapacity)
@@ -84,7 +84,7 @@ func (pr *Process) ExitExtProcess() {
 
 //implement the interface
 
-func (pr *Process) GetId() msg.ProcessId {
+func (pr *Process) GetId() msg.TaskId {
 	return pr.Id
 }
 

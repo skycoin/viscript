@@ -4,21 +4,21 @@ import (
 	"math/rand"
 )
 
-type ProcessId uint64 //HyperVisor: processId
+type TaskId uint64 //HyperVisor: TaskId
 type TerminalId uint64
-type ExtProcessId uint64
+type ExtTaskId uint64
 
-var ProcessIdGlobal ProcessId = 1 //sequential
-var ExtProcessIdGlobal ExtProcessId = 1
+var TaskIdGlobal TaskId = 1 //sequential
+var ExtTaskIdGlobal ExtTaskId = 1
 
-func NextProcessId() ProcessId {
-	ProcessIdGlobal += 1
-	return ProcessIdGlobal
+func NextTaskId() TaskId {
+	TaskIdGlobal += 1
+	return TaskIdGlobal
 }
 
-func NextExtProcessId() ExtProcessId {
-	ExtProcessIdGlobal += 1
-	return ExtProcessIdGlobal
+func NextExtTaskId() ExtTaskId {
+	ExtTaskIdGlobal += 1
+	return ExtTaskIdGlobal
 }
 
 func RandTerminalId() TerminalId {

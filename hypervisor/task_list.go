@@ -18,30 +18,30 @@ import (
 	- tick method, input messages are processed, output messages created
 */
 
-var ProcessListGlobal ProcessList
+var TaskListGlobal TaskList
 
-type ProcessList struct {
-	ProcessMap map[msg.ProcessId]msg.TaskInterface //process id to interface
+type TaskList struct {
+	ProcessMap map[msg.TaskId]msg.TaskInterface //task id to interface
 }
 
-func initProcessList() {
-	ProcessListGlobal.ProcessMap = make(map[msg.ProcessId]msg.TaskInterface)
+func initTaskList() {
+	TaskListGlobal.ProcessMap = make(map[msg.TaskId]msg.TaskInterface)
 }
 
-func teardownProcessList() {
-	ProcessListGlobal.ProcessMap = nil
+func teardownTaskList() {
+	TaskListGlobal.ProcessMap = nil
 	// TODO: actually call teardown methods on all the processes and also
 	// external processes. what about Alt+f4?
 	// upon application exit we need to terminate all the running processes
 	// and external processes
 }
 
-func AddProcess(p msg.TaskInterface) msg.ProcessId {
+func AddProcess(p msg.TaskInterface) msg.TaskId {
 	id := p.GetId()
 
-	_, isInTheMap := ProcessListGlobal.ProcessMap[id]
+	_, isInTheMap := TaskListGlobal.ProcessMap[id]
 	if !isInTheMap {
-		ProcessListGlobal.ProcessMap[id] = p
+		TaskListGlobal.ProcessMap[id] = p
 	}
 	return id
 }
@@ -51,7 +51,7 @@ func GetTaskEvents() {
 }
 
 func TickTasks() {
-	for _, p := range ProcessListGlobal.ProcessMap {
+	for _, p := range TaskListGlobal.ProcessMap {
 		p.Tick()
 	}
 }

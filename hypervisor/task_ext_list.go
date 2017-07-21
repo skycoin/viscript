@@ -10,11 +10,11 @@ import (
 var ExtTaskListGlobal ExtTaskList
 
 type ExtTaskList struct {
-	ProcessMap map[msg.ExtProcessId]msg.ExtTaskInterface
+	ProcessMap map[msg.ExtTaskId]msg.ExtTaskInterface
 }
 
 func initExtTaskList() {
-	ExtTaskListGlobal.ProcessMap = make(map[msg.ExtProcessId]msg.ExtTaskInterface)
+	ExtTaskListGlobal.ProcessMap = make(map[msg.ExtTaskId]msg.ExtTaskInterface)
 }
 
 func teardownExtTaskList() {
@@ -22,12 +22,12 @@ func teardownExtTaskList() {
 	// TODO: Further cleanup
 }
 
-func ExtProcessIsRunning(procId msg.ExtProcessId) bool {
+func ExtProcessIsRunning(procId msg.ExtTaskId) bool {
 	_, exists := ExtTaskListGlobal.ProcessMap[procId]
 	return exists
 }
 
-func AddExtTask(ep msg.ExtTaskInterface) msg.ExtProcessId {
+func AddExtTask(ep msg.ExtTaskInterface) msg.ExtTaskId {
 	id := ep.GetId()
 
 	if !ExtProcessIsRunning(id) {
@@ -37,7 +37,7 @@ func AddExtTask(ep msg.ExtTaskInterface) msg.ExtProcessId {
 	return id
 }
 
-func GetExtProcess(id msg.ExtProcessId) (msg.ExtTaskInterface, error) {
+func GetExtProcess(id msg.ExtTaskId) (msg.ExtTaskInterface, error) {
 	extProc, exists := ExtTaskListGlobal.ProcessMap[id]
 	if exists {
 		return extProc, nil
@@ -49,7 +49,7 @@ func GetExtProcess(id msg.ExtProcessId) (msg.ExtTaskInterface, error) {
 	return nil, err
 }
 
-func RemoveExtProcess(id msg.ExtProcessId) {
+func RemoveExtProcess(id msg.ExtTaskId) {
 	delete(ExtTaskListGlobal.ProcessMap, id)
 }
 
