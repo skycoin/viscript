@@ -21,15 +21,15 @@ import (
 var TaskListGlobal TaskList
 
 type TaskList struct {
-	ProcessMap map[msg.TaskId]msg.TaskInterface //task id to interface
+	TaskMap map[msg.TaskId]msg.TaskInterface //task id to interface
 }
 
 func initTaskList() {
-	TaskListGlobal.ProcessMap = make(map[msg.TaskId]msg.TaskInterface)
+	TaskListGlobal.TaskMap = make(map[msg.TaskId]msg.TaskInterface)
 }
 
 func teardownTaskList() {
-	TaskListGlobal.ProcessMap = nil
+	TaskListGlobal.TaskMap = nil
 	// TODO: actually call teardown methods on all the processes and also
 	// external processes. what about Alt+f4?
 	// upon application exit we need to terminate all the running processes
@@ -39,9 +39,9 @@ func teardownTaskList() {
 func AddProcess(p msg.TaskInterface) msg.TaskId {
 	id := p.GetId()
 
-	_, isInTheMap := TaskListGlobal.ProcessMap[id]
+	_, isInTheMap := TaskListGlobal.TaskMap[id]
 	if !isInTheMap {
-		TaskListGlobal.ProcessMap[id] = p
+		TaskListGlobal.TaskMap[id] = p
 	}
 	return id
 }
@@ -51,7 +51,7 @@ func GetTaskEvents() {
 }
 
 func TickTasks() {
-	for _, p := range TaskListGlobal.ProcessMap {
+	for _, p := range TaskListGlobal.TaskMap {
 		p.Tick()
 	}
 }

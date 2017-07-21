@@ -8,8 +8,8 @@ import (
 //ExtTaskInterface implementation
 
 func (pr *ExternalTask) Tick() {
-	pr.processInput()
-	pr.processOutput()
+	pr.taskInput()
+	pr.taskOutput()
 }
 
 func (pr *ExternalTask) Start() error {

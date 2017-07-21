@@ -79,7 +79,7 @@ func (pr *Process) ExitExtProcess() {
 	extProcId := pr.attachedExtProcess.GetId() //for removing from global list.
 	pr.attachedExtProcess.TearDown()           //(and cleanup)
 	pr.attachedExtProcess = nil
-	hypervisor.RemoveExtProcess(extProcId) //...from ExtTaskListGlobal.ProcessMap
+	hypervisor.RemoveExtProcess(extProcId) //...from ExtTaskListGlobal.TaskMap
 }
 
 //implement the interface

@@ -295,7 +295,7 @@ func (st *State) commandAttach(args []string) {
 func (st *State) commandListExternalTasks(args []string) {
 	app.At(cp, "commandListExternalTasks")
 
-	extTaskMap := hypervisor.ExtTaskListGlobal.ProcessMap
+	extTaskMap := hypervisor.ExtTaskListGlobal.TaskMap
 	if len(extTaskMap) == 0 {
 		st.PrintLn("No external tasks running.\n" +
 			"Try starting one with \"start\" command (\"help\" or \"h\" for help).")

@@ -199,19 +199,19 @@ func (pr *ExternalTask) stopRoutines() {
 	close(pr.shutdown)
 }
 
-func (pr *ExternalTask) processOutput() {
+func (pr *ExternalTask) taskOutput() {
 	select {
 	case data := <-pr.ProcessIn:
-		println("ProcessOutput() - data := ", string(data))
+		println("taskOutput() - data := ", string(data))
 		pr.cmdOut <- data
 	default:
 	}
 }
 
-func (pr *ExternalTask) processInput() {
+func (pr *ExternalTask) taskInput() {
 	select {
 	case data := <-pr.cmdIn:
-		println("ProcessInput() - data := ", string(data))
+		println("taskInput() - data := ", string(data))
 		pr.ProcessOut <- data
 	default:
 	}

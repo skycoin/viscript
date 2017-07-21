@@ -114,7 +114,7 @@ func (receiver *RPCReceiver) StartTerminalWithProcess(_ []string, result *[]byte
 
 func (receiver *RPCReceiver) ListProcesses(_ []string, result *[]byte) error {
 	println("\nHandling Request: List all process Ids")
-	processes := receiver.TerminalManager.taskList.ProcessMap
+	processes := receiver.TerminalManager.taskList.TaskMap
 	processInfos := make([]msg.ProcessInfo, 0)
 
 	for _, process := range processes {

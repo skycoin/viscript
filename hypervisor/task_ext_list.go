@@ -10,20 +10,20 @@ import (
 var ExtTaskListGlobal ExtTaskList
 
 type ExtTaskList struct {
-	ProcessMap map[msg.ExtTaskId]msg.ExtTaskInterface
+	TaskMap map[msg.ExtTaskId]msg.ExtTaskInterface
 }
 
 func initExtTaskList() {
-	ExtTaskListGlobal.ProcessMap = make(map[msg.ExtTaskId]msg.ExtTaskInterface)
+	ExtTaskListGlobal.TaskMap = make(map[msg.ExtTaskId]msg.ExtTaskInterface)
 }
 
 func teardownExtTaskList() {
-	ExtTaskListGlobal.ProcessMap = nil
+	ExtTaskListGlobal.TaskMap = nil
 	// TODO: Further cleanup
 }
 
 func ExtProcessIsRunning(procId msg.ExtTaskId) bool {
-	_, exists := ExtTaskListGlobal.ProcessMap[procId]
+	_, exists := ExtTaskListGlobal.TaskMap[procId]
 	return exists
 }
 
@@ -31,14 +31,14 @@ func AddExtTask(ep msg.ExtTaskInterface) msg.ExtTaskId {
 	id := ep.GetId()
 
 	if !ExtProcessIsRunning(id) {
-		ExtTaskListGlobal.ProcessMap[id] = ep
+		ExtTaskListGlobal.TaskMap[id] = ep
 	}
 
 	return id
 }
 
 func GetExtProcess(id msg.ExtTaskId) (msg.ExtTaskInterface, error) {
-	extProc, exists := ExtTaskListGlobal.ProcessMap[id]
+	extProc, exists := ExtTaskListGlobal.TaskMap[id]
 	if exists {
 		return extProc, nil
 	}
@@ -50,12 +50,12 @@ func GetExtProcess(id msg.ExtTaskId) (msg.ExtTaskInterface, error) {
 }
 
 func RemoveExtProcess(id msg.ExtTaskId) {
-	delete(ExtTaskListGlobal.ProcessMap, id)
+	delete(ExtTaskListGlobal.TaskMap, id)
 }
 
 func TickExtTasks() {
 	// TODO: Read from response channels if they contain any new messages
-	// for _, p := range ExtTaskListGlobal.ProcessMap {
+	// for _, p := range ExtTaskListGlobal.TaskMap {
 	// data, err := monitor.Monitor.ReadFrom(p.GetId())
 	// if err != nil {
 	// 	// println(err.Error())
