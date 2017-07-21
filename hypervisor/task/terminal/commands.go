@@ -128,7 +128,7 @@ func (st *State) commandStart(args []string) {
 
 		tokens = append(tokens, pathToApp)
 
-		for _, arg := range args {
+		for _, arg := range args[1:] {
 			tokens = append(tokens, strings.ToLower(arg))
 		}
 
