@@ -1,5 +1,5 @@
 // TODO: change readme
-### Running with external process temporarily
+### Running with external task temporarily
 
 1. Please make sure that the GOPATH is properly set and it's on the PATH.
 2. Pull skycoin/skycoin repo
@@ -22,4 +22,4 @@ NOTES:
 - Please don't try to rename the binary files after go install of the server and cli.
     They are called "srv" and "cli" by default, for now.
 - If you are wishing to run viscript rpc cli, please don't use `stp` command that starts new terminal
-    with attached process.
+    with attached task.

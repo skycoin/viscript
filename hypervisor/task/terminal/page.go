@@ -5,7 +5,7 @@ import (
 )
 
 func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
-	//app.At("process/terminal/msg_action", "makePageOfLog")
+	//app.At("task/terminal/msg_action", "makePageOfLog")
 
 	//called when:
 	//		* receiving new/changed data via TypeVisualInfo msg/event

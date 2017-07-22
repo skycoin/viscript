@@ -36,7 +36,7 @@ func (st *State) commandHelp() {
 	st.PrintLn("start (-a) <command>:  Start external task. (-a to also attach).")
 	// st.PrintLn("rpc:                   Issues command: \"go run rpc/cli/cli.go\"")
 	// st.PrintLn("Current hotkeys:")
-	st.PrintLn("CTRL+Z:                Detach currently attached process.")
+	st.PrintLn("CTRL+Z:                Detach currently attached task.")
 	// st.PrintLn("    CTRL+C:           ___description goes here___")
 	st.PrintLn(app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)))
 }

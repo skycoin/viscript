@@ -10,11 +10,10 @@ import (
 	- can emit message back to hypervisor
 	- have a tick method for handling incoming messages
 
-	Incoming messages from process to hypervisor come in anytime
+	Incoming messages from tasks to hypervisor come in anytime
 	- on input dispatch
-	Messages outgoing to hypervisor are processed in DispatchProcessEvents()
-	- we check each process channel for outgoing messages to the hypervisor
-	Each process has a tick() method
+	- we check each task channel for outgoing messages to the hypervisor
+	Each task has a tick() method
 	- tick method, input messages are processed, output messages created
 */
 
@@ -47,7 +46,7 @@ func AddProcess(p msg.TaskInterface) msg.TaskId {
 }
 
 func GetTaskEvents() {
-	println("process_list.GetTaskEvents()   ---------------- TODO !!!!!!!!!!!")
+	println("task_list.GetTaskEvents()   ---------------- TODO !!!!!!!!!!!")
 }
 
 func TickTasks() {

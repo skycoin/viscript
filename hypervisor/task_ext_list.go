@@ -43,7 +43,7 @@ func GetExtProcess(id msg.ExtTaskId) (msg.ExtTaskInterface, error) {
 		return extProc, nil
 	}
 
-	err := errors.New("External process with id " +
+	err := errors.New("External task with id " +
 		strconv.Itoa(int(id)) + " doesn't exist!")
 
 	return nil, err

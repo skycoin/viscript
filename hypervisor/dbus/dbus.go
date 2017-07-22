@@ -4,7 +4,7 @@ package dbus
 - Add pubsub channel type
 
 - Add server/client type
--- allow process to request server and get a socket
+-- allow task to request server and get a socket
 
 	Channel Type: PubSub
 	- pub sub
@@ -18,10 +18,9 @@ package dbus
 
 
 	TODO:
-	- dbus channel manager (process library)
 	- abstract resource IDs
-	- allow process to import the channel manager
-	-- process will receive an unnumbered channel object for internal usage
+	- allow task to import the channel manager
+	-- task will receive an unnumbered channel object for internal usage
 	- channel manager will automatically route to the channel ID
 
 

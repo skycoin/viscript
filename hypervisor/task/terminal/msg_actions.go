@@ -24,7 +24,7 @@ func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 }
 
 func (st *State) onChar(m msg.MessageChar) {
-	//println("process/terminal/msg_actions.onChar()")
+	//println("task/terminal/msg_actions.onChar()")
 	st.Cli.InsertCharIfItFits(m.Char, st)
 }
 
@@ -73,7 +73,7 @@ func (st *State) onNONRepeatableKey(m msg.MessageKey) {
 			}
 
 			//TODO: send the exit request i.e sigint or
-			//just maybe kill the process?
+			//just maybe kill the task?
 		}
 
 	case msg.KeyZ:
