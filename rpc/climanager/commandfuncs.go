@@ -58,15 +58,15 @@ func (c *CliManager) ClearTerminal(_ []string) error {
 }
 
 func (c *CliManager) ListTermIDsWithAttachedTasks(_ []string) error {
-	termsWithTaskIds, err := GetTermIDsWithTaskIds(c.Client)
+	termsWithTaskIDs, err := GetTermIDsWithTaskIDs(c.Client)
 
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Terminals (%d) defaults marked with {}:\n", len(termsWithTaskIds))
+	fmt.Printf("Terminals (%d) defaults marked with {}:\n", len(termsWithTaskIDs))
 	fmt.Println("\nIdx\tTerminal Id\t\tAttached Process Id")
-	for index, term := range termsWithTaskIds {
+	for index, term := range termsWithTaskIDs {
 		fmt.Printf("[ %d ]\t", index)
 
 		// mark selected default terminal id
@@ -211,8 +211,8 @@ func GetTerminalIDs(client *tm.RPCClient) ([]msg.TerminalId, error) {
 	return termIDs, nil
 }
 
-func GetTermIDsWithTaskIds(client *tm.RPCClient) ([]msg.TermAndAttachedTaskId, error) {
-	response, err := client.SendToRPC("ListTIDsWithTaskIds", []string{})
+func GetTermIDsWithTaskIDs(client *tm.RPCClient) ([]msg.TermAndAttachedTaskId, error) {
+	response, err := client.SendToRPC("ListTIDsWithTaskIDs", []string{})
 	if err != nil {
 		return []msg.TermAndAttachedTaskId{}, err
 	}

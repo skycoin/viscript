@@ -184,21 +184,21 @@ func (st *State) commandAppPing(args []string) {
 		return
 	}
 
-	extProcID := msg.ExtTaskId(passedID)
+	extTaskID := msg.ExtTaskId(passedID)
 
-	if !hypervisor.ExtTaskIsRunning(extProcID) {
+	if !hypervisor.ExtTaskIsRunning(extTaskID) {
 		st.PrintError("Taks with given id is not running.")
 		return
 	}
 
 	msgUserCommand := msg.MessageUserCommand{
 		Sequence: signal.GetNextMessageID(),
-		AppId:    uint32(extProcID),
+		AppId:    uint32(extTaskID),
 		Payload:  msg.Serialize(msg.TypePing, msg.MessagePing{})}
 
 	serializedCommand := msg.Serialize(msg.TypeUserCommand, msgUserCommand)
 
-	signal.Monitor.Send(uint32(extProcID), serializedCommand)
+	signal.Monitor.Send(uint32(extTaskID), serializedCommand)
 }
 
 func (st *State) commandShutDown(args []string) {
@@ -215,21 +215,21 @@ func (st *State) commandShutDown(args []string) {
 		return
 	}
 
-	extProcID := msg.ExtTaskId(passedID)
+	extTaskID := msg.ExtTaskId(passedID)
 
-	if !hypervisor.ExtTaskIsRunning(extProcID) {
+	if !hypervisor.ExtTaskIsRunning(extTaskID) {
 		st.PrintError("Task with given id is not running.")
 		return
 	}
 
 	msgUserCommand := msg.MessageUserCommand{
 		Sequence: signal.GetNextMessageID(),
-		AppId:    uint32(extProcID),
+		AppId:    uint32(extTaskID),
 		Payload:  msg.Serialize(msg.TypeShutdown, msg.MessageShutdown{})}
 
 	serializedCommand := msg.Serialize(msg.TypeUserCommand, msgUserCommand)
 
-	signal.Monitor.Send(uint32(extProcID), serializedCommand)
+	signal.Monitor.Send(uint32(extTaskID), serializedCommand)
 }
 
 func (st *State) commandResourceUsage(args []string) {
@@ -245,22 +245,22 @@ func (st *State) commandResourceUsage(args []string) {
 		return
 	}
 
-	extProcID := msg.ExtTaskId(passedID)
+	extTaskID := msg.ExtTaskId(passedID)
 
-	if !hypervisor.ExtTaskIsRunning(extProcID) {
+	if !hypervisor.ExtTaskIsRunning(extTaskID) {
 		st.PrintError("Task with give id is not running.")
 		return
 	}
 
 	msgUserCommand := msg.MessageUserCommand{
 		Sequence: signal.GetNextMessageID(),
-		AppId:    uint32(extProcID),
+		AppId:    uint32(extTaskID),
 		Payload: msg.Serialize(msg.TypeResourceUsage,
 			msg.MessageResourceUsage{})}
 
 	serializedCommand := msg.Serialize(msg.TypeUserCommand, msgUserCommand)
 
-	signal.Monitor.Send(uint32(extProcID), serializedCommand)
+	signal.Monitor.Send(uint32(extTaskID), serializedCommand)
 }
 
 func (st *State) commandAttach(args []string) {
@@ -277,9 +277,9 @@ func (st *State) commandAttach(args []string) {
 		return
 	}
 
-	extProcID := msg.ExtTaskId(passedID)
+	extTaskID := msg.ExtTaskId(passedID)
 
-	extProc, err := hypervisor.GetExtTask(extProcID)
+	extProc, err := hypervisor.GetExtTask(extTaskID)
 	if err != nil {
 		st.PrintError(err.Error())
 		return

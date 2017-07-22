@@ -16,7 +16,7 @@ type Task struct {
 	InChannel    chan []byte
 	State        State
 
-	hasExtProcAttached bool
+	hasExtTaskAttached bool
 	attachedExtTask    msg.ExtTaskInterface
 }
 
@@ -32,7 +32,7 @@ func MakeNewTask() *Task {
 	t.State.Init(&t)
 
 	//means no external task is attached
-	t.hasExtProcAttached = false
+	t.hasExtTaskAttached = false
 
 	return &t
 }
@@ -50,7 +50,7 @@ func (ta *Task) DeleteProcess() {
 }
 
 func (ta *Task) HasExtTaskAttached() bool {
-	return ta.hasExtProcAttached
+	return ta.hasExtTaskAttached
 }
 
 func (ta *Task) AttachExternalTask(extProc msg.ExtTaskInterface) error {
@@ -61,7 +61,7 @@ func (ta *Task) AttachExternalTask(extProc msg.ExtTaskInterface) error {
 	}
 
 	ta.attachedExtTask = extProc
-	ta.hasExtProcAttached = true
+	ta.hasExtTaskAttached = true
 
 	return nil
 }
@@ -70,16 +70,16 @@ func (ta *Task) DetachExternalTask() {
 	app.At(path, "DetachExternalTask")
 	// ta.attachedExtTask.Detach()
 	ta.attachedExtTask = nil
-	ta.hasExtProcAttached = false
+	ta.hasExtTaskAttached = false
 }
 
 func (ta *Task) ExitExtTask() {
 	app.At(path, "ExitExtTask")
-	ta.hasExtProcAttached = false
-	extProcId := ta.attachedExtTask.GetId() //for removing from global list.
+	ta.hasExtTaskAttached = false
+	extTaskID := ta.attachedExtTask.GetId() //for removing from global list.
 	ta.attachedExtTask.TearDown()           //(and cleanup)
 	ta.attachedExtTask = nil
-	hypervisor.RemoveExtTask(extProcId) //...from ExtTaskListGlobal.TaskMap
+	hypervisor.RemoveExtTask(extTaskID) //...from ExtTaskListGlobal.TaskMap
 }
 
 //implement the interface

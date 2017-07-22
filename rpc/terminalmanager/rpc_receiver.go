@@ -14,24 +14,24 @@ type RPCReceiver struct {
 	TerminalManager *TerminalManager
 }
 
-func (receiver *RPCReceiver) ListTIDsWithTaskIds(_ []string, result *[]byte) error {
+func (receiver *RPCReceiver) ListTIDsWithTaskIDs(_ []string, result *[]byte) error {
 	println("\nHandling Request: List terminal Ids with attached process Ids")
 
 	terms := receiver.TerminalManager.terminalStack.Terms
-	termsWithTaskIds := make([]msg.TermAndAttachedTaskId, 0)
+	termsWithTaskIDs := make([]msg.TermAndAttachedTaskId, 0)
 
 	for termID, term := range terms {
-		termsWithTaskIds = append(termsWithTaskIds,
+		termsWithTaskIDs = append(termsWithTaskIDs,
 			msg.TermAndAttachedTaskId{TerminalId: termID, AttachedTaskId: term.AttachedProcess})
 	}
 
 	println("[==============================]")
 	println("Terms with process Ids list:")
-	for _, t := range termsWithTaskIds {
+	for _, t := range termsWithTaskIDs {
 		println("Terminal Id:", t.TerminalId, "\tAttached Process Id:", t.AttachedTaskId)
 	}
 
-	*result = msg.Serialize(uint16(0), termsWithTaskIds)
+	*result = msg.Serialize(uint16(0), termsWithTaskIDs)
 	return nil
 }
 
