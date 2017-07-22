@@ -82,7 +82,7 @@ func (st *State) onNONRepeatableKey(m msg.MessageKey) {
 				return
 			}
 
-			st.PrintLn("Detaching External Process")
+			st.PrintLn("Detaching External Task")
 			st.task.DetachExternalTask()
 		}
 

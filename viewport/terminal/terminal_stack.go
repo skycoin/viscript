@@ -137,7 +137,7 @@ func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 		dbus.ResourceTypeTerminal, //owner type
 		rid1)
 
-	//process
+	//task
 	rid2 := fmt.Sprintf("dbus.pubsub.task-%d", int(tskId)) //ResourceIdentifier
 	pcid := hypervisor.DbusGlobal.CreatePubsubChannel(     //task channel id
 		dbus.ResourceId(tskId), //owner id
@@ -146,16 +146,16 @@ func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 
 	task.OutChannelId = uint32(tcid)
 	ts.Terms[termId].OutChannelId = uint32(pcid)
-	ts.Terms[termId].AttachedProcess = tskId
+	ts.Terms[termId].AttachedTask = tskId
 
-	//subscribe process to the terminal id
+	//subscribe task to the terminal id
 	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
 		tcid,
 		dbus.ResourceId(tskId),
 		dbus.ResourceTypeTask,
 		ts.Terms[termId].InChannel)
 
-	//subscribe terminal to the process id
+	//subscribe terminal to the task id
 	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
 		pcid,
 		dbus.ResourceId(termId),

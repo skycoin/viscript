@@ -42,8 +42,8 @@ func (ta *Task) GetTaskInterface() msg.TaskInterface {
 	return msg.TaskInterface(ta)
 }
 
-func (ta *Task) DeleteProcess() {
-	app.At(path, "DeleteProcess")
+func (ta *Task) DeleteTask() {
+	app.At(path, "DeleteTask")
 	close(ta.InChannel)
 	ta.State.task = nil
 	ta = nil

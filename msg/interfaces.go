@@ -8,7 +8,7 @@ type TaskInterface interface {
 	GetType() TaskType
 	GetLabel() string
 	GetIncomingChannel() chan []byte //channel for incoming messages
-	Tick()                           //process the messages and emit messages
+	Tick()                           //digest the messages and emit messages
 }
 
 type ExtTaskInterface interface {

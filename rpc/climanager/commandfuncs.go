@@ -65,7 +65,7 @@ func (c *CliManager) ListTermIDsWithAttachedTasks(_ []string) error {
 	}
 
 	fmt.Printf("Terminals (%d) defaults marked with {}:\n", len(termsWithTaskIDs))
-	fmt.Println("\nIdx\tTerminal Id\t\tAttached Process Id")
+	fmt.Println("\nIdx\tTerminal Id\t\tAttached Task Id")
 	for index, term := range termsWithTaskIDs {
 		fmt.Printf("[ %d ]\t", index)
 
@@ -76,7 +76,7 @@ func (c *CliManager) ListTermIDsWithAttachedTasks(_ []string) error {
 			fmt.Printf("  %d\t", term.TerminalId)
 		}
 
-		// mark selected default process id
+		// mark selected default task id
 		if term.AttachedTaskId == c.ChosenTaskId {
 			fmt.Printf("{ %d }\t", term.AttachedTaskId)
 		} else {
@@ -97,11 +97,11 @@ func (c *CliManager) ListTasks(_ []string) error {
 
 	fmt.Printf("Tasks (%d) default marked with {}:\n", len(taskInfos))
 	fmt.Println("\nIdx\t Id\t Type\t\t Label")
-	for index, processInfo := range taskInfos {
-		if processInfo.Id == c.ChosenTaskId {
-			fmt.Printf("[ %d ]\t{ %6d } %6d \t%s\n", index, processInfo.Id, processInfo.Type, processInfo.Label)
+	for index, taskInfo := range taskInfos {
+		if taskInfo.Id == c.ChosenTaskId {
+			fmt.Printf("[ %d ]\t{ %6d } %6d \t%s\n", index, taskInfo.Id, taskInfo.Type, taskInfo.Label)
 		} else {
-			fmt.Printf("[ %d ]\t  %6d   %6d \t%s\n", index, processInfo.Id, processInfo.Type, processInfo.Label)
+			fmt.Printf("[ %d ]\t  %6d   %6d \t%s\n", index, taskInfo.Id, taskInfo.Type, taskInfo.Label)
 		}
 	}
 	println()
@@ -179,9 +179,9 @@ func (c *CliManager) ShowChosenTermChannelInfo(_ []string) error {
 	return nil
 }
 
-func (c *CliManager) StartTerminalWithProcess(_ []string) error {
-	fmt.Println("startTerminalWithProcess()")
-	response, err := c.Client.SendToRPC("StartTerminalWithProcess", []string{})
+func (c *CliManager) StartTerminalWithTask(_ []string) error {
+	fmt.Println("StartTerminalWithTask()")
+	response, err := c.Client.SendToRPC("StartTerminalWithTask", []string{})
 	if err != nil {
 		return err
 	}

@@ -15,20 +15,20 @@ type RPCReceiver struct {
 }
 
 func (receiver *RPCReceiver) ListTIDsWithTaskIDs(_ []string, result *[]byte) error {
-	println("\nHandling Request: List terminal Ids with attached process Ids")
+	println("\nHandling Request: List terminal Ids with attached task Ids")
 
 	terms := receiver.TerminalManager.terminalStack.Terms
 	termsWithTaskIDs := make([]msg.TermAndAttachedTaskId, 0)
 
 	for termID, term := range terms {
 		termsWithTaskIDs = append(termsWithTaskIDs,
-			msg.TermAndAttachedTaskId{TerminalId: termID, AttachedTaskId: term.AttachedProcess})
+			msg.TermAndAttachedTaskId{TerminalId: termID, AttachedTaskId: term.AttachedTask})
 	}
 
 	println("[==============================]")
-	println("Terms with process Ids list:")
+	println("Terms with task IDs list:")
 	for _, t := range termsWithTaskIDs {
-		println("Terminal Id:", t.TerminalId, "\tAttached Process Id:", t.AttachedTaskId)
+		println("Terminal ID:", t.TerminalId, "\tAttached Task ID:", t.AttachedTaskId)
 	}
 
 	*result = msg.Serialize(uint16(0), termsWithTaskIDs)
@@ -102,8 +102,8 @@ func (receiver *RPCReceiver) GetTermChannelInfo(args []string, result *[]byte) e
 	return nil
 }
 
-func (receiver *RPCReceiver) StartTerminalWithProcess(_ []string, result *[]byte) error {
-	println("\nHandling Request: Start terminal with process")
+func (receiver *RPCReceiver) StartTerminalWithTask(_ []string, result *[]byte) error {
+	println("\nHandling Request: Start terminal with task")
 	terms := receiver.TerminalManager.terminalStack
 	newTerminalID := terms.Add()
 	println("[==============================]")
@@ -113,21 +113,21 @@ func (receiver *RPCReceiver) StartTerminalWithProcess(_ []string, result *[]byte
 }
 
 func (receiver *RPCReceiver) ListTasks(_ []string, result *[]byte) error {
-	println("\nHandling Request: List all process Ids")
+	println("\nHandling Request: List all task Ids")
 	tasks := receiver.TerminalManager.taskList.TaskMap
 	taskInfos := make([]msg.TaskInfo, 0)
 
-	for _, process := range tasks {
+	for _, task := range tasks {
 		taskInfos = append(taskInfos, msg.TaskInfo{
-			Id:    process.GetId(),
-			Type:  process.GetType(),
-			Label: process.GetLabel()})
+			Id:    task.GetId(),
+			Type:  task.GetType(),
+			Label: task.GetLabel()})
 	}
 
 	println("[==============================]")
 	println("Tasks:")
-	for _, processInfo := range taskInfos {
-		fmt.Printf("Id:%6d\tType:%6d\tLabel:%s\n", processInfo.Id, processInfo.Type, processInfo.Label)
+	for _, taskInfo := range taskInfos {
+		fmt.Printf("Id:%6d\tType:%6d\tLabel:%s\n", taskInfo.Id, taskInfo.Type, taskInfo.Label)
 	}
 	*result = msg.Serialize((uint16)(0), taskInfos)
 	return nil

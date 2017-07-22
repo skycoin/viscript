@@ -16,13 +16,13 @@ const (
 )
 
 type Terminal struct {
-	TerminalId      msg.TerminalId
-	FixedSize       bool
-	AttachedProcess msg.TaskId
-	OutChannelId    uint32 //id of pubsub channel
-	InChannel       chan []byte
-	ResizingRight   bool
-	ResizingBottom  bool
+	TerminalId     msg.TerminalId
+	FixedSize      bool
+	AttachedTask   msg.TaskId
+	OutChannelId   uint32 //id of pubsub channel
+	InChannel      chan []byte
+	ResizingRight  bool
+	ResizingBottom bool
 
 	//int/character grid space
 	Curr     app.Vec2I //current flow insert position

@@ -53,7 +53,7 @@ func (c *CliManager) initCommands() {
 
 	c.setCommand("cft", c.ShowChosenTermChannelInfo)
 
-	c.setCommand("stp", c.StartTerminalWithProcess)
+	c.setCommand("stp", c.StartTerminalWithTask)
 
 	c.setCommandWithShortcut("help", c.PrintHelp)
 	c.setCommandWithShortcut("clear", c.ClearTerminal)

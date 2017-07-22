@@ -151,11 +151,11 @@ func (pr *ExternalTask) cmdOutRoutine() {
 			println("!!! Shutting cmdOutRoutine down !!!")
 			return
 		case data := <-pr.cmdOut:
-			fmt.Printf("-- Received input to write to external process: %s\n",
+			fmt.Printf("-- Received input to write to external task: %s\n",
 				string(data))
 			_, err := pr.stdInPipe.Write(append(data, '\n'))
 			if err != nil {
-				println("!!! Couldn't Write To the std in pipe of the process !!!")
+				println("!!! Couldn't Write To the std in pipe of the task!!!")
 				close(pr.TaskExit)
 				close(pr.shutdown)
 				return
@@ -167,11 +167,11 @@ func (pr *ExternalTask) cmdOutRoutine() {
 func (pr *ExternalTask) startRoutines() error {
 
 	if pr.stdOutPipe == nil {
-		return errors.New("Standard out pipe of process is nil")
+		return errors.New("Standard out pipe of task is nil")
 	}
 
 	if pr.stdInPipe == nil {
-		return errors.New("Standard in pipe of process is nil")
+		return errors.New("Standard in pipe of task is nil")
 	}
 
 	if !pr.routinesStarted {
@@ -186,7 +186,7 @@ func (pr *ExternalTask) startRoutines() error {
 		//Run the routine which will read and send the data to CmdIn
 		go pr.cmdInRoutine()
 
-		//Run the routine which will read from Cmdout and write to process
+		//Run the routine which will read from Cmdout and write to task
 		go pr.cmdOutRoutine()
 
 		pr.routinesStarted = true

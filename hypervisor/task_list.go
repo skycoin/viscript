@@ -14,7 +14,7 @@ import (
 	- on input dispatch
 	- we check each task channel for outgoing messages to the hypervisor
 	Each task has a tick() method
-	- tick method, input messages are processed, output messages created
+	- tick method, input messages are digested, output messages created
 */
 
 var TaskListGlobal TaskList
