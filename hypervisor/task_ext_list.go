@@ -22,7 +22,7 @@ func teardownExtTaskList() {
 	// TODO: Further cleanup
 }
 
-func ExtProcessIsRunning(procId msg.ExtTaskId) bool {
+func ExtTaskIsRunning(procId msg.ExtTaskId) bool {
 	_, exists := ExtTaskListGlobal.TaskMap[procId]
 	return exists
 }
@@ -30,14 +30,14 @@ func ExtProcessIsRunning(procId msg.ExtTaskId) bool {
 func AddExtTask(ep msg.ExtTaskInterface) msg.ExtTaskId {
 	id := ep.GetId()
 
-	if !ExtProcessIsRunning(id) {
+	if !ExtTaskIsRunning(id) {
 		ExtTaskListGlobal.TaskMap[id] = ep
 	}
 
 	return id
 }
 
-func GetExtProcess(id msg.ExtTaskId) (msg.ExtTaskInterface, error) {
+func GetExtTask(id msg.ExtTaskId) (msg.ExtTaskInterface, error) {
 	extProc, exists := ExtTaskListGlobal.TaskMap[id]
 	if exists {
 		return extProc, nil
@@ -49,7 +49,7 @@ func GetExtProcess(id msg.ExtTaskId) (msg.ExtTaskInterface, error) {
 	return nil, err
 }
 
-func RemoveExtProcess(id msg.ExtTaskId) {
+func RemoveExtTask(id msg.ExtTaskId) {
 	delete(ExtTaskListGlobal.TaskMap, id)
 }
 

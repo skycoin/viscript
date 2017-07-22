@@ -22,7 +22,7 @@ func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 	st.printVisibleRows(m)
 
 	//so you can see & interact with the command prompt even while backscrolled
-	st.Cli.EchoWholeCommand(st.proc.OutChannelId)
+	st.Cli.EchoWholeCommand(st.task.OutChannelId)
 }
 
 func (st *State) printVisibleRows(vi msg.MessageVisualInfo) {

@@ -10,14 +10,14 @@ var path = "hypervisor/task/terminal/task"
 
 type Process struct {
 	Id           msg.TaskId
-	Type         msg.ProcessType
+	Type         msg.TaskType
 	Label        string
 	OutChannelId uint32
 	InChannel    chan []byte
 	State        State
 
 	hasExtProcAttached bool
-	attachedExtProcess msg.ExtTaskInterface
+	attachedExtTask    msg.ExtTaskInterface
 }
 
 //non-instanced
@@ -45,11 +45,11 @@ func (pr *Process) GetTaskInterface() msg.TaskInterface {
 func (pr *Process) DeleteProcess() {
 	app.At(path, "DeleteProcess")
 	close(pr.InChannel)
-	pr.State.proc = nil
+	pr.State.task = nil
 	pr = nil
 }
 
-func (pr *Process) HasExtProcessAttached() bool {
+func (pr *Process) HasExtTaskAttached() bool {
 	return pr.hasExtProcAttached
 }
 
@@ -60,7 +60,7 @@ func (pr *Process) AttachExternalTask(extProc msg.ExtTaskInterface) error {
 		return err
 	}
 
-	pr.attachedExtProcess = extProc
+	pr.attachedExtTask = extProc
 	pr.hasExtProcAttached = true
 
 	return nil
@@ -68,18 +68,18 @@ func (pr *Process) AttachExternalTask(extProc msg.ExtTaskInterface) error {
 
 func (pr *Process) DetachExternalTask() {
 	app.At(path, "DetachExternalTask")
-	// pr.attachedExtProcess.Detach()
-	pr.attachedExtProcess = nil
+	// pr.attachedExtTask.Detach()
+	pr.attachedExtTask = nil
 	pr.hasExtProcAttached = false
 }
 
-func (pr *Process) ExitExtProcess() {
-	app.At(path, "ExitExtProcess")
+func (pr *Process) ExitExtTask() {
+	app.At(path, "ExitExtTask")
 	pr.hasExtProcAttached = false
-	extProcId := pr.attachedExtProcess.GetId() //for removing from global list.
-	pr.attachedExtProcess.TearDown()           //(and cleanup)
-	pr.attachedExtProcess = nil
-	hypervisor.RemoveExtProcess(extProcId) //...from ExtTaskListGlobal.TaskMap
+	extProcId := pr.attachedExtTask.GetId() //for removing from global list.
+	pr.attachedExtTask.TearDown()           //(and cleanup)
+	pr.attachedExtTask = nil
+	hypervisor.RemoveExtTask(extProcId) //...from ExtTaskListGlobal.TaskMap
 }
 
 //implement the interface
@@ -88,7 +88,7 @@ func (pr *Process) GetId() msg.TaskId {
 	return pr.Id
 }
 
-func (pr *Process) GetType() msg.ProcessType {
+func (pr *Process) GetType() msg.TaskType {
 	return pr.Type
 }
 
@@ -103,19 +103,19 @@ func (pr *Process) GetIncomingChannel() chan []byte {
 func (pr *Process) Tick() {
 	pr.State.HandleMessages()
 
-	if !pr.HasExtProcessAttached() {
+	if !pr.HasExtTaskAttached() {
 		return
 	}
 
 	select {
-	//case exit := <-pr.attachedExtProcess.GetTaskExitChannel():
+	//case exit := <-pr.attachedExtTask.GetTaskExitChannel():
 	// if exit {
 	// 	println("Got the exit in task, task is finished.")
 	// 	//TODO: still not working yet. looking for the best way to finish
 	// 	//multiple goroutines at the same time to avoid any side effects
 	// 	pr.ExitExtTask()
 	// }
-	case data := <-pr.attachedExtProcess.GetTaskOutChannel():
+	case data := <-pr.attachedExtTask.GetTaskOutChannel():
 		println("Received data from external task, sending to term.")
 		pr.State.PrintLn(string(data))
 	default:

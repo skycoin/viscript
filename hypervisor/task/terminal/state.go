@@ -11,12 +11,12 @@ type State struct {
 	DebugPrintInputEvents bool
 	Cli                   *Cli
 	VisualInfo            msg.MessageVisualInfo //dimensions, etc. (Terminal sends/updates)
-	proc                  *Process
+	task                  *Task
 	storedTerminalIds     []msg.TerminalId
 }
 
-func (st *State) Init(proc *Process) {
-	st.proc = proc
+func (st *State) Init(task *Task) {
+	st.task = task
 	st.DebugPrintInputEvents = true
 	st.Cli = NewCli()
 	st.Cli.Log = append(st.Cli.Log, app.HelpText)
@@ -24,7 +24,7 @@ func (st *State) Init(proc *Process) {
 
 func (st *State) HandleMessages() {
 	//called per Tick()
-	c := st.proc.InChannel
+	c := st.task.InChannel
 
 	for len(c) > 0 {
 		m := <-c

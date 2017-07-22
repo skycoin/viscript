@@ -156,7 +156,7 @@ func makeNode(panelId, childIdL, childIdR, parentId int, s string) {
 		Terms[panelId].Trees[0].Nodes, &tree.Node{s, childIdL, childIdR, parentId})
 }
 
-func Process(feedbackWanted bool) {
+func Digest(feedbackWanted bool) {
 	// clear script
 	mainBlock = &CodeBlock{Name: "main"}
 

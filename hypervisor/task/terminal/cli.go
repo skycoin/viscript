@@ -91,7 +91,7 @@ func (c *Cli) AdjustBackscrollOffset(delta int) {
 func (c *Cli) InsertCharIfItFits(char uint32, state *State) {
 	if len(c.Commands[c.CurrCmd]) < c.MaxCommandSize {
 		c.InsertCharAtCursor(char)
-		c.EchoWholeCommand(state.proc.OutChannelId)
+		c.EchoWholeCommand(state.task.OutChannelId)
 	}
 }
 
@@ -137,7 +137,7 @@ func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
 	for numRows > 0 { //for each row of command prompt:
 		numRows-- //...pass key event (value: Enter) to terminal
 		//...(which advances it's y position).
-		hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
+		hypervisor.DbusGlobal.PublishTo(st.task.OutChannelId, serializedMsg)
 	}
 
 	//add to log & command histories

@@ -5,7 +5,7 @@ import (
 )
 
 /*
-	Process can
+	Task can
 	- receive messages from hypervisor
 	- can emit message back to hypervisor
 	- have a tick method for handling incoming messages
@@ -35,7 +35,7 @@ func teardownTaskList() {
 	// and external tasks
 }
 
-func AddProcess(p msg.TaskInterface) msg.TaskId {
+func AddTask(p msg.TaskInterface) msg.TaskId {
 	id := p.GetId()
 
 	_, isInTheMap := TaskListGlobal.TaskMap[id]

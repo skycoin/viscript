@@ -51,7 +51,7 @@ func (st *State) SendCommand(command string, args []string) {
 //private
 
 func (st *State) publishToOut(message []byte) {
-	hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, message)
+	hypervisor.DbusGlobal.PublishTo(st.task.OutChannelId, message)
 }
 
 func (st *State) printLnAndMAYBELogIt(s string, addToLog bool) {

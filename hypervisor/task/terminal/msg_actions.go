@@ -14,7 +14,7 @@ func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 		//(i believe this was only used for sidescrolling in the text editor,
 		//but we might want to use this as an alternative to PGUP/PGDN keys
 		//when focused on a CLI terminal)
-		hypervisor.DbusGlobal.PublishTo(st.proc.OutChannelId, serializedMsg)
+		hypervisor.DbusGlobal.PublishTo(st.task.OutChannelId, serializedMsg)
 	} else {
 		st.Cli.AdjustBackscrollOffset(int(m.Y))
 		//just pass unchanged VisualInfo
@@ -39,7 +39,7 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 	case msg.Repeat: //constantly repeated for as long as key is pressed
 		//THIS IS ALSO DONE ON 'PRESS' EVENTS, via FALLTHROUGH!
 		st.onRepeatableKey(m, serializedMsg)
-		st.Cli.EchoWholeCommand(st.proc.OutChannelId)
+		st.Cli.EchoWholeCommand(st.task.OutChannelId)
 
 	case msg.Release:
 		//most keys will probably never do anything upon release
@@ -60,7 +60,7 @@ func (st *State) onTerminalIds(m msg.MessageTerminalIds) {
 		}
 	}
 
-	st.Cli.EchoWholeCommand(st.proc.OutChannelId)
+	st.Cli.EchoWholeCommand(st.task.OutChannelId)
 }
 
 func (st *State) onNONRepeatableKey(m msg.MessageKey) {
@@ -68,7 +68,7 @@ func (st *State) onNONRepeatableKey(m msg.MessageKey) {
 
 	case msg.KeyC:
 		if m.Mod == msg.GLFW_MOD_CONTROL {
-			if !st.proc.HasExtProcessAttached() {
+			if !st.task.HasExtTaskAttached() {
 				return
 			}
 
@@ -78,12 +78,12 @@ func (st *State) onNONRepeatableKey(m msg.MessageKey) {
 
 	case msg.KeyZ:
 		if m.Mod == msg.GLFW_MOD_CONTROL {
-			if !st.proc.HasExtProcessAttached() {
+			if !st.task.HasExtTaskAttached() {
 				return
 			}
 
 			st.PrintLn("Detaching External Process")
-			st.proc.DetachExternalTask()
+			st.task.DetachExternalTask()
 		}
 
 	}
@@ -148,9 +148,9 @@ func (st *State) onUserCommand() {
 
 	println(s)
 
-	if st.proc.HasExtProcessAttached() {
-		extProcInChannel := st.proc.attachedExtProcess.GetTaskInChannel()
-		extProcInChannel <- []byte(st.Cli.CurrentCommandLine())
+	if st.task.HasExtTaskAttached() {
+		extTaskInChannel := st.task.attachedExtTask.GetTaskInChannel()
+		extTaskInChannel <- []byte(st.Cli.CurrentCommandLine())
 		return
 	}
 

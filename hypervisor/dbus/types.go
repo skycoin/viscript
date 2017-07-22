@@ -16,7 +16,7 @@ const (
 	ResourceTypeChannel  = 1
 	ResourceTypeViewport = 2 //do viewports need to be listed as a resource?
 	ResourceTypeTerminal = 3
-	ResourceTypeProcess  = 4
+	ResourceTypeTask     = 4
 )
 
 //Should these be moved to msg?
@@ -28,7 +28,7 @@ var ResourceTypeNames = map[ResourceType]string{
 	1: "Channel",
 	2: "Viewport",
 	3: "Terminal",
-	4: "Process",
+	4: "Task",
 }
 
 //Do we do resource tracking in dbus?

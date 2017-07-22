@@ -184,12 +184,12 @@ func respondToAnyMenuButtonClicks() {
 	// 		switch bu.Name {
 	// 		case "Run":
 	// 			if bu.Activated {
-	// 				//script.Process(true)
+	// 				//script.Digest(true)
 	// 			}
 	// 			break
 	// 		case "Testing Tree":
 	// 			if bu.Activated {
-	// 				//script.Process(true)
+	// 				//script.Digest(true)
 	// 				//script.MakeTree()
 	// 			} else { // deactivated
 	// 				// remove all terminals with trees

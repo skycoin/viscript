@@ -189,7 +189,7 @@ func onKey(m msg.MessageKey) {
 
 		}
 
-		//script.Process(false)
+		//script.Digest(false)
 	}
 }
 

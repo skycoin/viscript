@@ -94,7 +94,7 @@ func (st *State) commandClearTerminal() {
 
 	st.VisualInfo.CurrRow = 0
 	st.publishToOut(msg.Serialize(msg.TypeClear, msg.MessageClear{}))
-	st.Cli.EchoWholeCommand(st.proc.OutChannelId)
+	st.Cli.EchoWholeCommand(st.task.OutChannelId)
 }
 
 func (st *State) commandStart(args []string) {
@@ -158,13 +158,13 @@ func (st *State) commandStart(args []string) {
 	procId := hypervisor.AddExtTask(extProcInterface)
 
 	if !detached {
-		err = st.proc.AttachExternalTask(extProcInterface)
+		err = st.task.AttachExternalTask(extProcInterface)
 		if err != nil {
 			st.PrintError(err.Error())
 		}
 	}
 
-	st.PrintLn("Added External Process (ID: " +
+	st.PrintLn("Added External Task (ID: " +
 		strconv.Itoa(int(procId)) + ", Command: " +
 		newExtProc.CommandLine + ")")
 
@@ -186,7 +186,7 @@ func (st *State) commandAppPing(args []string) {
 
 	extProcID := msg.ExtTaskId(passedID)
 
-	if !hypervisor.ExtProcessIsRunning(extProcID) {
+	if !hypervisor.ExtTaskIsRunning(extProcID) {
 		st.PrintError("Taks with given id is not running.")
 		return
 	}
@@ -217,7 +217,7 @@ func (st *State) commandShutDown(args []string) {
 
 	extProcID := msg.ExtTaskId(passedID)
 
-	if !hypervisor.ExtProcessIsRunning(extProcID) {
+	if !hypervisor.ExtTaskIsRunning(extProcID) {
 		st.PrintError("Task with given id is not running.")
 		return
 	}
@@ -247,7 +247,7 @@ func (st *State) commandResourceUsage(args []string) {
 
 	extProcID := msg.ExtTaskId(passedID)
 
-	if !hypervisor.ExtProcessIsRunning(extProcID) {
+	if !hypervisor.ExtTaskIsRunning(extProcID) {
 		st.PrintError("Task with give id is not running.")
 		return
 	}
@@ -279,14 +279,14 @@ func (st *State) commandAttach(args []string) {
 
 	extProcID := msg.ExtTaskId(passedID)
 
-	extProc, err := hypervisor.GetExtProcess(extProcID)
+	extProc, err := hypervisor.GetExtTask(extProcID)
 	if err != nil {
 		st.PrintError(err.Error())
 		return
 	}
 
 	st.PrintLn(extProc.GetFullCommandLine())
-	err = st.proc.AttachExternalTask(extProc)
+	err = st.task.AttachExternalTask(extProc)
 	if err != nil {
 		st.PrintError(err.Error())
 	}

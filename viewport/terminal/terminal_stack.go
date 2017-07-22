@@ -124,7 +124,7 @@ func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 	//make it's task
 	task := termTask.MakeNewTask()
 	tskIF := msg.TaskInterface(task)
-	tskId := hypervisor.AddProcess(tskIF)
+	tskId := hypervisor.AddTask(tskIF)
 
 	task.State.VisualInfo = ts.Terms[termId].GetVisualInfo()
 
@@ -138,10 +138,10 @@ func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 		rid1)
 
 	//process
-	rid2 := fmt.Sprintf("dbus.pubsub.process-%d", int(tskId)) //ResourceIdentifier
-	pcid := hypervisor.DbusGlobal.CreatePubsubChannel(        //process channel id
-		dbus.ResourceId(tskId),   //owner id
-		dbus.ResourceTypeProcess, //owner type
+	rid2 := fmt.Sprintf("dbus.pubsub.task-%d", int(tskId)) //ResourceIdentifier
+	pcid := hypervisor.DbusGlobal.CreatePubsubChannel(     //task channel id
+		dbus.ResourceId(tskId), //owner id
+		dbus.ResourceTypeTask,  //owner type
 		rid2)
 
 	task.OutChannelId = uint32(tcid)
@@ -152,7 +152,7 @@ func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
 		tcid,
 		dbus.ResourceId(tskId),
-		dbus.ResourceTypeProcess,
+		dbus.ResourceTypeTask,
 		ts.Terms[termId].InChannel)
 
 	//subscribe terminal to the process id
