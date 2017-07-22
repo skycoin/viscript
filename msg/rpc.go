@@ -4,7 +4,7 @@ import "github.com/skycoin/viscript/hypervisor/dbus"
 
 type TaskInfo struct {
 	Id    TaskId
-	Type  ProcessType
+	Type  TaskType
 	Label string
 }
 

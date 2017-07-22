@@ -26,7 +26,7 @@ func (et *ExternalTask) Start() error {
 func (et *ExternalTask) TearDown() {
 	app.At(te, "TearDown")
 
-	et.cmd.Task.Kill()
+	et.cmd.Process.Kill()
 
 	close(et.cmdIn)
 	close(et.cmdOut)

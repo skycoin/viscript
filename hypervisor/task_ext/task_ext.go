@@ -48,14 +48,14 @@ type ExternalTask struct {
 //non-instanced
 func MakeNewTaskExternal(tokens []string, detached bool) (*ExternalTask, error) {
 	app.At(te, "MakeNewTaskExternal")
-	var p ExternalTask
+	var et ExternalTask
 
-	err := p.Init(tokens)
+	err := et.Init(tokens)
 	if err != nil {
 		return nil, err
 	}
 
-	return &p, nil
+	return &et, nil
 }
 
 func (pr *ExternalTask) GetExtTaskInterface() msg.ExtTaskInterface {
