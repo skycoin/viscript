@@ -153,12 +153,12 @@ func (st *State) commandStart(args []string) {
 		return
 	}
 
-	extProcInterface := newExtTask.GetExtTaskInterface()
+	extTaskInterface := newExtTask.GetExtTaskInterface()
 
-	procId := hypervisor.AddExtTask(extProcInterface)
+	procId := hypervisor.AddExtTask(extTaskInterface)
 
 	if !detached {
-		err = st.task.AttachExternalTask(extProcInterface)
+		err = st.task.AttachExternalTask(extTaskInterface)
 		if err != nil {
 			st.PrintError(err.Error())
 		}
@@ -279,14 +279,14 @@ func (st *State) commandAttach(args []string) {
 
 	extTaskID := msg.ExtTaskId(passedID)
 
-	extProc, err := hypervisor.GetExtTask(extTaskID)
+	extTask, err := hypervisor.GetExtTask(extTaskID)
 	if err != nil {
 		st.PrintError(err.Error())
 		return
 	}
 
-	st.PrintLn(extProc.GetFullCommandLine())
-	err = st.task.AttachExternalTask(extProc)
+	st.PrintLn(extTask.GetFullCommandLine())
+	err = st.task.AttachExternalTask(extTask)
 	if err != nil {
 		st.PrintError(err.Error())
 	}
@@ -308,14 +308,14 @@ func (st *State) commandListExternalTasks(args []string) {
 		fullPrint = true
 	}
 
-	for procId, extProc := range extTaskMap {
+	for procId, extTask := range extTaskMap {
 		procCommand := ""
 
 		if fullPrint {
-			procCommand = extProc.GetFullCommandLine()
+			procCommand = extTask.GetFullCommandLine()
 		} else {
 			procCommand = strings.Split(
-				extProc.GetFullCommandLine(), " ")[0]
+				extTask.GetFullCommandLine(), " ")[0]
 		}
 
 		st.Printf("[ %d ] -> [ %s ]\n", int(procId), procCommand)

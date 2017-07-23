@@ -38,9 +38,9 @@ func AddExtTask(ep msg.ExtTaskInterface) msg.ExtTaskId {
 }
 
 func GetExtTask(id msg.ExtTaskId) (msg.ExtTaskInterface, error) {
-	extProc, exists := ExtTaskListGlobal.TaskMap[id]
+	extTask, exists := ExtTaskListGlobal.TaskMap[id]
 	if exists {
-		return extProc, nil
+		return extTask, nil
 	}
 
 	err := errors.New("External task with id " +

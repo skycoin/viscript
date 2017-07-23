@@ -53,14 +53,14 @@ func (ta *Task) HasExtTaskAttached() bool {
 	return ta.hasExtTaskAttached
 }
 
-func (ta *Task) AttachExternalTask(extProc msg.ExtTaskInterface) error {
+func (ta *Task) AttachExternalTask(extTask msg.ExtTaskInterface) error {
 	app.At(path, "AttachExternalTask")
-	err := extProc.Attach()
+	err := extTask.Attach()
 	if err != nil {
 		return err
 	}
 
-	ta.attachedExtTask = extProc
+	ta.attachedExtTask = extTask
 	ta.hasExtTaskAttached = true
 
 	return nil
