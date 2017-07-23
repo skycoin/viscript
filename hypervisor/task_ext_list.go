@@ -22,8 +22,8 @@ func teardownExtTaskList() {
 	// TODO: Further cleanup
 }
 
-func ExtTaskIsRunning(procId msg.ExtTaskId) bool {
-	_, exists := ExtTaskListGlobal.TaskMap[procId]
+func ExtTaskIsRunning(taskID msg.ExtTaskId) bool {
+	_, exists := ExtTaskListGlobal.TaskMap[taskID]
 	return exists
 }
 

@@ -155,7 +155,7 @@ func (st *State) commandStart(args []string) {
 
 	extTaskInterface := newExtTask.GetExtTaskInterface()
 
-	procId := hypervisor.AddExtTask(extTaskInterface)
+	taskID := hypervisor.AddExtTask(extTaskInterface)
 
 	if !detached {
 		err = st.task.AttachExternalTask(extTaskInterface)
@@ -165,7 +165,7 @@ func (st *State) commandStart(args []string) {
 	}
 
 	st.PrintLn("Added External Task (ID: " +
-		strconv.Itoa(int(procId)) + ", Command: " +
+		strconv.Itoa(int(taskID)) + ", Command: " +
 		newExtTask.CommandLine + ")")
 
 }
@@ -308,17 +308,17 @@ func (st *State) commandListExternalTasks(args []string) {
 		fullPrint = true
 	}
 
-	for procId, extTask := range extTaskMap {
-		procCommand := ""
+	for taskID, extTask := range extTaskMap {
+		taskCommand := ""
 
 		if fullPrint {
-			procCommand = extTask.GetFullCommandLine()
+			taskCommand = extTask.GetFullCommandLine()
 		} else {
-			procCommand = strings.Split(
+			taskCommand = strings.Split(
 				extTask.GetFullCommandLine(), " ")[0]
 		}
 
-		st.Printf("[ %d ] -> [ %s ]\n", int(procId), procCommand)
+		st.Printf("[ %d ] -> [ %s ]\n", int(taskID), taskCommand)
 	}
 }
 
