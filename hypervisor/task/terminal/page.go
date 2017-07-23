@@ -1,4 +1,4 @@
-package process
+package task
 
 import (
 	"github.com/skycoin/viscript/msg"

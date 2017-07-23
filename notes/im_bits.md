@@ -812,7 +812,7 @@ what does not work right now
 
 the app, gfx, these libraries that call out for rendering will be called insido the process implementation and will be imported from there; and will be boiled down to messages to drive terminal going over the messaging channel to hypervisor
 
-i made small example in process/example/api.go
+i made small example in task/example/api.go
 
 and those are "atomic" terminal operations, and then the gui elements will be drawn using compount operations (multiple atomic operations)
 
@@ -897,16 +897,13 @@ a terminal is a rectangle in the window, drawn by hypervisor
 I would be happy if
 - terminals draw to screen
 - the tasks can animate the terminals
-- the proecess user input handle is already implemented
+- the task user input handle is already implemented
 
-the process gets events in on the events in channel, you call tick and it tasks them and events go out on the events out channel
-and the process is determinstic.
-go into /process/example/api.go
+the task gets events in on the events in channel, you call tick and it digests them and events go out on the events out channel
+and the task is determinstic.
+go into /task/example/api.go
 
 that is function that writes terminal messages to the output event channel
-
-issues:
-2> the terminals are not associated to tasks yet
 
 
 
@@ -922,9 +919,9 @@ right now, you are implementing the stuff you would nee to implement any process
 
 
 
-viscript/process/example/api.go
+viscript/task/example/api.go
 
-and multiple process implementations can use one library and just import the library; and will have library for atomic, and library for compound or widget like GUI stuff
+and multiple task implementations can use one library and just import the library; and will have library for atomic, and library for compound or widget like GUI stuff
 
 
 
@@ -947,10 +944,10 @@ and making it like a video game
 
 
 the hypervisor will process the commands for display and controlling display
-the hyper visor will send input messages to the process/task
-the process/task will send draw messages back to the hypervisor
+the hyper visor will send input messages to the task
+the task will send draw messages back to the hypervisor
 the hypervisor terminal object will receive the messages from hypervisor, and will have a draw method and will import the opengl
-the process/task will import a gui library, that wraps the operations through the length prefixed message channel
+the task will import a gui library, that wraps the operations through the length prefixed message channel
 
 
 

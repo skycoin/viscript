@@ -194,7 +194,7 @@ func lexAll() {
 }
 
 func lexAndColorize(y int, line string) string {
-	s := line // the dynamic/processed offshoot string
+	s := line // the dynamic/digested offshoot string
 	comment := ""
 
 	// strip any comments
