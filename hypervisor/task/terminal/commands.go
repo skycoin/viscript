@@ -141,19 +141,19 @@ func (st *State) commandStart(args []string) {
 		detached = true
 	}
 
-	newExtProc, err := extTask.MakeNewTaskExternal(tokens, detached)
+	newExtTask, err := extTask.MakeNewTaskExternal(tokens, detached)
 	if err != nil {
 		st.PrintError(err.Error())
 		return
 	}
 
-	err = newExtProc.Start()
+	err = newExtTask.Start()
 	if err != nil {
 		st.PrintError(err.Error())
 		return
 	}
 
-	extProcInterface := newExtProc.GetExtTaskInterface()
+	extProcInterface := newExtTask.GetExtTaskInterface()
 
 	procId := hypervisor.AddExtTask(extProcInterface)
 
@@ -166,7 +166,7 @@ func (st *State) commandStart(args []string) {
 
 	st.PrintLn("Added External Task (ID: " +
 		strconv.Itoa(int(procId)) + ", Command: " +
-		newExtProc.CommandLine + ")")
+		newExtTask.CommandLine + ")")
 
 }
 
