@@ -48,10 +48,19 @@ func (st *State) onKey(m msg.MessageKey, serializedMsg []byte) {
 
 func (st *State) onTerminalIds(m msg.MessageTerminalIds) {
 	st.storedTerminalIds = m.TermIds
-	st.PrintLn(fmt.Sprintf("Terminals (%d):", len(m.TermIds)))
+	num := len(m.TermIds)
+	str := fmt.Sprintf("%d Terminal", num)
+
+	if num == 1 {
+		str += ":"
+	} else {
+		str += "s:"
+	}
+
+	st.PrintLn(str)
 
 	for i, termID := range m.TermIds {
-		s := fmt.Sprintf("[%d] %d", i, termID)
+		s := fmt.Sprintf("    [%d] %d", i, termID)
 
 		if termID == m.Focused {
 			st.PrintLn(s + "    (FOCUSED)")
@@ -125,7 +134,7 @@ func (st *State) onRepeatableKey(m msg.MessageKey, serializedMsg []byte) {
 }
 
 func (st *State) onUserCommand() {
-	cmd, args := st.Cli.CurrentCommandAndArgs()
+	cmd, args := st.Cli.CurrentCommandAndArgsInLowerCase()
 	if len(cmd) < 1 {
 		println("**** ERROR! ****   Command was empty!  Returning.")
 		return
@@ -150,7 +159,7 @@ func (st *State) onUserCommand() {
 
 	if st.task.HasExtTaskAttached() {
 		extTaskInChannel := st.task.attachedExtTask.GetTaskInChannel()
-		extTaskInChannel <- []byte(st.Cli.CurrentCommandLine())
+		extTaskInChannel <- []byte(st.Cli.CurrentCommandLineInLowerCase())
 		return
 	}
 

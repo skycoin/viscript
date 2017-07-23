@@ -170,6 +170,7 @@ func (c *CliManager) ShowChosenTermChannelInfo(_ []string) error {
 	} else {
 		fmt.Printf("Channel's Subscribers (%d total):\n\n", subCount)
 		fmt.Println("Index\tResourceId\t\tResource Type")
+
 		for index, subscriber := range channelInfo.Subscribers {
 			fmt.Println(index, "\t", subscriber.SubscriberId, "\t\t",
 				dbus.ResourceTypeNames[subscriber.SubscriberType])
