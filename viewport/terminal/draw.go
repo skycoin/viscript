@@ -15,15 +15,33 @@ func (ts *TerminalStack) Draw() {
 			gl.SetColor(gl.Gray)
 		}
 
+		idText := &app.Rectangle{ //rectangle initially used to draw tab background (FIXME for multidigit ids)
+			t.Bounds.Top + t.BorderSize*2 + t.CharSize.Y,
+			t.Bounds.Left + t.BorderSize*2 + t.CharSize.X,
+			t.Bounds.Top,
+			t.Bounds.Left}
+
+		//id tab background
+		gl.Draw9SlicedRect(gl.Pic_GradientBorder, idText, z)
+		//main window background
 		gl.Draw9SlicedRect(gl.Pic_GradientBorder, t.Bounds, z)
 
-		cr := &app.Rectangle{ //current rect
+		//id rectangle now pushes in to leave a border visible
+		idText.Left += t.BorderSize
+		idText.Right -= t.BorderSize
+		idText.Top -= t.BorderSize
+		idText.Bottom += t.BorderSize
+
+		//draw the id #
+		gl.DrawCharAtRect(rune(65), idText, z)
+
+		cr := &app.Rectangle{ //current rect (in character grid of main window)
 			t.Bounds.Top,
 			t.Bounds.Left + t.CharSize.X,
 			t.Bounds.Top - t.CharSize.Y,
 			t.Bounds.Left}
 
-		cr.Left += t.BorderSize //start with the initial rect being offset by the border margin
+		cr.Left += t.BorderSize //start with the initial character grid rect being offset by the border margin
 		cr.Right += t.BorderSize
 		cr.Top -= t.BorderSize
 		cr.Bottom -= t.BorderSize
