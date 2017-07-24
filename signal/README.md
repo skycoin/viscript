@@ -9,7 +9,9 @@ After connection is set signal-server can send commands to node like ping, res_u
 
 Also see demo in signal/demo. First run  signal-client.go in signal/demo/client signal/demo/client2.
 When run signal-server.go in signal/demo/server. Add running nodes by typing:
+```
 add_node 0.0.0.0 8001
 add_node 0.0.0.0 8008
+```
 
 Use commands with appIds 1,2.

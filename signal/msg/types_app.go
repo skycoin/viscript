@@ -37,9 +37,13 @@ type MessageResourceUsageAck struct {
 	Memory uint64
 }
 
-type MessageShutdown struct{}
+type MessageShutdown struct{
+	Stage uint32
+}
 
-type MessageShutdownAck struct{}
+type MessageShutdownAck struct{
+	Stage uint32
+}
 
 type MessageConnectDirectly struct {
 	Address string

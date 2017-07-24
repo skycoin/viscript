@@ -2,27 +2,28 @@ package main
 
 import (
 	"github.com/skycoin/viscript/signal"
-	"github.com/skycoin/viscript/msg"
 	"strings"
 	"bufio"
 	"os"
 	"log"
 	"fmt"
+	"strconv"
 )
 
 func main() {
-	signal.Init("127.0.0.1:7999").Run()
+	server := signal.Init("127.0.0.1:7999")
+	server.Run()
 	showHelp()
-	promptCycle()
+	promptCycle(server)
 }
 
-func promptCycle() {
+func promptCycle(server *signal.MonitorServer) {
 	for {
 		newCommand, args := inputFromCli()
 		if newCommand == "" {
 			continue
 		}
-		dispatcher(strings.ToLower(newCommand), args)
+		dispatcher(server, strings.ToLower(newCommand), args)
 	}
 }
 
@@ -46,8 +47,10 @@ func inputFromCli() (command string, args []string) {
 	return
 }
 
-func dispatcher(cmd string, args []string) {
+func dispatcher(server *signal.MonitorServer, cmd string, args []string) {
 	log.Println("new command:" + cmd)
+	log.Println(args[0:])
+
 
 
 	switch cmd {
@@ -56,34 +59,34 @@ func dispatcher(cmd string, args []string) {
 		showHelp()
 
 	case "ping":
-		msgUserCommand := msg.MessageUserCommand{
-			Sequence: 1,
-			AppId:    2,
-			Payload:  msg.Serialize(msg.TypePing, msg.MessagePing{})}
-
-		serializedCommand := msg.Serialize(msg.TypeUserCommand, msgUserCommand)
-
-		signal.Monitor.Send(2, serializedCommand)
+		s, err := strconv.ParseUint(args[0], 10, 32)
+		if err != nil {
+			log.Println(err)
+		}
+		appId := uint32(s)
+		signal.Monitor.SendPingCommand(appId)
 
 	case "shutdown":
-		msgUserCommand := msg.MessageUserCommand{
-			Sequence: 1,
-			AppId:    2,
-			Payload:  msg.Serialize(msg.TypeShutdown, msg.MessagePing{})}
-
-		serializedCommand := msg.Serialize(msg.TypeUserCommand, msgUserCommand)
-
-		signal.Monitor.Send(2, serializedCommand)
+		s, err := strconv.ParseUint(args[0], 10, 32)
+		if err != nil {
+			log.Println(err)
+		}
+		appId := uint32(s)
+		signal.Monitor.SendShutdownCommand(appId, 1)
 
 	case "res_usage":
-		msgUserCommand := msg.MessageUserCommand{
-			Sequence: 1,
-			AppId:    2,
-			Payload:  msg.Serialize(msg.TypeResourceUsage, msg.MessagePing{})}
+		s, err := strconv.ParseUint(args[0], 10, 32)
+		if err != nil {
+			log.Println(err)
+		}
+		appId := uint32(s)
+		signal.Monitor.SendResUsageCommand(appId)
 
-		serializedCommand := msg.Serialize(msg.TypeUserCommand, msgUserCommand)
+	case "add_node":
+		server.AddSignalNodeConn(args[0], args[1])
 
-		signal.Monitor.Send(2, serializedCommand)
+	case "list_nodes":
+		server.ListNodes()
 
 
 	default:
@@ -98,4 +101,6 @@ func showHelp() {
 	fmt.Printf("> ping <id>\t\tPing app with choosen id.\n\n")
 	fmt.Printf("> shutdown <id>\t\tKill app with choosen id.\n\n")
 	fmt.Printf("> res_usage <id>\tShow cpu and memory stats.\n\n")
+	fmt.Printf("> add_node <ip> <port>\tShow cpu and memory stats.\n\n")
+	fmt.Printf("> list_nodes\t\tShow list of runnig apps.\n\n")
 }
