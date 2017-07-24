@@ -5,16 +5,30 @@ import (
 	"io"
 	"log"
 	"github.com/skycoin/viscript/msg"
+	sgmsg "github.com/skycoin/viscript/signal/msg"
 	"runtime"
+	"time"
 )
 
-func ListenForSignals(port string) {
-	listenAddress := "0.0.0.0:" + port
+type SignalNode struct {
+	port         string
+	appId        uint32
+}
+
+func InitSignalNode(port string, appId uint32) *SignalNode {
+	client := &SignalNode{port: port,
+		appId: appId,
+	}
+	return client
+}
+
+func (self *SignalNode) ListenForSignals() {
+	listenAddress := "0.0.0.0:" + self.port
 	l, err := net.Listen("tcp", listenAddress)
 	if err != nil {
 		panic(err)
 	}
-	log.Println("Listen for incoming message on port: " + port)
+	log.Println("Listen for incoming message on port: " + self.port)
 	for {
 		appConn, err := l.Accept() // create a connection with the user app (e.g. browser)
 		if err != nil {
@@ -25,7 +39,7 @@ func ListenForSignals(port string) {
 
 		go func() { // run listening the connection for data and sending it through the meshnet to the server
 			for {
-				sizeMessage := make([]byte, 30)
+				sizeMessage := make([]byte, 40)
 				_, err := appConn.Read(sizeMessage)
 				if err != nil {
 					if err == io.EOF {
@@ -39,15 +53,15 @@ func ListenForSignals(port string) {
 
 				switch msg.GetType(sizeMessage) {
 
-				case msg.TypeUserCommand:
-					uc := msg.MessageUserCommand{}
+				case sgmsg.TypeUserCommand:
+					uc := sgmsg.MessageUserCommand{}
 					err = msg.Deserialize(sizeMessage, &uc)
 					if err != nil {
 						log.Println("Incorrect UserCommand:", sizeMessage)
 						continue
 					}
 
-					handleUserCommand(&uc)
+					self.handleUserCommand(&uc)
 
 				default:
 					log.Println("Bad command")
@@ -57,13 +71,13 @@ func ListenForSignals(port string) {
 	}
 }
 
-func handleUserCommand(uc *msg.MessageUserCommand) {
+func (self *SignalNode) handleUserCommand(uc *sgmsg.MessageUserCommand) {
 	log.Println("command received:", uc)
-	//sequence := uc.Sequence
+	sequence := uc.Sequence
 	//appId := uc.AppId
 	message := uc.Payload
 
-	test := msg.MessageUserCommand{}
+	test := sgmsg.MessageUserCommand{}
 	err := msg.Deserialize(uc.Payload, &test)
 	if err != nil {
 		log.Println("Incorrect UserCommand:", uc.Payload)
@@ -71,48 +85,74 @@ func handleUserCommand(uc *msg.MessageUserCommand) {
 
 	switch msg.GetType(test.Payload) {
 
-		case msg.TypePing:
-			log.Println("ping command")
-			ack := &msg.MessagePingAck{}
-			ackS := msg.Serialize(msg.TypePingAck, ack)
-			SendAck(ackS, 2, 1)
+	case sgmsg.TypePing:
+		log.Println("ping command")
+		ack := &sgmsg.MessagePingAck{}
+		ackS := msg.Serialize(sgmsg.TypePingAck, ack)
+		self.SendAck(ackS, sequence, self.appId)
 
-		case msg.TypeResourceUsage:
-			log.Println("res_usage command")
-			cpu, memory, err := GetResources()
-			if err == nil {
-				ack := &msg.MessageResourceUsageAck{
-					cpu,
-					memory,
-				}
-				ackS := msg.Serialize(msg.TypeResourceUsageAck, ack)
-				SendAck(ackS, 2, 1)
+	case sgmsg.TypeResourceUsage:
+		log.Println("res_usage command")
+		cpu, memory, err := GetResources()
+		if err == nil {
+			ack := &sgmsg.MessageResourceUsageAck{
+				cpu,
+				memory,
 			}
-
-		case msg.TypeShutdown:
-			log.Println("shutdown command")
-			ack := &msg.MessageShutdownAck{}
-			ackS := msg.Serialize(msg.TypeShutdownAck, ack)
-			SendAck(ackS, 2, 1)
-			panic("goodbye")
-
-		default:
-			log.Println("Unknown user command:", message)
-
+			ackS := msg.Serialize(sgmsg.TypeResourceUsageAck, ack)
+			self.SendAck(ackS, sequence, self.appId)
 		}
+
+	case sgmsg.TypeShutdown:
+		log.Println("shutdown command")
+		shutdown := sgmsg.MessageShutdown{}
+		err = msg.Deserialize(test.Payload, &shutdown)
+		if err != nil {
+			panic(err)
+		}
+
+		switch shutdown.Stage {
+			case 1:
+				log.Println("app is preparing for shutdown... ", shutdown.Stage)
+				ack := &sgmsg.MessageShutdownAck{Stage: 1}
+				ackS := msg.Serialize(sgmsg.TypeShutdownAck, ack)
+				self.SendAck(ackS, sequence, self.appId)
+			case 2:
+				log.Println("turn off daemons... ", shutdown.Stage)
+				self.TurnOffNodes()
+				ack := &sgmsg.MessageShutdownAck{Stage: 2}
+				ackS := msg.Serialize(sgmsg.TypeShutdownAck, ack)
+				self.SendAck(ackS, sequence, self.appId)
+			case 3:
+				ack := &sgmsg.MessageShutdownAck{Stage: 3}
+				ackS := msg.Serialize(sgmsg.TypeShutdownAck, ack)
+				self.SendAck(ackS, sequence, self.appId)
+				panic("goodbye")
+		}
+
+
+	default:
+		log.Println("Unknown user command:", message)
+
+	}
 }
 
-func SendAck(ackS []byte, sequence, appId uint32) {
+func (self *SignalNode) TurnOffNodes(){
+	time.Sleep(2* time.Second)
+	log.Println("Daemons turned off")
+}
+
+func (self *SignalNode) SendAck(ackS []byte, sequence, appId uint32) {
 	ucAck := &msg.MessageUserCommandAck{
 		sequence,
-		appId,
+		self.appId,
 		ackS,
 	}
 	ucAckS := msg.Serialize(msg.TypeUserCommandAck, ucAck)
-	send(ucAckS)
+	self.send(ucAckS)
 }
 
-func send(data []byte) {
+func (self *SignalNode) send(data []byte) {
 	conn, e := net.Dial("tcp", "127.0.0.1:7999")
 	if e != nil {
 		log.Println("bad conn")
