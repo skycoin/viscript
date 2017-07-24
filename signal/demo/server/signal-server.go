@@ -97,10 +97,10 @@ func dispatcher(server *signal.MonitorServer, cmd string, args []string) {
 }
 
 func showHelp() {
-	fmt.Printf("> help\t\t\tShow list of commands.\n\n")
-	fmt.Printf("> ping <id>\t\tPing app with choosen id.\n\n")
-	fmt.Printf("> shutdown <id>\t\tKill app with choosen id.\n\n")
-	fmt.Printf("> res_usage <id>\tShow cpu and memory stats.\n\n")
-	fmt.Printf("> add_node <ip> <port>\tShow cpu and memory stats.\n\n")
+	fmt.Printf("> help\t\t\tShow list of commands.\n")
+	fmt.Printf("> ping <id>\t\tPing app with choosen id.\n")
+	fmt.Printf("> shutdown <id>\t\tKill app with choosen id.\n")
+	fmt.Printf("> res_usage <id>\tShow cpu and memory stats.\n")
+	fmt.Printf("> add_node <ip> <port>\tShow cpu and memory stats.\n")
 	fmt.Printf("> list_nodes\t\tShow list of runnig apps.\n\n")
 }
