@@ -8,18 +8,16 @@ import (
 	"net"
 	"sync"
 	"time"
-
-	"github.com/skycoin/viscript/msg"
 	sgmsg "github.com/skycoin/viscript/signal/msg"
 )
 
 var Sequence uint32 = 0
 
-var K uint32 = 1 //just for demo
+var CountApps uint32 = 1
 
-func incrK() uint32 {
-	K++
-	return K
+func incrementCountApps() uint32 {
+	CountApps++
+	return CountApps
 }
 
 func GetNextMessageID() uint32 {
@@ -90,8 +88,8 @@ func (self *MonitorServer) Serve() {
 						break
 					}
 				}
-				uc := &msg.MessageUserCommandAck{}
-				err = msg.Deserialize(message, uc)
+				uc := &sgmsg.MessageUserCommandAck{}
+				err = sgmsg.Deserialize(message, uc)
 				if err != nil {
 					panic(err)
 				}
@@ -152,7 +150,7 @@ func (self *MonitorServer) Send(appId uint32, message []byte) ([]byte, string, e
 	str := fmt.Sprint(n)
 
 	uc := &sgmsg.MessageUserCommand{sequence, appId, message}
-	ucS := msg.Serialize(sgmsg.TypeUserCommand, uc)
+	ucS := sgmsg.Serialize(sgmsg.TypeUserCommand, uc)
 	sendTime := time.Now()
 	_, err := conn.Write(ucS)
 	if err != nil {
@@ -160,11 +158,11 @@ func (self *MonitorServer) Send(appId uint32, message []byte) ([]byte, string, e
 	}
 	response, err := self.Wait(respChan, sequence)
 
-	switch msg.GetType(response) {
+	switch sgmsg.GetType(response) {
 
 	case sgmsg.TypeResourceUsageAck:
 		answer := sgmsg.MessageResourceUsageAck{}
-		err = msg.Deserialize(response, &answer)
+		err = sgmsg.Deserialize(response, &answer)
 		if err != nil {
 			panic(err)
 		}
@@ -176,11 +174,10 @@ func (self *MonitorServer) Send(appId uint32, message []byte) ([]byte, string, e
 
 	case sgmsg.TypeShutdownAck:
 		answer := sgmsg.MessageShutdownAck{}
-		err = msg.Deserialize(response, &answer)
+		err = sgmsg.Deserialize(response, &answer)
 		if err != nil {
 			panic(err)
 		}
-
 
 		switch answer.Stage {
 		case 1:
@@ -194,8 +191,24 @@ func (self *MonitorServer) Send(appId uint32, message []byte) ([]byte, string, e
 			log.Println("app is closed.")
 		}
 
+	case sgmsg.TypeStartupAck:
+		answer := sgmsg.MessageStartupAck{}
+		err = sgmsg.Deserialize(response, &answer)
+		if err != nil {
+			panic(err)
+		}
 
-
+		switch answer.Stage {
+		case 1:
+			log.Println("startup stage ", answer.Stage, " is over")
+			self.SendStartupCommand(appId, 2)
+		case 2:
+			log.Println("startup stage ", answer.Stage, " is over")
+			self.SendStartupCommand(appId, 3)
+		case 3:
+			log.Println("startup stage ", answer.Stage, " is over")
+			log.Println("app is up.")
+		}
 
 	default:
 		log.Println("Incorrect command type")
@@ -210,17 +223,18 @@ func (self *MonitorServer) AddSignalNodeConn(address string, port string) {
 	if e != nil {
 		log.Println("Can't add this node.")
 	}
-	self.connections[K] = conn
-	incrK()
+	self.connections[CountApps] = conn
+	self.SendStartupCommand(CountApps, 1)
+	incrementCountApps()
 }
 
 func (self *MonitorServer) SendPingCommand(appId uint32) {
 	msgUserCommand := sgmsg.MessageUserCommand{
 		Sequence: 1,
 		AppId:    appId,
-		Payload:  msg.Serialize(sgmsg.TypePing, sgmsg.MessagePing{})}
+		Payload:  sgmsg.Serialize(sgmsg.TypePing, sgmsg.MessagePing{})}
 
-	serializedCommand := msg.Serialize(sgmsg.TypeUserCommand, msgUserCommand)
+	serializedCommand := sgmsg.Serialize(sgmsg.TypeUserCommand, msgUserCommand)
 
 	self.Send(appId, serializedCommand)
 }
@@ -230,9 +244,20 @@ func (self *MonitorServer) SendShutdownCommand(appId uint32, stage uint32) {
 	msgUserCommand := sgmsg.MessageUserCommand{
 		Sequence: 1,
 		AppId:    appId,
-		Payload:  msg.Serialize(sgmsg.TypeShutdown, sgmsg.MessageShutdown{  Stage: stage})}
+		Payload:  sgmsg.Serialize(sgmsg.TypeShutdown, sgmsg.MessageShutdown{  Stage: stage})}
 
-	serializedCommand := msg.Serialize(sgmsg.TypeUserCommand, msgUserCommand)
+	serializedCommand := sgmsg.Serialize(sgmsg.TypeUserCommand, msgUserCommand)
+
+	self.Send(appId, serializedCommand)
+}
+
+func (self *MonitorServer) SendStartupCommand(appId uint32, stage uint32) {
+	msgUserCommand := sgmsg.MessageUserCommand{
+		Sequence: 1,
+		AppId:    appId,
+		Payload:  sgmsg.Serialize(sgmsg.TypeStartup, sgmsg.MessageStartup{  Address: self.address, Stage: stage})}
+
+	serializedCommand := sgmsg.Serialize(sgmsg.TypeUserCommand, msgUserCommand)
 
 	self.Send(appId, serializedCommand)
 }
@@ -243,9 +268,9 @@ func (self *MonitorServer) SendResUsageCommand(appId uint32) {
 	msgUserCommand := sgmsg.MessageUserCommand{
 		Sequence: 1,
 		AppId:    appId,
-		Payload:  msg.Serialize(sgmsg.TypeResourceUsage, sgmsg.MessageResourceUsage{})}
+		Payload:  sgmsg.Serialize(sgmsg.TypeResourceUsage, sgmsg.MessageResourceUsage{})}
 
-	serializedCommand := msg.Serialize(sgmsg.TypeUserCommand, msgUserCommand)
+	serializedCommand := sgmsg.Serialize(sgmsg.TypeUserCommand, msgUserCommand)
 
 	self.Send(appId, serializedCommand)
 }

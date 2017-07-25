@@ -7,7 +7,7 @@ import (
 func main() {
 	var k int
 	k=0
-	signal.InitSignalNode("8001", 3).ListenForSignals()
+	signal.InitSignalNode("8001").ListenForSignals()
 	for {
 		k++
 		if (k<0) {
