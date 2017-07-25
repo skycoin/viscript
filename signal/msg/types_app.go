@@ -7,13 +7,13 @@ const (
 	TypeUserCommandAck     = 2 + CATEGORY_App  // Meshnet -> Viscript
 	TypePing               = 3 + CATEGORY_App  // Viscript -> Meshnet
 	TypePingAck            = 4 + CATEGORY_App  // Meshnet -> Viscript
-	TypeCreateAck          = 5 + CATEGORY_App  // Meshnet -> Viscript
-	TypeResourceUsage      = 6 + CATEGORY_App  // Viscript -> Meshnet
-	TypeResourceUsageAck   = 7 + CATEGORY_App  // Meshnet -> Viscript
-	TypeShutdown           = 8 + CATEGORY_App  // Viscript -> Meshnet
-	TypeShutdownAck        = 9 + CATEGORY_App  // Meshnet -> Viscript
-	TypeConnectDirectly    = 10 + CATEGORY_App // Viscript -> Meshnet
-	TypeConnectDirectlyAck = 11 + CATEGORY_App // Meshnet -> Viscript
+	TypeResourceUsage      = 5 + CATEGORY_App  // Viscript -> Meshnet
+	TypeResourceUsageAck   = 6 + CATEGORY_App  // Meshnet -> Viscript
+	TypeShutdown           = 7 + CATEGORY_App  // Viscript -> Meshnet
+	TypeShutdownAck        = 8 + CATEGORY_App  // Meshnet -> Viscript
+	TypeStartup            = 9 + CATEGORY_App  // Viscript -> Meshnet
+	TypeStartupAck         = 10 + CATEGORY_App  // Meshnet -> Viscript
+
 )
 
 type MessageUserCommand struct {
@@ -27,8 +27,6 @@ type MessageUserCommandAck struct {
 	AppId    uint32
 	Payload  []byte
 }
-
-type MessageCreateAck struct{}
 
 type MessageResourceUsage struct{}
 
@@ -45,12 +43,16 @@ type MessageShutdownAck struct{
 	Stage uint32
 }
 
-type MessageConnectDirectly struct {
-	Address string
-}
-
-type MessageConnectDirectlyAck struct{}
-
 type MessagePing struct{}
 
 type MessagePingAck struct{}
+
+type MessageStartup struct{
+	Address string
+	Stage uint32
+}
+
+type MessageStartupAck struct{
+	Address string
+	Stage uint32
+}

@@ -74,7 +74,7 @@ func (self *MonitorServer) Serve() {
 		defer appConn.Close()
 
 		remoteAddr := appConn.RemoteAddr().String()
-		go func() { // run listening the connection for user command exchange between viscript and app (ping, shutdown, resources request etc.)
+		go func() { // run listening the connection for user command exchange between signal-server and app (ping, shutdown, resources request etc.)
 			for {
 				message := make([]byte, 42)
 
@@ -93,15 +93,10 @@ func (self *MonitorServer) Serve() {
 				if err != nil {
 					panic(err)
 				}
-				//log.Println("received message for sequence", uc.Sequence)
 
-				appId := uc.AppId
-				//sequence := uc.Sequence
 
 				self.lock.Lock()
-				if _, ok := self.connections[appId]; !ok { // if viscript already created an app, this connection is already in the map
-					self.connections[appId] = appConn // if no, then add current connection to the map; so next iterations will skip this step
-				}
+
 				respChan, ok0 := self.responseChannels[uc.Sequence] // take response channel for responding to it
 				self.lock.Unlock()
 				if !ok0 {
@@ -113,23 +108,6 @@ func (self *MonitorServer) Serve() {
 		}()
 	}
 }
-
-//func (self *MonitorServer) ReadFrom(appId msg.ExtTaskId) ([]byte, error) {
-//	appMessageChannel, exists := self.responseChannels[uint32(appId)]
-//	if !exists {
-//		errString := fmt.Sprintf("Channel with ID: %d doesn't exist.", appId)
-//		err := errors.New(errString)
-//		return []byte{}, err
-//	}
-//
-//	select {
-//	case data := <-appMessageChannel:
-//		return data, nil
-//	default:
-//	}
-//
-//	return []byte{}, errors.New(string(appId) + " app channel is empty.")
-//}
 
 func (self *MonitorServer) PrintAll() {
 	for key, _ := range self.responseChannels {
@@ -278,7 +256,7 @@ func (self *MonitorServer) SendResUsageCommand(appId uint32) {
 
 func (self *MonitorServer) ListNodes() {
 	for i:=1; i<=len(self.connections); i++ {
-		log.Println("appId: ", i+1, "remote addres: ", self.connections[uint32(i)].RemoteAddr())
+		log.Println("appId: ", i, "remote addres: ", self.connections[uint32(i)].RemoteAddr())
 	}
 }
 
