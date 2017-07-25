@@ -4,7 +4,6 @@ import (
 	"net"
 	"io"
 	"log"
-	"github.com/skycoin/viscript/msg"
 	sgmsg "github.com/skycoin/viscript/signal/msg"
 	"runtime"
 	"time"
@@ -14,14 +13,16 @@ import (
 	"fmt"
 )
 
+
 type SignalNode struct {
-	port         string
-	appId        uint32
+	port          string
+	appId         uint32
+	serverAddress string
 }
 
-func InitSignalNode(port string, appId uint32) *SignalNode {
+func InitSignalNode(port string) *SignalNode {
 	client := &SignalNode{port: port,
-		appId: appId,
+		appId: 1,
 	}
 	return client
 }
@@ -43,7 +44,7 @@ func (self *SignalNode) ListenForSignals() {
 
 		go func() { // run listening the connection for data and sending it through the meshnet to the server
 			for {
-				sizeMessage := make([]byte, 40)
+				sizeMessage := make([]byte, 56)
 				_, err := appConn.Read(sizeMessage)
 				if err != nil {
 					if err == io.EOF {
@@ -55,15 +56,16 @@ func (self *SignalNode) ListenForSignals() {
 				}
 
 
-				switch msg.GetType(sizeMessage) {
+				switch sgmsg.GetType(sizeMessage) {
 
 				case sgmsg.TypeUserCommand:
 					uc := sgmsg.MessageUserCommand{}
-					err = msg.Deserialize(sizeMessage, &uc)
+					err = sgmsg.Deserialize(sizeMessage, &uc)
 					if err != nil {
 						log.Println("Incorrect UserCommand:", sizeMessage)
 						continue
 					}
+
 
 					self.handleUserCommand(&uc)
 
@@ -76,62 +78,88 @@ func (self *SignalNode) ListenForSignals() {
 }
 
 func (self *SignalNode) handleUserCommand(uc *sgmsg.MessageUserCommand) {
-	log.Println("command received:", uc)
 	sequence := uc.Sequence
 	//appId := uc.AppId
 	message := uc.Payload
 
 	test := sgmsg.MessageUserCommand{}
-	err := msg.Deserialize(uc.Payload, &test)
+	err := sgmsg.Deserialize(uc.Payload, &test)
 	if err != nil {
 		log.Println("Incorrect UserCommand:", uc.Payload)
 	}
 
-	switch msg.GetType(test.Payload) {
+	switch sgmsg.GetType(test.Payload) {
 
 	case sgmsg.TypePing:
-		log.Println("ping command")
+		log.Println("ping command received")
 		ack := &sgmsg.MessagePingAck{}
-		ackS := msg.Serialize(sgmsg.TypePingAck, ack)
+		ackS := sgmsg.Serialize(sgmsg.TypePingAck, ack)
 		self.SendAck(ackS, sequence, self.appId)
 
 	case sgmsg.TypeResourceUsage:
-		log.Println("res_usage command")
+		log.Println("res_usage command received")
 		cpu, memory, err := GetResources()
 		if err == nil {
 			ack := &sgmsg.MessageResourceUsageAck{
 				cpu,
 				memory,
 			}
-			ackS := msg.Serialize(sgmsg.TypeResourceUsageAck, ack)
+			ackS := sgmsg.Serialize(sgmsg.TypeResourceUsageAck, ack)
 			self.SendAck(ackS, sequence, self.appId)
 		}
 
 	case sgmsg.TypeShutdown:
-		log.Println("shutdown command")
+		log.Println("shutdown command received")
 		shutdown := sgmsg.MessageShutdown{}
-		err = msg.Deserialize(test.Payload, &shutdown)
+		err = sgmsg.Deserialize(test.Payload, &shutdown)
 		if err != nil {
 			panic(err)
 		}
 
 		switch shutdown.Stage {
 			case 1:
-				log.Println("app is preparing for shutdown... ", shutdown.Stage)
+				log.Println("app is preparing for shutdown... ")
 				ack := &sgmsg.MessageShutdownAck{Stage: 1}
-				ackS := msg.Serialize(sgmsg.TypeShutdownAck, ack)
+				ackS := sgmsg.Serialize(sgmsg.TypeShutdownAck, ack)
 				self.SendAck(ackS, sequence, self.appId)
 			case 2:
-				log.Println("turn off daemons... ", shutdown.Stage)
+				log.Println("turn off daemons... ")
 				self.TurnOffNodes()
 				ack := &sgmsg.MessageShutdownAck{Stage: 2}
-				ackS := msg.Serialize(sgmsg.TypeShutdownAck, ack)
+				ackS := sgmsg.Serialize(sgmsg.TypeShutdownAck, ack)
 				self.SendAck(ackS, sequence, self.appId)
 			case 3:
 				ack := &sgmsg.MessageShutdownAck{Stage: 3}
-				ackS := msg.Serialize(sgmsg.TypeShutdownAck, ack)
+				ackS := sgmsg.Serialize(sgmsg.TypeShutdownAck, ack)
 				self.SendAck(ackS, sequence, self.appId)
 				panic("goodbye")
+		}
+
+	case sgmsg.TypeStartup:
+		startup := sgmsg.MessageStartup{}
+		err = sgmsg.Deserialize(test.Payload, &startup)
+		if err != nil {
+			panic(err)
+		}
+
+		switch startup.Stage {
+		case 1:
+			self.serverAddress = startup.Address
+			log.Println("app is preparing for shutdown... ")
+			ack := &sgmsg.MessageStartupAck{Stage: 1}
+			ackS := sgmsg.Serialize(sgmsg.TypeStartupAck, ack)
+			self.SendAck(ackS, sequence, self.appId)
+		case 2:
+			log.Println("turn on daemons... ")
+			self.TurnOnNodes()
+			ack := &sgmsg.MessageStartupAck{Stage: 2}
+			ackS := sgmsg.Serialize(sgmsg.TypeStartupAck, ack)
+			self.SendAck(ackS, sequence, self.appId)
+		case 3:
+			ack := &sgmsg.MessageStartupAck{Stage: 3}
+			ackS := sgmsg.Serialize(sgmsg.TypeStartupAck, ack)
+			self.SendAck(ackS, sequence, self.appId)
+			log.Println("signal-server is connected.")
 		}
 
 
@@ -141,23 +169,31 @@ func (self *SignalNode) handleUserCommand(uc *sgmsg.MessageUserCommand) {
 	}
 }
 
+
+//This is empty func, need to add functionality
 func (self *SignalNode) TurnOffNodes(){
-	time.Sleep(2* time.Second)
+	time.Sleep(1* time.Second)
 	log.Println("Daemons turned off")
 }
 
+//This is empty func, need to add functionality
+func (self *SignalNode) TurnOnNodes(){
+	time.Sleep(1* time.Second)
+	log.Println("Daemons turned on")
+}
+
 func (self *SignalNode) SendAck(ackS []byte, sequence, appId uint32) {
-	ucAck := &msg.MessageUserCommandAck{
+	ucAck := &sgmsg.MessageUserCommandAck{
 		sequence,
 		self.appId,
 		ackS,
 	}
-	ucAckS := msg.Serialize(msg.TypeUserCommandAck, ucAck)
+	ucAckS := sgmsg.Serialize(sgmsg.TypeUserCommandAck, ucAck)
 	self.send(ucAckS)
 }
 
 func (self *SignalNode) send(data []byte) {
-	conn, e := net.Dial("tcp", "127.0.0.1:7999")
+	conn, e := net.Dial("tcp", self.serverAddress)
 	if e != nil {
 		log.Println("bad conn")
 	}
@@ -167,12 +203,12 @@ func (self *SignalNode) send(data []byte) {
 	}
 }
 
+//Need realization for macOS and windows
 func GetResources() (float64, uint64, error) {
 	var cpu float64
 	switch runtime.GOOS {
 	case "linux":
 		cpu = CPUUsage()
-		log.Println("linux")
 	case "darwin":
 		log.Println("darwin")
 	case "windows":

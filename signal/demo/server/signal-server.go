@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	server := signal.Init("127.0.0.1:7999")
+	server := signal.Init("127.0.0.1:7788")
 	server.Run()
 	showHelp()
 	promptCycle(server)

@@ -1,9 +1,13 @@
 ## package "signal"
 
 Able to create signal-server that can communicate with running nodes. Node must run func:
-signal.InitSignalNode("port", appId).ListenForSignals()
+```
+signal.InitSignalNode("port").ListenForSignals()
+```
 And when signal-server can connect to this node with func:
+```
 AddSignalNodeConn(address string, port string)
+```
 
 After connection is set signal-server can send commands to node like ping, res_usage, shutdown.
 
