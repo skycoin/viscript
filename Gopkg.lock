@@ -29,13 +29,13 @@
   branch = "master"
   name = "github.com/skycoin/viscript"
   packages = ["app","config","hypervisor","hypervisor/dbus","hypervisor/input/keyboard","hypervisor/input/mouse","hypervisor/task/terminal","hypervisor/task_ext","msg","old/tree","old/ui","rpc/climanager","rpc/terminalmanager","signal","viewport","viewport/gl","viewport/terminal"]
-  revision = "e2cfb7ccb7f1ba2f4085d140b6dd8aa1eef91dfe"
+  revision = "0cfe5437ff45d6f8e3daee6f81c20dbebd989e6c"
 
 [[projects]]
   branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "3b4ad1db5b2a649883ff3782f5f9f6fb52be71af"
+  revision = "25c4ec802a7d637f88d584ab26798e94ad14c13b"
 
 [solve-meta]
   analyzer-name = "dep"
