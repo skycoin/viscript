@@ -13,7 +13,7 @@ import (
 
 var Sequence uint32 = 0
 
-var CountApps uint32 = 1
+var CountApps uint32 = 2
 
 func incrementCountApps() uint32 {
 	CountApps++
@@ -94,16 +94,26 @@ func (self *MonitorServer) Serve() {
 					panic(err)
 				}
 
+				if (sgmsg.GetType(uc.Payload) == sgmsg.TypeFirstConnect) {
+					message := sgmsg.MessageFirstConnect{}
+					err = sgmsg.Deserialize(uc.Payload, &message)
+					if err != nil {
+						panic(err)
+					}
+					log.Println("Address: ", message.Address, "Port", message.Port )
+					self.AddSignalNodeConn(message.Address, message.Port)
+				} else {
 
-				self.lock.Lock()
+					self.lock.Lock()
 
-				respChan, ok0 := self.responseChannels[uc.Sequence] // take response channel for responding to it
-				self.lock.Unlock()
-				if !ok0 {
-					log.Println("no response channel", err)
-					continue
+					respChan, ok0 := self.responseChannels[uc.Sequence] // take response channel for responding to it
+					self.lock.Unlock()
+					if !ok0 {
+						log.Println("no response channel", err)
+						continue
+					}
+					respChan <- uc.Payload // respond to it
 				}
-				respChan <- uc.Payload // respond to it
 			}
 		}()
 	}
@@ -115,7 +125,7 @@ func (self *MonitorServer) PrintAll() {
 	}
 }
 
-func (self *MonitorServer) Send(appId uint32, message []byte) ([]byte, string, error) {
+func (self *MonitorServer) Send(appId uint32, message []byte) ([]byte, error) {
 	respChan, sequence := self.MakeResponseChannel()
 
 	self.lock.Lock()
@@ -124,50 +134,24 @@ func (self *MonitorServer) Send(appId uint32, message []byte) ([]byte, string, e
 		log.Println("bad conn")
 	}
 	self.lock.Unlock()
-	var n uint32 = appId
-	str := fmt.Sprint(n)
+
 
 	uc := &sgmsg.MessageUserCommand{sequence, appId, message}
 	ucS := sgmsg.Serialize(sgmsg.TypeUserCommand, uc)
-	sendTime := time.Now()
+
 	_, err := conn.Write(ucS)
 	if err != nil {
-		return nil, str, err
+		return nil, err
 	}
 	response, err := self.Wait(respChan, sequence)
 
 	switch sgmsg.GetType(response) {
 
 	case sgmsg.TypeResourceUsageAck:
-		answer := sgmsg.MessageResourceUsageAck{}
-		err = sgmsg.Deserialize(response, &answer)
-		if err != nil {
-			panic(err)
-		}
-		log.Println("cpu: ", answer.CPU, "memory: ", answer.Memory)
 
 	case sgmsg.TypePingAck:
-		getTime := time.Now()
-		log.Print(getTime.Sub(sendTime).Seconds()*1000, " ms")
 
 	case sgmsg.TypeShutdownAck:
-		answer := sgmsg.MessageShutdownAck{}
-		err = sgmsg.Deserialize(response, &answer)
-		if err != nil {
-			panic(err)
-		}
-
-		switch answer.Stage {
-		case 1:
-			log.Println("shutdown stage ", answer.Stage, " is over")
-			self.SendShutdownCommand(appId, 2)
-		case 2:
-			log.Println("shutdown stage ", answer.Stage, " is over")
-			self.SendShutdownCommand(appId, 3)
-		case 3:
-			log.Println("shutdown stage ", answer.Stage, " is over")
-			log.Println("app is closed.")
-		}
 
 	case sgmsg.TypeStartupAck:
 		answer := sgmsg.MessageStartupAck{}
@@ -192,7 +176,7 @@ func (self *MonitorServer) Send(appId uint32, message []byte) ([]byte, string, e
 		log.Println("Incorrect command type")
 	}
 
-	return response, "end", err
+	return response,  err
 }
 
 func (self *MonitorServer) AddSignalNodeConn(address string, port string) {
@@ -206,7 +190,9 @@ func (self *MonitorServer) AddSignalNodeConn(address string, port string) {
 	incrementCountApps()
 }
 
-func (self *MonitorServer) SendPingCommand(appId uint32) {
+func (self *MonitorServer) SendPingCommand(appId uint32) float64 {
+	sendTime := time.Now()
+
 	msgUserCommand := sgmsg.MessageUserCommand{
 		Sequence: 1,
 		AppId:    appId,
@@ -214,11 +200,20 @@ func (self *MonitorServer) SendPingCommand(appId uint32) {
 
 	serializedCommand := sgmsg.Serialize(sgmsg.TypeUserCommand, msgUserCommand)
 
-	self.Send(appId, serializedCommand)
+	_, err := self.Send(appId, serializedCommand)
+	if err != nil {
+		log.Println("Can't ping app")
+	}
+
+	getTime := time.Now()
+	resp := getTime.Sub(sendTime).Seconds()*1000
+	log.Print(resp, " ms")
+	return resp
+
 }
 
 
-func (self *MonitorServer) SendShutdownCommand(appId uint32, stage uint32) {
+func (self *MonitorServer) SendShutdownCommand(appId uint32, stage uint32) uint32 {
 	msgUserCommand := sgmsg.MessageUserCommand{
 		Sequence: 1,
 		AppId:    appId,
@@ -226,7 +221,20 @@ func (self *MonitorServer) SendShutdownCommand(appId uint32, stage uint32) {
 
 	serializedCommand := sgmsg.Serialize(sgmsg.TypeUserCommand, msgUserCommand)
 
-	self.Send(appId, serializedCommand)
+	response, err := self.Send(appId, serializedCommand)
+	if err != nil {
+		log.Println(err)
+	}
+	answer := sgmsg.MessageShutdownAck{}
+	err = sgmsg.Deserialize(response, &answer)
+	if err != nil {
+		panic(err)
+	}
+
+	if (answer.Stage == 3) {
+		delete(self.connections, appId)
+	}
+	return answer.Stage
 }
 
 func (self *MonitorServer) SendStartupCommand(appId uint32, stage uint32) {
@@ -242,7 +250,7 @@ func (self *MonitorServer) SendStartupCommand(appId uint32, stage uint32) {
 
 
 
-func (self *MonitorServer) SendResUsageCommand(appId uint32) {
+func (self *MonitorServer) SendResUsageCommand(appId uint32) (float64, uint64) {
 	msgUserCommand := sgmsg.MessageUserCommand{
 		Sequence: 1,
 		AppId:    appId,
@@ -250,15 +258,36 @@ func (self *MonitorServer) SendResUsageCommand(appId uint32) {
 
 	serializedCommand := sgmsg.Serialize(sgmsg.TypeUserCommand, msgUserCommand)
 
-	self.Send(appId, serializedCommand)
+	response, err := self.Send(appId, serializedCommand)
+	if err != nil {
+		panic(err)
+	}
+
+	answer := sgmsg.MessageResourceUsageAck{}
+	err = sgmsg.Deserialize(response, &answer)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println("cpu: ", answer.CPU, "memory: ", answer.Memory)
+	return answer.CPU, answer.Memory
 }
 
 
 func (self *MonitorServer) ListNodes() {
-	for i:=1; i<=len(self.connections); i++ {
-		log.Println("appId: ", i, "remote addres: ", self.connections[uint32(i)].RemoteAddr())
+	for i, app := range self.connections {
+		log.Println("appId: ", i, "remote addres: ", app.RemoteAddr())
 	}
 }
+
+func (self *MonitorServer) ExistAppId(id int) bool {
+	appId := uint32(id)
+	if _, ok := self.connections[appId]; ok {
+		return true
+	} else {
+		return false
+	}
+}
+
 
 func (self *MonitorServer) MakeResponseChannel() (chan []byte, uint32) {
 	respChan := make(chan []byte)

@@ -29,7 +29,7 @@
   branch = "master"
   name = "github.com/skycoin/viscript"
   packages = ["app","config","hypervisor","hypervisor/dbus","hypervisor/input/keyboard","hypervisor/input/mouse","hypervisor/task/terminal","hypervisor/task_ext","msg","old/tree","old/ui","rpc/climanager","rpc/terminalmanager","signal","signal/msg","viewport","viewport/gl","viewport/terminal"]
-  revision = "6cfe6b67d7aa2e99c2bd6b2b0f177785fc0c2f3d"
+  revision = "300df54efedd0ed41089aed4abffcaadcc0a79bc"
 
 [[projects]]
   branch = "v2"
