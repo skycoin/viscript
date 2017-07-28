@@ -66,7 +66,7 @@ githubSkywirePath="github.com/skycoin/skywire"
 # Go get skywire
 pv "Go getting Skywire: $githubSkywirePath"
 go get -u -d $githubSkywirePath &>/dev/null
-
+GOPATH="/home/owner/.go"
 # Set local skywire path
 localSkywirePath="$GOPATH/src/$githubSkywirePath"
 pv "Local Skywire path set to: $localSkywirePath"

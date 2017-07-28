@@ -5,15 +5,7 @@ import (
 )
 
 func main() {
-	var k int
-	k=0
 	signal.InitSignalNode("8008").ListenForSignals()
-	for {
-		k++
-		if (k<0) {
-			break
-		}
-	}
 }
 
 

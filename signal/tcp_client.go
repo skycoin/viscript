@@ -13,6 +13,7 @@ import (
 	"fmt"
 )
 
+const viscriptAddr = "127.0.0.1:7999"
 
 type SignalNode struct {
 	port          string
@@ -23,6 +24,7 @@ type SignalNode struct {
 func InitSignalNode(port string) *SignalNode {
 	client := &SignalNode{port: port,
 		appId: 1,
+		serverAddress: viscriptAddr,
 	}
 	return client
 }
@@ -33,6 +35,10 @@ func (self *SignalNode) ListenForSignals() {
 	if err != nil {
 		panic(err)
 	}
+	//Send first message to signal-server
+	ack := &sgmsg.MessageFirstConnect{Address: "127.0.0.1", Port: self.port}
+	ackS := sgmsg.Serialize(sgmsg.TypeFirstConnect, ack)
+	self.SendAck(ackS, 1, self.appId)
 	log.Println("Listen for incoming message on port: " + self.port)
 	for {
 		appConn, err := l.Accept() // create a connection with the user app (e.g. browser)

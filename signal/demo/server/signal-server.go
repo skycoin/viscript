@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	server := signal.Init("127.0.0.1:7788")
+	server := signal.Init("127.0.0.1:7999")
 	server.Run()
 	showHelp()
 	promptCycle(server)
@@ -64,7 +64,12 @@ func dispatcher(server *signal.MonitorServer, cmd string, args []string) {
 			log.Println(err)
 		}
 		appId := uint32(s)
+		passedID, err := strconv.Atoi(args[0])
+		if (signal.Monitor.ExistAppId(passedID)){
 		signal.Monitor.SendPingCommand(appId)
+		} else		{
+			log.Println("no app with this id")
+		}
 
 	case "shutdown":
 		s, err := strconv.ParseUint(args[0], 10, 32)

@@ -184,21 +184,14 @@ func (st *State) commandAppPing(args []string) {
 		return
 	}
 
-	extTaskID := msg.ExtTaskId(passedID)
-
-	if !hypervisor.ExtTaskIsRunning(extTaskID) {
+	if !signal.Monitor.ExistAppId(passedID) {
 		st.PrintError("Taks with given id is not running.")
 		return
 	}
 
-	msgUserCommand := msg.MessageUserCommand{
-		Sequence: signal.GetNextMessageID(),
-		AppId:    uint32(extTaskID),
-		Payload:  msg.Serialize(msg.TypePing, msg.MessagePing{})}
-
-	serializedCommand := msg.Serialize(msg.TypeUserCommand, msgUserCommand)
-
-	signal.Monitor.Send(uint32(extTaskID), serializedCommand)
+	ping :=	signal.Monitor.SendPingCommand(uint32(passedID))
+	s64 := strconv.FormatFloat(ping, 'f', 5, 64)
+	st.PrintLn("Ping is " + s64)
 }
 
 func (st *State) commandShutDown(args []string) {
@@ -215,21 +208,20 @@ func (st *State) commandShutDown(args []string) {
 		return
 	}
 
-	extTaskID := msg.ExtTaskId(passedID)
-
-	if !hypervisor.ExtTaskIsRunning(extTaskID) {
+	if !signal.Monitor.ExistAppId(passedID) {
 		st.PrintError("Task with given id is not running.")
 		return
 	}
 
-	msgUserCommand := msg.MessageUserCommand{
-		Sequence: signal.GetNextMessageID(),
-		AppId:    uint32(extTaskID),
-		Payload:  msg.Serialize(msg.TypeShutdown, msg.MessageShutdown{})}
+	signal.Monitor.SendShutdownCommand(uint32(passedID), 1)
+	st.PrintLn("App preparing to shutdown")
+	signal.Monitor.SendShutdownCommand(uint32(passedID), 2)
+	st.PrintLn("App is closing daemons")
+	signal.Monitor.SendShutdownCommand(uint32(passedID), 3)
+	st.PrintLn("App is closed.")
 
-	serializedCommand := msg.Serialize(msg.TypeUserCommand, msgUserCommand)
 
-	signal.Monitor.Send(uint32(extTaskID), serializedCommand)
+
 }
 
 func (st *State) commandResourceUsage(args []string) {
@@ -245,22 +237,17 @@ func (st *State) commandResourceUsage(args []string) {
 		return
 	}
 
-	extTaskID := msg.ExtTaskId(passedID)
 
-	if !hypervisor.ExtTaskIsRunning(extTaskID) {
+
+	if !signal.Monitor.ExistAppId(passedID) {
 		st.PrintError("Task with give id is not running.")
 		return
 	}
 
-	msgUserCommand := msg.MessageUserCommand{
-		Sequence: signal.GetNextMessageID(),
-		AppId:    uint32(extTaskID),
-		Payload: msg.Serialize(msg.TypeResourceUsage,
-			msg.MessageResourceUsage{})}
-
-	serializedCommand := msg.Serialize(msg.TypeUserCommand, msgUserCommand)
-
-	signal.Monitor.Send(uint32(extTaskID), serializedCommand)
+	cpu, memory := signal.Monitor.SendResUsageCommand(uint32(passedID))
+	cpu64 := strconv.FormatFloat(cpu, 'f', 5, 64)
+	memory64 := strconv.FormatUint(memory, 10)
+	st.PrintLn("CPU: " + cpu64 + " Memory: " +memory64)
 }
 
 func (st *State) commandAttach(args []string) {

@@ -13,6 +13,7 @@ const (
 	TypeShutdownAck        = 8 + CATEGORY_App  // Meshnet -> Viscript
 	TypeStartup            = 9 + CATEGORY_App  // Viscript -> Meshnet
 	TypeStartupAck         = 10 + CATEGORY_App  // Meshnet -> Viscript
+	TypeFirstConnect       = 11 + CATEGORY_App  // Viscript -> Meshnet
 
 )
 
@@ -55,4 +56,9 @@ type MessageStartup struct{
 type MessageStartupAck struct{
 	Address string
 	Stage uint32
+}
+
+type MessageFirstConnect struct{
+	Address string
+	Port	string
 }
