@@ -56,6 +56,7 @@ func (ta *Task) HasExtTaskAttached() bool {
 func (ta *Task) AttachExternalTask(extTask msg.ExtTaskInterface) error {
 	app.At(path, "AttachExternalTask")
 	err := extTask.Attach()
+
 	if err != nil {
 		return err
 	}

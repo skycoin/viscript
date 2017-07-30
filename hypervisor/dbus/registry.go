@@ -12,16 +12,16 @@ func (di *DbusInstance) Init() {
 }
 
 //register that a resource exists
-func (di *DbusInstance) ResourceRegister(ResourceId ResourceId, ResourceType ResourceType) {
+func (di *DbusInstance) ResourceRegister(resId ResourceId, resType ResourceType) {
 	x := ResourceMeta{}
-	x.Id = ResourceId
-	x.Type = ResourceType
+	x.Id = resId
+	x.Type = resType
 
 	di.Resources = append(di.Resources, x)
 }
 
 //remove resource from list
-func (di *DbusInstance) ResourceUnregister(ResourceID ResourceId, ResourceType ResourceType) {
+func (di *DbusInstance) ResourceUnregister(ResourceID ResourceId) {
 	println("<dbus/registry>.ResourceUnregister()")
 	println("FIXME/TODO: THIS IS NOT CALLED ANYWHERE")
 

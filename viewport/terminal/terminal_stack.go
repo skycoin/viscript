@@ -78,12 +78,18 @@ func (ts *TerminalStack) AddWithFixedSizeState(fixedSize bool) msg.TerminalId { 
 func (ts *TerminalStack) Remove(id msg.TerminalId) {
 	println("<TerminalStack>.Remove():", id)
 	//TODO: FIXME:
-	//what should happen here after deleting terminal from the stack?                          -Red
-	//well BEFORE removal, we'll want to unsub to update/cleanup dsub (not sure what else atm) -CC
+	//what should happen here after deleting terminal from the stack?                       -Red
+	//well BEFORE removal, we'll want to unsub/update/cleanup dsub (not sure what else atm) -CC
 
 	for _, term := range ts.Terms {
 		if id == term.TerminalId {
+			if term == ts.Focused {
+				ts.Focused = nil
+				ts.FocusedId = 0
+			}
+
 			delete(ts.Terms, id)
+			//TODO?			//st.SendCommand("list_terms", []string{}) //updates tasks' stored list, on any remaining terminals
 		}
 	}
 }

@@ -15,13 +15,13 @@ func (di *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType Resource
 }
 
 func (di *DbusInstance) AddPubsubChannelSubscriber(chanId ChannelId, resourceId ResourceId, resourceType ResourceType, channelIn chan []byte) {
-	pc := di.PubsubChannels[chanId] //pubsub channel
-	ns := PubsubSubscriber{}        //new subscriber
+	psc := di.PubsubChannels[chanId] //pubsub channel
+	ns := PubsubSubscriber{}         //new subscriber
 	ns.SubscriberId = resourceId
 	ns.SubscriberType = resourceType
 	ns.Channel = channelIn
 
-	pc.Subscribers = append(pc.Subscribers, ns)
+	psc.Subscribers = append(psc.Subscribers, ns)
 }
 
 func (di *DbusInstance) PublishTo(chanId uint32, msg []byte) {
@@ -37,6 +37,12 @@ func (di *DbusInstance) PublishTo(chanId uint32, msg []byte) {
 	}
 }
 
+func (di *DbusInstance) RemoveSubscriber(chanId ChannelId) {
+	delete(di.PubsubChannels, chanId)
+}
+
+//
+//
 //private
 func (di *DbusInstance) prefixMessageWithChanId(id ChannelId, msg *[]byte) {
 	prefix := make([]byte, 4)

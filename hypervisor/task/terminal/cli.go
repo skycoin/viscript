@@ -140,7 +140,7 @@ func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
 		hypervisor.DbusGlobal.PublishTo(st.task.OutChannelId, serializedMsg)
 	}
 
-	//add to log & command histories
+	//append to log history & make a "blank" new command line (which user modifies when they type)
 	c.Log = append(c.Log, c.Commands[c.CurrCmd])
 	c.Commands = append(c.Commands, c.Prompt)
 

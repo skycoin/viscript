@@ -15,7 +15,7 @@ func (t *Terminal) UnpackMessage(message []byte) []byte {
 		t.clear()
 		t.Curr.Y = 0
 
-	case msg.TypeTokenizedCommands:
+	case msg.TypeTokenizedCommand:
 		var m msg.MessageTokenizedCommand
 		msg.MustDeserialize(message, &m)
 		Terms.OnUserCommandFinalStage(t.TerminalId, m)
