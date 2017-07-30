@@ -243,22 +243,6 @@ func (st *State) onUserCommand() {
 	case "start":
 		st.commandStart(args)
 
-	//
-	//
-	//
-	//
-	//
-	//commands TODO:
-	//terminal_move - move terminal by x,y
-	//terminal_close - close terminal by id
-	//terminal_focus - set focus to terminal by id
-	//
-	//
-	//
-	//
-	//
-	//
-
 	default:
 		st.PrintError("\"" + cmd + "\" is an unknown command.")
 

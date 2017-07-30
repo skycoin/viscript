@@ -23,12 +23,12 @@ func (st *State) commandHelp() {
 	//st.PrintLn("Current commands:")
 	st.PrintLn("------ Terminals ------")
 	st.PrintLn("clear:                 Clears currently focused terminal.")
-	st.PrintLn("close_term <id>:         Delete terminal with index to the terminal id.")
+	st.PrintLn("close_term <id>:       Close terminal by id.")
 	st.PrintLn("list_terms:            List all terminal ids.")
 	st.PrintLn("new_term:              Add new terminal (n for short).")
 	st.PrintLn("------ Apps -----------")
 	st.PrintLn("apps:                  Display all available apps with descriptions.")
-	st.PrintLn("attach    <id>:        Attach external task with given id to terminal.")
+	st.PrintLn("attach    <id>:        Attach external task with given terminal id.")
 	st.PrintLn("list_tasks (-f):       List running tasks (-f for full commands).")
 	st.PrintLn("ping      <id>:        Ping app with given id.")
 	st.PrintLn("res_usage <id>:        See resource usage for app with given id.")
@@ -42,7 +42,6 @@ func (st *State) commandHelp() {
 }
 
 func (st *State) commandDisplayApps() {
-	app.At(cp, "commandDisplayApps")
 	apps := config.Global.Apps
 
 	if len(apps) == 0 {
@@ -53,10 +52,8 @@ func (st *State) commandDisplayApps() {
 	maxAppKeyLength := 0
 
 	for appKey, _ := range apps {
-		appKeyLength := len(appKey)
-
-		if appKeyLength > maxAppKeyLength {
-			maxAppKeyLength = appKeyLength
+		if len(appKey) > maxAppKeyLength {
+			maxAppKeyLength = len(appKey)
 		}
 	}
 
@@ -66,9 +63,11 @@ func (st *State) commandDisplayApps() {
 
 	for appKey, app := range apps {
 		buffer.WriteString(appKey)
+
 		for i := 0; i < maxAppKeyLength-len(appKey); i++ {
 			buffer.WriteString(" ")
 		}
+
 		buffer.WriteString(fmt.Sprintf("-%s\n", app.Desc))
 	}
 
