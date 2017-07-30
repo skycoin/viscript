@@ -160,12 +160,12 @@ func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
 //a == leftmost fragment that fits num columns
 //b == remaining fragment which still may need breaking
 func (c *Cli) breakStringIn2(s string, num int) (a, b string) {
-	x := num - 1
-	fb /* feedback */ := "breakStringIn2 () "
+	x := num - 1 //current position in x
 	foundSpaceChar := false
 
-	println(fb+"STARTING   -   x:", x, "   -   num(columns):", num)
-	println(fb+"passed string:", s)
+	//fb /* feedback */ := "breakStringIn2 () "
+	//println(fb+"STARTING   -   x:", x, "   -   num(columns):", num)
+	//println(fb+"passed string:", s)
 
 	for /* fragment A is smaller than a row */ len(s[x:num]) < num {
 		//scan for line break
@@ -178,7 +178,7 @@ func (c *Cli) breakStringIn2(s string, num int) (a, b string) {
 	}
 
 	//show both frags with no space removed
-	println(x, " \"", s[:x], "\" \"", s[x:], "\"")
+	//println(x, " \"", s[:x], "\" \"", s[x:], "\"")
 
 	if foundSpaceChar {
 		a = s[:x]
@@ -187,9 +187,6 @@ func (c *Cli) breakStringIn2(s string, num int) (a, b string) {
 		a = s[:num]
 		b = s[num:]
 	}
-
-	println("fragment: \"", a, "\"", len(a))
-	println("remainder: \"", b, "\"", len(b))
 
 	return a, b
 }

@@ -49,7 +49,7 @@ func (st *State) printRowsONLY(nvr, num int) {
 
 	for i := start; i < end && i < num; i++ {
 		if /* index not negative */ i > -1 {
-			println("pVL i:", i)
+			//println("pVL i:", i)
 			st.printLnAndMAYBELogIt(st.Cli.VisualRows[i], false)
 		}
 	}

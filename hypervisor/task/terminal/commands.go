@@ -68,7 +68,7 @@ func (st *State) commandApps() {
 	}
 
 	st.PrintLn(s)
-	st.PrintLn("Type \"help app_name\" for expected parameters.")
+	st.PrintLn("Type \"help name\" for expected parameters.")
 }
 
 func (st *State) commandAppHelp(args []string) {
@@ -211,7 +211,6 @@ func (st *State) commandShutDown(args []string) {
 	st.PrintLn("App is closing daemons")
 	signal.Monitor.SendShutdownCommand(uint32(passedID), 3)
 	st.PrintLn("App is closed.")
-
 }
 
 func (st *State) commandResourceUsage(args []string) {
@@ -329,8 +328,8 @@ func (st *State) commandCloseTerminalFirstStage(args []string) {
 	} else { //args failure (too many/few passed)
 		st.PrintError("Must supply ONE valid ID argument")
 		//IDEALLY we'd use ANY VALID index at position 0,
-		//but i think you'd want us to prioritize simplicity
-		//above doing extra coding to handle nitpickiness like that.
+		//but I think you'd want us to prioritize simplicity
+		//over nitpickiness like that.
 		return
 	}
 }
