@@ -14,7 +14,7 @@ type RPCReceiver struct {
 	TerminalManager *TerminalManager
 }
 
-func (receiver *RPCReceiver) ListTIDsWithTaskIDs(_ []string, result *[]byte) error {
+func (receiver *RPCReceiver) ListTerminalIDsWithTaskIDs(_ []string, result *[]byte) error {
 	println("\nHandling Request: List terminal Ids with attached task Ids")
 
 	terms := receiver.TerminalManager.terminalStack.Terms

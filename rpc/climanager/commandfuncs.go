@@ -213,7 +213,7 @@ func GetTerminalIDs(client *tm.RPCClient) ([]msg.TerminalId, error) {
 }
 
 func GetTermIDsWithTaskIDs(client *tm.RPCClient) ([]msg.TermAndAttachedTaskId, error) {
-	response, err := client.SendToRPC("ListTIDsWithTaskIDs", []string{})
+	response, err := client.SendToRPC("ListTerminalIDsWithTaskIDs", []string{})
 	if err != nil {
 		return []msg.TermAndAttachedTaskId{}, err
 	}

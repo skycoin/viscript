@@ -19,6 +19,7 @@ func RunClient(addr string) (*RPCClient, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	rpcClient.Client = client
 	return rpcClient, nil
 }
@@ -28,8 +29,7 @@ func (rpcClient *RPCClient) SendToRPC(command string, args []string) ([]byte, er
 		Command:   command,
 		Arguments: args}
 	var result []byte
-	err := rpcClient.Client.Call("RPCReceiver."+msg.Command, msg.Arguments,
-		&result)
+	err := rpcClient.Client.Call("RPCReceiver."+msg.Command, msg.Arguments, &result)
 	return result, err
 }
 

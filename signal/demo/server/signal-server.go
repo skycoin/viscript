@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/skycoin/viscript/signal"
-	"strings"
 	"bufio"
-	"os"
-	"log"
 	"fmt"
+	"github.com/skycoin/viscript/signal"
+	"log"
+	"os"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -51,8 +51,6 @@ func dispatcher(server *signal.MonitorServer, cmd string, args []string) {
 	log.Println("new command:" + cmd)
 	log.Println(args[0:])
 
-
-
 	switch cmd {
 
 	case "help":
@@ -65,9 +63,9 @@ func dispatcher(server *signal.MonitorServer, cmd string, args []string) {
 		}
 		appId := uint32(s)
 		passedID, err := strconv.Atoi(args[0])
-		if (signal.Monitor.ExistAppId(passedID)){
-		signal.Monitor.SendPingCommand(appId)
-		} else		{
+		if signal.Monitor.ExistAppId(passedID) {
+			signal.Monitor.SendPingCommand(appId)
+		} else {
 			log.Println("no app with this id")
 		}
 
@@ -93,7 +91,6 @@ func dispatcher(server *signal.MonitorServer, cmd string, args []string) {
 	case "list_nodes":
 		server.ListNodes()
 
-
 	default:
 		log.Println("Unknown user command:")
 
@@ -103,9 +100,9 @@ func dispatcher(server *signal.MonitorServer, cmd string, args []string) {
 
 func showHelp() {
 	fmt.Printf("> help\t\t\tShow list of commands.\n")
-	fmt.Printf("> ping <id>\t\tPing app with choosen id.\n")
-	fmt.Printf("> shutdown <id>\t\tKill app with choosen id.\n")
+	fmt.Printf("> ping <id>\t\tPing app with given id.\n")
+	fmt.Printf("> shutdown <id>\t\tKill app with given id.\n")
 	fmt.Printf("> res_usage <id>\tShow cpu and memory stats.\n")
 	fmt.Printf("> add_node <ip> <port>\tShow cpu and memory stats.\n")
-	fmt.Printf("> list_nodes\t\tShow list of runnig apps.\n\n")
+	fmt.Printf("> list_nodes\t\tShow list of running apps.\n\n")
 }

@@ -189,7 +189,7 @@ func (st *State) commandAppPing(args []string) {
 		return
 	}
 
-	ping :=	signal.Monitor.SendPingCommand(uint32(passedID))
+	ping := signal.Monitor.SendPingCommand(uint32(passedID))
 	s64 := strconv.FormatFloat(ping, 'f', 5, 64)
 	st.PrintLn("Ping is " + s64)
 }
@@ -220,8 +220,6 @@ func (st *State) commandShutDown(args []string) {
 	signal.Monitor.SendShutdownCommand(uint32(passedID), 3)
 	st.PrintLn("App is closed.")
 
-
-
 }
 
 func (st *State) commandResourceUsage(args []string) {
@@ -237,17 +235,15 @@ func (st *State) commandResourceUsage(args []string) {
 		return
 	}
 
-
-
 	if !signal.Monitor.ExistAppId(passedID) {
-		st.PrintError("Task with give id is not running.")
+		st.PrintError("Task with given id is not running.")
 		return
 	}
 
 	cpu, memory := signal.Monitor.SendResUsageCommand(uint32(passedID))
 	cpu64 := strconv.FormatFloat(cpu, 'f', 5, 64)
 	memory64 := strconv.FormatUint(memory, 10)
-	st.PrintLn("CPU: " + cpu64 + " Memory: " +memory64)
+	st.PrintLn("CPU: " + cpu64 + " Memory: " + memory64)
 }
 
 func (st *State) commandAttach(args []string) {
@@ -316,7 +312,7 @@ func (st *State) commandCloseTerminalFirstStage(args []string) {
 			st.PrintError("Use 'list_terms' command to see their IDs")
 			return
 		} else if len(st.storedTerminalIds) == 1 {
-			st.PrintError("Shouldn't delete when only 1 remains (UNTIL GUI IS MADE)")
+			st.PrintError("Shouldn't close when only 1 terminal remains (UNTIL GUI IS MADE)")
 			return
 		}
 
@@ -329,7 +325,7 @@ func (st *State) commandCloseTerminalFirstStage(args []string) {
 			return
 		}
 
-		//handle index errors
+		//handle index range errors
 		if storedId < 0 ||
 			storedId >= len(st.storedTerminalIds) {
 			st.PrintError("Index not in range.")
