@@ -41,7 +41,7 @@ func (st *State) commandHelp() {
 	st.PrintLn(app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)))
 }
 
-func (st *State) commandDisplayApps() {
+func (st *State) commandApps() {
 	apps := config.Global.Apps
 
 	if len(apps) == 0 {

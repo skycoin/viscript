@@ -178,7 +178,7 @@ func (st *State) onUserCommand() {
 
 	//display all apps with descriptions
 	case "apps":
-		st.commandDisplayApps()
+		st.commandApps()
 
 	//attach external task to terminal task
 	case "attach":

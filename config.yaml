@@ -25,7 +25,7 @@ apps:
   #   desc: Command line client for meshnet nodes manager server
   meshnet-node:
     daemon: true
-    desc: Run meshnet node
+    desc: DESCRIPTION GOES HERE
     path: bin/meshnet/meshnet-run-node
     default_args: []
     help: |
@@ -38,7 +38,7 @@ apps:
             start meshnet-node 111.222.123.44:5000 202.101.65.43:5999 true 8000 node0
   meshnet-socks-client:
     daemon: true
-    desc: Run meshnet socks client
+    desc: DESCRIPTION GOES HERE
     path: bin/meshnet/meshnet-run-socks-client
     default_args: []
     help: |
@@ -49,7 +49,7 @@ apps:
             start meshnet-socks-client sockscli0 101.202.34.56:9000 8001
   meshnet-socks-server:
     daemon: true
-    desc: Run meshnet socks server
+    desc: DESCRIPTION GOES HERE
     path: bin/meshnet/meshnet-run-socks-server
     default_args: []
     help: |
@@ -60,7 +60,7 @@ apps:
             start meshnet-socks-server sockssrv0 101.202.34.56:9000 8001
   meshnet-vpn-client:
     daemon: true
-    desc: Run meshnet vpn client
+    desc: DESCRIPTION GOES HERE
     path: bin/meshnet/meshnet-run-vpn-server
     default_args: []
     help: |
@@ -71,7 +71,7 @@ apps:
             start meshnet-vpn-client vpncli0 101.202.34.56:9000 8000
   meshnet-vpn-server:
     daemon: true
-    desc: Run meshnet vpn server
+    desc: DESCRIPTION GOES HERE
     path: bin/meshnet/meshnet-run-vpn-server
     default_args: []
     help: |
@@ -81,7 +81,7 @@ apps:
             start meshnet-vpn-server vpnsrv0 101.202.34.56:9000
   apptracker:
     daemon: true
-    desc: Run apptracker
+    desc: DESCRIPTION GOES HERE
     path: bin/meshnet/meshnet-run-apptracker
     default_args: []
     help: |
