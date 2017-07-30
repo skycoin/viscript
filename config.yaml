@@ -34,7 +34,8 @@ apps:
         [3] True if node needs to be connected randomly, false otherwise.
         [4] TCP port at which node will listen messages from apps.
         [5] Hostname alias.
-        Full Example Command
+
+        Full Example Command:
             start meshnet-node 111.222.123.44:5000 202.101.65.43:5999 true 8000 node0
   meshnet-socks-client:
     daemon: true
@@ -45,7 +46,8 @@ apps:
         [1] Text name of app, must be unique
         [2] Node address which app will be talked with. ex 101.202.34.56:9000
         [3] Port which socks will listen for web app incoming messages. ex 8000
-        Full Example Command
+
+        Full Example Command:
             start meshnet-socks-client sockscli0 101.202.34.56:9000 8001
   meshnet-socks-server:
     daemon: true
@@ -56,7 +58,8 @@ apps:
         [1] Text name of app, must be unique
         [2] Node address which app will be talked with. ex 101.202.34.56:9000
         [3] Port which socks server will use for connecting with target host. ex 8000
-        Full Example Command
+
+        Full Example Command:
             start meshnet-socks-server sockssrv0 101.202.34.56:9000 8001
   meshnet-vpn-client:
     daemon: true
@@ -67,7 +70,8 @@ apps:
         [1] Text name of app, must be unique
         [2] Node address which app will be talked with. ex 101.202.34.56:9000
         [3] Port which vpn will listen for web app incoming messages. ex 8000
-        Full Example Command
+
+        Full Example Command:
             start meshnet-vpn-client vpncli0 101.202.34.56:9000 8000
   meshnet-vpn-server:
     daemon: true
@@ -77,7 +81,8 @@ apps:
     help: |
         [1] Text name of app, must be unique.
         [2] Node address which app will be talked with. ex 101.202.34.56:9000
-        Full Example Command
+        
+        Full Example Command:
             start meshnet-vpn-server vpnsrv0 101.202.34.56:9000
   apptracker:
     daemon: true

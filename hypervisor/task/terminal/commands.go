@@ -1,12 +1,9 @@
 package task
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
-
-	"bytes"
-
-	"fmt"
 
 	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/config"
@@ -57,30 +54,28 @@ func (st *State) commandApps() {
 		}
 	}
 
-	var buffer bytes.Buffer
-
 	maxAppKeyLength += 4 // Space after max string length app hash
+	s := ""
 
 	for appKey, app := range apps {
-		buffer.WriteString(appKey)
+		s += appKey
 
 		for i := 0; i < maxAppKeyLength-len(appKey); i++ {
-			buffer.WriteString(" ")
+			s += " "
 		}
 
-		buffer.WriteString(fmt.Sprintf("-%s\n", app.Desc))
+		s += fmt.Sprintf("-%s\n", app.Desc)
 	}
 
-	st.PrintLn(buffer.String())
+	st.PrintLn(s)
+	st.PrintLn("Type \"help app_name\" for expected parameters.")
 }
 
 func (st *State) commandAppHelp(args []string) {
-	app.At(cp, "commandAppHelp")
-
 	appName := args[0]
 
 	if !config.AppExistsWithName(appName) {
-		st.PrintError("App with name: " + appName + "doesn't exist. " +
+		st.PrintError("App with name: " + appName + " doesn't exist. " +
 			"Try running 'apps'.")
 		return
 	}
@@ -89,8 +84,6 @@ func (st *State) commandAppHelp(args []string) {
 }
 
 func (st *State) commandClearTerminal() {
-	app.At(cp, "commandClearTerminal")
-
 	st.VisualInfo.CurrRow = 0
 	st.publishToOut(msg.Serialize(msg.TypeClear, msg.MessageClear{}))
 	st.Cli.EchoWholeCommand(st.task.OutChannelId)
@@ -113,7 +106,7 @@ func (st *State) commandStart(args []string) {
 	appName := args[0]
 
 	if !config.AppExistsWithName(appName) {
-		st.PrintError("App with name: " + appName + "doesn't exist. " +
+		st.PrintError("App with name: " + appName + " doesn't exist. " +
 			"Try running 'apps'.")
 		return
 	}
