@@ -17,12 +17,13 @@ type RPCReceiver struct {
 func (receiver *RPCReceiver) ListTerminalIDsWithTaskIDs(_ []string, result *[]byte) error {
 	println("\nHandling Request: List terminal Ids with attached task Ids")
 
-	terms := receiver.TerminalManager.terminalStack.Terms
 	termsWithTaskIDs := make([]msg.TermAndAttachedTaskId, 0)
 
-	for termID, term := range terms {
+	for id, term := range receiver.TerminalManager.terminalStack.Terms {
 		termsWithTaskIDs = append(termsWithTaskIDs,
-			msg.TermAndAttachedTaskId{TerminalId: termID, AttachedTaskId: term.AttachedTask})
+			msg.TermAndAttachedTaskId{
+				TerminalId:     id,
+				AttachedTaskId: term.AttachedTask})
 	}
 
 	println("[==============================]")
@@ -60,45 +61,45 @@ func (receiver *RPCReceiver) GetTermChannelInfo(args []string, result *[]byte) e
 		return errors.New(channelExistsErrText)
 	}
 
-	channelInfo := msg.ChannelInfo{}
+	c := dbus.PubsubChannel{}
 
-	channelInfo.ChannelId = dbusChannel.ChannelId
-	channelInfo.Owner = dbusChannel.Owner
-	channelInfo.OwnerType = dbusChannel.OwnerType
-	channelInfo.ResourceIdentifier = dbusChannel.ResourceIdentifier
+	c.ChannelId = dbusChannel.ChannelId
+	c.Owner = dbusChannel.Owner
+	c.OwnerType = dbusChannel.OwnerType
+	c.ResourceIdentifier = dbusChannel.ResourceIdentifier
 
 	// moving subscribers to the type without chan
-	channelSubscribers := make([]msg.PubsubSubscriber, 0)
+	channelSubscribers := make([]dbus.PubsubSubscriber, 0)
 	for _, v := range dbusChannel.Subscribers {
-		channelSubscribers = append(channelSubscribers, msg.PubsubSubscriber{
+		channelSubscribers = append(channelSubscribers, dbus.PubsubSubscriber{
 			SubscriberId:   v.SubscriberId,
 			SubscriberType: v.SubscriberType})
 	}
 
-	channelInfo.Subscribers = channelSubscribers
+	c.Subscribers = channelSubscribers
 	println("[==============================]")
 
 	fmt.Printf("Term (Id: %d) out channel info:\n", terminalId)
 
-	println("Channel Id:", channelInfo.ChannelId)
-	println("Channel Owner:", channelInfo.Owner)
-	println("Channel Owner's Type:", dbus.ResourceTypeNames[channelInfo.OwnerType])
-	println("Channel ResourceIdentifier:", channelInfo.ResourceIdentifier)
+	println("Channel Id:", c.ChannelId)
+	println("Channel Owner:", c.Owner)
+	println("Channel Owner's Type:", dbus.ResourceTypeNames[c.OwnerType])
+	println("Channel ResourceIdentifier:", c.ResourceIdentifier)
 
-	subCount := len(channelInfo.Subscribers)
+	subCount := len(c.Subscribers)
 
 	if subCount == 0 {
 		fmt.Printf("No subscribers to this channel.\n")
 	} else {
 		fmt.Printf("Channel's Subscribers (%d total):\n\n", subCount)
 		fmt.Println("Index\tResourceId\t\tResource Type")
-		for index, subscriber := range channelInfo.Subscribers {
+		for index, subscriber := range c.Subscribers {
 			fmt.Println(index, "\t", subscriber.SubscriberId, "\t\t",
 				dbus.ResourceTypeNames[subscriber.SubscriberType])
 		}
 	}
 
-	*result = msg.Serialize(uint16(0), channelInfo)
+	*result = msg.Serialize(uint16(0), c)
 	return nil
 }
 

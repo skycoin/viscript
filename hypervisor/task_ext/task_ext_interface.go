@@ -1,11 +1,11 @@
-package task_ext
+package ext_app
 
 import (
 	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/msg"
 )
 
-//ExtTaskInterface implementation
+//ExtAppInterface implementation
 
 func (et *ExternalTask) Tick() {
 	et.taskInput()
@@ -59,7 +59,7 @@ func (et *ExternalTask) Detach() {
 	et.stopRoutines()
 }
 
-func (et *ExternalTask) GetId() msg.ExtTaskId {
+func (et *ExternalTask) GetId() msg.ExtAppId {
 	return et.Id
 }
 

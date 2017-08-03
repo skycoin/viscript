@@ -48,6 +48,20 @@ package dbus
 
 var ChannelIdGlobal ChannelId = 2 //sequential
 
+type DbusInstance struct {
+	PubsubChannels map[ChannelId]*PubsubChannel
+	Resources      []ResourceMeta
+}
+
+func (di *DbusInstance) Init() {
+	println("<dbus/registry>.Init()")
+	di.PubsubChannels = make(map[ChannelId]*PubsubChannel)
+	di.Resources = make([]ResourceMeta, 0)
+}
+
+//
+//
+//
 func GetChannelId() ChannelId {
 	print("<dbus>.GetChannelId(): ")
 	ChannelIdGlobal++

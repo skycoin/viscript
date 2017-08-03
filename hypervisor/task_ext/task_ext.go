@@ -1,4 +1,4 @@
-package task_ext
+package ext_app
 
 import (
 	"errors"
@@ -21,10 +21,10 @@ import (
 	"github.com/skycoin/viscript/signal"
 )
 
-const te = "hypervisor/task_ext/task_ext" //path
+const te = "hypervisor/ext_app/ext_app" //path
 
 type ExternalTask struct {
-	Id          msg.ExtTaskId
+	Id          msg.ExtAppId
 	CommandLine string
 
 	TaskIn   chan []byte

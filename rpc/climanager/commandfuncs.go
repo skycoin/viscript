@@ -33,7 +33,7 @@ func (c *CliManager) PrintHelp(_ []string) error {
 }
 
 func (c *CliManager) Quit(_ []string) error {
-	println("See ya again! :>")
+	println("***  QUITTING  ***")
 	c.SessionEnd = true
 	return nil
 }
@@ -66,26 +66,28 @@ func (c *CliManager) ListTermIDsWithAttachedTasks(_ []string) error {
 
 	fmt.Printf("Terminals (%d) defaults marked with {}:\n", len(termsWithTaskIDs))
 	fmt.Println("\nIdx\tTerminal Id\t\tAttached Task Id")
+
 	for index, term := range termsWithTaskIDs {
 		fmt.Printf("[ %d ]\t", index)
 
-		// mark selected default terminal id
+		//mark selected default terminal id
 		if term.TerminalId == c.ChosenTerminalId {
 			fmt.Printf("{ %d }\t", term.TerminalId)
 		} else {
 			fmt.Printf("  %d\t", term.TerminalId)
 		}
 
-		// mark selected default task id
+		//mark selected default task id
 		if term.AttachedTaskId == c.ChosenTaskId {
 			fmt.Printf("{ %d }\t", term.AttachedTaskId)
 		} else {
 			fmt.Printf("  %d\t", term.AttachedTaskId)
 		}
+
 		fmt.Printf("\n")
 	}
-	println()
 
+	println()
 	return nil
 }
 
@@ -150,20 +152,20 @@ func (c *CliManager) ShowChosenTermChannelInfo(_ []string) error {
 		return err
 	}
 
-	var channelInfo msg.ChannelInfo
-	err = msg.Deserialize(response, &channelInfo)
+	var c PubsubChannel
+	err = msg.Deserialize(response, &c)
 	if err != nil {
 		return err
 	}
 
 	fmt.Printf("Term (Id: %d) out channel info:\n", c.ChosenTerminalId)
 
-	println("Channel Id:", channelInfo.ChannelId)
-	println("Channel Owner:", channelInfo.Owner)
-	println("Channel Owner's Type:", dbus.ResourceTypeNames[channelInfo.OwnerType])
-	println("Channel ResourceIdentifier:", channelInfo.ResourceIdentifier)
+	println("Channel Id:", c.ChannelId)
+	println("Channel Owner:", c.Owner)
+	println("Channel Owner's Type:", dbus.ResourceTypeNames[c.OwnerType])
+	println("Channel ResourceIdentifier:", c.ResourceIdentifier)
 
-	subCount := len(channelInfo.Subscribers)
+	subCount := len(c.Subscribers)
 
 	if subCount == 0 {
 		fmt.Printf("No subscribers to this channel.\n")
@@ -171,7 +173,7 @@ func (c *CliManager) ShowChosenTermChannelInfo(_ []string) error {
 		fmt.Printf("Channel's Subscribers (%d total):\n\n", subCount)
 		fmt.Println("Index\tResourceId\t\tResource Type")
 
-		for index, subscriber := range channelInfo.Subscribers {
+		for index, subscriber := range c.Subscribers {
 			fmt.Println(index, "\t", subscriber.SubscriberId, "\t\t",
 				dbus.ResourceTypeNames[subscriber.SubscriberType])
 		}

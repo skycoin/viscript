@@ -4,19 +4,22 @@ import (
 	"math/rand"
 )
 
-type TaskId uint64 //HyperVisor: TaskId
-type TerminalId uint64
-type ExtTaskId uint64
-
 var TaskIdGlobal TaskId = 1 //sequential
-var ExtTaskIdGlobal ExtTaskId = 1
+var ExtTaskIdGlobal ExtAppId = 1
 
+type TaskId uint64
+type ExtAppId uint64
+type TerminalId uint64
+
+//
+//
+//
 func NextTaskId() TaskId {
 	TaskIdGlobal += 1
 	return TaskIdGlobal
 }
 
-func NextExtTaskId() ExtTaskId {
+func NextExtTaskId() ExtAppId {
 	ExtTaskIdGlobal += 1
 	return ExtTaskIdGlobal
 }

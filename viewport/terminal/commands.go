@@ -10,7 +10,7 @@ func (ts *TerminalStack) OnUserCommandFinalStage(tID msg.TerminalId, cmd msg.Mes
 	case "close_term":
 		ts.commandCloseTerminalFinalStage(tID)
 	case "list_terms":
-		ts.ListTerminalsWithIds(tID)
+		ts.commandListTerminals(tID)
 	case "new_term":
 		ts.AddWithFixedSizeState(true)
 	default:
@@ -19,7 +19,10 @@ func (ts *TerminalStack) OnUserCommandFinalStage(tID msg.TerminalId, cmd msg.Mes
 	}
 }
 
-func (ts *TerminalStack) ListTerminalsWithIds(termId msg.TerminalId) {
+//
+//
+//private
+func (ts *TerminalStack) commandListTerminals(termId msg.TerminalId) {
 	var m msg.MessageTerminalIds
 	m.Focused = termId
 

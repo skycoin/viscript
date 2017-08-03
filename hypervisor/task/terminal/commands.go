@@ -251,7 +251,7 @@ func (st *State) commandAttach(args []string) {
 		return
 	}
 
-	extTaskID := msg.ExtTaskId(passedID)
+	extTaskID := msg.ExtAppId(passedID)
 
 	extTask, err := hypervisor.GetExtTask(extTaskID)
 	if err != nil {

@@ -15,27 +15,13 @@ func (ts *TerminalStack) Draw() {
 			gl.SetColor(gl.Gray)
 		}
 
-		idText := &app.Rectangle{ //rectangle initially used to draw tab background (FIXME for multidigit ids)
-			t.Bounds.Top + t.BorderSize*2 + t.CharSize.Y,
-			t.Bounds.Left + t.BorderSize*2 + t.CharSize.X,
-			t.Bounds.Top,
-			t.Bounds.Left}
+		drawIdTab(t, z)
 
-		//id tab background
-		gl.Draw9SlicedRect(gl.Pic_GradientBorder, idText, z)
 		//main window background
 		gl.Draw9SlicedRect(gl.Pic_GradientBorder, t.Bounds, z)
 
-		//id rectangle now pushes in to leave a border visible
-		idText.Left += t.BorderSize
-		idText.Right -= t.BorderSize
-		idText.Top -= t.BorderSize
-		idText.Bottom += t.BorderSize
-
-		//draw the id #
-		gl.DrawCharAtRect(rune(65), idText, z)
-
-		cr := &app.Rectangle{ //current rect (in character grid of main window)
+		//current rect (in character grid of main window)
+		cr := &app.Rectangle{
 			t.Bounds.Top,
 			t.Bounds.Left + t.CharSize.X,
 			t.Bounds.Top - t.CharSize.Y,
@@ -72,4 +58,52 @@ func (ts *TerminalStack) Draw() {
 			cr.Right += t.CharSize.X
 		}
 	}
+}
+
+//
+//
+//private
+func drawIdTab(t *Terminal, z float32) {
+	////handle arg conversion errors
+	// id, err := strconv.Atoi(t.TerminalId)
+	// if err != nil {
+	// 	st.PrintError("Unable to convert passed index.")
+	// 	s := "err.Error(): \"" + err.Error() + "\""
+	// 	st.PrintError(s)
+	// 	return
+	// }
+
+	// //handle index range errors
+	// if id < 0 ||
+	// 	id >= len(st.storedTerminalIds) {
+	// 	st.PrintError("Index not in range.")
+	// 	return
+	// }
+
+	// string{strconv.Itoa(int(st.storedTerminalIds[id]))})
+	//
+	//
+	//
+	//
+	stringer := "" + string(t.TerminalId)
+
+	idText := &app.Rectangle{ //rectangle initially used to draw tab background (FIXME for multidigit ids)
+		t.Bounds.Top + t.BorderSize*2 + t.CharSize.Y,
+		t.Bounds.Left + t.BorderSize*2 + t.CharSize.X,
+		t.Bounds.Top,
+		t.Bounds.Left}
+
+	//id tab background
+	gl.Draw9SlicedRect(gl.Pic_GradientBorder, idText, z)
+
+	//id rectangle now pushes in to leave a border visible
+	idText.Left += t.BorderSize
+	idText.Right -= t.BorderSize
+	idText.Top -= t.BorderSize
+	idText.Bottom += t.BorderSize
+
+	//draw the id #
+	//
+	//(single A atm)
+	gl.DrawCharAtRect(rune(stringer[0]), idText, z)
 }

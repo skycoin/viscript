@@ -39,7 +39,7 @@ func (c *CliManager) CommandDispatcher(command string, args []string) {
 			c.PrintServerError(serverError)
 		}
 	} else {
-		println("Command not found. Type 'help(h)' for commands.")
+		println("Command not found. Type 'help' for commands.")
 	}
 }
 

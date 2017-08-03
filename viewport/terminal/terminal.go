@@ -7,13 +7,13 @@ import (
 	"github.com/skycoin/viscript/msg"
 )
 
-var numOOB int // number of out of bound characters
-
 const (
 	NumPromptLines = 2
 	MinimumColumns = 16 //don't allow resizing smaller than this
 	path           = "viewport/terminal/terminal"
 )
+
+var numOOB int //number of out of bound characters
 
 type Terminal struct {
 	TerminalId     msg.TerminalId
@@ -220,7 +220,7 @@ func (t *Terminal) GetVisualInfo() msg.MessageVisualInfo {
 
 //
 //
-// private
+//private
 
 func (t *Terminal) clear() {
 	for y := 0; y < t.GridSize.Y; y++ {
@@ -268,7 +268,6 @@ func (t *Terminal) posIsValidElsePrint(X, Y int) bool { //...any errors to OS bo
 }
 
 func (t *Terminal) setupNewGrid() {
-	//app.At(path, "setupNewGrid")
 	t.Curr = app.Vec2I{0, 0}
 	t.Chars = [][]uint32{}
 

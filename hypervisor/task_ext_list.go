@@ -10,11 +10,11 @@ import (
 var ExtTaskListGlobal ExtTaskList
 
 type ExtTaskList struct {
-	TaskMap map[msg.ExtTaskId]msg.ExtTaskInterface
+	TaskMap map[msg.ExtAppId]msg.ExtTaskInterface
 }
 
 func initExtTaskList() {
-	ExtTaskListGlobal.TaskMap = make(map[msg.ExtTaskId]msg.ExtTaskInterface)
+	ExtTaskListGlobal.TaskMap = make(map[msg.ExtAppId]msg.ExtTaskInterface)
 }
 
 func teardownExtTaskList() {
@@ -22,25 +22,25 @@ func teardownExtTaskList() {
 	// TODO: Further cleanup
 }
 
-func ExtTaskIsRunning(taskID msg.ExtTaskId) bool {
-	_, exists := ExtTaskListGlobal.TaskMap[taskID]
+func ExtTaskIsRunning(taskId msg.ExtAppId) bool {
+	_, exists := ExtTaskListGlobal.TaskMap[taskId]
 	return exists
 }
 
-func AddExtTask(ep msg.ExtTaskInterface) msg.ExtTaskId {
-	id := ep.GetId()
+func AddExtTask(ea msg.ExtTaskInterface) msg.ExtAppId {
+	id := ea.GetId()
 
 	if !ExtTaskIsRunning(id) {
-		ExtTaskListGlobal.TaskMap[id] = ep
+		ExtTaskListGlobal.TaskMap[id] = ea
 	}
 
 	return id
 }
 
-func GetExtTask(id msg.ExtTaskId) (msg.ExtTaskInterface, error) {
-	extTask, exists := ExtTaskListGlobal.TaskMap[id]
+func GetExtTask(id msg.ExtAppId) (msg.ExtTaskInterface, error) {
+	ea, exists := ExtTaskListGlobal.TaskMap[id]
 	if exists {
-		return extTask, nil
+		return ea, nil
 	}
 
 	err := errors.New("External task with id " +
@@ -49,7 +49,7 @@ func GetExtTask(id msg.ExtTaskId) (msg.ExtTaskInterface, error) {
 	return nil, err
 }
 
-func RemoveExtTask(id msg.ExtTaskId) {
+func RemoveExtTask(id msg.ExtAppId) {
 	delete(ExtTaskListGlobal.TaskMap, id)
 }
 

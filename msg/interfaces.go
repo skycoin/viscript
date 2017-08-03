@@ -5,21 +5,23 @@ const ChannelCapacity = 4096 // FIXME?  might only need capacity of 2?
 
 type TaskInterface interface {
 	GetId() TaskId
-	GetType() TaskType
+	GetIncomingChannel() chan []byte
 	GetLabel() string
-	GetIncomingChannel() chan []byte //channel for incoming messages
-	Tick()                           //digest the messages and emit messages
+	GetType() TaskType
+	Tick()
 }
 
 type ExtTaskInterface interface {
+	//shared vars (with task ^^^)
+	GetId() ExtAppId
+	GetTaskInChannel() chan []byte
 	Tick()
-	Start() error
+	//unique vars
 	Attach() error
 	Detach()
-	TearDown()
-	GetId() ExtTaskId
 	GetFullCommandLine() string
-	GetTaskInChannel() chan []byte
 	GetTaskOutChannel() chan []byte
 	GetTaskExitChannel() chan struct{}
+	Start() error
+	TearDown()
 }
