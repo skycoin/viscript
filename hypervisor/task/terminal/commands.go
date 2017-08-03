@@ -11,6 +11,7 @@ import (
 	extTask "github.com/skycoin/viscript/hypervisor/task_ext"
 	"github.com/skycoin/viscript/msg"
 	"github.com/skycoin/viscript/signal"
+	"time"
 )
 
 const cp = "hypervisor/task/terminal/commands"
@@ -176,14 +177,19 @@ func (st *State) commandAppPing(args []string) {
 		return
 	}
 
-	if !signal.Monitor.ExistAppId(passedID) {
-		st.PrintError("Taks with given id is not running.")
+	client, ok := signal.GetClient(uint(passedID))
+	if !ok {
+		st.PrintError("Task with given id is not running.")
 		return
 	}
 
-	ping := signal.Monitor.SendPingCommand(uint32(passedID))
-	s64 := strconv.FormatFloat(ping, 'f', 5, 64)
-	st.PrintLn("Ping is " + s64)
+	start := time.Now()
+	_, err = client.Ping()
+	if err != nil {
+		st.PrintError(err.Error())
+		return
+	}
+	st.PrintLn(fmt.Sprintf("ping time %s", time.Now().Sub(start).String()))
 }
 
 func (st *State) commandShutDown(args []string) {
@@ -200,17 +206,18 @@ func (st *State) commandShutDown(args []string) {
 		return
 	}
 
-	if !signal.Monitor.ExistAppId(passedID) {
+	client, ok := signal.GetClient(uint(passedID))
+	if !ok {
 		st.PrintError("Task with given id is not running.")
 		return
 	}
 
-	signal.Monitor.SendShutdownCommand(uint32(passedID), 1)
-	st.PrintLn("App preparing to shutdown")
-	signal.Monitor.SendShutdownCommand(uint32(passedID), 2)
-	st.PrintLn("App is closing daemons")
-	signal.Monitor.SendShutdownCommand(uint32(passedID), 3)
-	st.PrintLn("App is closed.")
+	resp, err := client.Shutdown()
+	if err != nil {
+		st.PrintError(err.Error())
+		return
+	}
+	st.PrintLn(fmt.Sprintf("shutdown pid %d", resp.Pid))
 }
 
 func (st *State) commandResourceUsage(args []string) {
@@ -226,15 +233,18 @@ func (st *State) commandResourceUsage(args []string) {
 		return
 	}
 
-	if !signal.Monitor.ExistAppId(passedID) {
+	client, ok := signal.GetClient(uint(passedID))
+	if !ok {
 		st.PrintError("Task with given id is not running.")
 		return
 	}
 
-	cpu, memory := signal.Monitor.SendResUsageCommand(uint32(passedID))
-	cpu64 := strconv.FormatFloat(cpu, 'f', 5, 64)
-	memory64 := strconv.FormatUint(memory, 10)
-	st.PrintLn("CPU: " + cpu64 + " Memory: " + memory64)
+	resp, err := client.Top()
+	if err != nil {
+		st.PrintError(err.Error())
+		return
+	}
+	st.PrintLn(fmt.Sprintf("MemStats %#v", resp.MemStats))
 }
 
 func (st *State) commandAttach(args []string) {

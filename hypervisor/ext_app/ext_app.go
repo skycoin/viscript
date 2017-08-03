@@ -18,7 +18,6 @@ import (
 
 	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/msg"
-	"github.com/skycoin/viscript/signal"
 )
 
 const te = "hypervisor/ext_app/ext_app" //path
@@ -70,9 +69,9 @@ func (pr *ExternalTask) Init(tokens []string) error {
 	pr.Id = msg.NextExtTaskId()
 
 	//append app id before creating command
+	tokens = append(tokens, "-signal-client-id")
 	tokens = append(tokens, strconv.Itoa(int(pr.Id)))
-
-	tokens = append(tokens, strconv.Itoa(int(signal.GetNextMessageID())))
+	tokens = append(tokens, "-signal-client")
 
 	//TODO: think about this here if we have daemon should we attach anything?
 

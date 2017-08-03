@@ -95,7 +95,10 @@ func main() {
 		rpcInstance.Serve()
 	}()
 
-	signal.Init("0.0.0.0:7999").Run() //tcp server for apps
+	err = signal.Listen("0.0.0.0:7999")
+	if err != nil {
+		panic(err)
+	}
 
 	//actual start of loop
 	for viewport.CloseWindow == false {
