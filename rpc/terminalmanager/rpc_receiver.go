@@ -47,15 +47,15 @@ func (receiver *RPCReceiver) GetTermChannelInfo(args []string, result *[]byte) e
 
 	term, ok := receiver.TerminalManager.terminalStack.Terms[msg.TerminalId(terminalId)]
 	if !ok {
-		termErr := fmt.Sprintf("Terminal with given Id: %d doesn't exist.", terminalId)
+		termErr := fmt.Sprintf("Terminal with id: %d doesn't exist.", terminalId)
 		println("[==============!!==============]")
 		fmt.Println(termErr)
 		return errors.New(termErr)
 	}
 
-	dbusChannel, ok := hypervisor.DbusGlobal.PubsubChannels[dbus.ChannelId(term.OutChannelId)]
+	termOut /* channel id */, ok := hypervisor.DbusGlobal.PubsubChannels[dbus.ChannelId(term.OutChannelId)]
 	if !ok {
-		chanErr := fmt.Sprintf("Channel with given Id: %d doesn't exist.", term.OutChannelId)
+		chanErr := fmt.Sprintf("Channel with id: %d doesn't exist.", term.OutChannelId)
 		println("[==============!!==============]")
 		fmt.Println(chanErr)
 		return errors.New(chanErr)
@@ -63,14 +63,14 @@ func (receiver *RPCReceiver) GetTermChannelInfo(args []string, result *[]byte) e
 
 	c := dbus.PubsubChannel{}
 
-	c.ChannelId = dbusChannel.ChannelId
-	c.Owner = dbusChannel.Owner
-	c.OwnerType = dbusChannel.OwnerType
-	c.ResourceIdentifier = dbusChannel.ResourceIdentifier
+	c.ChannelId = termOut.ChannelId
+	c.Owner = termOut.Owner
+	c.OwnerType = termOut.OwnerType
+	c.ResourceIdentifier = termOut.ResourceIdentifier
 
 	// moving subscribers to the type without chan
 	subbers := make([]dbus.PubsubSubscriber, 0)
-	for _, v := range dbusChannel.Subscribers {
+	for _, v := range termOut.Subscribers {
 		subbers = append(subbers, dbus.PubsubSubscriber{
 			SubscriberId:   v.SubscriberId,
 			SubscriberType: v.SubscriberType})
