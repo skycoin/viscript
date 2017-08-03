@@ -39,7 +39,6 @@ func (c *CliManager) Quit(_ []string) error {
 }
 
 func (c *CliManager) ClearTerminal(_ []string) error {
-
 	ros := runtime.GOOS
 
 	if ros == "linux" || ros == "darwin" {
@@ -152,20 +151,20 @@ func (c *CliManager) ShowChosenTermChannelInfo(_ []string) error {
 		return err
 	}
 
-	var c PubsubChannel
-	err = msg.Deserialize(response, &c)
+	var pc PubsubChannel
+	err = msg.Deserialize(response, &pc)
 	if err != nil {
 		return err
 	}
 
 	fmt.Printf("Term (Id: %d) out channel info:\n", c.ChosenTerminalId)
 
-	println("Channel Id:", c.ChannelId)
-	println("Channel Owner:", c.Owner)
-	println("Channel Owner's Type:", dbus.ResourceTypeNames[c.OwnerType])
-	println("Channel ResourceIdentifier:", c.ResourceIdentifier)
+	println("Channel Id:", pc.ChannelId)
+	println("Channel Owner:", pc.Owner)
+	println("Channel Owner's Type:", dbus.ResourceTypeNames[pc.OwnerType])
+	println("Channel ResourceIdentifier:", pc.ResourceIdentifier)
 
-	subCount := len(c.Subscribers)
+	subCount := len(pc.Subscribers)
 
 	if subCount == 0 {
 		fmt.Printf("No subscribers to this channel.\n")
@@ -173,9 +172,9 @@ func (c *CliManager) ShowChosenTermChannelInfo(_ []string) error {
 		fmt.Printf("Channel's Subscribers (%d total):\n\n", subCount)
 		fmt.Println("Index\tResourceId\t\tResource Type")
 
-		for index, subscriber := range c.Subscribers {
-			fmt.Println(index, "\t", subscriber.SubscriberId, "\t\t",
-				dbus.ResourceTypeNames[subscriber.SubscriberType])
+		for i, subber := range pc.Subscribers {
+			fmt.Println(i, "\t", subber.SubscriberId, "\t\t",
+				dbus.ResourceTypeNames[subber.SubscriberType])
 		}
 	}
 
@@ -200,6 +199,12 @@ func (c *CliManager) StartTerminalWithTask(_ []string) error {
 	return nil
 }
 
+//
+//
+//non-member funcs
+//
+//
+
 func GetTerminalIDs(client *tm.RPCClient) ([]msg.TerminalId, error) {
 	response, err := client.SendToRPC("ListTerminalIDs", []string{})
 	if err != nil {
@@ -207,10 +212,12 @@ func GetTerminalIDs(client *tm.RPCClient) ([]msg.TerminalId, error) {
 	}
 
 	var termIDs []msg.TerminalId
+
 	err = msg.Deserialize(response, &termIDs)
 	if err != nil {
 		return []msg.TerminalId{}, err
 	}
+
 	return termIDs, nil
 }
 
@@ -221,10 +228,12 @@ func GetTermIDsWithTaskIDs(client *tm.RPCClient) ([]msg.TermAndAttachedTaskId, e
 	}
 
 	var termsAndAttachedTasks []msg.TermAndAttachedTaskId
+
 	err = msg.Deserialize(response, &termsAndAttachedTasks)
 	if err != nil {
 		return []msg.TermAndAttachedTaskId{}, err
 	}
+
 	return termsAndAttachedTasks, nil
 }
 
@@ -235,9 +244,11 @@ func GetTasks(client *tm.RPCClient) ([]msg.TaskInfo, error) {
 	}
 
 	var taskInfos []msg.TaskInfo
+
 	err = msg.Deserialize(response, &taskInfos)
 	if err != nil {
 		return []msg.TaskInfo{}, err
 	}
+
 	return taskInfos, nil
 }

@@ -47,18 +47,18 @@ func (receiver *RPCReceiver) GetTermChannelInfo(args []string, result *[]byte) e
 
 	term, ok := receiver.TerminalManager.terminalStack.Terms[msg.TerminalId(terminalId)]
 	if !ok {
-		termExistsErrText := fmt.Sprintf("Terminal with given Id: %d doesn't exist.", terminalId)
+		termErr := fmt.Sprintf("Terminal with given Id: %d doesn't exist.", terminalId)
 		println("[==============!!==============]")
-		fmt.Println(termExistsErrText)
-		return errors.New(termExistsErrText)
+		fmt.Println(termErr)
+		return errors.New(termErr)
 	}
 
 	dbusChannel, ok := hypervisor.DbusGlobal.PubsubChannels[dbus.ChannelId(term.OutChannelId)]
 	if !ok {
-		channelExistsErrText := fmt.Sprintf("Channel with given Id: %d doesn't exist.", term.OutChannelId)
+		chanErr := fmt.Sprintf("Channel with given Id: %d doesn't exist.", term.OutChannelId)
 		println("[==============!!==============]")
-		fmt.Println(channelExistsErrText)
-		return errors.New(channelExistsErrText)
+		fmt.Println(chanErr)
+		return errors.New(chanErr)
 	}
 
 	c := dbus.PubsubChannel{}
@@ -69,14 +69,14 @@ func (receiver *RPCReceiver) GetTermChannelInfo(args []string, result *[]byte) e
 	c.ResourceIdentifier = dbusChannel.ResourceIdentifier
 
 	// moving subscribers to the type without chan
-	channelSubscribers := make([]dbus.PubsubSubscriber, 0)
+	subbers := make([]dbus.PubsubSubscriber, 0)
 	for _, v := range dbusChannel.Subscribers {
-		channelSubscribers = append(channelSubscribers, dbus.PubsubSubscriber{
+		subbers = append(subbers, dbus.PubsubSubscriber{
 			SubscriberId:   v.SubscriberId,
 			SubscriberType: v.SubscriberType})
 	}
 
-	c.Subscribers = channelSubscribers
+	c.Subscribers = subbers
 	println("[==============================]")
 
 	fmt.Printf("Term (Id: %d) out channel info:\n", terminalId)
@@ -93,9 +93,9 @@ func (receiver *RPCReceiver) GetTermChannelInfo(args []string, result *[]byte) e
 	} else {
 		fmt.Printf("Channel's Subscribers (%d total):\n\n", subCount)
 		fmt.Println("Index\tResourceId\t\tResource Type")
-		for index, subscriber := range c.Subscribers {
-			fmt.Println(index, "\t", subscriber.SubscriberId, "\t\t",
-				dbus.ResourceTypeNames[subscriber.SubscriberType])
+		for id, subber := range c.Subscribers {
+			fmt.Println(id, "\t", subber.SubscriberId, "\t\t",
+				dbus.ResourceTypeNames[subber.SubscriberType])
 		}
 	}
 
