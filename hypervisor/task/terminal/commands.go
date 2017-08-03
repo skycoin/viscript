@@ -8,7 +8,7 @@ import (
 	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/config"
 	"github.com/skycoin/viscript/hypervisor"
-	extTask "github.com/skycoin/viscript/hypervisor/task_ext"
+	extTask "github.com/skycoin/viscript/hypervisor/ext_app"
 	"github.com/skycoin/viscript/msg"
 	"github.com/skycoin/viscript/signal"
 	"time"
