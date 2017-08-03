@@ -68,7 +68,7 @@ func (receiver *RPCReceiver) GetTermChannelInfo(args []string, result *[]byte) e
 	c.OwnerType = termOut.OwnerType
 	c.ResourceIdentifier = termOut.ResourceIdentifier
 
-	// moving subscribers to the type without chan
+	//moving subscribers to the type without chan
 	subbers := make([]dbus.PubsubSubscriber, 0)
 	for _, v := range termOut.Subscribers {
 		subbers = append(subbers, dbus.PubsubSubscriber{
