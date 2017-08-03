@@ -20,16 +20,22 @@
   version = "v1"
 
 [[projects]]
+  name = "github.com/sirupsen/logrus"
+  packages = ["."]
+  revision = "418b41d23a1bf978c06faea5313ba194650ac088"
+  version = "v0.8.7"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/skycoin/net"
+  packages = ["client","conn","factory","msg","server"]
+  revision = "e1c3dcfc8d40a032d995378502a43b06c5c3f3ff"
+
+[[projects]]
   name = "github.com/skycoin/skycoin"
   packages = ["src/cipher","src/cipher/base58","src/cipher/chacha20","src/cipher/encoder","src/cipher/ripemd160","src/cipher/secp256k1-go","src/cipher/secp256k1-go/secp256k1-go2","src/util/logging"]
   revision = "dd924e1f2de8fab945e05b3245dbeabf267f2910"
   version = "v0.19.0"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/skycoin/viscript"
-  packages = ["app","config","hypervisor","hypervisor/dbus","hypervisor/input/keyboard","hypervisor/input/mouse","hypervisor/task/terminal","hypervisor/task_ext","msg","old/tree","old/ui","rpc/climanager","rpc/terminalmanager","signal","signal/msg","viewport","viewport/gl","viewport/terminal"]
-  revision = "300df54efedd0ed41089aed4abffcaadcc0a79bc"
 
 [[projects]]
   branch = "v2"
@@ -40,6 +46,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "08c6accd23e5df08821c1300209101954fa4f55906338f90012517d5f00c5782"
+  inputs-digest = "9c3481add45faacc89563240e9fc863c591d5acdd8efdcba7c9d61eb0caec34e"
   solver-name = "gps-cdcl"
   solver-version = 1
