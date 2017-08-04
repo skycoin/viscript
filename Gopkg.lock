@@ -22,20 +22,26 @@
 [[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
-  revision = "418b41d23a1bf978c06faea5313ba194650ac088"
-  version = "v0.8.7"
+  revision = "a3f95b5c423586578a4e099b11a46c2479628cac"
+  version = "1.0.2"
 
 [[projects]]
   branch = "master"
   name = "github.com/skycoin/net"
   packages = ["client","conn","factory","msg","server"]
-  revision = "e1c3dcfc8d40a032d995378502a43b06c5c3f3ff"
+  revision = "8204ebbfa654707c95ae8e57052ad8296248373d"
 
 [[projects]]
   name = "github.com/skycoin/skycoin"
   packages = ["src/cipher","src/cipher/base58","src/cipher/chacha20","src/cipher/encoder","src/cipher/ripemd160","src/cipher/secp256k1-go","src/cipher/secp256k1-go/secp256k1-go2","src/util/logging"]
   revision = "dd924e1f2de8fab945e05b3245dbeabf267f2910"
   version = "v0.19.0"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = ["unix"]
+  revision = "d8f5ea21b9295e315e612b4bcf4bedea93454d4d"
 
 [[projects]]
   branch = "v2"
