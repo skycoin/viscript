@@ -56,6 +56,11 @@ func (t *Terminal) Init() {
 	t.Curr.Y = 1
 	t.ResizingRight = false
 	t.ResizingBottom = false
+
+	//push down window by size of id tab
+	tabOffset := t.BorderSize*2 + t.CharSize.Y
+	t.Bounds.Top -= tabOffset
+	t.Bounds.Bottom -= tabOffset
 }
 
 func (t *Terminal) IsResizing() bool {

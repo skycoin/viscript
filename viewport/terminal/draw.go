@@ -64,6 +64,9 @@ func (ts *TerminalStack) Draw() {
 //
 //
 //private
+//
+//
+
 func drawIdTab(t *Terminal, z float32) {
 	id := strconv.Itoa(int(t.TerminalId))
 

@@ -23,28 +23,30 @@ type TerminalStack struct {
 	//next/new terminal spawn vars
 	nextRect   app.Rectangle
 	nextDepth  float32
-	nextOffset app.Vec2F // how far from previous terminal
+	nextOffset app.Vec2F //how far from previous terminal
 }
 
 func (ts *TerminalStack) Init() {
+	top := gl.CanvasExtents.Y
+	left := -gl.CanvasExtents.X
 	w := gl.CanvasExtents.X * 1.5 //width of terminal window
-	h := gl.CanvasExtents.Y * 1.5 //height
+	h := gl.CanvasExtents.Y * 1.5 //height " " "
 
 	ts.Terms = make(map[msg.TerminalId]*Terminal)
 	ts.nextOffset.X = (gl.CanvasExtents.X*2 - w) / 2
 	ts.nextOffset.Y = (gl.CanvasExtents.Y*2 - h) / 2
 
 	ts.nextRect = app.Rectangle{
-		gl.CanvasExtents.Y,
-		-gl.CanvasExtents.X + w,
-		gl.CanvasExtents.Y - h,
-		-gl.CanvasExtents.X}
+		top,
+		left + w,
+		top - h,
+		left}
 
-	//setup a starter terminal window
+	//initial terminal window
 	Terms.Add()
 }
 
-//these are visually grouped, because they're used as 1 unit (to allow for a sort of default argument)
+//these are visually grouped, because they're used as 1 unit (to allow for a sort of default parameter)
 func (ts *TerminalStack) Add() msg.TerminalId {
 	println("<TerminalStack>.Add()")
 	return ts.AddWithFixedSizeState(false)
