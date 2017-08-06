@@ -3,6 +3,7 @@ package terminal
 import (
 	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/viewport/gl"
+	"strconv"
 )
 
 func (ts *TerminalStack) Draw() {
@@ -64,46 +65,27 @@ func (ts *TerminalStack) Draw() {
 //
 //private
 func drawIdTab(t *Terminal, z float32) {
-	////handle arg conversion errors
-	// id, err := strconv.Atoi(t.TerminalId)
-	// if err != nil {
-	// 	st.PrintError("Unable to convert passed index.")
-	// 	s := "err.Error(): \"" + err.Error() + "\""
-	// 	st.PrintError(s)
-	// 	return
-	// }
+	id := strconv.Itoa(int(t.TerminalId))
 
-	// //handle index range errors
-	// if id < 0 ||
-	// 	id >= len(st.storedTerminalIds) {
-	// 	st.PrintError("Index not in range.")
-	// 	return
-	// }
-
-	// string{strconv.Itoa(int(st.storedTerminalIds[id]))})
-	//
-	//
-	//
-	//
-	stringer := "" + string(t.TerminalId)
-
-	idText := &app.Rectangle{ //rectangle initially used to draw tab background (FIXME for multidigit ids)
+	idText := &app.Rectangle{ //rectangle initially used to draw tab background
 		t.Bounds.Top + t.BorderSize*2 + t.CharSize.Y,
-		t.Bounds.Left + t.BorderSize*2 + t.CharSize.X,
+		t.Bounds.Left + t.BorderSize*2 + t.CharSize.X*float32(len(id)),
 		t.Bounds.Top,
 		t.Bounds.Left}
 
 	//id tab background
 	gl.Draw9SlicedRect(gl.Pic_GradientBorder, idText, z)
 
-	//id rectangle now pushes in to leave a border visible
-	idText.Left += t.BorderSize
-	idText.Right -= t.BorderSize
+	//push in edges to leave a border visible....
 	idText.Top -= t.BorderSize
 	idText.Bottom += t.BorderSize
+	idText.Left += t.BorderSize
+	idText.Right = idText.Left + t.CharSize.X //....and shrink width to char size
 
 	//draw the id #
-	//
-	//(single A atm)
-	gl.DrawCharAtRect(rune(stringer[0]), idText, z)
+	for i := 0; i < len(id); i++ {
+		gl.DrawCharAtRect(rune(id[i]), idText, z)
+		idText.Left += t.CharSize.X
+		idText.Right += t.CharSize.X
+	}
 }
