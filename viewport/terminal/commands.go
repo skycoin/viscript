@@ -2,16 +2,20 @@ package terminal
 
 import (
 	"github.com/skycoin/viscript/msg"
+	"strconv"
 )
 
-func (ts *TerminalStack) OnUserCommandFinalStage(tID msg.TerminalId, cmd msg.MessageTokenizedCommand) {
+func (ts *TerminalStack) OnUserCommandFinalStage(reciever msg.TerminalId, cmd msg.MessageTokenizedCommand) {
 	switch cmd.Command {
 
 	case "close_term":
-		ts.commandCloseTerminalFinalStage(tID)
+		ts.commandCloseTerminalFinalStage(reciever, cmd)
 	case "list_terms":
-		ts.commandListTerminals(tID)
+		ts.commandListTerminals(reciever)
 	case "new_term":
+		//temporary
+		//for now, we'll be testing the difference between fixed size and dynamic terminals.
+		//the 1st/initial terminal will be dynamic.  new terms afterwards will all be fixed.
 		ts.AddWithFixedSizeState(true)
 	default:
 		//nope
@@ -22,9 +26,12 @@ func (ts *TerminalStack) OnUserCommandFinalStage(tID msg.TerminalId, cmd msg.Mes
 //
 //
 //private
-func (ts *TerminalStack) commandListTerminals(termId msg.TerminalId) {
+//
+//
+
+func (ts *TerminalStack) commandListTerminals(reciever msg.TerminalId) {
 	var m msg.MessageTerminalIds
-	m.Focused = termId
+	m.Focused = reciever
 
 	for _, term := range ts.Terms {
 		m.TermIds = append(m.TermIds, term.TerminalId)
@@ -33,8 +40,9 @@ func (ts *TerminalStack) commandListTerminals(termId msg.TerminalId) {
 	ts.Focused.RelayToTask(msg.Serialize(msg.TypeTerminalIds, m))
 }
 
-func (ts *TerminalStack) commandCloseTerminalFinalStage(id msg.TerminalId) {
+func (ts *TerminalStack) commandCloseTerminalFinalStage(reciever msg.TerminalId, cmd msg.MessageTokenizedCommand) {
 	//for simplicity, all edge cases are to be handled in the first stage, so that...
 	//THIS SHOULD NEVER BE RUN WITHOUT A VALID ID
-	ts.Remove(id)
+	termToClose, _ := strconv.Atoi(cmd.Args[0]) //(should always convert)
+	ts.Remove(msg.TerminalId(termToClose))
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/config"
 	"github.com/skycoin/viscript/hypervisor"
-	extTask "github.com/skycoin/viscript/hypervisor/ext_app"
+	extAppImport "github.com/skycoin/viscript/hypervisor/ext_app"
 	"github.com/skycoin/viscript/msg"
 	"github.com/skycoin/viscript/signal"
 	"time"
@@ -116,15 +116,12 @@ func (st *State) commandStart(args []string) {
 
 	//if there are user passed args for the app override defaults set in config
 	if len(args) > 1 {
-
 		pathToApp := config.GetPathForApp(appName)
-
 		tokens = append(tokens, pathToApp)
 
 		for _, arg := range args[1:] {
 			tokens = append(tokens, strings.ToLower(arg))
 		}
-
 	} else {
 		tokens = config.GetPathWithDefaultArgsForApp(appName)
 	}
@@ -134,7 +131,7 @@ func (st *State) commandStart(args []string) {
 		detached = true
 	}
 
-	newExtTask, err := extTask.MakeNewTaskExternal(tokens, detached)
+	newExtTask, err := extAppImport.MakeNewTaskExternal(tokens, detached)
 	if err != nil {
 		st.PrintError(err.Error())
 		return
@@ -147,7 +144,6 @@ func (st *State) commandStart(args []string) {
 	}
 
 	extTaskInterface := newExtTask.GetExtTaskInterface()
-
 	taskID := hypervisor.AddExtTask(extTaskInterface)
 
 	if !detached {
@@ -160,7 +156,6 @@ func (st *State) commandStart(args []string) {
 	st.PrintLn("Added External Task (ID: " +
 		strconv.Itoa(int(taskID)) + ", Command: " +
 		newExtTask.CommandLine + ")")
-
 }
 
 func (st *State) commandAppPing(args []string) {
