@@ -221,17 +221,17 @@ func GetTerminalIDs(client *tm.RPCClient) ([]msg.TerminalId, error) {
 	return termIDs, nil
 }
 
-func GetTermIDsWithTaskIDs(client *tm.RPCClient) ([]msg.TermAndAttachedTaskId, error) {
+func GetTermIDsWithTaskIDs(client *tm.RPCClient) ([]msg.TermAndTaskIds, error) {
 	response, err := client.SendToRPC("ListTerminalIDsWithTaskIDs", []string{})
 	if err != nil {
-		return []msg.TermAndAttachedTaskId{}, err
+		return []msg.TermAndTaskIds{}, err
 	}
 
-	var termsAndAttachedTasks []msg.TermAndAttachedTaskId
+	var termsAndAttachedTasks []msg.TermAndTaskIds
 
 	err = msg.Deserialize(response, &termsAndAttachedTasks)
 	if err != nil {
-		return []msg.TermAndAttachedTaskId{}, err
+		return []msg.TermAndTaskIds{}, err
 	}
 
 	return termsAndAttachedTasks, nil

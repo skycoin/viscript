@@ -17,7 +17,7 @@ var Terms = TerminalStack{}
 type TerminalStack struct {
 	FocusedId msg.TerminalId
 	Focused   *Terminal
-	Terms     map[msg.TerminalId]*Terminal
+	TermMap   map[msg.TerminalId]*Terminal
 
 	//private
 	//next/new terminal spawn vars
@@ -32,7 +32,7 @@ func (ts *TerminalStack) Init() {
 	w := gl.CanvasExtents.X * 1.5 //width of terminal window
 	h := gl.CanvasExtents.Y * 1.5 //height " " "
 
-	ts.Terms = make(map[msg.TerminalId]*Terminal)
+	ts.TermMap = make(map[msg.TerminalId]*Terminal)
 	ts.nextOffset.X = (gl.CanvasExtents.X*2 - w) / 2
 	ts.nextOffset.Y = (gl.CanvasExtents.Y*2 - h) / 2
 
@@ -57,15 +57,15 @@ func (ts *TerminalStack) AddWithFixedSizeState(fixedSize bool) msg.TerminalId { 
 	ts.nextDepth += ts.nextOffset.X / 10 // done first, cuz desktop is at 0
 
 	tid := msg.RandTerminalId() //terminal id
-	ts.Terms[tid] = &Terminal{
+	ts.TermMap[tid] = &Terminal{
 		Depth: ts.nextDepth,
 		Bounds: &app.Rectangle{
 			ts.nextRect.Top,
 			ts.nextRect.Right,
 			ts.nextRect.Bottom,
 			ts.nextRect.Left}}
-	ts.Terms[tid].Init()
-	ts.Terms[tid].FixedSize = fixedSize
+	ts.TermMap[tid].Init()
+	ts.TermMap[tid].FixedSize = fixedSize
 	ts.SetFocused(tid)
 
 	ts.nextRect.Top -= ts.nextOffset.Y
@@ -83,21 +83,21 @@ func (ts *TerminalStack) Remove(id msg.TerminalId) {
 	//what should happen here after deleting terminal from the stack?                       -Red
 	//well BEFORE removal, we'll want to unsub/update/cleanup dsub (not sure what else atm) -CC
 
-	for _, term := range ts.Terms {
+	for _, term := range ts.TermMap {
 		if id == term.TerminalId {
 			if term == ts.Focused {
 				ts.Focused = nil
 				ts.FocusedId = 0
 			}
-
-			delete(ts.Terms, id)
-			//TODO?			//st.SendCommand("list_terms", []string{}) //updates tasks' stored list, on any remaining terminals
 		}
 	}
+
+	delete(ts.TermMap, id)
+	//TODO?			//st.SendCommand("list_terms", []string{}) //updates tasks' stored list, on any remaining terminals
 }
 
 func (ts *TerminalStack) Tick() {
-	for _, term := range ts.Terms {
+	for _, term := range ts.TermMap {
 		term.Tick()
 	}
 }
@@ -134,7 +134,7 @@ func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 	tskIF := msg.TaskInterface(task)
 	tskId := hypervisor.AddTask(tskIF)
 
-	task.State.VisualInfo = ts.Terms[termId].GetVisualInfo()
+	task.State.VisualInfo = ts.TermMap[termId].GetVisualInfo()
 
 	/* the rest is all DBUS related */
 
@@ -153,15 +153,15 @@ func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 		rid2)
 
 	task.OutChannelId = uint32(tcid)
-	ts.Terms[termId].OutChannelId = uint32(pcid)
-	ts.Terms[termId].AttachedTask = tskId
+	ts.TermMap[termId].OutChannelId = uint32(pcid)
+	ts.TermMap[termId].AttachedTask = tskId
 
 	//subscribe task to the terminal id
 	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
 		tcid,
 		dbus.ResourceId(tskId),
 		dbus.ResourceTypeTask,
-		ts.Terms[termId].InChannel)
+		ts.TermMap[termId].InChannel)
 
 	//subscribe terminal to the task id
 	hypervisor.DbusGlobal.AddPubsubChannelSubscriber(
@@ -175,13 +175,13 @@ func (ts *TerminalStack) SetFocused(topmostId msg.TerminalId) {
 	//store which is focused and bring it to top
 	newZ := float32(9.9) //FIXME (@ all places of this var) IF you ever want more than (about) 50 terms
 	ts.FocusedId = topmostId
-	ts.Focused = ts.Terms[topmostId]
+	ts.Focused = ts.TermMap[topmostId]
 	ts.Focused.Depth = newZ
 
 	//REST of the terms
 	theRest := []*Terminal{}
 
-	for id, t := range ts.Terms {
+	for id, t := range ts.TermMap {
 		if id != ts.FocusedId {
 			theRest = append(theRest, t)
 		}

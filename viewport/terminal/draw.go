@@ -7,7 +7,7 @@ import (
 )
 
 func (ts *TerminalStack) Draw() {
-	for _, t := range ts.Terms {
+	for _, t := range ts.TermMap {
 		z := t.Depth
 
 		if t == ts.Focused {

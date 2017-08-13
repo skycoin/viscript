@@ -60,8 +60,6 @@ func (c *Cli) BuildRowsFromLogEntryFragments(vi msg.MessageVisualInfo) {
 }
 
 func (c *Cli) printLogInOsBox(vi msg.MessageVisualInfo) {
-	println("printLogInOsBox()")
-
 	for _, entry := range c.VisualRows {
 		for len(entry) < int(vi.NumColumns) {
 			entry += "*"

@@ -11,7 +11,7 @@ var path = "hypervisor/task/terminal/task"
 type Task struct {
 	Id           msg.TaskId
 	Type         msg.TaskType
-	Label        string
+	Text         string
 	OutChannelId uint32
 	InChannel    chan []byte
 	State        State
@@ -27,7 +27,7 @@ func MakeNewTask() *Task {
 	var t Task
 	t.Id = msg.NextTaskId()
 	t.Type = 0
-	t.Label = "TestLabel"
+	t.Text = "Initial text"
 	t.InChannel = make(chan []byte, msg.ChannelCapacity)
 	t.State.Init(&t)
 	t.hasExternalAppAttached = false
@@ -91,8 +91,8 @@ func (ta *Task) GetType() msg.TaskType {
 	return ta.Type
 }
 
-func (ta *Task) GetLabel() string {
-	return ta.Label
+func (ta *Task) GetText() string {
+	return ta.Text
 }
 
 func (ta *Task) GetIncomingChannel() chan []byte {

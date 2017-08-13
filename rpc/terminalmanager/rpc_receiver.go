@@ -17,22 +17,22 @@ type RPCReceiver struct {
 func (receiver *RPCReceiver) ListTerminalIDsWithTaskIDs(_ []string, result *[]byte) error {
 	println("\nHandling Request: List terminal ids with attached task ids")
 
-	termsWithTaskIDs := make([]msg.TermAndAttachedTaskId, 0)
+	ids := make([]msg.TermAndTaskIds, 0)
 
-	for id, term := range receiver.TerminalManager.terminalStack.Terms {
-		termsWithTaskIDs = append(termsWithTaskIDs,
-			msg.TermAndAttachedTaskId{
+	for id, term := range receiver.TerminalManager.terminalStack.TermMap {
+		ids = append(ids,
+			msg.TermAndTaskIds{
 				TerminalId:     id,
 				AttachedTaskId: term.AttachedTask})
 	}
 
 	println("[==============================]")
 	println("Terms with task IDs list:")
-	for _, t := range termsWithTaskIDs {
+	for _, t := range ids {
 		println("Terminal ID:", t.TerminalId, "\tAttached Task ID:", t.AttachedTaskId)
 	}
 
-	*result = msg.Serialize(uint16(0), termsWithTaskIDs)
+	*result = msg.Serialize(uint16(0), ids)
 	return nil
 }
 
@@ -45,7 +45,7 @@ func (receiver *RPCReceiver) GetTermChannelInfo(args []string, result *[]byte) e
 		return err
 	}
 
-	term, ok := receiver.TerminalManager.terminalStack.Terms[msg.TerminalId(terminalId)]
+	term, ok := receiver.TerminalManager.terminalStack.TermMap[msg.TerminalId(terminalId)]
 	if !ok {
 		termErr := fmt.Sprintf("Terminal with id: %d doesn't exist.", terminalId)
 		println("[==============!!==============]")
@@ -115,20 +115,20 @@ func (receiver *RPCReceiver) StartTerminalWithTask(_ []string, result *[]byte) e
 
 func (receiver *RPCReceiver) ListTasks(_ []string, result *[]byte) error {
 	println("\nHandling Request: List all task Ids")
-	tasks := receiver.TerminalManager.tasks.TaskMap
+	tMap := receiver.TerminalManager.tasks.TaskMap
 	taskInfos := make([]msg.TaskInfo, 0)
 
-	for _, task := range tasks {
+	for _, task := range tMap {
 		taskInfos = append(taskInfos, msg.TaskInfo{
-			Id:    task.GetId(),
-			Type:  task.GetType(),
-			Label: task.GetLabel()})
+			Id:   task.GetId(),
+			Type: task.GetType(),
+			Text: task.GetText()})
 	}
 
 	println("[==============================]")
 	println("Tasks:")
 	for _, taskInfo := range taskInfos {
-		fmt.Printf("Id:%6d\tType:%6d\tLabel:%s\n", taskInfo.Id, taskInfo.Type, taskInfo.Label)
+		fmt.Printf("Id: %6d\tType: %6d\tText: \"%s\"\n", taskInfo.Id, taskInfo.Type, taskInfo.Text)
 	}
 	*result = msg.Serialize((uint16)(0), taskInfos)
 	return nil

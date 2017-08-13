@@ -33,7 +33,7 @@ func (ts *TerminalStack) commandListTerminals(reciever msg.TerminalId) {
 	var m msg.MessageTerminalIds
 	m.Focused = reciever
 
-	for _, term := range ts.Terms {
+	for _, term := range ts.TermMap {
 		m.TermIds = append(m.TermIds, term.TerminalId)
 	}
 
