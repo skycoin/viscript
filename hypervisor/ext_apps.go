@@ -10,11 +10,11 @@ import (
 var ExternalAppListGlobal ExternalAppList
 
 type ExternalAppList struct {
-	TaskMap map[msg.ExtAppId]msg.ExternalAppInterface
+	TaskMap map[msg.ExternalAppId]msg.ExternalAppInterface
 }
 
 func initExternalAppList() {
-	ExternalAppListGlobal.TaskMap = make(map[msg.ExtAppId]msg.ExternalAppInterface)
+	ExternalAppListGlobal.TaskMap = make(map[msg.ExternalAppId]msg.ExternalAppInterface)
 }
 
 func teardownExternalAppList() {
@@ -22,12 +22,12 @@ func teardownExternalAppList() {
 	// TODO: Further cleanup
 }
 
-func ExternalAppIsRunning(id msg.ExtAppId) bool {
+func ExternalAppIsRunning(id msg.ExternalAppId) bool {
 	_, exists := ExternalAppListGlobal.TaskMap[id]
 	return exists
 }
 
-func AddExternalApp(ea msg.ExternalAppInterface) msg.ExtAppId {
+func AddExternalApp(ea msg.ExternalAppInterface) msg.ExternalAppId {
 	id := ea.GetId()
 
 	if !ExternalAppIsRunning(id) {
@@ -37,7 +37,7 @@ func AddExternalApp(ea msg.ExternalAppInterface) msg.ExtAppId {
 	return id
 }
 
-func GetExternalApp(id msg.ExtAppId) (msg.ExternalAppInterface, error) {
+func GetExternalApp(id msg.ExternalAppId) (msg.ExternalAppInterface, error) {
 	ea, exists := ExternalAppListGlobal.TaskMap[id]
 	if exists {
 		return ea, nil
@@ -49,7 +49,7 @@ func GetExternalApp(id msg.ExtAppId) (msg.ExternalAppInterface, error) {
 	return nil, err
 }
 
-func RemoveExternalApp(id msg.ExtAppId) {
+func RemoveExternalApp(id msg.ExternalAppId) {
 	delete(ExternalAppListGlobal.TaskMap, id)
 }
 
@@ -72,7 +72,7 @@ func TickExternalApps() {
 
 	// select {
 	// case <-p.GetTaskExitChannel():
-	// 	println("Got the exit in task ext list")
+	// 	println("Got the exit (in TickExternalApps)")
 	// default:
 	// }
 	// p.Tick()

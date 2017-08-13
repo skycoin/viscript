@@ -23,7 +23,7 @@ import (
 const path = "hypervisor/ext_app/ext_app"
 
 type ExternalApp struct {
-	Id          msg.ExtAppId
+	Id          msg.ExternalAppId
 	CommandLine string
 
 	TaskIn   chan []byte

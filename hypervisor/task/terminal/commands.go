@@ -258,7 +258,7 @@ func (st *State) commandAttach(args []string) {
 		return
 	}
 
-	eaId := msg.ExtAppId(passedID)
+	eaId := msg.ExternalAppId(passedID)
 
 	ea, err := hypervisor.GetExternalApp(eaId)
 	if err != nil {

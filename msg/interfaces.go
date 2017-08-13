@@ -13,7 +13,7 @@ type TaskInterface interface {
 
 type ExternalAppInterface interface {
 	//shared vars (with task ^^^)
-	GetId() ExtAppId
+	GetId() ExternalAppId
 	GetTaskInChannel() chan []byte
 	Tick()
 	//unique vars

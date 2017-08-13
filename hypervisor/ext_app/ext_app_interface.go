@@ -59,7 +59,7 @@ func (ea *ExternalApp) Detach() {
 	ea.stopRoutines()
 }
 
-func (ea *ExternalApp) GetId() msg.ExtAppId {
+func (ea *ExternalApp) GetId() msg.ExternalAppId {
 	return ea.Id
 }
 
