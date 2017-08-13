@@ -45,8 +45,8 @@ type ExternalApp struct {
 }
 
 //non-instanced
-func MakeNewTaskExternal(tokens []string, detached bool) (*ExternalApp, error) {
-	app.At(path, "MakeNewTaskExternal")
+func MakeNewExternalApp(tokens []string, detached bool) (*ExternalApp, error) {
+	app.At(path, "MakeNewExternalApp")
 	var ea ExternalApp
 
 	err := ea.Init(tokens)

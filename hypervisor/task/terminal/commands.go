@@ -131,7 +131,7 @@ func (st *State) commandStart(args []string) {
 		detached = true
 	}
 
-	newExtTask, err := extAppImport.MakeNewTaskExternal(tokens, detached)
+	newExtTask, err := extAppImport.MakeNewExternalApp(tokens, detached)
 	if err != nil {
 		st.PrintError(err.Error())
 		return
