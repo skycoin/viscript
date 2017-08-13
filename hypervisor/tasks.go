@@ -17,40 +17,41 @@ import (
 	- tick method, input messages are digested, output messages created
 */
 
-var TaskListGlobal TaskList
+var GlobalTasks Tasks
 
-type TaskList struct {
+type Tasks struct {
 	TaskMap map[msg.TaskId]msg.TaskInterface //task id to interface
 }
 
-func initTaskList() {
-	TaskListGlobal.TaskMap = make(map[msg.TaskId]msg.TaskInterface)
+func initTasks() {
+	GlobalTasks.TaskMap = make(map[msg.TaskId]msg.TaskInterface)
 }
 
-func teardownTaskList() {
-	TaskListGlobal.TaskMap = nil
+func teardownTasks() {
+	GlobalTasks.TaskMap = nil
 	// TODO: actually call teardown methods on all the tasks and also
 	// external apps. what about Alt+f4?
 	// upon application exit we need to terminate all the running tasks
 	// and external apps
 }
 
-func AddTask(p msg.TaskInterface) msg.TaskId {
-	id := p.GetId()
+func AddTask(ti msg.TaskInterface) msg.TaskId {
+	id := ti.GetId()
 
-	_, isInTheMap := TaskListGlobal.TaskMap[id]
+	_, isInTheMap := GlobalTasks.TaskMap[id]
 	if !isInTheMap {
-		TaskListGlobal.TaskMap[id] = p
+		GlobalTasks.TaskMap[id] = ti
 	}
+
 	return id
 }
 
 func GetTaskEvents() {
-	println("task_list.GetTaskEvents()   ---------------- TODO !!!!!!!!!!!")
+	println("tasks.GetTaskEvents()   ---------------- TODO !!!!!!!!!!!")
 }
 
 func TickTasks() {
-	for _, p := range TaskListGlobal.TaskMap {
-		p.Tick()
+	for _, t := range GlobalTasks.TaskMap {
+		t.Tick()
 	}
 }

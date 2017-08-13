@@ -15,7 +15,7 @@ type RPCReceiver struct {
 }
 
 func (receiver *RPCReceiver) ListTerminalIDsWithTaskIDs(_ []string, result *[]byte) error {
-	println("\nHandling Request: List terminal Ids with attached task Ids")
+	println("\nHandling Request: List terminal ids with attached task ids")
 
 	termsWithTaskIDs := make([]msg.TermAndAttachedTaskId, 0)
 
@@ -115,7 +115,7 @@ func (receiver *RPCReceiver) StartTerminalWithTask(_ []string, result *[]byte) e
 
 func (receiver *RPCReceiver) ListTasks(_ []string, result *[]byte) error {
 	println("\nHandling Request: List all task Ids")
-	tasks := receiver.TerminalManager.taskList.TaskMap
+	tasks := receiver.TerminalManager.tasks.TaskMap
 	taskInfos := make([]msg.TaskInfo, 0)
 
 	for _, task := range tasks {
