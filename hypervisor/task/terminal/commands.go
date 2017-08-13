@@ -276,7 +276,7 @@ func (st *State) commandAttach(args []string) {
 func (st *State) commandListRunningExternalApps(args []string) {
 	app.At(cp, "commandListRunningExternalApps")
 
-	extApps := hypervisor.ExternalAppListGlobal.TaskMap
+	extApps := hypervisor.GlobalRunningExternalApps.TaskMap
 	if len(extApps) == 0 {
 		st.PrintLn("No external apps running.\n" +
 			"Try starting one with \"start\" command (\"help\" or \"h\" for help).")

@@ -43,14 +43,14 @@ var DbusGlobal dbus.DbusInstance
 func Init() {
 	println("<hypervisor>.Init()")
 	initTaskList()
-	initExternalAppList()
+	initRunningExternalApps()
 	DbusGlobal.Init()
 }
 
 func Teardown() {
 	println("<hypervisor>.Teardown()")
 	teardownTaskList()
-	teardownExternalAppList()
+	teardownRunningExternalApps()
 	DbusGlobal.PubsubChannels = nil
 	DbusGlobal.Resources = nil
 }

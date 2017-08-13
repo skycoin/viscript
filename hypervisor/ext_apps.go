@@ -7,23 +7,23 @@ import (
 	"github.com/skycoin/viscript/msg"
 )
 
-var ExternalAppListGlobal ExternalAppList
+var GlobalRunningExternalApps RunningExternalApps
 
-type ExternalAppList struct {
+type RunningExternalApps struct {
 	TaskMap map[msg.ExternalAppId]msg.ExternalAppInterface
 }
 
-func initExternalAppList() {
-	ExternalAppListGlobal.TaskMap = make(map[msg.ExternalAppId]msg.ExternalAppInterface)
+func initRunningExternalApps() {
+	GlobalRunningExternalApps.TaskMap = make(map[msg.ExternalAppId]msg.ExternalAppInterface)
 }
 
-func teardownExternalAppList() {
-	ExternalAppListGlobal.TaskMap = nil
+func teardownRunningExternalApps() {
+	GlobalRunningExternalApps.TaskMap = nil
 	// TODO: Further cleanup
 }
 
 func ExternalAppIsRunning(id msg.ExternalAppId) bool {
-	_, exists := ExternalAppListGlobal.TaskMap[id]
+	_, exists := GlobalRunningExternalApps.TaskMap[id]
 	return exists
 }
 
@@ -31,14 +31,14 @@ func AddExternalApp(ea msg.ExternalAppInterface) msg.ExternalAppId {
 	id := ea.GetId()
 
 	if !ExternalAppIsRunning(id) {
-		ExternalAppListGlobal.TaskMap[id] = ea
+		GlobalRunningExternalApps.TaskMap[id] = ea
 	}
 
 	return id
 }
 
 func GetExternalApp(id msg.ExternalAppId) (msg.ExternalAppInterface, error) {
-	ea, exists := ExternalAppListGlobal.TaskMap[id]
+	ea, exists := GlobalRunningExternalApps.TaskMap[id]
 	if exists {
 		return ea, nil
 	}
@@ -50,12 +50,12 @@ func GetExternalApp(id msg.ExternalAppId) (msg.ExternalAppInterface, error) {
 }
 
 func RemoveExternalApp(id msg.ExternalAppId) {
-	delete(ExternalAppListGlobal.TaskMap, id)
+	delete(GlobalRunningExternalApps.TaskMap, id)
 }
 
 func TickExternalApps() {
 	// TODO: Read from response channels if they contain any new messages
-	// for _, p := range ExternalAppListGlobal.TaskMap {
+	// for _, p := range GlobalRunningExternalApps.TaskMap {
 	// data, err := monitor.Monitor.ReadFrom(p.GetId())
 	// if err != nil {
 	// 	// println(err.Error())

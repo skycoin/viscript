@@ -78,7 +78,7 @@ func (ta *Task) ExitExternalApp() {
 	id := ta.attachedExternalApp.GetId() //for removing from global list.
 	ta.attachedExternalApp.TearDown()    //(and cleanup)
 	ta.attachedExternalApp = nil
-	hypervisor.RemoveExternalApp(id) //...from ExternalAppListGlobal.TaskMap
+	hypervisor.RemoveExternalApp(id) //...from GlobalRunningExternalApps.TaskMap
 }
 
 //implement the interface
