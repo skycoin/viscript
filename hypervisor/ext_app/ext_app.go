@@ -58,7 +58,7 @@ func MakeNewTaskExternal(tokens []string, detached bool) (*ExternalApp, error) {
 }
 
 func (ea *ExternalApp) GetExtTaskInterface() msg.ExtTaskInterface {
-	return msg.ExtTaskInterface(pr)
+	return msg.ExtTaskInterface(ea)
 }
 
 func (ea *ExternalApp) Init(tokens []string) error {

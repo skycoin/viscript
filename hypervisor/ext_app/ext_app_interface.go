@@ -8,14 +8,14 @@ import (
 //ExtAppInterface implementation
 
 func (ea *ExternalApp) Tick() {
-	et.taskInput()
-	et.taskOutput()
+	ea.taskInput()
+	ea.taskOutput()
 }
 
 func (ea *ExternalApp) Start() error {
-	app.At(te, "Start")
+	app.At(path, "Start")
 
-	err := et.cmd.Start()
+	err := ea.cmd.Start()
 	if err != nil {
 		return err
 	}
@@ -24,57 +24,57 @@ func (ea *ExternalApp) Start() error {
 }
 
 func (ea *ExternalApp) TearDown() {
-	app.At(te, "TearDown")
+	app.At(path, "TearDown")
 
-	et.cmd.Process.Kill()
+	ea.cmd.Process.Kill()
 
-	close(et.cmdIn)
-	close(et.cmdOut)
+	close(ea.cmdIn)
+	close(ea.cmdOut)
 
-	close(et.TaskIn)
-	close(et.TaskOut)
-	// close(et.TaskExit)
+	close(ea.TaskIn)
+	close(ea.TaskOut)
+	// close(ea.TaskExit)
 
-	if et.cmd != nil {
-		et.cmd = nil
+	if ea.cmd != nil {
+		ea.cmd = nil
 	}
 
-	if et.stdOutPipe != nil {
-		et.stdOutPipe = nil
+	if ea.stdOutPipe != nil {
+		ea.stdOutPipe = nil
 	}
 
-	if et.stdInPipe != nil {
-		et.stdInPipe = nil
+	if ea.stdInPipe != nil {
+		ea.stdInPipe = nil
 	}
 }
 
 func (ea *ExternalApp) Attach() error {
-	app.At(te, "Attach")
-	return et.startRoutines()
+	app.At(path, "Attach")
+	return ea.startRoutines()
 }
 
 func (ea *ExternalApp) Detach() {
-	app.At(te, "Detach")
+	app.At(path, "Detach")
 	// TODO: detach using channels maybe
-	et.stopRoutines()
+	ea.stopRoutines()
 }
 
 func (ea *ExternalApp) GetId() msg.ExtAppId {
-	return et.Id
+	return ea.Id
 }
 
 func (ea *ExternalApp) GetFullCommandLine() string {
-	return et.CommandLine
+	return ea.CommandLine
 }
 
 func (ea *ExternalApp) GetTaskInChannel() chan []byte {
-	return et.TaskIn
+	return ea.TaskIn
 }
 
 func (ea *ExternalApp) GetTaskOutChannel() chan []byte {
-	return et.TaskOut
+	return ea.TaskOut
 }
 
 func (ea *ExternalApp) GetTaskExitChannel() chan struct{} {
-	return et.TaskExit
+	return ea.TaskExit
 }
