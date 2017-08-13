@@ -57,53 +57,53 @@ func MakeNewTaskExternal(tokens []string, detached bool) (*ExternalTask, error) 
 	return &et, nil
 }
 
-func (pr *ExternalTask) GetExtTaskInterface() msg.ExtTaskInterface {
+func (ea *ExternalApp) GetExtTaskInterface() msg.ExtTaskInterface {
 	return msg.ExtTaskInterface(pr)
 }
 
-func (pr *ExternalTask) Init(tokens []string) error {
+func (ea *ExternalApp) Init(tokens []string) error {
 	app.At(te, "Init")
 
 	var err error
 
-	pr.Id = msg.NextExtTaskId()
+	ea.Id = msg.NextExtTaskId()
 
 	//append app id before creating command
 	tokens = append(tokens, "-signal-client-id")
-	tokens = append(tokens, strconv.Itoa(int(pr.Id)))
+	tokens = append(tokens, strconv.Itoa(int(ea.Id)))
 	tokens = append(tokens, "-signal-client")
 
 	//TODO: think about this here if we have daemon should we attach anything?
 
-	if pr.cmd, err = pr.createCMDAccordingToOS(tokens); err != nil {
+	if ea.cmd, err = ea.createCMDAccordingToOS(tokens); err != nil {
 		return err
 	}
 
-	if pr.stdOutPipe, err = pr.cmd.StdoutPipe(); err != nil {
+	if ea.stdOutPipe, err = ea.cmd.StdoutPipe(); err != nil {
 		return err
 	}
 
-	if pr.stdInPipe, err = pr.cmd.StdinPipe(); err != nil {
+	if ea.stdInPipe, err = ea.cmd.StdinPipe(); err != nil {
 		return err
 	}
 
-	pr.CommandLine = strings.Join(tokens, " ")
+	ea.CommandLine = strings.Join(tokens, " ")
 
-	pr.cmdOut = make(chan []byte, 2048)
-	pr.cmdIn = make(chan []byte, 2048)
+	ea.cmdOut = make(chan []byte, 2048)
+	ea.cmdIn = make(chan []byte, 2048)
 
-	pr.TaskIn = make(chan []byte, 2048)
-	pr.TaskOut = make(chan []byte, 2048)
-	pr.TaskExit = make(chan struct{})
+	ea.TaskIn = make(chan []byte, 2048)
+	ea.TaskOut = make(chan []byte, 2048)
+	ea.TaskExit = make(chan struct{})
 
-	pr.shutdown = make(chan struct{})
+	ea.shutdown = make(chan struct{})
 
-	pr.routinesStarted = false
+	ea.routinesStarted = false
 
 	return nil
 }
 
-func (pr *ExternalTask) createCMDAccordingToOS(tokens []string) (*exec.Cmd, error) {
+func (ea *ExternalApp) createCMDAccordingToOS(tokens []string) (*exec.Cmd, error) {
 	app.At(te, "createCMDAccordingToOS")
 
 	ros := runtime.GOOS
@@ -117,101 +117,101 @@ func (pr *ExternalTask) createCMDAccordingToOS(tokens []string) (*exec.Cmd, erro
 	return nil, errors.New("Unknown Operating System. Aborting command initilization")
 }
 
-func (pr *ExternalTask) cmdInRoutine() {
+func (ea *ExternalApp) cmdInRoutine() {
 	app.At(te, "cmdInRoutine")
 
 	for {
 		buf := make([]byte, 2048)
-		size, err := pr.stdOutPipe.Read(buf[:])
+		size, err := ea.stdOutPipe.Read(buf[:])
 		if err != nil {
 			println("Cmd In Routine error:", err.Error())
-			close(pr.TaskExit)
-			close(pr.shutdown)
+			close(ea.TaskExit)
+			close(ea.shutdown)
 			return
 		}
 
 		select {
-		case <-pr.shutdown:
+		case <-ea.shutdown:
 			println("!!! Shutting cmdInRoutine down !!!")
 			return
-		case pr.cmdIn <- buf[:size]:
+		case ea.cmdIn <- buf[:size]:
 			fmt.Printf("-- Received data for sending to CmdIn: %s\n",
 				string(buf[:size]))
 		}
 	}
 }
 
-func (pr *ExternalTask) cmdOutRoutine() {
+func (ea *ExternalApp) cmdOutRoutine() {
 	app.At(te, "cmdOutRoutine")
 
 	for {
 		select {
-		case <-pr.shutdown:
+		case <-ea.shutdown:
 			println("!!! Shutting cmdOutRoutine down !!!")
 			return
-		case data := <-pr.cmdOut:
+		case data := <-ea.cmdOut:
 			fmt.Printf("-- Received input to write to external task: %s\n",
 				string(data))
-			_, err := pr.stdInPipe.Write(append(data, '\n'))
+			_, err := ea.stdInPipe.Write(append(data, '\n'))
 			if err != nil {
 				println("!!! Couldn't Write To the std in pipe of the task!!!")
-				close(pr.TaskExit)
-				close(pr.shutdown)
+				close(ea.TaskExit)
+				close(ea.shutdown)
 				return
 			}
 		}
 	}
 }
 
-func (pr *ExternalTask) startRoutines() error {
+func (ea *ExternalApp) startRoutines() error {
 
-	if pr.stdOutPipe == nil {
+	if ea.stdOutPipe == nil {
 		return errors.New("Standard out pipe of task is nil")
 	}
 
-	if pr.stdInPipe == nil {
+	if ea.stdInPipe == nil {
 		return errors.New("Standard in pipe of task is nil")
 	}
 
-	if !pr.routinesStarted {
+	if !ea.routinesStarted {
 
-		pr.wg = sync.WaitGroup{}
+		ea.wg = sync.WaitGroup{}
 
-		pr.TaskExit = make(chan struct{})
-		pr.shutdown = make(chan struct{})
+		ea.TaskExit = make(chan struct{})
+		ea.shutdown = make(chan struct{})
 
-		pr.wg.Add(2)
+		ea.wg.Add(2)
 
 		//Run the routine which will read and send the data to CmdIn
-		go pr.cmdInRoutine()
+		go ea.cmdInRoutine()
 
 		//Run the routine which will read from Cmdout and write to task
-		go pr.cmdOutRoutine()
+		go ea.cmdOutRoutine()
 
-		pr.routinesStarted = true
+		ea.routinesStarted = true
 	}
 
 	return nil
 }
 
-func (pr *ExternalTask) stopRoutines() {
-	close(pr.shutdown)
+func (ea *ExternalApp) stopRoutines() {
+	close(ea.shutdown)
 }
 
-func (pr *ExternalTask) taskOutput() {
+func (ea *ExternalApp) taskOutput() {
 	select {
-	case data := <-pr.TaskIn:
+	case data := <-ea.TaskIn:
 		println("taskOutput() - data := ", string(data))
-		pr.cmdOut <- data
+		ea.cmdOut <- data
 	default:
 	}
 }
 
-func (pr *ExternalTask) taskInput() {
+func (ea *ExternalApp) taskInput() {
 	select {
-	case data := <-pr.cmdIn:
+	case data := <-ea.cmdIn:
 		println("taskInput() - data := ", string(data))
-		pr.TaskOut <- data
+		ea.TaskOut <- data
 	default:
 	}
 }

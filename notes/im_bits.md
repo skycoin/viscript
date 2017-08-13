@@ -1783,7 +1783,6 @@ like snake or ticktac toe or dwarf fortress 2d or something
 
 
 
-
 if you print a line and it runs over to next line, then you must put a block character
 at the end of the line.  To visually indicate that.
 
@@ -1795,3 +1794,19 @@ at the end of the line.  To visually indicate that.
 
 
 who is working on moving the task launching and monitoring into the signal library
+
+
+
+
+
+
+
+
+we might only need application launching to be headless
+
+and have a cli inside viscript for app launching and monitoring
+
+because viscript is mostly terminal?
+
+we will have signal server (the thing that launches and has tcp listening)
+and signal client (the library the launched apps import & use to phone home)

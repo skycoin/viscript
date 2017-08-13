@@ -56,6 +56,7 @@
 package main
 
 import (
+	"bufio"
 	"os"
 
 	"github.com/skycoin/viscript/app"
@@ -65,6 +66,8 @@ import (
 	"github.com/skycoin/viscript/signal"
 	"github.com/skycoin/viscript/viewport"
 )
+
+var scanner *bufio.Scanner
 
 func main() {
 	app.MakeHighlyVisibleLogEntry(app.Name, 13)
@@ -86,7 +89,13 @@ func main() {
 	println("RunHeadless:", config.Global.Settings.RunHeadless)
 
 	hypervisor.Init()
-	viewport.Init() //runtime.LockOSThread()
+
+	if config.Global.Settings.RunHeadless {
+		scanner = bufio.NewScanner(os.Stdin)
+	} else {
+		viewport.Init() //runtime.LockOSThread()
+	}
+
 	//rpc concurrency can interrupt the following, so printing NOW
 	app.MakeHighlyVisibleLogEntry("Start loop", 7)
 
@@ -100,17 +109,23 @@ func main() {
 		panic(err)
 	}
 
-	//actual start of loop
+	//ACTUAL start of loop
 	for viewport.CloseWindow == false {
 		viewport.DispatchEvents() //event channel
 
 		hypervisor.TickTasks()
 		hypervisor.TickExtTasks()
 
-		viewport.PollUiInputEvents()
-		viewport.Tick()
-		viewport.UpdateDrawBuffer()
-		viewport.SwapDrawBuffer() //with new frame
+		if config.Global.Settings.RunHeadless {
+			for scanner.Scan() {
+				println(scanner.Text())
+			}
+		} else {
+			viewport.PollUiInputEvents()
+			viewport.Tick()
+			viewport.UpdateDrawBuffer()
+			viewport.SwapDrawBuffer() //with new frame
+		}
 	}
 
 	viewport.TeardownScreen()
