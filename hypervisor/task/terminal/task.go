@@ -30,8 +30,6 @@ func MakeNewTask() *Task {
 	t.Label = "TestLabel"
 	t.InChannel = make(chan []byte, msg.ChannelCapacity)
 	t.State.Init(&t)
-
-	//means no external task is attached
 	t.hasExternalAppAttached = false
 
 	return &t
@@ -117,7 +115,7 @@ func (ta *Task) Tick() {
 	// 	ta.ExitExternalApp()
 	// }
 	case data := <-ta.attachedExternalApp.GetTaskOutChannel():
-		println("Received data from external task, sending to term.")
+		println("Received data from external app, sending to term.")
 		ta.State.PrintLn(string(data))
 	default:
 	}

@@ -30,9 +30,9 @@ func initTaskList() {
 func teardownTaskList() {
 	TaskListGlobal.TaskMap = nil
 	// TODO: actually call teardown methods on all the tasks and also
-	// external tasks. what about Alt+f4?
+	// external apps. what about Alt+f4?
 	// upon application exit we need to terminate all the running tasks
-	// and external tasks
+	// and external apps
 }
 
 func AddTask(p msg.TaskInterface) msg.TaskId {

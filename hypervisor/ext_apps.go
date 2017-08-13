@@ -43,8 +43,8 @@ func GetExternalApp(id msg.ExternalAppId) (msg.ExternalAppInterface, error) {
 		return ea, nil
 	}
 
-	err := errors.New("External task with id " +
-		strconv.Itoa(int(id)) + " doesn't exist!")
+	err := errors.New("External app with id " +
+		strconv.Itoa(int(id)) + " isn't running")
 
 	return nil, err
 }

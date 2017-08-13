@@ -1592,7 +1592,7 @@ what does not work
 
 Red:
 CTRL+L could work for clearing it think, it wouldn't be a command thus won't
-interrupt running atached external task.
+interrupt running attached external app.
 it's like that in a normal terminal.
 
 go run rpc/cli/cli.go won't work alone as stated in README.md inside the rpc package
@@ -1652,16 +1652,6 @@ Then we will have script for loading the defaults into bin.
 
 Bin will be in .gitignore
 
-
-
-
-
-
-
-
-
-The external task is not attached to the terminal
-But to a list of external tasks
 
 
 

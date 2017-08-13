@@ -91,7 +91,7 @@ func (st *State) onNONRepeatableKey(m msg.MessageKey) {
 				return
 			}
 
-			st.PrintLn("Detaching External Task")
+			st.PrintLn("Detaching external app")
 			st.task.DetachExternalApp()
 		}
 
@@ -180,7 +180,7 @@ func (st *State) onUserCommand() {
 	case "apps":
 		st.commandApps()
 
-	//attach external task to terminal task
+	//attach external app to terminal task
 	case "attach":
 		st.commandAttach(args)
 
@@ -237,7 +237,7 @@ func (st *State) onUserCommand() {
 	case "shutdown":
 		st.commandShutDown(args)
 
-	//start new external task, detached running in bg by default
+	//start new external app, detached running in bg by default
 	case "s":
 		fallthrough
 	case "start":

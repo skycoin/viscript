@@ -1,5 +1,5 @@
 // TODO: change readme
-### Running with external task temporarily
+### Running with external app temporarily
 
 1. Please make sure that the GOPATH is properly set and it's on the PATH.
 2. Pull skycoin/skycoin repo

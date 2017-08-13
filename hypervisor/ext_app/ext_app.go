@@ -150,7 +150,7 @@ func (ea *ExternalApp) cmdOutRoutine() {
 			println("!!! Shutting cmdOutRoutine down !!!")
 			return
 		case data := <-ea.cmdOut:
-			fmt.Printf("-- Received input to write to external task: %s\n",
+			fmt.Printf("-- Received input to write to external app: %s\n",
 				string(data))
 			_, err := ea.stdInPipe.Write(append(data, '\n'))
 			if err != nil {
