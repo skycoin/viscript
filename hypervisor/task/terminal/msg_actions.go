@@ -92,7 +92,7 @@ func (st *State) onNONRepeatableKey(m msg.MessageKey) {
 			}
 
 			st.PrintLn("Detaching External Task")
-			st.task.DetachExternalTask()
+			st.task.DetachExternalApp()
 		}
 
 	}
@@ -200,7 +200,7 @@ func (st *State) onUserCommand() {
 		st.commandCloseTerminalFirstStage(args)
 
 	case "list_tasks":
-		st.commandListExternalTasks(args)
+		st.commandListRunningExternalApps(args)
 
 	//list all terminals
 	case "lt":

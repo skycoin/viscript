@@ -53,8 +53,8 @@ func (ta *Task) HasExtTaskAttached() bool {
 	return ta.hasExtTaskAttached
 }
 
-func (ta *Task) AttachExternalTask(extTask msg.ExtTaskInterface) error {
-	app.At(path, "AttachExternalTask")
+func (ta *Task) AttachExternalApp(extTask msg.ExtTaskInterface) error {
+	app.At(path, "AttachExternalApp")
 	err := extTask.Attach()
 
 	if err != nil {
@@ -67,8 +67,8 @@ func (ta *Task) AttachExternalTask(extTask msg.ExtTaskInterface) error {
 	return nil
 }
 
-func (ta *Task) DetachExternalTask() {
-	app.At(path, "DetachExternalTask")
+func (ta *Task) DetachExternalApp() {
+	app.At(path, "DetachExternalApp")
 	// ta.attachedExtTask.Detach()
 	ta.attachedExtTask = nil
 	ta.hasExtTaskAttached = false

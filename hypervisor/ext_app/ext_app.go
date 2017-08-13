@@ -20,9 +20,9 @@ import (
 	"github.com/skycoin/viscript/msg"
 )
 
-const te = "hypervisor/ext_app/ext_app" //path
+const path = "hypervisor/ext_app/ext_app"
 
-type ExternalTask struct {
+type ExternalApp struct {
 	Id          msg.ExtAppId
 	CommandLine string
 
@@ -45,16 +45,16 @@ type ExternalTask struct {
 }
 
 //non-instanced
-func MakeNewTaskExternal(tokens []string, detached bool) (*ExternalTask, error) {
-	app.At(te, "MakeNewTaskExternal")
-	var et ExternalTask
+func MakeNewTaskExternal(tokens []string, detached bool) (*ExternalApp, error) {
+	app.At(path, "MakeNewTaskExternal")
+	var ea ExternalApp
 
-	err := et.Init(tokens)
+	err := ea.Init(tokens)
 	if err != nil {
 		return nil, err
 	}
 
-	return &et, nil
+	return &ea, nil
 }
 
 func (ea *ExternalApp) GetExtTaskInterface() msg.ExtTaskInterface {
@@ -62,7 +62,7 @@ func (ea *ExternalApp) GetExtTaskInterface() msg.ExtTaskInterface {
 }
 
 func (ea *ExternalApp) Init(tokens []string) error {
-	app.At(te, "Init")
+	app.At(path, "Init")
 
 	var err error
 
@@ -104,7 +104,7 @@ func (ea *ExternalApp) Init(tokens []string) error {
 }
 
 func (ea *ExternalApp) createCMDAccordingToOS(tokens []string) (*exec.Cmd, error) {
-	app.At(te, "createCMDAccordingToOS")
+	app.At(path, "createCMDAccordingToOS")
 
 	ros := runtime.GOOS
 	if ros == "linux" || ros == "darwin" {
@@ -118,7 +118,7 @@ func (ea *ExternalApp) createCMDAccordingToOS(tokens []string) (*exec.Cmd, error
 }
 
 func (ea *ExternalApp) cmdInRoutine() {
-	app.At(te, "cmdInRoutine")
+	app.At(path, "cmdInRoutine")
 
 	for {
 		buf := make([]byte, 2048)
@@ -142,7 +142,7 @@ func (ea *ExternalApp) cmdInRoutine() {
 }
 
 func (ea *ExternalApp) cmdOutRoutine() {
-	app.At(te, "cmdOutRoutine")
+	app.At(path, "cmdOutRoutine")
 
 	for {
 		select {
@@ -164,7 +164,6 @@ func (ea *ExternalApp) cmdOutRoutine() {
 }
 
 func (ea *ExternalApp) startRoutines() error {
-
 	if ea.stdOutPipe == nil {
 		return errors.New("Standard out pipe of task is nil")
 	}
@@ -174,12 +173,9 @@ func (ea *ExternalApp) startRoutines() error {
 	}
 
 	if !ea.routinesStarted {
-
 		ea.wg = sync.WaitGroup{}
-
 		ea.TaskExit = make(chan struct{})
 		ea.shutdown = make(chan struct{})
-
 		ea.wg.Add(2)
 
 		//Run the routine which will read and send the data to CmdIn
@@ -200,18 +196,22 @@ func (ea *ExternalApp) stopRoutines() {
 
 func (ea *ExternalApp) taskOutput() {
 	select {
+
 	case data := <-ea.TaskIn:
 		println("taskOutput() - data := ", string(data))
 		ea.cmdOut <- data
 	default:
+
 	}
 }
 
 func (ea *ExternalApp) taskInput() {
 	select {
+
 	case data := <-ea.cmdIn:
 		println("taskInput() - data := ", string(data))
 		ea.TaskOut <- data
 	default:
+
 	}
 }

@@ -7,7 +7,7 @@
 	that can be retrieved by lp or setting the task id as default
 	because that already exists
 
-* ExternalTask:
+* ExternalApp:
 	Ctrl + c - detach, delete, kill probably
 	Ctrl + z - detach and let it be running or pause it (https://repl.it/GeGn/1)?,
 	jobs - list all jobs of current terminal

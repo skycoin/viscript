@@ -147,7 +147,7 @@ func (st *State) commandStart(args []string) {
 	taskID := hypervisor.AddExtTask(extTaskInterface)
 
 	if !detached {
-		err = st.task.AttachExternalTask(extTaskInterface)
+		err = st.task.AttachExternalApp(extTaskInterface)
 		if err != nil {
 			st.PrintError(err.Error())
 		}
@@ -267,18 +267,18 @@ func (st *State) commandAttach(args []string) {
 	}
 
 	st.PrintLn(extTask.GetFullCommandLine())
-	err = st.task.AttachExternalTask(extTask)
+	err = st.task.AttachExternalApp(extTask)
 	if err != nil {
 		st.PrintError(err.Error())
 	}
 }
 
-func (st *State) commandListExternalTasks(args []string) {
-	app.At(cp, "commandListExternalTasks")
+func (st *State) commandListRunningExternalApps(args []string) {
+	app.At(cp, "commandListRunningExternalApps")
 
 	extTaskMap := hypervisor.ExtTaskListGlobal.TaskMap
 	if len(extTaskMap) == 0 {
-		st.PrintLn("No external tasks running.\n" +
+		st.PrintLn("No external apps running.\n" +
 			"Try starting one with \"start\" command (\"help\" or \"h\" for help).")
 		return
 	}

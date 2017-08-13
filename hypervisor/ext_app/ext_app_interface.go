@@ -7,12 +7,12 @@ import (
 
 //ExtAppInterface implementation
 
-func (et *ExternalTask) Tick() {
+func (ea *ExternalApp) Tick() {
 	et.taskInput()
 	et.taskOutput()
 }
 
-func (et *ExternalTask) Start() error {
+func (ea *ExternalApp) Start() error {
 	app.At(te, "Start")
 
 	err := et.cmd.Start()
@@ -23,7 +23,7 @@ func (et *ExternalTask) Start() error {
 	return nil
 }
 
-func (et *ExternalTask) TearDown() {
+func (ea *ExternalApp) TearDown() {
 	app.At(te, "TearDown")
 
 	et.cmd.Process.Kill()
@@ -48,33 +48,33 @@ func (et *ExternalTask) TearDown() {
 	}
 }
 
-func (et *ExternalTask) Attach() error {
+func (ea *ExternalApp) Attach() error {
 	app.At(te, "Attach")
 	return et.startRoutines()
 }
 
-func (et *ExternalTask) Detach() {
+func (ea *ExternalApp) Detach() {
 	app.At(te, "Detach")
 	// TODO: detach using channels maybe
 	et.stopRoutines()
 }
 
-func (et *ExternalTask) GetId() msg.ExtAppId {
+func (ea *ExternalApp) GetId() msg.ExtAppId {
 	return et.Id
 }
 
-func (et *ExternalTask) GetFullCommandLine() string {
+func (ea *ExternalApp) GetFullCommandLine() string {
 	return et.CommandLine
 }
 
-func (et *ExternalTask) GetTaskInChannel() chan []byte {
+func (ea *ExternalApp) GetTaskInChannel() chan []byte {
 	return et.TaskIn
 }
 
-func (et *ExternalTask) GetTaskOutChannel() chan []byte {
+func (ea *ExternalApp) GetTaskOutChannel() chan []byte {
 	return et.TaskOut
 }
 
-func (et *ExternalTask) GetTaskExitChannel() chan struct{} {
+func (ea *ExternalApp) GetTaskExitChannel() chan struct{} {
 	return et.TaskExit
 }
