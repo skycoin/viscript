@@ -114,7 +114,7 @@ func main() {
 		viewport.DispatchEvents() //event channel
 
 		hypervisor.TickTasks()
-		hypervisor.TickExtTasks()
+		hypervisor.TickExternalApps()
 
 		if config.Global.Settings.RunHeadless {
 			for scanner.Scan() {

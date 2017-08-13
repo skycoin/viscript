@@ -7,38 +7,38 @@ import (
 	"github.com/skycoin/viscript/msg"
 )
 
-var ExtTaskListGlobal ExtTaskList
+var ExternalAppListGlobal ExternalAppList
 
-type ExtTaskList struct {
-	TaskMap map[msg.ExtAppId]msg.ExtTaskInterface
+type ExternalAppList struct {
+	TaskMap map[msg.ExtAppId]msg.ExternalAppInterface
 }
 
-func initExtTaskList() {
-	ExtTaskListGlobal.TaskMap = make(map[msg.ExtAppId]msg.ExtTaskInterface)
+func initExternalAppList() {
+	ExternalAppListGlobal.TaskMap = make(map[msg.ExtAppId]msg.ExternalAppInterface)
 }
 
-func teardownExtTaskList() {
-	ExtTaskListGlobal.TaskMap = nil
+func teardownExternalAppList() {
+	ExternalAppListGlobal.TaskMap = nil
 	// TODO: Further cleanup
 }
 
-func ExtTaskIsRunning(taskId msg.ExtAppId) bool {
-	_, exists := ExtTaskListGlobal.TaskMap[taskId]
+func ExternalAppIsRunning(id msg.ExtAppId) bool {
+	_, exists := ExternalAppListGlobal.TaskMap[id]
 	return exists
 }
 
-func AddExtTask(ea msg.ExtTaskInterface) msg.ExtAppId {
+func AddExternalApp(ea msg.ExternalAppInterface) msg.ExtAppId {
 	id := ea.GetId()
 
-	if !ExtTaskIsRunning(id) {
-		ExtTaskListGlobal.TaskMap[id] = ea
+	if !ExternalAppIsRunning(id) {
+		ExternalAppListGlobal.TaskMap[id] = ea
 	}
 
 	return id
 }
 
-func GetExtTask(id msg.ExtAppId) (msg.ExtTaskInterface, error) {
-	ea, exists := ExtTaskListGlobal.TaskMap[id]
+func GetExternalApp(id msg.ExtAppId) (msg.ExternalAppInterface, error) {
+	ea, exists := ExternalAppListGlobal.TaskMap[id]
 	if exists {
 		return ea, nil
 	}
@@ -49,13 +49,13 @@ func GetExtTask(id msg.ExtAppId) (msg.ExtTaskInterface, error) {
 	return nil, err
 }
 
-func RemoveExtTask(id msg.ExtAppId) {
-	delete(ExtTaskListGlobal.TaskMap, id)
+func RemoveExternalApp(id msg.ExtAppId) {
+	delete(ExternalAppListGlobal.TaskMap, id)
 }
 
-func TickExtTasks() {
+func TickExternalApps() {
 	// TODO: Read from response channels if they contain any new messages
-	// for _, p := range ExtTaskListGlobal.TaskMap {
+	// for _, p := range ExternalAppListGlobal.TaskMap {
 	// data, err := monitor.Monitor.ReadFrom(p.GetId())
 	// if err != nil {
 	// 	// println(err.Error())

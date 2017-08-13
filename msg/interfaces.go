@@ -11,7 +11,7 @@ type TaskInterface interface {
 	Tick()
 }
 
-type ExtTaskInterface interface {
+type ExternalAppInterface interface {
 	//shared vars (with task ^^^)
 	GetId() ExtAppId
 	GetTaskInChannel() chan []byte

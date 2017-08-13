@@ -57,8 +57,8 @@ func MakeNewExternalApp(tokens []string, detached bool) (*ExternalApp, error) {
 	return &ea, nil
 }
 
-func (ea *ExternalApp) GetExtTaskInterface() msg.ExtTaskInterface {
-	return msg.ExtTaskInterface(ea)
+func (ea *ExternalApp) GetExternalAppInterface() msg.ExternalAppInterface {
+	return msg.ExternalAppInterface(ea)
 }
 
 func (ea *ExternalApp) Init(tokens []string) error {
@@ -66,7 +66,7 @@ func (ea *ExternalApp) Init(tokens []string) error {
 
 	var err error
 
-	ea.Id = msg.NextExtTaskId()
+	ea.Id = msg.NextExternalAppId()
 
 	//append app id before creating command
 	tokens = append(tokens, "-signal-client-id")

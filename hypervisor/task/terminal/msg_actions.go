@@ -77,7 +77,7 @@ func (st *State) onNONRepeatableKey(m msg.MessageKey) {
 
 	case msg.KeyC:
 		if m.Mod == msg.GLFW_MOD_CONTROL {
-			if !st.task.HasExtTaskAttached() {
+			if !st.task.HasExternalAppAttached() {
 				return
 			}
 
@@ -87,7 +87,7 @@ func (st *State) onNONRepeatableKey(m msg.MessageKey) {
 
 	case msg.KeyZ:
 		if m.Mod == msg.GLFW_MOD_CONTROL {
-			if !st.task.HasExtTaskAttached() {
+			if !st.task.HasExternalAppAttached() {
 				return
 			}
 
@@ -155,9 +155,9 @@ func (st *State) onUserCommand() {
 
 	println(s)
 
-	if st.task.HasExtTaskAttached() {
-		extTaskInChannel := st.task.attachedExtTask.GetTaskInChannel()
-		extTaskInChannel <- []byte(st.Cli.CurrentCommandLineInLowerCase())
+	if st.task.HasExternalAppAttached() {
+		ic := st.task.attachedExternalApp.GetTaskInChannel()
+		ic <- []byte(st.Cli.CurrentCommandLineInLowerCase())
 		return
 	}
 

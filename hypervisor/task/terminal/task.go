@@ -16,8 +16,8 @@ type Task struct {
 	InChannel    chan []byte
 	State        State
 
-	hasExtTaskAttached bool
-	attachedExtTask    msg.ExtTaskInterface
+	hasExternalAppAttached bool
+	attachedExternalApp    msg.ExternalAppInterface
 }
 
 //non-instanced
@@ -32,7 +32,7 @@ func MakeNewTask() *Task {
 	t.State.Init(&t)
 
 	//means no external task is attached
-	t.hasExtTaskAttached = false
+	t.hasExternalAppAttached = false
 
 	return &t
 }
@@ -49,38 +49,38 @@ func (ta *Task) DeleteTask() {
 	ta = nil
 }
 
-func (ta *Task) HasExtTaskAttached() bool {
-	return ta.hasExtTaskAttached
+func (ta *Task) HasExternalAppAttached() bool {
+	return ta.hasExternalAppAttached
 }
 
-func (ta *Task) AttachExternalApp(extTask msg.ExtTaskInterface) error {
+func (ta *Task) AttachExternalApp(eai msg.ExternalAppInterface) error {
 	app.At(path, "AttachExternalApp")
-	err := extTask.Attach()
+	err := eai.Attach()
 
 	if err != nil {
 		return err
 	}
 
-	ta.attachedExtTask = extTask
-	ta.hasExtTaskAttached = true
+	ta.attachedExternalApp = eai
+	ta.hasExternalAppAttached = true
 
 	return nil
 }
 
 func (ta *Task) DetachExternalApp() {
 	app.At(path, "DetachExternalApp")
-	// ta.attachedExtTask.Detach()
-	ta.attachedExtTask = nil
-	ta.hasExtTaskAttached = false
+	// ta.attachedExternalApp.Detach()
+	ta.attachedExternalApp = nil
+	ta.hasExternalAppAttached = false
 }
 
-func (ta *Task) ExitExtTask() {
-	app.At(path, "ExitExtTask")
-	ta.hasExtTaskAttached = false
-	extTaskID := ta.attachedExtTask.GetId() //for removing from global list.
-	ta.attachedExtTask.TearDown()           //(and cleanup)
-	ta.attachedExtTask = nil
-	hypervisor.RemoveExtTask(extTaskID) //...from ExtTaskListGlobal.TaskMap
+func (ta *Task) ExitExternalApp() {
+	app.At(path, "ExitExternalApp")
+	ta.hasExternalAppAttached = false
+	id := ta.attachedExternalApp.GetId() //for removing from global list.
+	ta.attachedExternalApp.TearDown()    //(and cleanup)
+	ta.attachedExternalApp = nil
+	hypervisor.RemoveExternalApp(id) //...from ExternalAppListGlobal.TaskMap
 }
 
 //implement the interface
@@ -104,19 +104,19 @@ func (ta *Task) GetIncomingChannel() chan []byte {
 func (ta *Task) Tick() {
 	ta.State.HandleMessages()
 
-	if !ta.HasExtTaskAttached() {
+	if !ta.HasExternalAppAttached() {
 		return
 	}
 
 	select {
-	//case exit := <-ta.attachedExtTask.GetTaskExitChannel():
+	//case exit := <-ta.attachedExternalApp.GetTaskExitChannel():
 	// if exit {
 	// 	println("Got the exit in task, task is finished.")
 	// 	//TODO: still not working yet. looking for the best way to finish
 	// 	//multiple goroutines at the same time to avoid any side effects
-	// 	ta.ExitExtTask()
+	// 	ta.ExitExternalApp()
 	// }
-	case data := <-ta.attachedExtTask.GetTaskOutChannel():
+	case data := <-ta.attachedExternalApp.GetTaskOutChannel():
 		println("Received data from external task, sending to term.")
 		ta.State.PrintLn(string(data))
 	default:

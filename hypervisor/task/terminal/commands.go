@@ -131,31 +131,31 @@ func (st *State) commandStart(args []string) {
 		detached = true
 	}
 
-	newExtTask, err := extAppImport.MakeNewExternalApp(tokens, detached)
+	newExternalApp, err := extAppImport.MakeNewExternalApp(tokens, detached)
 	if err != nil {
 		st.PrintError(err.Error())
 		return
 	}
 
-	err = newExtTask.Start()
+	err = newExternalApp.Start()
 	if err != nil {
 		st.PrintError(err.Error())
 		return
 	}
 
-	extTaskInterface := newExtTask.GetExtTaskInterface()
-	taskID := hypervisor.AddExtTask(extTaskInterface)
+	eai := newExternalApp.GetExternalAppInterface()
+	appId := hypervisor.AddExternalApp(eai)
 
 	if !detached {
-		err = st.task.AttachExternalApp(extTaskInterface)
+		err = st.task.AttachExternalApp(eai)
 		if err != nil {
 			st.PrintError(err.Error())
 		}
 	}
 
-	st.PrintLn("Added External Task (ID: " +
-		strconv.Itoa(int(taskID)) + ", Command: " +
-		newExtTask.CommandLine + ")")
+	st.PrintLn("Added external app (ID: " +
+		strconv.Itoa(int(appId)) + ", Command: " +
+		newExternalApp.CommandLine + ")")
 }
 
 func (st *State) commandAppPing(args []string) {
@@ -258,16 +258,16 @@ func (st *State) commandAttach(args []string) {
 		return
 	}
 
-	extTaskID := msg.ExtAppId(passedID)
+	eaId := msg.ExtAppId(passedID)
 
-	extTask, err := hypervisor.GetExtTask(extTaskID)
+	ea, err := hypervisor.GetExternalApp(eaId)
 	if err != nil {
 		st.PrintError(err.Error())
 		return
 	}
 
-	st.PrintLn(extTask.GetFullCommandLine())
-	err = st.task.AttachExternalApp(extTask)
+	st.PrintLn(ea.GetFullCommandLine())
+	err = st.task.AttachExternalApp(ea)
 	if err != nil {
 		st.PrintError(err.Error())
 	}
@@ -276,8 +276,8 @@ func (st *State) commandAttach(args []string) {
 func (st *State) commandListRunningExternalApps(args []string) {
 	app.At(cp, "commandListRunningExternalApps")
 
-	extTaskMap := hypervisor.ExtTaskListGlobal.TaskMap
-	if len(extTaskMap) == 0 {
+	extApps := hypervisor.ExternalAppListGlobal.TaskMap
+	if len(extApps) == 0 {
 		st.PrintLn("No external apps running.\n" +
 			"Try starting one with \"start\" command (\"help\" or \"h\" for help).")
 		return
@@ -289,17 +289,16 @@ func (st *State) commandListRunningExternalApps(args []string) {
 		fullPrint = true
 	}
 
-	for taskID, extTask := range extTaskMap {
-		taskCommand := ""
+	for id, extApp := range extApps {
+		appCmd := ""
 
 		if fullPrint {
-			taskCommand = extTask.GetFullCommandLine()
+			appCmd = extApp.GetFullCommandLine()
 		} else {
-			taskCommand = strings.Split(
-				extTask.GetFullCommandLine(), " ")[0]
+			appCmd = strings.Split(extApp.GetFullCommandLine(), " ")[0]
 		}
 
-		st.Printf("[ %d ] -> [ %s ]\n", int(taskID), taskCommand)
+		st.Printf("[ %d ] -> [ %s ]\n", int(id), appCmd)
 	}
 }
 

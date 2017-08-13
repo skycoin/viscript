@@ -5,7 +5,7 @@ import (
 )
 
 var TaskIdGlobal TaskId = 1 //sequential
-var ExtTaskIdGlobal ExtAppId = 1
+var ExternalAppIdGlobal ExtAppId = 1
 
 type TaskId uint64
 type ExtAppId uint64
@@ -19,9 +19,9 @@ func NextTaskId() TaskId {
 	return TaskIdGlobal
 }
 
-func NextExtTaskId() ExtAppId {
-	ExtTaskIdGlobal += 1
-	return ExtTaskIdGlobal
+func NextExternalAppId() ExtAppId {
+	ExternalAppIdGlobal += 1
+	return ExternalAppIdGlobal
 }
 
 func RandTerminalId() TerminalId {
