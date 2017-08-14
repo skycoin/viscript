@@ -68,12 +68,13 @@ func (ts *TerminalStack) Draw() {
 //
 
 func drawIdTab(t *Terminal, z float32) {
+	//...with a rectangle whose bottom lip/edge will be covered by main window
 	id := strconv.Itoa(int(t.TerminalId))
 
 	idText := &app.Rectangle{ //rectangle initially used to draw tab background
-		t.Bounds.Top + t.BorderSize*2 + t.CharSize.Y,
+		t.Bounds.Top + t.BorderSize + t.CharSize.Y,
 		t.Bounds.Left + t.BorderSize*2 + t.CharSize.X*float32(len(id)),
-		t.Bounds.Top,
+		t.Bounds.Top - t.BorderSize,
 		t.Bounds.Left}
 
 	//id tab background

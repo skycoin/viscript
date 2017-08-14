@@ -58,7 +58,7 @@ func (t *Terminal) Init() {
 	t.ResizingBottom = false
 
 	//push down window by size of id tab
-	tabOffset := t.BorderSize*2 + t.CharSize.Y
+	tabOffset := t.BorderSize + t.CharSize.Y
 	t.Bounds.Top -= tabOffset
 	t.Bounds.Bottom -= tabOffset
 }
