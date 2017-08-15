@@ -3,8 +3,8 @@ package viewport
 import (
 	"runtime"
 
-	igl "github.com/skycoin/viscript/viewport/gl"         //internal gl
-	stack "github.com/skycoin/viscript/viewport/terminal" //TerminalStack
+	igl "github.com/skycoin/viscript/viewport/gl" //internal gl
+	term "github.com/skycoin/viscript/viewport/terminal"
 )
 
 //glfw
@@ -22,7 +22,7 @@ func Init() {
 
 	initScreen()
 	initEvents()
-	stack.Terms.Init()
+	term.Terms.Init()
 }
 
 func initScreen() {
@@ -60,12 +60,12 @@ func DispatchEvents() []byte {
 
 func Tick() {
 	igl.Curs.Tick()
-	stack.Terms.Tick()
+	term.Terms.Tick()
 }
 
 func UpdateDrawBuffer() {
 	igl.DrawBegin()
-	stack.Terms.Draw()
+	term.Terms.Draw()
 	igl.DrawEnd()
 }
 

@@ -226,6 +226,8 @@ func (t *Terminal) GetVisualInfo() msg.MessageVisualInfo {
 //
 //
 //private
+//
+//
 
 func (t *Terminal) clear() {
 	for y := 0; y < t.GridSize.Y; y++ {
