@@ -85,6 +85,8 @@ func (ts *TerminalStack) Remove(id msg.TerminalId) {
 
 	for _, term := range ts.TermMap {
 		if id == term.TerminalId {
+			println("found id:", id)
+
 			if term == ts.Focused {
 				ts.Focused = nil
 				ts.FocusedId = 0
@@ -92,7 +94,15 @@ func (ts *TerminalStack) Remove(id msg.TerminalId) {
 		}
 	}
 
-	delete(ts.TermMap, id)
+	_, found := ts.TermMap[id]
+	if found {
+		println("len of TermMap:", len(ts.TermMap))
+		delete(ts.TermMap, id)
+		println("len of TermMap:", len(ts.TermMap))
+	} else {
+		println("COULDN'T FIND id:", id)
+	}
+
 	//TODO?			//st.SendCommand("list_terms", []string{}) //updates tasks' stored list, on any remaining terminals
 }
 
@@ -139,18 +149,16 @@ func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 	/* the rest is all DBUS related */
 
 	//terminal
-	rid1 := fmt.Sprintf("dbus.pubsub.terminal-%d", int(termId)) //ResourceIdentifier
-	tcid := hypervisor.DbusGlobal.CreatePubsubChannel(          //terminal channel id
-		dbus.ResourceId(termId),   //owner id
-		dbus.ResourceTypeTerminal, //owner type
-		rid1)
+	tcid := hypervisor.DbusGlobal.CreatePubsubChannel( //terminal channel id
+		dbus.ResourceId(termId),                             //owner id
+		dbus.ResourceTypeTerminal,                           //owner type
+		fmt.Sprintf("dbus.pubsub.terminal-%d", int(termId))) //ResourceIdentifier
 
 	//task
-	rid2 := fmt.Sprintf("dbus.pubsub.task-%d", int(tskId)) //ResourceIdentifier
-	pcid := hypervisor.DbusGlobal.CreatePubsubChannel(     //task channel id
-		dbus.ResourceId(tskId), //owner id
-		dbus.ResourceTypeTask,  //owner type
-		rid2)
+	pcid := hypervisor.DbusGlobal.CreatePubsubChannel( //task(process) channel id
+		dbus.ResourceId(tskId),                         //owner id
+		dbus.ResourceTypeTask,                          //owner type
+		fmt.Sprintf("dbus.pubsub.task-%d", int(tskId))) //ResourceIdentifier
 
 	task.OutChannelId = uint32(tcid)
 	ts.TermMap[termId].OutChannelId = uint32(pcid)

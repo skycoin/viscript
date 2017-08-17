@@ -96,7 +96,7 @@ func main() {
 		viewport.Init() //runtime.LockOSThread()
 	}
 
-	//rpc concurrency can interrupt the following, so printing NOW
+	//rpc concurrency can interrupt/scramble the following text, so print NOW
 	app.MakeHighlyVisibleLogEntry("Start loop", 7)
 
 	go func() {
@@ -120,6 +120,8 @@ func main() {
 			for scanner.Scan() {
 				println(scanner.Text())
 			}
+
+			// TODO: need to tick the sole headless Task
 		} else {
 			viewport.PollUiInputEvents()
 			viewport.Tick()
