@@ -21,6 +21,7 @@ type Cli struct {
 	MaxCommandSize int
 }
 
+//non-instanced
 func NewCli() *Cli {
 	var cli Cli
 	cli.Log = []string{}

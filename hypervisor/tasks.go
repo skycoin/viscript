@@ -23,23 +23,11 @@ type Tasks struct {
 	TaskMap map[msg.TaskId]msg.TaskInterface //task id to interface
 }
 
-func initTasks() {
-	GlobalTasks.TaskMap = make(map[msg.TaskId]msg.TaskInterface)
-}
-
-func teardownTasks() {
-	GlobalTasks.TaskMap = nil
-	// TODO: actually call teardown methods on all the tasks and also
-	// external apps. what about Alt+f4?
-	// upon application exit we need to terminate all the running tasks
-	// and external apps
-}
-
 func AddTask(ti msg.TaskInterface) msg.TaskId {
 	id := ti.GetId()
 
-	_, isInTheMap := GlobalTasks.TaskMap[id]
-	if !isInTheMap {
+	_, inTheMap := GlobalTasks.TaskMap[id]
+	if !inTheMap {
 		GlobalTasks.TaskMap[id] = ti
 	}
 
@@ -54,4 +42,22 @@ func TickTasks() {
 	for _, t := range GlobalTasks.TaskMap {
 		t.Tick()
 	}
+}
+
+//
+//
+//private
+//
+//
+
+func initTasks() {
+	GlobalTasks.TaskMap = make(map[msg.TaskId]msg.TaskInterface)
+}
+
+func teardownTasks() {
+	GlobalTasks.TaskMap = nil
+	// TODO: actually call teardown methods on all the tasks and also
+	// external apps. what about Alt+f4?
+	// upon application exit we need to terminate all the running tasks
+	// and external apps
 }

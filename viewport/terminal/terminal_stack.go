@@ -104,6 +104,7 @@ func (ts *TerminalStack) Remove(id msg.TerminalId) {
 	}
 
 	//TODO?			//st.SendCommand("list_terms", []string{}) //updates tasks' stored list, on any remaining terminals
+	//otherwise, since term ids can be seen on the tabs now (with no need to "list_terms"), terminal tasks could have old entries
 }
 
 func (ts *TerminalStack) Tick() {
