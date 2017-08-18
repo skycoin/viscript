@@ -60,16 +60,6 @@ func (c *Cli) BuildRowsFromLogEntryFragments(vi msg.MessageVisualInfo) {
 	c.printLogInOsBox(vi)
 }
 
-func (c *Cli) printLogInOsBox(vi msg.MessageVisualInfo) {
-	for _, entry := range c.VisualRows {
-		for len(entry) < int(vi.NumColumns) {
-			entry += "*"
-		}
-
-		println(entry)
-	}
-}
-
 func (c *Cli) AdjustBackscrollOffset(delta int) {
 	c.BackscrollAmount += delta
 	println("BACKSCROLLING --- delta:", delta)
@@ -154,6 +144,8 @@ func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
 //
 //
 //private
+//
+//
 
 //num == number of columns
 //a == leftmost fragment that fits num columns
@@ -188,6 +180,16 @@ func (c *Cli) breakStringIn2(s string, num int) (a, b string) {
 	}
 
 	return a, b
+}
+
+func (c *Cli) printLogInOsBox(vi msg.MessageVisualInfo) {
+	for _, entry := range c.VisualRows {
+		for len(entry) < int(vi.NumColumns) {
+			entry += "*"
+		}
+
+		println(entry)
+	}
 }
 
 func (c *Cli) traverseCommands(delta int) {

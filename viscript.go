@@ -61,6 +61,7 @@ import (
 
 	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/config"
+	"github.com/skycoin/viscript/headless"
 	"github.com/skycoin/viscript/hypervisor"
 	"github.com/skycoin/viscript/rpc/terminalmanager"
 	"github.com/skycoin/viscript/signal"
@@ -71,45 +72,28 @@ var scanner *bufio.Scanner
 
 func main() {
 	app.MakeHighlyVisibleLogEntry(app.Name, 13)
-
-	err := config.Load("config.yaml")
-	if err != nil {
-		println(err.Error())
-		return
-	}
-
-	args := os.Args[1:]
-	if len(args) == 1 {
-		if args[0] == "-h" || args[0] == "-run_headless" {
-			//override the defalt run headless no matter what it's value
-			config.Global.Settings.RunHeadless = true
-		}
-	}
-
-	println("RunHeadless:", config.Global.Settings.RunHeadless)
-
+	loadConfig()
+	handleAnyArguments()
 	hypervisor.Init()
 
 	if config.Global.Settings.RunHeadless {
 		scanner = bufio.NewScanner(os.Stdin)
+		headless.Init()
 	} else {
 		viewport.Init() //runtime.LockOSThread()
 	}
-
-	//rpc concurrency can interrupt/scramble the following text, so print NOW
-	app.MakeHighlyVisibleLogEntry("Start loop", 7)
 
 	go func() {
 		rpcInstance := terminalmanager.NewRPC()
 		rpcInstance.Serve()
 	}()
 
-	err = signal.Listen("0.0.0.0:7999")
+	err := signal.Listen("0.0.0.0:7999")
 	if err != nil {
 		panic(err)
 	}
 
-	//ACTUAL start of loop
+	//start looping
 	for viewport.CloseWindow == false {
 		viewport.DispatchEvents() //event channel
 
@@ -121,7 +105,7 @@ func main() {
 				println(scanner.Text())
 			}
 
-			// TODO: need to tick the sole headless Task
+			headless.Tick()
 		} else {
 			viewport.PollUiInputEvents()
 			viewport.Tick()
@@ -132,4 +116,22 @@ func main() {
 
 	viewport.TeardownScreen()
 	hypervisor.Teardown()
+}
+
+func loadConfig() {
+	err := config.Load("config.yaml")
+	if err != nil {
+		println(err.Error())
+		return
+	}
+}
+
+func handleAnyArguments() {
+	args := os.Args[1:]
+	if len(args) == 1 {
+		if args[0] == "-h" || args[0] == "-run_headless" {
+			config.Global.Settings.RunHeadless = true //override defalt
+			println("Running in HEADLESS MODE")
+		}
+	}
 }
