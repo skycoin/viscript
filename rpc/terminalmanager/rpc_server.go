@@ -25,9 +25,7 @@ func (r *RPC) Serve() {
 		port = DefaultPort
 	}
 
-	terminalManager := newTerminalManager()
 	receiver := new(RPCReceiver)
-	receiver.TerminalManager = terminalManager
 	err := rpc.Register(receiver)
 	if err != nil {
 		panic(err)

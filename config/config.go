@@ -47,7 +47,7 @@ func Load(configFileName string) error {
 			fmt.Printf("\tHelp: %s\n\n", app.Help)
 		}
 
-		fmt.Printf("Settings: %+v\n\n", Global.Settings)
+		fmt.Printf("Default Settings:\n\n%+v\n\n", Global.Settings)
 	}
 
 	return nil

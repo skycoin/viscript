@@ -131,7 +131,7 @@ func handleAnyArguments() {
 	if len(args) == 1 {
 		if args[0] == "-h" || args[0] == "-run_headless" {
 			config.Global.Settings.RunHeadless = true //override defalt
-			println("Running in HEADLESS MODE")
+			app.MakeHighlyVisibleLogEntry("Running in HEADLESS MODE", 9)
 		}
 	}
 }

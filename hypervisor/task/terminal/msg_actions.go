@@ -199,7 +199,9 @@ func (st *State) onUserCommand() {
 	case "close_term":
 		st.commandCloseTerminalFirstStage(args)
 
-	case "list_tasks":
+	case "la":
+		fallthrough
+	case "list_apps":
 		st.commandListRunningExternalApps(args)
 
 	//list all terminals

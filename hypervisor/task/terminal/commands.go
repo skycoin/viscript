@@ -27,11 +27,11 @@ func (st *State) commandHelp() {
 	st.PrintLn("------ Apps -----------")
 	st.PrintLn("apps:                  Display all available apps with descriptions.")
 	st.PrintLn("attach    <id>:        Attach external app with given terminal id.")
-	st.PrintLn("list_tasks (-f):       List running tasks (-f for full commands).")
+	st.PrintLn("list_apps (-f):        List running apps (-f for full commands).")
 	st.PrintLn("ping      <id>:        Ping app with given id.")
 	st.PrintLn("res_usage <id>:        See resource usage for app with given id.")
 	st.PrintLn("shutdown  <id>:        [TODO] Shutdown external app with given id.")
-	st.PrintLn("start (-a) <command>:  Start external app. (-a to also attach).")
+	st.PrintLn("start [-a] <command>:  Start external app. (-a to also attach).")
 	// st.PrintLn("rpc:                   Issues command: \"go run rpc/cli/cli.go\"")
 	// st.PrintLn("Current hotkeys:")
 	st.PrintLn("CTRL+Z:                Detach currently attached app.")
@@ -55,7 +55,7 @@ func (st *State) commandApps() {
 		}
 	}
 
-	maxAppKeyLength += 4 // Space after max string length app hash
+	maxAppKeyLength += 4 //Space after max string length app hash
 	s := ""
 
 	for appKey, app := range apps {

@@ -8,10 +8,10 @@ import (
 	"github.com/skycoin/viscript/hypervisor"
 	"github.com/skycoin/viscript/hypervisor/dbus"
 	"github.com/skycoin/viscript/msg"
+	"github.com/skycoin/viscript/viewport/terminal"
 )
 
 type RPCReceiver struct {
-	TerminalManager *TerminalManager
 }
 
 func (receiver *RPCReceiver) ListTerminalIDsWithTaskIDs(_ []string, result *[]byte) error {
@@ -19,7 +19,7 @@ func (receiver *RPCReceiver) ListTerminalIDsWithTaskIDs(_ []string, result *[]by
 
 	ids := make([]msg.TermAndTaskIds, 0)
 
-	for id, term := range receiver.TerminalManager.terminalStack.TermMap {
+	for id, term := range terminal.Terms.TermMap {
 		ids = append(ids,
 			msg.TermAndTaskIds{
 				TerminalId:     id,
@@ -27,7 +27,7 @@ func (receiver *RPCReceiver) ListTerminalIDsWithTaskIDs(_ []string, result *[]by
 	}
 
 	println("[==============================]")
-	println("Terms with task IDs list:")
+	println("Terms with task IDs:")
 	for _, t := range ids {
 		println("Terminal ID:", t.TerminalId, "\tAttached Task ID:", t.AttachedTaskId)
 	}
@@ -45,7 +45,7 @@ func (receiver *RPCReceiver) GetTermChannelInfo(args []string, result *[]byte) e
 		return err
 	}
 
-	term, ok := receiver.TerminalManager.terminalStack.TermMap[msg.TerminalId(terminalId)]
+	term, ok := terminal.Terms.TermMap[msg.TerminalId(terminalId)]
 	if !ok {
 		termErr := fmt.Sprintf("Terminal with id: %d doesn't exist.", terminalId)
 		println("[==============!!==============]")
@@ -105,17 +105,17 @@ func (receiver *RPCReceiver) GetTermChannelInfo(args []string, result *[]byte) e
 
 func (receiver *RPCReceiver) StartTerminalWithTask(_ []string, result *[]byte) error {
 	println("\nHandling Request: Start terminal with task")
-	terms := receiver.TerminalManager.terminalStack
+	terms := terminal.Terms
 	newTerminalID := terms.Add()
 	println("[==============================]")
-	fmt.Println("Terminal with ID", newTerminalID, "created!")
+	fmt.Println("Terminal with ID", newTerminalID, "created")
 	*result = msg.Serialize((uint16)(0), newTerminalID)
 	return nil
 }
 
 func (receiver *RPCReceiver) ListTasks(_ []string, result *[]byte) error {
 	println("\nHandling Request: List all task Ids")
-	tMap := receiver.TerminalManager.tasks.TaskMap
+	tMap := hypervisor.GlobalTasks.TaskMap
 	taskInfos := make([]msg.TaskInfo, 0)
 
 	for _, task := range tMap {
