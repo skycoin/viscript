@@ -63,7 +63,7 @@ import (
 	"github.com/skycoin/viscript/config"
 	"github.com/skycoin/viscript/headless"
 	"github.com/skycoin/viscript/hypervisor"
-	"github.com/skycoin/viscript/rpc/terminalmanager"
+	"github.com/skycoin/viscript/rpc/reds_rpc"
 	"github.com/skycoin/viscript/signal"
 	"github.com/skycoin/viscript/viewport"
 )
@@ -84,7 +84,7 @@ func main() {
 	}
 
 	go func() {
-		rpcInstance := terminalmanager.NewRPC()
+		rpcInstance := reds_rpc.NewRPC()
 		rpcInstance.Serve()
 	}()
 

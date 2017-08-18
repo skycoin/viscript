@@ -1,4 +1,4 @@
-package terminalmanager
+package reds_rpc
 
 import (
 	"log"
