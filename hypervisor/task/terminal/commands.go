@@ -47,21 +47,21 @@ func (st *State) commandApps() {
 		return
 	}
 
-	maxAppKeyLength := 0
+	beforeDesc := 0 //number of character spaces before app description
 
-	for appKey, _ := range apps {
-		if len(appKey) > maxAppKeyLength {
-			maxAppKeyLength = len(appKey)
+	for name, _ := range apps {
+		if len(name) > beforeDesc {
+			beforeDesc = len(name)
 		}
 	}
 
-	maxAppKeyLength += 4 //Space after max string length app hash
+	beforeDesc += 4 //add spaces between longest name & description
 	s := ""
 
-	for appKey, app := range apps {
-		s += appKey
+	for name, app := range apps {
+		s += name
 
-		for i := 0; i < maxAppKeyLength-len(appKey); i++ {
+		for i := 0; i < beforeDesc-len(name); i++ {
 			s += " "
 		}
 
