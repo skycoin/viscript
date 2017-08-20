@@ -63,7 +63,7 @@ import (
 	"github.com/skycoin/viscript/config"
 	"github.com/skycoin/viscript/headless"
 	"github.com/skycoin/viscript/hypervisor"
-	"github.com/skycoin/viscript/rpc/reds_rpc"
+	"github.com/skycoin/viscript/reds_rpc"
 	"github.com/skycoin/viscript/signal"
 	"github.com/skycoin/viscript/viewport"
 )
@@ -96,7 +96,6 @@ func main() {
 	//start looping
 	for viewport.CloseWindow == false {
 		viewport.DispatchEvents() //event channel
-
 		hypervisor.TickTasks()
 		hypervisor.TickExternalApps()
 

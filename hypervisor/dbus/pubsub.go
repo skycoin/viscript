@@ -25,13 +25,13 @@ func (di *DbusInstance) AddPubsubChannelSubscriber(chanId ChannelId, resourceId 
 }
 
 func (di *DbusInstance) PublishTo(chanId uint32, msg []byte) {
-	id := ChannelId(chanId)
 	//println("<dbus/pubsub>.PublishTo()", id)
+	id := ChannelId(chanId)
 
 	channel := di.PubsubChannels[id]
 	di.prefixMessageWithChanId(id, &msg)
 
-	//fix non-determinism?
+	//FIXME? fix non-determinism?
 	for _, sub := range channel.Subscribers {
 		sub.Channel <- msg
 	}
