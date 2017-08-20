@@ -69,14 +69,14 @@ func (st *State) commandApps() {
 	}
 
 	st.PrintLn(s)
-	st.PrintLn("Type \"help name\" for expected parameters.")
+	st.PrintLn("Type \"help <name>\" for expected parameters.")
 }
 
 func (st *State) commandAppHelp(args []string) {
 	appName := args[0]
 
 	if !config.AppExistsWithName(appName) {
-		st.PrintError("App with name: " + appName + " doesn't exist. " +
+		st.PrintError("App with name '" + appName + "' doesn't exist. " +
 			"Try running 'apps'.")
 		return
 	}

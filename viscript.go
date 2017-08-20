@@ -61,11 +61,12 @@ import (
 
 	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/config"
-	"github.com/skycoin/viscript/headless"
+	//"github.com/skycoin/viscript/headless"
 	"github.com/skycoin/viscript/hypervisor"
 	"github.com/skycoin/viscript/reds_rpc"
 	"github.com/skycoin/viscript/signal"
 	"github.com/skycoin/viscript/viewport"
+	"github.com/skycoin/viscript/viewport/terminal"
 )
 
 var scanner *bufio.Scanner
@@ -74,14 +75,7 @@ func main() {
 	app.MakeHighlyVisibleLogEntry(app.Name, 13)
 	loadConfig()
 	handleAnyArguments()
-	hypervisor.Init()
-
-	if config.Global.Settings.RunHeadless {
-		scanner = bufio.NewScanner(os.Stdin)
-		headless.Init()
-	} else {
-		viewport.Init() //runtime.LockOSThread()
-	}
+	inits()
 
 	go func() {
 		rpcInstance := reds_rpc.NewRPC()
@@ -101,10 +95,12 @@ func main() {
 
 		if config.Global.Settings.RunHeadless {
 			for scanner.Scan() {
+				terminal.Terms.DrawTextMode()
 				println(scanner.Text())
 			}
 
-			headless.Tick()
+			//headless.Tick()
+			terminal.Terms.Tick()
 		} else {
 			viewport.PollUiInputEvents()
 			viewport.Tick()
@@ -132,5 +128,17 @@ func handleAnyArguments() {
 			config.Global.Settings.RunHeadless = true //override defalt
 			app.MakeHighlyVisibleLogEntry("Running in HEADLESS MODE", 9)
 		}
+	}
+}
+
+func inits() {
+	hypervisor.Init()
+
+	if config.Global.Settings.RunHeadless {
+		scanner = bufio.NewScanner(os.Stdin)
+		terminal.Terms.Init()
+		//headless.Init()
+	} else {
+		viewport.Init() //runtime.LockOSThread()
 	}
 }

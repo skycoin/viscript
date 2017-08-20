@@ -6,6 +6,34 @@ import (
 	"strconv"
 )
 
+func (ts *TerminalStack) DrawTextMode() { //for running headless mode
+	for _, t := range ts.TermMap {
+		if t == ts.Focused { //in text/headless mode, only draw focused
+			println(app.GetBarOfChars("_", t.GridSize.X-1))
+
+			for y := 0; y < t.GridSize.Y; y++ {
+				line := ""
+				blank := true
+
+				for x := 0; x < t.GridSize.X; x++ {
+					if t.Chars[y][x] == 0 {
+						line += " "
+					} else {
+						line += string(t.Chars[y][x])
+						blank = false
+					}
+				}
+
+				if blank {
+					line = ""
+				}
+
+				println(line)
+			}
+		}
+	}
+}
+
 func (ts *TerminalStack) Draw() {
 	for _, t := range ts.TermMap {
 		z := t.Depth
