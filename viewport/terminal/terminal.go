@@ -63,6 +63,14 @@ func (t *Terminal) Init() {
 	t.Bounds.Bottom -= tabOffset
 }
 
+func (t *Terminal) Tick() {
+	//println("Terminal.Tick()")
+
+	for len(t.InChannel) > 0 {
+		t.UnpackMessage(<-t.InChannel)
+	}
+}
+
 func (t *Terminal) IsResizing() bool {
 	return t.ResizingRight || t.ResizingBottom
 }
@@ -127,12 +135,6 @@ func (t *Terminal) ResizeVertically(newBottom float32) {
 
 	if /* y changed */ sy != t.GridSize.Y {
 		t.setupNewGrid()
-	}
-}
-
-func (t *Terminal) Tick() {
-	for len(t.InChannel) > 0 {
-		t.UnpackMessage(<-t.InChannel)
 	}
 }
 

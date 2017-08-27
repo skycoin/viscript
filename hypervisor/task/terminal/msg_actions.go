@@ -133,9 +133,7 @@ func (st *State) onRepeatableKey(m msg.MessageKey, serializedMsg []byte) {
 	}
 }
 
-func (st *State) onUserCommand() {
-	cmd, args := st.Cli.CurrentCommandAndArgsInLowerCase()
-
+func (st *State) onUserCommand(cmd string, args []string) {
 	if len(cmd) < 1 {
 		println("**** ERROR! ****   Command was empty!  Returning.")
 		return

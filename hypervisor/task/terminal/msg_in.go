@@ -33,6 +33,12 @@ func (st *State) UnpackMessage(msgType uint16, message []byte) []byte {
 		msg.MustDeserialize(message, &m)
 		st.onTerminalIds(m)
 
+	case msg.TypeTokenizedCommand:
+		var m msg.MessageTokenizedCommand
+		msg.MustDeserialize(message, &m)
+		st.onUserCommand(m.Command, m.Args)
+		app.At("hypervisor/task/terminal/msg_in", "TypeTokenizedCommand")
+
 	default:
 		app.At("hypervisor/task/terminal/msg_in", "UNKNOWN MESSAGE TYPE!!!")
 

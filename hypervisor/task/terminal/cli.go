@@ -134,7 +134,7 @@ func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
 	c.Commands = append(c.Commands, c.Prompt)
 
 	//action
-	st.onUserCommand()
+	st.onUserCommand(c.CurrentCommandAndArgsInLowerCase())
 
 	//reset prompt & position
 	c.CurrCmd = len(c.Commands) - 1

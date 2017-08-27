@@ -56,20 +56,16 @@
 package main
 
 import (
-	"bufio"
 	"os"
 
 	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/config"
-	//"github.com/skycoin/viscript/headless"
+	"github.com/skycoin/viscript/headless"
 	"github.com/skycoin/viscript/hypervisor"
 	"github.com/skycoin/viscript/reds_rpc"
 	"github.com/skycoin/viscript/signal"
 	"github.com/skycoin/viscript/viewport"
-	"github.com/skycoin/viscript/viewport/terminal"
 )
-
-var scanner *bufio.Scanner
 
 func main() {
 	app.MakeHighlyVisibleLogEntry(app.Name, 13)
@@ -94,13 +90,7 @@ func main() {
 		hypervisor.TickExternalApps()
 
 		if config.Global.Settings.RunHeadless {
-			for scanner.Scan() {
-				terminal.Terms.DrawTextMode()
-				println(scanner.Text())
-			}
-
-			//headless.Tick()
-			terminal.Terms.Tick()
+			headless.Tick()
 		} else {
 			viewport.PollUiInputEvents()
 			viewport.Tick()
@@ -135,9 +125,7 @@ func inits() {
 	hypervisor.Init()
 
 	if config.Global.Settings.RunHeadless {
-		scanner = bufio.NewScanner(os.Stdin)
-		terminal.Terms.Init()
-		//headless.Init()
+		headless.Init()
 	} else {
 		viewport.Init() //runtime.LockOSThread()
 	}
