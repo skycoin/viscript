@@ -2,6 +2,7 @@ package terminal
 
 import (
 	"github.com/skycoin/viscript/app"
+	"github.com/skycoin/viscript/config"
 	"github.com/skycoin/viscript/hypervisor"
 	//"github.com/skycoin/viscript/hypervisor/input/keyboard"
 	"github.com/skycoin/viscript/msg"
@@ -164,6 +165,10 @@ func (t *Terminal) NewLine() {
 				t.Chars[y][x] = t.Chars[y+1][x]
 			}
 		}
+	}
+
+	if config.Global.Settings.RunHeadless {
+		Terms.DrawTextMode()
 	}
 }
 

@@ -17,10 +17,6 @@ func (st *State) NewLine() {
 	st.publishToOut(msg.Serialize(msg.TypeKey, keyEnter))
 }
 
-func (st *State) PrintLn(s string) {
-	st.printLnAndMAYBELogIt(s, true)
-}
-
 func (st *State) PrintError(s string) {
 	s = "**** ERROR! ****    " + s
 
@@ -46,13 +42,15 @@ func (st *State) SendCommand(command string, args []string) {
 	st.publishToOut(m)
 }
 
+func (st *State) PrintLn(s string) {
+	st.printLnAndMAYBELogIt(s, true)
+}
+
 //
 //
 //private
-
-func (st *State) publishToOut(message []byte) {
-	hypervisor.DbusGlobal.PublishTo(st.task.OutChannelId, message)
-}
+//
+//
 
 func (st *State) printLnAndMAYBELogIt(s string, addToLog bool) {
 	if addToLog {
@@ -92,4 +90,8 @@ func (st *State) sendChar(c uint32) {
 
 	m := msg.Serialize(msg.TypePutChar, msg.MessagePutChar{0, c})
 	st.publishToOut(m) // EVERY publish action prefixes another chan id
+}
+
+func (st *State) publishToOut(message []byte) {
+	hypervisor.DbusGlobal.PublishTo(st.task.OutChannelId, message)
 }

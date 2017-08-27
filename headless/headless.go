@@ -1,7 +1,9 @@
 package headless
 
+//for running the app in headless/text only mode (without using GLFW)
+
 import (
-	"bufio" ///////
+	"bufio"
 	"os"
 	"strings"
 	"time"
@@ -45,7 +47,6 @@ func Init() {
 			tc := msg.MessageTokenizedCommand{tokens[0], args}
 			m := msg.Serialize(msg.TypeTokenizedCommand, tc)
 			terminal.Terms.Focused.RelayToTask(m)
-			terminal.Terms.DrawTextMode()
 		}
 
 		close(ch)
