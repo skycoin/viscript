@@ -118,7 +118,7 @@ func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSin
 	cs := ts.Focused.CharSize
 	fb := ts.Focused.Bounds
 
-	if keyboard.ControlKeyIsDown { //smooth, high resolution
+	if keyboard.AltKeyIsDown { //smooth, high resolution
 		fb.MoveBy(hiResDelta)
 	} else { //snap movement to char size
 		if d.X > cs.X {

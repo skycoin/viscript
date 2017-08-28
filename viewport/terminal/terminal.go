@@ -86,7 +86,7 @@ func (t *Terminal) ResizeHorizontally(newRight float32) {
 	delta := newRight - t.Bounds.Right
 	sx := t.GridSize.X
 
-	// if keyboard.ControlKeyIsDown {
+	// if keyboard.AltKeyIsDown {
 	// 	//if we re-enable holding CTRL for pixel resizing, will need to adjust GridSize too
 	// 	t.Bounds.Right = newRight
 	// } else {
@@ -117,7 +117,7 @@ func (t *Terminal) ResizeVertically(newBottom float32) {
 	delta := newBottom - t.Bounds.Bottom
 	sy := t.GridSize.Y
 
-	// if keyboard.ControlKeyIsDown {
+	// if keyboard.AltKeyIsDown {
 	// 	//if we re-enable holding CTRL for pixel resizing, will need to adjust GridSize too
 	// 	t.Bounds.Bottom = newBottom
 	// } else {

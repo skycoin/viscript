@@ -92,9 +92,9 @@ func onKey(m msg.MessageKey) {
 		//keys
 		switch m.Key {
 
-		case msg.KeyLeftAlt:
+		case msg.KeyLeftControl:
 			fallthrough
-		case msg.KeyRightAlt:
+		case msg.KeyRightControl:
 			t.Terms.Defocus()
 			gl.SetArrowPointer()
 

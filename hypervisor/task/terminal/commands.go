@@ -239,6 +239,7 @@ func (st *State) commandResourceUsage(args []string) {
 		st.PrintError(err.Error())
 		return
 	}
+
 	stats := resp.MemStats
 	st.PrintLn(fmt.Sprintf("MemStats HeapAlloc:%d HeapSys:%d HeapIdle:%d HeapInuse:%d StackSys:%d StackInuse:%d",
 		stats.HeapAlloc, stats.HeapSys, stats.HeapIdle, stats.HeapInuse, stats.StackSys, stats.StackInuse))
