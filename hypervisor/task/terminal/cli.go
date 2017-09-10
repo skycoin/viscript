@@ -10,7 +10,7 @@ import (
 type Cli struct {
 	Log        []string
 	Commands   []string
-	VisualRows []string //each log entry can be multiple fragments/rows to fit current columns
+	VisualRows []string //for caching current log entry/line breaks.  each can be multiple fragments/rows to fit current columns
 	CurrCmd    int      //index
 	CursPos    int      //cursor/insert position, local to command space (2 lines dedicated ATM)
 	Prompt     string
@@ -39,22 +39,32 @@ func NewCli() *Cli {
 	return &cli
 }
 
-func (c *Cli) BuildRowsFromLogEntryFragments(vi msg.MessageVisualInfo) {
-	//println("BuildRowsFromLogEntryFragments()   START")
+func (c *Cli) AddEntry(s string, numColumns uint32) {
+	c.Log = append(c.Log, s)
+	c.breakLogEntry(s, numColumns)
+}
+
+func (c *Cli) breakLogEntry(entry string, numColumns uint32) {
+	//'entry' shrinks as we cut out fitting fragments
+	for len(entry) > int(numColumns) {
+		lff := "" /* largest fitting fragment */
+		lff, entry = c.breakStringIn2(entry, int(numColumns))
+		c.VisualRows = append(c.VisualRows, lff)
+	}
+
+	//last fragment is less than .NumColumns
+	if /* something remains */ len(entry) > 0 {
+		//println("what's left of current log entry:", entry)
+		c.VisualRows = append(c.VisualRows, entry) //add last fragment
+	}
+}
+
+func (c *Cli) RebuildVisualRowsFromLogEntryFragments(vi msg.MessageVisualInfo) {
+	//println("RebuildVisualRowsFromLogEntryFragments()   START")
 	c.VisualRows = []string{}
 
-	for _, entry := range c.Log { // 'entry' shrinks as we cut out fitting fragments
-		for len(entry) > int(vi.NumColumns) {
-			lff := "" /* largest fitting fragment */
-			lff, entry = c.breakStringIn2(entry, int(vi.NumColumns))
-			c.VisualRows = append(c.VisualRows, lff)
-		}
-
-		//last fragment is less than .NumColumns
-		if /* something remains */ len(entry) > 0 {
-			//println("what's left of current log entry:", entry)
-			c.VisualRows = append(c.VisualRows, entry) //add last fragment
-		}
+	for _, entry := range c.Log {
+		c.breakLogEntry(entry, vi.NumColumns)
 	}
 
 	c.printLogInOsBox(vi)
@@ -130,7 +140,7 @@ func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
 	}
 
 	//append to log history & make a "blank" new command line (which user modifies when they type)
-	c.Log = append(c.Log, c.Commands[c.CurrCmd])
+	c.AddEntry(c.Commands[c.CurrCmd], st.VisualInfo.NumColumns)
 	c.Commands = append(c.Commands, c.Prompt)
 
 	//action

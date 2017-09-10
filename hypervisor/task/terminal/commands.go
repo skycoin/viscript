@@ -23,7 +23,7 @@ func (st *State) commandHelp() {
 	st.PrintLn("clear:                 Clears currently focused terminal.")
 	st.PrintLn("close_term <id>:       Close terminal by id.")
 	st.PrintLn("list_terms:            List all terminal ids.")
-	st.PrintLn("new_term:              Add new terminal (n for short).")
+	st.PrintLn("new_term:              Add new terminal.")
 	st.PrintLn("------ Apps -----------")
 	st.PrintLn("apps:                  Display all available apps with descriptions.")
 	st.PrintLn("attach    <id>:        Attach external app with given terminal id.")

@@ -13,7 +13,7 @@ func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 
 	if /* VisualInfo changed */ m != st.VisualInfo {
 		st.VisualInfo = m
-		st.Cli.BuildRowsFromLogEntryFragments(m)
+		st.Cli.RebuildVisualRowsFromLogEntryFragments(m)
 		println("VisualInfo changed   -   st.VisualInfo.NumRows:", st.VisualInfo.NumRows)
 	} else {
 		println("VisualInfo UNchanged  -  st.VisualInfo.NumRows:", st.VisualInfo.NumRows)
@@ -28,27 +28,27 @@ func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 func (st *State) printVisibleRows(vi msg.MessageVisualInfo) {
 	println("printVisibleRows()") //...and indicator if backscrolled
 
-	num := len(st.Cli.VisualRows)
-	println("len of st.Cli.VisualRows:", num)
+	lvr := len(st.Cli.VisualRows)
+	println("len of st.Cli.VisualRows:", lvr)
 
-	//(n)umber of (v)isible (r)ows   (that current Terminal height allows)
-	nvr := int(vi.NumRows - vi.PromptRows)
+	//(n)umber of (p)potential visible (r)ows   (that current Terminal height allows)
+	npr := int(vi.NumRows - vi.PromptRows)
 
 	if st.Cli.BackscrollAmount > 0 {
-		nvr--
-		st.printRowsONLY(nvr, num)
+		npr--
+		st.printRowsONLY(npr, lvr)
 		st.printLnAndMAYBELogIt("^^^^^^^^^^^^^^^^ BACKSCROLLED ^^^^^^^^^^^^^^^^", false)
 	} else {
-		st.printRowsONLY(nvr, num)
+		st.printRowsONLY(npr, lvr)
 	}
 }
 
-func (st *State) printRowsONLY(nvr, num int) {
-	end := num - st.Cli.BackscrollAmount
-	start := end - nvr
+func (st *State) printRowsONLY(npr, lvr int) {
+	max := lvr - st.Cli.BackscrollAmount
+	start := max - npr
 
-	for i := start; i < end && i < num; i++ {
-		if /* index not negative */ i > -1 {
+	for i := start; i < max; i++ {
+		if /* index is valid */ i >= 0 && i < lvr {
 			//println("pVL i:", i)
 			st.printLnAndMAYBELogIt(st.Cli.VisualRows[i], false)
 		}

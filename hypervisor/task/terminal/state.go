@@ -19,7 +19,8 @@ func (st *State) Init(task *Task) {
 	st.task = task
 	st.DebugPrintInputEvents = true
 	st.Cli = NewCli()
-	st.Cli.Log = append(st.Cli.Log, app.HelpText)
+	println("st.VisualInfo.NumColumns", st.VisualInfo.NumColumns)
+	st.Cli.AddEntry(app.HelpText, 80)
 }
 
 func (st *State) HandleMessages() {

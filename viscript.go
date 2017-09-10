@@ -2,19 +2,16 @@
 
 ------- NEXT THINGS TODO: -------
 
-* RPC cli:
+* (Red typed this) RPC cli:
 	add functionality to print running jobs for a given task id
 	that can be retrieved by lp or setting the task id as default
 	because that already exists
 
-* ExternalApp:
+* (Red typed this) ExternalApp:
 	Ctrl + c - detach, delete, kill probably
 	Ctrl + z - detach and let it be running or pause it (https://repl.it/GeGn/1)?,
 	jobs - list all jobs of current terminal
 	fg <id> - send to foreground
-
-* make current command line autoscroll horizontally
-	* make it optional (if turned off, always truncate the left)
 
 * back buffer scrolling
 	* pgup/pgdn hotkeys
@@ -22,12 +19,11 @@
 * Sideways auto-scroll command line when it doesn't fit the dedicated space for it
 		(atm, 2 lines are reserved along the bottom of a full screen)
 		* block character at end to indicate continuing on next line
-
-* move onUserCommand() to command_cases.go?
+	* make it optional (if turned off, always truncate the left)
 
 * improve BACKSCROLL indicator line
 
-* scan and do/fix most FIXME/TODO places in the code
+* scan and do/fix the most important FIXME/TODO places in the code
 
 
 
@@ -43,13 +39,13 @@
 
 ------- LOWER PRIORITY POLISH: -------
 
-* if cursor movement goes past left/right of screen, auto-horizontal-scroll as you type
+* if cursor movement goes past left/right of screen, auto-horizontal-scroll the page as you type
 * same for when newlines/enters/returns push cursor past the bottom of visible space
 * vertical scrollbars could have a smaller rendering of the first ~40 chars?
 		however not if we map the whole vertical space (when scrollspace is taller than screen),
 		because this requires scaling the text.  and keeping the aspect ratio means ~40 (max)
 		would alter the width of the scrollbar
-* when there is no scrollbar, should be able to see/interact with text in that area
+* when there is no scrollbar needed, should be able to see/interact with text in that area?
 
 */
 
