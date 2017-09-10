@@ -17,7 +17,7 @@ import (
 const cp = "hypervisor/task/terminal/commands"
 
 func (st *State) commandHelp() {
-	st.PrintLn(app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)))
+	st.PrintLn("<bar>")
 	//st.PrintLn("Current commands:")
 	st.PrintLn("------ Terminals ------")
 	st.PrintLn("clear:                 Clears currently focused terminal.")
@@ -36,7 +36,7 @@ func (st *State) commandHelp() {
 	// st.PrintLn("Current hotkeys:")
 	st.PrintLn("CTRL+Z:                Detach currently attached app.")
 	// st.PrintLn("    CTRL+C:           ___description goes here___")
-	st.PrintLn(app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)))
+	st.PrintLn("<bar>")
 }
 
 func (st *State) commandApps() {

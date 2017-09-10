@@ -2,7 +2,9 @@ package task
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/hypervisor"
 	"github.com/skycoin/viscript/msg"
 )
@@ -56,6 +58,8 @@ func (st *State) printLnAndMAYBELogIt(s string, addToLog bool) {
 	if addToLog {
 		st.Cli.AddEntriesForLogAndVisualRowsCache(s, st.VisualInfo.NumColumns)
 	}
+
+	s = strings.Replace(s, "<bar>", app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)), -1)
 
 	for _, c := range s {
 		st.sendChar(uint32(c))
