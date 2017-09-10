@@ -70,7 +70,7 @@ func GetBarOfChars(chars string, howMany int) string {
 // numLines: use odd number for an exact middle point
 func MakeHighlyVisibleLogEntry(s string, numLines int) {
 	s = " " + s + " "
-	osOnly := s == Name
+	osBoxOnly := s == Name
 
 	bar := GetBarOfChars(fillChar, numOSBoxColumns)
 
@@ -88,22 +88,22 @@ func MakeHighlyVisibleLogEntry(s string, numLines int) {
 	for i := 0; i < numLines; i++ {
 		switch {
 		case i == vMid:
-			predPrint(osOnly, bookend+s+bookend)
+			maybePrint(osBoxOnly, bookend+s+bookend)
 		case i == vMid-1 || i == vMid+1:
-			predPrint(osOnly, bookend+spaces+bookend)
+			maybePrint(osBoxOnly, bookend+spaces+bookend)
 		default:
-			predPrint(osOnly, bar)
+			maybePrint(osBoxOnly, bar)
 		}
 	}
 }
 
 // prints only to OS console window if it's for the app's name
-func predPrint(osOnly bool, s string) {
+func maybePrint(osBoxOnly bool, s string) {
 	if len(s) < numOSBoxColumns {
 		s += fillChar
 	}
 
-	if osOnly {
+	if osBoxOnly {
 		println(s)
 	} else {
 		Con.Add(fmt.Sprintf("%s\n", s))
