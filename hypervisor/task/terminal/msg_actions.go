@@ -16,7 +16,7 @@ func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 		//when focused on a CLI terminal)
 		hypervisor.DbusGlobal.PublishTo(st.task.OutChannelId, serializedMsg)
 	} else {
-		st.Cli.AdjustBackscrollOffset(int(m.Y), st.VisualInfo.NumRows)
+		st.Cli.AdjustBackscrollOffset(int(m.Y), st)
 		//just pass unchanged VisualInfo
 		//(which is acted upon like a boolean flag)
 		st.makePageOfLog(st.VisualInfo)

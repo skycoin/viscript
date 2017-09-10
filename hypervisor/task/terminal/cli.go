@@ -70,10 +70,10 @@ func (c *Cli) RebuildVisualRowsFromLogEntryFragments(vi msg.MessageVisualInfo) {
 	c.printLogInOsBox(vi)
 }
 
-func (c *Cli) AdjustBackscrollOffset(delta int, numVIRows uint32) { //visible info rows
+func (c *Cli) AdjustBackscrollOffset(delta int, st *State) {
 	c.BackscrollAmount += delta
 	println("BACKSCROLLING --- delta:", delta)
-	max := len(c.VisualRows) - int(numVIRows) + 3
+	max := len(c.VisualRows) - st.BackscrollRows() + 1
 
 	if c.BackscrollAmount > max {
 		c.BackscrollAmount = max
