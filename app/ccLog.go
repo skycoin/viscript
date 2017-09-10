@@ -29,11 +29,39 @@ func (log CcLog) Add(s string) {
 	*/
 }
 
-func GetBarOfChars(char string, howMany int) string {
+func GetLabeledBarOfChars(label, chars string, totalChars uint32) string {
+	bar := label
+
+	modifyLeftEdge := true
+	for len(bar) < int(totalChars) {
+		if modifyLeftEdge {
+			bar = chars + bar
+		} else {
+			bar += chars
+		}
+
+		modifyLeftEdge = !modifyLeftEdge
+	}
+
+	modifyLeftEdge = true
+	for len(bar) > int(totalChars) {
+		if modifyLeftEdge {
+			bar = bar[1:]
+		} else {
+			bar = bar[:len(bar)-1]
+		}
+
+		modifyLeftEdge = !modifyLeftEdge
+	}
+
+	return bar
+}
+
+func GetBarOfChars(chars string, howMany int) string {
 	bar := ""
 
 	for i := 0; i < howMany; i++ {
-		bar += char
+		bar += chars
 	}
 
 	return bar

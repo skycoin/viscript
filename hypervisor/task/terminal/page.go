@@ -1,6 +1,7 @@
 package task
 
 import (
+	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/msg"
 )
 
@@ -37,7 +38,8 @@ func (st *State) printVisibleRows(vi msg.MessageVisualInfo) {
 	if st.Cli.BackscrollAmount > 0 {
 		npr--
 		st.printRowsONLY(npr, lvr)
-		st.printLnAndMAYBELogIt("^^^^^^^^^^^^^^^^ BACKSCROLLED ^^^^^^^^^^^^^^^^", false)
+		indicBar := app.GetLabeledBarOfChars(" BACKSCROLLED ", "^", st.VisualInfo.NumColumns)
+		st.printLnAndMAYBELogIt(indicBar, false)
 	} else {
 		st.printRowsONLY(npr, lvr)
 	}
