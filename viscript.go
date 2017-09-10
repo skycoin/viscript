@@ -13,15 +13,10 @@
 	jobs - list all jobs of current terminal
 	fg <id> - send to foreground
 
-* back buffer scrolling
-	* pgup/pgdn hotkeys
-
 * Sideways auto-scroll command line when it doesn't fit the dedicated space for it
 		(atm, 2 lines are reserved along the bottom of a full screen)
 		* block character at end to indicate continuing on next line
 	* make it optional (if turned off, always truncate the left)
-
-* improve BACKSCROLL indicator line
 
 * scan and do/fix the most important FIXME/TODO places in the code
 
