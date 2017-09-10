@@ -43,7 +43,17 @@ func (st *State) printVisibleRows(vi msg.MessageVisualInfo) {
 	}
 }
 
+var previousBSAmount int
+
 func (st *State) printRowsONLY(npr, lvr int) {
+	if st.Cli.BackscrollAmount == 0 &&
+		previousBSAmount == 0 {
+		return
+	}
+
+	//
+	//
+	previousBSAmount = st.Cli.BackscrollAmount
 	max := lvr - st.Cli.BackscrollAmount
 	start := max - npr
 
