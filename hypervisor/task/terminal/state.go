@@ -20,7 +20,7 @@ func (st *State) Init(task *Task) {
 	st.DebugPrintInputEvents = true
 	st.Cli = NewCli()
 	println("st.VisualInfo.NumColumns", st.VisualInfo.NumColumns)
-	st.Cli.AddEntry(app.HelpText, 80)
+	st.Cli.AddEntriesForLogAndVisualRowsCache(app.HelpText, 80)
 }
 
 func (st *State) HandleMessages() {

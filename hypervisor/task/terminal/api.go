@@ -54,7 +54,7 @@ func (st *State) PrintLn(s string) {
 
 func (st *State) printLnAndMAYBELogIt(s string, addToLog bool) {
 	if addToLog {
-		st.Cli.AddEntry(s, st.VisualInfo.NumColumns)
+		st.Cli.AddEntriesForLogAndVisualRowsCache(s, st.VisualInfo.NumColumns)
 	}
 
 	for _, c := range s {

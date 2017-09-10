@@ -39,7 +39,7 @@ func NewCli() *Cli {
 	return &cli
 }
 
-func (c *Cli) AddEntry(s string, numColumns uint32) {
+func (c *Cli) AddEntriesForLogAndVisualRowsCache(s string, numColumns uint32) {
 	c.Log = append(c.Log, s)
 	c.breakLogEntry(s, numColumns)
 }
@@ -140,7 +140,7 @@ func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
 	}
 
 	//append to log history & make a "blank" new command line (which user modifies when they type)
-	c.AddEntry(c.Commands[c.CurrCmd], st.VisualInfo.NumColumns)
+	c.AddEntriesForLogAndVisualRowsCache(c.Commands[c.CurrCmd], st.VisualInfo.NumColumns)
 	c.Commands = append(c.Commands, c.Prompt)
 
 	//action
