@@ -11,6 +11,7 @@ import (
 	extAppImport "github.com/skycoin/viscript/hypervisor/ext_app"
 	"github.com/skycoin/viscript/msg"
 	"github.com/skycoin/viscript/signal"
+	"github.com/skratchdot/open-golang/open"
 	"time"
 )
 
@@ -339,4 +340,19 @@ func (st *State) commandCloseTerminalFirstStage(args []string) {
 		//over nitpickiness like that.
 		return
 	}
+}
+
+//open cx sandbox site
+func (st *State) openCX(args []string) {
+	arg := args[0]
+
+
+	if arg == "cx" {
+		st.PrintLn("Opening CX web...")
+		open.Run("http://cx.skycoin.net/")
+	} else {
+		st.PrintError("Can't open " + arg)
+	}
+
+
 }
