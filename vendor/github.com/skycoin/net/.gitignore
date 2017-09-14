@@ -18,7 +18,6 @@ main
 test_node
 
 *~
-client
 
 # Packages #
 ############
@@ -102,10 +101,12 @@ electron/.electron_output
 electron/.standalone_output
 
 .vscode/
-
+yarn.lock
 src/mesh/TODO
+src/gui/static/dist
 
 .idea/
-
-*.iml
-*.test
+net
+skycoin-messenger/dist
+push.sh
+restart.sh
