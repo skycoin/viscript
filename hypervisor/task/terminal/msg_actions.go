@@ -241,9 +241,12 @@ func (st *State) onUserCommand(cmd string, args []string) {
 	case "s":
 		fallthrough
 	case "start":
-		st.commandStart(args)
-	case "open":
-		st.openCX(args)
+		if  len(args)>0 && args[0]== "cx"{
+			st.openCX(args)
+		} else  {
+			st.commandStart(args)
+		}
+
 	default:
 		st.PrintError("\"" + cmd + "\" is an unknown command.")
 
