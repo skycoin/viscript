@@ -344,15 +344,6 @@ func (st *State) commandCloseTerminalFirstStage(args []string) {
 
 //open cx sandbox site
 func (st *State) openCX(args []string) {
-	arg := args[0]
-
-
-	if arg == "cx" {
 		st.PrintLn("Opening CX web...")
 		open.Run("http://cx.skycoin.net/")
-	} else {
-		st.PrintError("Can't open " + arg)
-	}
-
-
 }
