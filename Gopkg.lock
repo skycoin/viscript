@@ -11,7 +11,7 @@
   branch = "master"
   name = "github.com/go-gl/glfw"
   packages = ["v3.2/glfw"]
-  revision = "55847fe4ded3fbee15191a625f3305a1fad48b67"
+  revision = "513e4f2bf85c31fba0fc4907abd7895242ccbe50"
 
 [[projects]]
   name = "github.com/op/go-logging"
@@ -22,32 +22,38 @@
 [[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
-  revision = "a3f95b5c423586578a4e099b11a46c2479628cac"
-  version = "1.0.2"
+  revision = "f006c2ac4710855cf0f916dd6b77acf6b048dc6e"
+  version = "v1.0.3"
 
 [[projects]]
   branch = "master"
   name = "github.com/skycoin/net"
   packages = ["client","conn","factory","msg","server"]
-  revision = "8204ebbfa654707c95ae8e57052ad8296248373d"
+  revision = "a4a76570fa7f5c4847dc88f2908ff4ca1e9835b5"
 
 [[projects]]
   name = "github.com/skycoin/skycoin"
   packages = ["src/cipher","src/cipher/base58","src/cipher/chacha20","src/cipher/encoder","src/cipher/ripemd160","src/cipher/secp256k1-go","src/cipher/secp256k1-go/secp256k1-go2","src/util/logging"]
-  revision = "dd924e1f2de8fab945e05b3245dbeabf267f2910"
-  version = "v0.19.0"
+  revision = "ee33f18f2eed78515bce3b1c412d0e67b0570c24"
+  version = "0.19.1"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/crypto"
+  packages = ["ssh/terminal"]
+  revision = "faadfbdc035307d901e69eea569f5dda451a3ee3"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
-  packages = ["unix"]
-  revision = "d8f5ea21b9295e315e612b4bcf4bedea93454d4d"
+  packages = ["unix","windows"]
+  revision = "062cd7e4e68206d8bab9b18396626e855c992658"
 
 [[projects]]
   branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "25c4ec802a7d637f88d584ab26798e94ad14c13b"
+  revision = "eb3733d160e74a9c7e442f435eb3bea458e1d19f"
 
 [solve-meta]
   analyzer-name = "dep"
