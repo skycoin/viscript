@@ -210,6 +210,12 @@ func (st *State) onUserCommand(cmd string, args []string) {
 	case "list_terms":
 		st.SendCommand("list_terms", []string{})
 
+	//move terminal
+	case "mt":
+		fallthrough
+	case "move_term":
+		st.commandMoveTerminal(args)
+
 	//add new terminal
 	case "nt":
 		fallthrough

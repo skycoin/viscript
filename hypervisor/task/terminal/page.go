@@ -27,7 +27,7 @@ func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 }
 
 func (st *State) printVisibleRows(vi msg.MessageVisualInfo) {
-	println("printVisibleRows()") //...and indicator if backscrolled
+	//println("printVisibleRows()") //...and indicator if backscrolled
 
 	lvr := len(st.Cli.VisualRows)
 	println("len of st.Cli.VisualRows:", lvr)

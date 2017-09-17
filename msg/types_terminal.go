@@ -6,12 +6,13 @@ const (
 	TypeClear            = 1 + CATEGORY_Terminal
 	TypeTokenizedCommand = 2 + CATEGORY_Terminal
 	TypeCommandPrompt    = 3 + CATEGORY_Terminal
-	TypePutChar          = 4 + CATEGORY_Terminal
-	TypeSetCharAt        = 5 + CATEGORY_Terminal
-	TypeSetCursor        = 6 + CATEGORY_Terminal
-	TypeTerminalIds      = 7 + CATEGORY_Terminal
-	TypeVisualInfo       = 8 + CATEGORY_Terminal
-	TypeFrameBufferSize  = 9 + CATEGORY_Terminal //start of low level events
+	TypeMoveTerminal     = 4 + CATEGORY_Terminal
+	TypePutChar          = 5 + CATEGORY_Terminal
+	TypeSetCharAt        = 6 + CATEGORY_Terminal
+	TypeSetCursor        = 7 + CATEGORY_Terminal
+	TypeTerminalIds      = 8 + CATEGORY_Terminal
+	TypeVisualInfo       = 9 + CATEGORY_Terminal
+	TypeFrameBufferSize  = 10 + CATEGORY_Terminal //start of low level events
 )
 
 type MessageClear struct { //this type simply signals that we need a .clear() call in terminal
@@ -26,6 +27,11 @@ type MessageCommandPrompt struct { //updates/replaces current command prompt on 
 	TermId       uint32
 	CommandLine  string
 	CursorOffset uint32 //from first character of command prompt
+}
+
+type MessageMoveTerminal struct {
+	X uint32
+	Y uint32
 }
 
 type MessagePutChar struct {

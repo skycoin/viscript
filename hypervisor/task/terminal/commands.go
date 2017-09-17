@@ -23,6 +23,7 @@ func (st *State) commandHelp() {
 	st.PrintLn("clear:                 Clears currently focused terminal.")
 	st.PrintLn("close_term <id>:       Close terminal by id.")
 	st.PrintLn("list_terms:            List all terminal ids.")
+	st.PrintLn("move_term:             Move terminal to given X & Y values")
 	st.PrintLn("new_term:              Add new terminal.")
 	st.PrintLn("------ Apps -----------")
 	st.PrintLn("apps:                  Display all available apps with descriptions.")
@@ -339,4 +340,32 @@ func (st *State) commandCloseTerminalFirstStage(args []string) {
 		//over nitpickiness like that.
 		return
 	}
+}
+
+func (st *State) commandMoveTerminal(args []string) {
+	errMsg := "We need exactly 2 valid numbers for the new X & Y position!"
+
+	if len(args) != 2 {
+		st.PrintError(errMsg)
+		return
+	}
+
+	x, err := strconv.Atoi(args[0])
+	if err != nil {
+		st.PrintError("X parameter is not a valid number!")
+		return
+	}
+
+	println("x: ", x)
+
+	y, err := strconv.Atoi(args[1])
+	if err != nil {
+		st.PrintError("Y parameter is not a valid number!")
+		return
+	}
+
+	println("y: ", y)
+
+	st.publishToOut(msg.Serialize(
+		msg.TypeMoveTerminal, msg.MessageMoveTerminal{uint32(x), uint32(y)}))
 }

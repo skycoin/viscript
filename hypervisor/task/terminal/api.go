@@ -55,17 +55,19 @@ func (st *State) PrintLn(s string) {
 //
 
 func (st *State) printLnAndMAYBELogIt(s string, addToLog bool) {
+	num := st.VisualInfo.NumColumns
+
 	if addToLog {
-		st.Cli.AddEntriesForLogAndVisualRowsCache(s, st.VisualInfo.NumColumns)
+		st.Cli.AddEntriesForLogAndVisualRowsCache(s, num)
 	}
 
-	s = strings.Replace(s, "<bar>", app.GetBarOfChars("-", int(st.VisualInfo.NumColumns)), -1)
+	s = strings.Replace(s, "<bar>", app.GetBarOfChars("-", int(num)), -1)
 
 	for _, c := range s {
 		st.sendChar(uint32(c))
 	}
 
-	if len(s) != int(st.VisualInfo.NumColumns) {
+	if len(s) != int(num) {
 		st.NewLine()
 	}
 }

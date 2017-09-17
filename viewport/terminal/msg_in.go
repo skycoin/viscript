@@ -15,25 +15,30 @@ func (t *Terminal) UnpackMessage(message []byte) []byte {
 		t.clear()
 		t.Curr.Y = 0
 
-	case msg.TypeTokenizedCommand:
-		var m msg.MessageTokenizedCommand
-		msg.MustDeserialize(message, &m)
-		Terms.OnUserCommandFinalStage(t.TerminalId, m)
-
 	case msg.TypeCommandPrompt:
 		var m msg.MessageCommandPrompt
 		msg.MustDeserialize(message, &m)
 		t.updateCommandPrompt(m)
+
+	case msg.TypeMoveTerminal:
+		var m msg.MessageMoveTerminal
+		msg.MustDeserialize(message, &m)
+		t.move(m)
+
+	case msg.TypePutChar:
+		var m msg.MessagePutChar
+		msg.MustDeserialize(message, &m)
+		t.PutCharacter(m.Char)
 
 	case msg.TypeSetCharAt:
 		var m msg.MessageSetCharAt
 		msg.MustDeserialize(message, &m)
 		t.SetCharacterAt(int(m.X), int(m.Y), m.Char)
 
-	case msg.TypePutChar:
-		var m msg.MessagePutChar
+	case msg.TypeTokenizedCommand:
+		var m msg.MessageTokenizedCommand
 		msg.MustDeserialize(message, &m)
-		t.PutCharacter(m.Char)
+		Terms.OnUserCommandFinalStage(t.TerminalId, m)
 
 	//lower level messages
 	case msg.TypeKey:

@@ -72,7 +72,7 @@ func (c *Cli) RebuildVisualRowsFromLogEntryFragments(vi msg.MessageVisualInfo) {
 
 func (c *Cli) AdjustBackscrollOffset(delta int, st *State) {
 	c.BackscrollAmount += delta
-	println("BACKSCROLLING --- delta:", delta)
+	//println("BACKSCROLLING --- delta:", delta)
 	max := len(c.VisualRows) - st.BackscrollRows() + 1
 
 	if c.BackscrollAmount > max {
@@ -83,7 +83,7 @@ func (c *Cli) AdjustBackscrollOffset(delta int, st *State) {
 		c.BackscrollAmount = 0
 	}
 
-	println("BACKSCROLLING --- amount:", c.BackscrollAmount)
+	//println("BACKSCROLLING --- amount:", c.BackscrollAmount)
 }
 
 func (c *Cli) InsertCharIfItFits(char uint32, state *State) {
