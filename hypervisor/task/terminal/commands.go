@@ -23,6 +23,7 @@ func (st *State) commandHelp() {
 	st.PrintLn("clear:                 Clears currently focused terminal.")
 	st.PrintLn("close_term <id>:       Close terminal by id.")
 	st.PrintLn("list_terms:            List all terminal ids.")
+	st.PrintLn("defocus/focus <id>:    Changes input focus.")
 	st.PrintLn("move_term:             Move terminal to given X & Y values")
 	st.PrintLn("new_term:              Add new terminal.")
 	st.PrintLn("------ Apps -----------")
@@ -368,4 +369,11 @@ func (st *State) commandMoveTerminal(args []string) {
 
 	st.publishToOut(msg.Serialize(
 		msg.TypeMoveTerminal, msg.MessageMoveTerminal{int32(x), int32(y)}))
+}
+
+func (st *State) commandFocus(args []string) {
+	println("commandFocus")
+}
+func (st *State) commandDefocus(args []string) {
+	st.SendCommand("defocus", args)
 }

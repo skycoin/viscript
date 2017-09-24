@@ -10,6 +10,10 @@ func (ts *TerminalStack) OnUserCommandFinalStage(reciever msg.TerminalId, cmd ms
 
 	case "close_term":
 		ts.commandCloseTerminalFinalStage(reciever, cmd)
+	case "defocus":
+		ts.Defocus()
+	case "focus":
+		//
 	case "list_terms":
 		ts.commandListTerminals(reciever)
 	case "new_term":

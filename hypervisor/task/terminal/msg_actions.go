@@ -196,12 +196,15 @@ func (st *State) onUserCommand(cmd string, args []string) {
 		st.commandClearTerminal()
 
 	//delete terminal with given index
-	case "xt":
-		fallthrough
 	case "ct":
 		fallthrough
 	case "close_term":
 		st.commandCloseTerminalFirstStage(args)
+
+	case "defocus":
+		st.commandDefocus(args)
+	case "focus":
+		st.commandFocus(args)
 
 	case "la":
 		fallthrough
