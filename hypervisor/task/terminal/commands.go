@@ -367,5 +367,5 @@ func (st *State) commandMoveTerminal(args []string) {
 	println("y: ", y)
 
 	st.publishToOut(msg.Serialize(
-		msg.TypeMoveTerminal, msg.MessageMoveTerminal{uint32(x), uint32(y)}))
+		msg.TypeMoveTerminal, msg.MessageMoveTerminal{int32(x), int32(y)}))
 }

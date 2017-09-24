@@ -30,8 +30,8 @@ type MessageCommandPrompt struct { //updates/replaces current command prompt on 
 }
 
 type MessageMoveTerminal struct {
-	X uint32
-	Y uint32
+	X int32
+	Y int32
 }
 
 type MessagePutChar struct {

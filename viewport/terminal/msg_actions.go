@@ -6,7 +6,7 @@ import (
 )
 
 func (t *Terminal) move(m msg.MessageMoveTerminal) {
-	//println("Terminal.move()")
+	//println("Terminal.move() - given x,y:", float32(m.X), float32(m.Y))
 	w := t.Bounds.Width()
 	h := t.Bounds.Height()
 
