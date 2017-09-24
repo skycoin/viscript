@@ -18,6 +18,7 @@ type MessageMousePos struct {
 type MessageMouseScroll struct {
 	X              float64
 	Y              float64
+	HoldingAlt     bool
 	HoldingControl bool
 }
 

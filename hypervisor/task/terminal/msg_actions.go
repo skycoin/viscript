@@ -9,13 +9,14 @@ import (
 )
 
 func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
-	if m.HoldingControl {
+	if /****/ m.HoldingControl {
 		//send message to 'Terminal'
-		//(i believe this was only used for sidescrolling in the text editor,
-		//but we might want to use this as an alternative to PGUP/PGDN keys
-		//when focused on a CLI terminal)
+		//(this was only used for sidescrolling in the old text editor)
 		hypervisor.DbusGlobal.PublishTo(st.task.OutChannelId, serializedMsg)
-	} else {
+	} else if m.HoldingAlt { //scroll by whole pages
+		st.Cli.AdjustBackscrollOffset(int(m.Y)*st.NumBackscrollRows(), st)
+		st.makePageOfLog(st.VisualInfo)
+	} else { //scroll by lines
 		st.Cli.AdjustBackscrollOffset(int(m.Y), st)
 		st.makePageOfLog(st.VisualInfo)
 	}

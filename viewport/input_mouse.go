@@ -75,6 +75,7 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 		print("msg.TypeMouseScroll")
 		showFloat64("X Offset", m.X)
 		showFloat64("Y Offset", m.Y)
+		showBool("HoldingAlt", m.HoldingAlt)
 		showBool("HoldingControl", m.HoldingControl)
 		println()
 	}

@@ -56,7 +56,11 @@ func onMouseScroll(w *glfw.Window, xOff, yOff float64) {
 	msg.SerializeAndDispatch(
 		InputEvents,
 		msg.TypeMouseScroll,
-		msg.MessageMouseScroll{xOff, yOff, eitherControlKeyHeld(w)})
+		msg.MessageMouseScroll{
+			xOff,
+			yOff,
+			eitherAltKeyHeld(w),
+			eitherControlKeyHeld(w)})
 }
 
 func onChar(w *glfw.Window, char rune) {
@@ -77,6 +81,14 @@ func onKey(
 		InputEvents,
 		msg.TypeKey,
 		msg.MessageKey{uint32(key), uint32(scancode), uint8(action), uint8(mod)})
+}
+
+func eitherAltKeyHeld(w *glfw.Window) bool {
+	if w.GetKey(glfw.KeyLeftAlt) == glfw.Press || w.GetKey(glfw.KeyRightAlt) == glfw.Press {
+		return true
+	}
+
+	return false
 }
 
 func eitherControlKeyHeld(w *glfw.Window) bool {
