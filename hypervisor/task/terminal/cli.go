@@ -73,7 +73,7 @@ func (c *Cli) RebuildVisualRowsFromLogEntryFragments(vi msg.MessageVisualInfo) {
 func (c *Cli) AdjustBackscrollOffset(delta int, st *State) {
 	c.BackscrollAmount += delta
 	//println("BACKSCROLLING --- delta:", delta)
-	max := len(c.VisualRows) - st.BackscrollRows() + 1
+	max := len(c.VisualRows) - st.NumVisibleRows() + 1
 
 	if c.BackscrollAmount > max {
 		c.BackscrollAmount = max

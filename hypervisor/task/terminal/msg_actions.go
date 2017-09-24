@@ -103,6 +103,17 @@ func (st *State) onRepeatableKey(m msg.MessageKey, serializedMsg []byte) {
 
 	switch m.Key {
 
+	case msg.KeyPageUp:
+		st.Cli.AdjustBackscrollOffset(st.NumVisibleRows(), st)
+		//just pass unchanged VisualInfo
+		//(which is acted upon like a boolean flag)
+		st.makePageOfLog(st.VisualInfo)
+	case msg.KeyPageDown:
+		st.Cli.AdjustBackscrollOffset(-st.NumVisibleRows(), st)
+		//just pass unchanged VisualInfo
+		//(which is acted upon like a boolean flag)
+		st.makePageOfLog(st.VisualInfo)
+
 	case msg.KeyHome:
 		st.Cli.CursPos = len(st.Cli.Prompt)
 	case msg.KeyEnd:
