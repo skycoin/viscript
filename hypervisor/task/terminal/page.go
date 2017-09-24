@@ -17,7 +17,7 @@ func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 		st.Cli.RebuildVisualRowsFromLogEntryFragments(m)
 		println("VisualInfo changed   -   st.VisualInfo.NumRows:", st.VisualInfo.NumRows)
 	} else {
-		println("VisualInfo UNchanged  -  st.VisualInfo.NumRows:", st.VisualInfo.NumRows)
+		//println("VisualInfo UNchanged  -  st.VisualInfo.NumRows:", st.VisualInfo.NumRows)
 	}
 
 	st.printVisibleRows(m)
@@ -30,7 +30,7 @@ func (st *State) printVisibleRows(vi msg.MessageVisualInfo) {
 	//println("printVisibleRows()") //...and indicator if backscrolled
 
 	lvr := len(st.Cli.VisualRows)
-	println("len of st.Cli.VisualRows:", lvr)
+	//println("len of st.Cli.VisualRows:", lvr)
 
 	//(n)umber of (p)potential visible (r)ows   (that current Terminal height allows)
 	npr := int(vi.NumRows - vi.PromptRows)

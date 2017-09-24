@@ -17,8 +17,6 @@ func (st *State) onMouseScroll(m msg.MessageMouseScroll, serializedMsg []byte) {
 		hypervisor.DbusGlobal.PublishTo(st.task.OutChannelId, serializedMsg)
 	} else {
 		st.Cli.AdjustBackscrollOffset(int(m.Y), st)
-		//just pass unchanged VisualInfo
-		//(which is acted upon like a boolean flag)
 		st.makePageOfLog(st.VisualInfo)
 	}
 }
@@ -104,14 +102,10 @@ func (st *State) onRepeatableKey(m msg.MessageKey, serializedMsg []byte) {
 	switch m.Key {
 
 	case msg.KeyPageUp:
-		st.Cli.AdjustBackscrollOffset(st.NumVisibleRows(), st)
-		//just pass unchanged VisualInfo
-		//(which is acted upon like a boolean flag)
+		st.Cli.AdjustBackscrollOffset(st.NumBackscrollRows(), st)
 		st.makePageOfLog(st.VisualInfo)
 	case msg.KeyPageDown:
-		st.Cli.AdjustBackscrollOffset(-st.NumVisibleRows(), st)
-		//just pass unchanged VisualInfo
-		//(which is acted upon like a boolean flag)
+		st.Cli.AdjustBackscrollOffset(-st.NumBackscrollRows(), st)
 		st.makePageOfLog(st.VisualInfo)
 
 	case msg.KeyHome:

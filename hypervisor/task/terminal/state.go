@@ -23,8 +23,9 @@ func (st *State) Init(task *Task) {
 	st.Cli.AddEntriesForLogAndVisualRowsCache(app.HelpText, 80)
 }
 
-func (st *State) NumVisibleRows() int {
-	return int(st.VisualInfo.NumRows) - int(st.VisualInfo.PromptRows)
+func (st *State) NumBackscrollRows() int {
+	//the extra one is because of the "^^^backscroll^^^" indicator line
+	return int(st.VisualInfo.NumRows) - int(st.VisualInfo.PromptRows) - 1
 }
 
 func (st *State) HandleMessages() {
