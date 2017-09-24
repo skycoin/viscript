@@ -65,8 +65,10 @@ func (t *Terminal) UnpackMessage(message []byte) []byte {
 
 func (t *Terminal) onKey(m msg.MessageKey) {
 	switch m.Key {
+
 	case msg.KeyEnter:
 		t.NewLine()
+
 	}
 }
 

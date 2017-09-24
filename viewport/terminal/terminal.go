@@ -172,55 +172,6 @@ func (t *Terminal) NewLine() {
 	}
 }
 
-func (t *Terminal) SetCursor(x, y int) {
-	if t.posIsValidElsePrint(x, y) {
-		t.Cursor.X = x
-		t.Cursor.Y = y
-	}
-}
-
-//2 paradigms for adding chars/strings:
-//
-//(1) Set___At() ------ full manual control/management.
-//			explicitly tell terminal exactly where to place
-//			something, without disrupting current position.
-//			must make sure there is space for it.
-//
-//(2) Put___() -------- automated flow control.
-//			just tell what char/string to put into the current...
-//			... flow.  then Terminal manages it's placement & wrapping
-//
-func (t *Terminal) PutCharacter(char uint32) {
-	if t.posIsValidElsePrint(t.Curr.X, t.Curr.Y) {
-		t.SetCharacterAt(t.Curr.X, t.Curr.Y, char)
-		t.MoveRight()
-	}
-}
-
-func (t *Terminal) SetCharacterAt(x, y int, Char uint32) {
-	numOOB = 0
-
-	if t.posIsValidElsePrint(x, y) {
-		t.Chars[y][x] = Char
-	}
-}
-
-func (t *Terminal) PutString(s string) {
-	for _, c := range s {
-		t.PutCharacter(uint32(c))
-	}
-}
-
-func (t *Terminal) SetStringAt(x, y int, s string) {
-	numOOB = 0
-
-	for col /* column */, c := range s {
-		if t.posIsValidElsePrint(x+col, y) {
-			t.Chars[y][x+col] = uint32(c)
-		}
-	}
-}
-
 func (t *Terminal) GetVisualInfo() msg.MessageVisualInfo {
 	return msg.MessageVisualInfo{
 		uint32(t.GridSize.X),
