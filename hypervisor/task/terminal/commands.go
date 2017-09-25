@@ -309,7 +309,8 @@ func (st *State) commandCloseTerminalFirstStage(args []string) {
 	if len(args) == 1 {
 		//handle storedTerminalIds errors
 		if /****/ len(st.storedTerminalIds) < 1 {
-			st.PrintError("Use 'list_terms' command to see their IDs")
+			st.SendCommand("list_terms", []string{"commandCloseTerminalFirstStage"})
+			//st.PrintError("Use 'list_terms' command to see their IDs")
 			return
 		} else if len(st.storedTerminalIds) == 1 {
 			st.PrintError("Shouldn't close when only 1 terminal remains (UNTIL GUI IS MADE)")
@@ -371,8 +372,14 @@ func (st *State) commandMoveTerminal(args []string) {
 		msg.TypeMoveTerminal, msg.MessageMoveTerminal{int32(x), int32(y)}))
 }
 
-func (st *State) commandFocus(args []string) {
-	println("commandFocus")
+func (st *State) commandFocusFirstStage(args []string) {
+	if len(args) < 1 {
+		st.PrintError("Must give me AT LEAST the 1st number of the id")
+		return
+	}
+
+	println("commandFocusFirstStage()")
+	st.SendCommand("focus", args)
 }
 func (st *State) commandDefocus(args []string) {
 	st.SendCommand("defocus", args)

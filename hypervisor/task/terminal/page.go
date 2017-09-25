@@ -15,7 +15,7 @@ func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 	if /* VisualInfo changed */ m != st.VisualInfo {
 		st.VisualInfo = m
 		st.Cli.RebuildVisualRowsFromLogEntryFragments(m)
-		println("VisualInfo changed   -   st.VisualInfo.NumRows:", st.VisualInfo.NumRows)
+		println("makePageOfLog()   VisualInfo changed   -   .NumRows/Columns:", st.VisualInfo.NumRows, st.VisualInfo.NumColumns)
 	} else {
 		//println("VisualInfo UNchanged  -  st.VisualInfo.NumRows:", st.VisualInfo.NumRows)
 	}
@@ -38,24 +38,25 @@ func (st *State) printVisibleRows(vi msg.MessageVisualInfo) {
 	if st.Cli.BackscrollAmount > 0 {
 		npr--
 		st.printRowsONLY(npr, lvr)
-		indicBar := app.GetLabeledBarOfChars(" BACKSCROLLED ", "^", st.VisualInfo.NumColumns)
-		st.printLnAndMAYBELogIt(indicBar, false)
+		ib /* indicator bar */ := app.GetLabeledBarOfChars(
+			" BACKSCROLLED ", "^", st.VisualInfo.NumColumns)
+		st.printLnAndMAYBELogIt(ib, false)
 	} else {
 		st.printRowsONLY(npr, lvr)
 	}
 }
 
-var previousBSAmount int
+var prevBackscrollAmount int
 
 func (st *State) printRowsONLY(npr, lvr int) {
 	if st.Cli.BackscrollAmount == 0 &&
-		previousBSAmount == 0 {
+		prevBackscrollAmount == 0 {
 		return
 	}
 
 	//
 	//
-	previousBSAmount = st.Cli.BackscrollAmount
+	prevBackscrollAmount = st.Cli.BackscrollAmount
 	max := lvr - st.Cli.BackscrollAmount
 	start := max - npr
 
