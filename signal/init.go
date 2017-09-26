@@ -1,8 +1,8 @@
 package signal
 
 import (
-	"flag"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -10,31 +10,42 @@ import (
 )
 
 var (
-	serverAddress string
-	runClient     bool
-	clientId      uint
+	// signal server address
+	serverAddress string = "localhost:7999"
+	// run as a signal client
+	runClient bool
+	// client id
+	clientId uint = 1
 )
 
 func init() {
-	flagSet := flag.NewFlagSet("signal", flag.ContinueOnError)
-	flagSet.StringVar(&serverAddress, "signal-server-address", "localhost:7999", "address of signal server")
-	flagSet.UintVar(&clientId, "signal-client-id", 1, "id of signal client")
-	flagSet.BoolVar(&runClient, "signal-client", false, "run signal client")
-	index := 0
-	for i, arg := range os.Args[1:] {
-		if strings.HasPrefix(arg, "-") {
-			index = i
-			break
+	// look up env values
+	value, ok := os.LookupEnv("SIGNAL_CLIENT")
+	if ok {
+		if strings.ToLower(value) != "false" {
+			runClient = true
 		}
 	}
-	flagSet.Parse(os.Args[index+1:])
+
+	value, ok = os.LookupEnv("SIGNAL_CLIENT_ID")
+	if ok {
+		id, err := strconv.ParseUint(value, 10, 64)
+		if err == nil {
+			clientId = uint(id)
+		}
+	}
+
+	value, ok = os.LookupEnv("SIGNAL_SERVER_ADDRESS")
+	if ok {
+		serverAddress = value
+	}
 
 	if runClient {
 		go func() {
 			c, err := Connect(serverAddress, clientId)
 			for {
 				if err != nil {
-					log.Errorf("connect to viscript failed %v", err)
+					log.Errorf("connect to viscript as id %d failed %v", clientId, err)
 				}
 				c.WaitUntilDisconnected()
 				// sleep 30s to reconnect

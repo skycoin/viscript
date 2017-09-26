@@ -10,19 +10,19 @@ This is all the code you need to change.
 
 ### Step 2
 
-And then add arguments to the command line
+And then add environment variable to the command line
 
 ```
 run as a signal client(default:false)
--signal-client
+SIGNAL_CLIENT
 
 connect to the address of signal server (default:"localhost:7999")
--signal-server-address
+SIGNAL_SERVER_ADDRESS
 
 client id to use(default:1)
--signal-client-id
+SIGNAL_CLIENT_ID
 ```
 
 for example:
 
-`~$ test localhost:20000 -signal-client -signal-client-id 2`
+`~$ SIGNAL_CLIENT=true ./cx --repl`

@@ -62,7 +62,7 @@ func (c *Client) Connect(address string) (err error) {
 	}
 	go func() {
 		c.readLoop()
-		c.disconnected <- struct{}{}
+		close(c.disconnected)
 	}()
 	return
 }
