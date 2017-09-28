@@ -181,10 +181,12 @@ func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 }
 
 func (ts *TerminalStack) SetFocused(topmostId msg.TerminalId) {
+	println("topmostId:", topmostId)
 	//store the focused one and bring it to the top
 	newZ := float32(9.9) //FIXME (@ all places of this var) IF you ever want more than (about) 50 terms
 	ts.FocusedId = topmostId
 	ts.Focused = ts.TermMap[topmostId]
+	println("ts.Focused.Depth:", ts.Focused.Depth)
 	ts.Focused.Depth = newZ
 
 	//REST of the terms

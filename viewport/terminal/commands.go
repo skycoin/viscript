@@ -69,39 +69,35 @@ func (ts *TerminalStack) commandCloseTerminalFinalStage(receiver msg.TerminalId,
 }
 
 func (ts *TerminalStack) commandFocusFinalStage(receiver msg.TerminalId, cmd msg.MessageTokenizedCommand) {
-	// //for simplicity, all edge cases are to be handled in the first stage, so that...
-	// //THIS SHOULD NEVER BE RUN WITHOUT A VALID ID
-	// term, _ := strconv.Atoi(cmd.Args[0]) //(should always convert)
-	// ts.SetFocused(msg.TerminalId(term))
-
-	//
-	//
-	//
-
-	foundAnyTerm := false
+	//foundAnyTerm := false
+	foundAnyTerm := msg.TerminalId(0)
 	for _, t := range ts.TermMap {
-		foundThisTerm := true //this is a lie at this point, but can change
+		ruledOutMatch := false
+		arg := cmd.Args[0]
+		tId := strconv.Itoa(int(t.TerminalId))
 
-		for _, c := range cmd.Args[0] {
-			tId := strconv.Itoa(int(t.TerminalId))
-
-			//chop runes off the end
-			//(if user gave more digits than an id has)
-			for len(cmd.Args[0]) > len(tId) {
-				tId = tId[:len(tId)-1]
-			}
-
-			println("rune(c):", rune(c))
-			println("tId:", tId)
-
-			// if c != rune(tId[i]) {
-			// 	foundThisTerm = false
-			//break
-			// }
+		//chop runes off the end
+		//(if user gave more digits than an id has)
+		for len(arg) > len(tId) {
+			arg = arg[:len(arg)-1]
 		}
 
-		if foundThisTerm {
-			foundAnyTerm = true
+		println("arg:", arg)
+
+		//compare each rune of user input
+		//to that many of the leftmost runes of id
+		for i, c := range arg {
+			println("string(c):", string(c))
+			println("string(tId[i]):", string(tId[i]))
+
+			if c != rune(tId[i]) {
+				ruledOutMatch = true
+				break
+			}
+		}
+
+		if !ruledOutMatch {
+			foundAnyTerm = t.TerminalId //true
 			break
 		}
 	}
@@ -109,9 +105,11 @@ func (ts *TerminalStack) commandFocusFinalStage(receiver msg.TerminalId, cmd msg
 	//
 	//
 
-	if foundAnyTerm {
-		//ts.SetFocused(t.TerminalId)
+	//if foundAnyTerm {
+	if foundAnyTerm != 0 {
+		ts.SetFocused(foundAnyTerm)
+		println("FOUND TERM!", cmd.Args[0])
 	} else {
-		// 	println("ERROR!!!   No terminal id matches:", cmd.Args[0])
+		println("ERROR!!!   No terminal id matches:", cmd.Args[0])
 	}
 }

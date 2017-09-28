@@ -203,6 +203,9 @@ func (st *State) onUserCommand(cmd string, args []string) {
 
 	case "defocus":
 		st.commandDefocus(args)
+
+	case "foc":
+		fallthrough
 	case "focus":
 		st.commandFocusFirstStage(args)
 
