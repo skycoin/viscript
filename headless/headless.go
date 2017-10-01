@@ -46,7 +46,8 @@ func Init() {
 
 			tc := msg.MessageTokenizedCommand{tokens[0], args}
 			m := msg.Serialize(msg.TypeTokenizedCommand, tc)
-			terminal.Terms.Focused.RelayToTask(m)
+			terminal.Terms.TermMap[terminal.Terms.FocusedId].RelayToTask(m)
+
 		}
 
 		close(ch)

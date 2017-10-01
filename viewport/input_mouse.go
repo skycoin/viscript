@@ -22,7 +22,7 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 
 	mouse.Update(app.Vec2F{float32(m.X), float32(m.Y)})
 
-	foc := t.Terms.Focused
+	foc := t.Terms.TermMap[t.Terms.FocusedId]
 
 	if foc == nil {
 		return
@@ -115,7 +115,7 @@ func onMouseButton(m msg.MessageMouseButton) {
 }
 
 func setPointerBasedOnPosition() {
-	foc := t.Terms.Focused
+	foc := t.Terms.TermMap[t.Terms.FocusedId]
 
 	if !foc.FixedSize {
 		if /****/ mouse.NearRight(foc.Bounds) && !foc.ResizingBottom {

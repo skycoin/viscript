@@ -23,7 +23,8 @@ func (st *State) commandHelp() {
 	st.PrintLn("clear:                 Clears currently focused terminal.")
 	st.PrintLn("close_term <id>:       Close terminal by id.")
 	st.PrintLn("list_terms:            List all terminal ids.")
-	st.PrintLn("defocus/focus <id>:    Changes input focus.")
+	st.PrintLn("focus <id>:            Changes terminal & input focus.")
+	st.PrintLn("defocus:               Defocus the current terminal.")
 	st.PrintLn("move_term:             Move terminal to given X & Y values")
 	st.PrintLn("new_term:              Add new terminal.")
 	st.PrintLn("------ Apps -----------")
@@ -381,6 +382,7 @@ func (st *State) commandFocusFirstStage(args []string) {
 	println("commandFocusFirstStage()")
 	st.SendCommand("focus", args)
 }
+
 func (st *State) commandDefocus(args []string) {
 	st.SendCommand("defocus", args)
 }

@@ -23,9 +23,7 @@ func UnpackMessage(msgIn []byte) []byte {
 		msg.MustDeserialize(msgIn, &m)
 		onMouseScroll(m)
 
-		if t.Terms.Focused != nil {
-			t.Terms.Focused.RelayToTask(msgIn)
-		}
+		passOnToFocused(msgIn)
 
 	case msg.TypeMouseButton:
 		var m msg.MessageMouseButton
@@ -37,18 +35,14 @@ func UnpackMessage(msgIn []byte) []byte {
 		msg.MustDeserialize(msgIn, &m)
 		onChar(m)
 
-		if t.Terms.Focused != nil {
-			t.Terms.Focused.RelayToTask(msgIn)
-		}
+		passOnToFocused(msgIn)
 
 	case msg.TypeKey:
 		var m msg.MessageKey
 		msg.MustDeserialize(msgIn, &m)
 		onKey(m)
 
-		if t.Terms.Focused != nil {
-			t.Terms.Focused.RelayToTask(msgIn)
-		}
+		passOnToFocused(msgIn)
 
 	case msg.TypeFrameBufferSize:
 		var m msg.MessageFrameBufferSize
@@ -71,4 +65,10 @@ func onFrameBufferSize(m msg.MessageFrameBufferSize) {
 	}
 
 	gl.SetSize(int32(m.X), int32(m.Y))
+}
+
+func passOnToFocused(msgIn []byte) {
+	if t.Terms.TermMap[t.Terms.FocusedId] != nil {
+		t.Terms.TermMap[t.Terms.FocusedId].RelayToTask(msgIn)
+	}
 }

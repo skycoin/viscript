@@ -8,7 +8,7 @@ import (
 
 func (ts *TerminalStack) DrawTextMode() { //for running headless mode
 	for _, t := range ts.TermMap {
-		if t == ts.Focused { //in text/headless mode, only draw focused
+		if t == ts.TermMap[ts.FocusedId] { //in text/headless mode, only draw focused
 			println(app.GetBarOfChars("_", t.GridSize.X-1))
 
 			for y := 0; y < t.GridSize.Y; y++ {
@@ -38,7 +38,7 @@ func (ts *TerminalStack) Draw() {
 	for _, t := range ts.TermMap {
 		z := t.Depth
 
-		if t == ts.Focused {
+		if t == ts.TermMap[ts.FocusedId] {
 			gl.SetColor(gl.White)
 		} else {
 			gl.SetColor(gl.Gray)
@@ -99,25 +99,25 @@ func drawIdTab(t *Terminal, z float32) {
 	//...with a rectangle whose bottom lip/edge will be covered by main window
 	id := strconv.Itoa(int(t.TerminalId))
 
-	idText := &app.Rectangle{ //rectangle initially used to draw tab background
+	tr := &app.Rectangle{ //text rectangle (initially used to draw whole tab background)
 		t.Bounds.Top + t.BorderSize + t.CharSize.Y,
 		t.Bounds.Left + t.BorderSize*2 + t.CharSize.X*float32(len(id)),
 		t.Bounds.Top - t.BorderSize,
 		t.Bounds.Left}
 
 	//id tab background
-	gl.Draw9SlicedRect(gl.Pic_GradientBorder, idText, z)
+	gl.Draw9SlicedRect(gl.Pic_GradientBorder, tr, z)
 
-	//push in edges to leave a border visible....
-	idText.Top -= t.BorderSize
-	idText.Bottom += t.BorderSize
-	idText.Left += t.BorderSize
-	idText.Right = idText.Left + t.CharSize.X //....and shrink width to char size
+	//push in edges to encompass ONLY the text (leaving a border visible)
+	tr.Top -= t.BorderSize
+	tr.Bottom += t.BorderSize
+	tr.Left += t.BorderSize
+	tr.Right = tr.Left + t.CharSize.X //....and shrink width to char size
 
 	//draw the id #
 	for i := 0; i < len(id); i++ {
-		gl.DrawCharAtRect(rune(id[i]), idText, z)
-		idText.Left += t.CharSize.X
-		idText.Right += t.CharSize.X
+		gl.DrawCharAtRect(rune(id[i]), tr, z)
+		tr.Left += t.CharSize.X
+		tr.Right += t.CharSize.X
 	}
 }

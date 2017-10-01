@@ -44,18 +44,24 @@ func (ts *TerminalStack) commandListTerminals(receiver msg.TerminalId, cmd msg.M
 		m.TermIds = append(m.TermIds, term.TerminalId)
 	}
 
-	ts.Focused.RelayToTask(msg.Serialize(msg.TypeTerminalIds, m))
+	ts.TermMap[ts.FocusedId].RelayToTask(msg.Serialize(msg.TypeTerminalIds, m))
 
 	//
 	//
-	//hmmmm, can we conditionally do:
+	//TODO
+	//for the purposes of band-aid'ing Redpixr's list terminal scheme,
+	//where the user is required to list them first, before issuing
+	//other commands such as close_term..... we were wanting to to
+	//automate this for when in graphic mode, and seeing the id's
+	//already in the terminal tabs.......
+	//..........can we conditionally do:
 	//	st.SendCommand("command_that_needed_this_first", []string{})
 	//...(when it was programmatically sent by a command that needs this list populated)
 	if len(cmd.Args) > 0 {
 		switch cmd.Args[0] {
 
 		case "commandCloseTerminalFirstStage":
-		case "commandFocus":
+		case "commandFocusFirstStage":
 
 		}
 	}
@@ -70,7 +76,7 @@ func (ts *TerminalStack) commandCloseTerminalFinalStage(receiver msg.TerminalId,
 
 func (ts *TerminalStack) commandFocusFinalStage(receiver msg.TerminalId, cmd msg.MessageTokenizedCommand) {
 	//foundAnyTerm := false
-	foundAnyTerm := msg.TerminalId(0)
+	matchedTerm := msg.TerminalId(0)
 	for _, t := range ts.TermMap {
 		ruledOutMatch := false
 		arg := cmd.Args[0]
@@ -85,7 +91,7 @@ func (ts *TerminalStack) commandFocusFinalStage(receiver msg.TerminalId, cmd msg
 		println("arg:", arg)
 
 		//compare each rune of user input
-		//to that many of the leftmost runes of id
+		//to leftmost runes of id
 		for i, c := range arg {
 			println("string(c):", string(c))
 			println("string(tId[i]):", string(tId[i]))
@@ -97,18 +103,15 @@ func (ts *TerminalStack) commandFocusFinalStage(receiver msg.TerminalId, cmd msg
 		}
 
 		if !ruledOutMatch {
-			foundAnyTerm = t.TerminalId //true
+			matchedTerm = t.TerminalId //true
 			break
 		}
 	}
 
-	//
-	//
-
-	//if foundAnyTerm {
-	if foundAnyTerm != 0 {
-		ts.SetFocused(foundAnyTerm)
-		println("FOUND TERM!", cmd.Args[0])
+	//set new focus (or show error)
+	if matchedTerm != 0 {
+		println("Found terminal starting with:", cmd.Args[0])
+		ts.nextIdsToFocus = append(ts.nextIdsToFocus, matchedTerm)
 	} else {
 		println("ERROR!!!   No terminal id matches:", cmd.Args[0])
 	}

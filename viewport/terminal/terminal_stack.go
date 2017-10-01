@@ -16,10 +16,10 @@ var Terms = TerminalStack{}
 
 type TerminalStack struct {
 	FocusedId msg.TerminalId
-	Focused   *Terminal
 	TermMap   map[msg.TerminalId]*Terminal
 
 	//private
+	nextIdsToFocus []msg.TerminalId
 	//next/new terminal spawn vars
 	nextRect   app.Rectangle
 	nextDepth  float32
@@ -87,8 +87,7 @@ func (ts *TerminalStack) Remove(id msg.TerminalId) {
 		if id == term.TerminalId {
 			println("found id:", id)
 
-			if term == ts.Focused {
-				ts.Focused = nil
+			if term == ts.TermMap[ts.FocusedId] {
 				ts.FocusedId = 0
 			}
 		}
@@ -108,6 +107,14 @@ func (ts *TerminalStack) Remove(id msg.TerminalId) {
 }
 
 func (ts *TerminalStack) Tick() {
+	//focus any pending queued ids
+	for len(ts.nextIdsToFocus) > 0 {
+		println("tick() startING something")
+		ts.SetFocused(ts.nextIdsToFocus[0])
+		ts.nextIdsToFocus = ts.nextIdsToFocus[1:]
+	}
+
+	//ticks
 	for _, term := range ts.TermMap {
 		term.Tick()
 	}
@@ -115,8 +122,8 @@ func (ts *TerminalStack) Tick() {
 
 func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSinceClick *app.Vec2F) {
 	d := mouseDeltaSinceClick
-	cs := ts.Focused.CharSize
-	fb := ts.Focused.Bounds
+	cs := ts.TermMap[ts.FocusedId].CharSize
+	fb := ts.TermMap[ts.FocusedId].Bounds
 
 	if keyboard.AltKeyIsDown { //smooth, high resolution
 		fb.MoveBy(hiResDelta)
@@ -181,20 +188,46 @@ func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 }
 
 func (ts *TerminalStack) SetFocused(topmostId msg.TerminalId) {
+	println("int(topmostId):", int(topmostId))
 	println("topmostId:", topmostId)
 	//store the focused one and bring it to the top
 	newZ := float32(9.9) //FIXME (@ all places of this var) IF you ever want more than (about) 50 terms
 	ts.FocusedId = topmostId
-	ts.Focused = ts.TermMap[topmostId]
-	println("ts.Focused.Depth:", ts.Focused.Depth)
-	ts.Focused.Depth = newZ
+	println("ts.FocusedId:", ts.FocusedId)
+
+	//temp display of all current ids
+	for key, term := range ts.TermMap {
+		println("TEMP_DISPLAY ITERATION THRU ts.TermMap")
+		println("int(term.TerminalId):", int(term.TerminalId))
+		println("term.TerminalId:", term.TerminalId)
+
+		if term.TerminalId == ts.FocusedId {
+			println("TEMP_DISPLAY MATCHED ABOVE ID")
+			println("TEMP_DISPLAY MATCHED ABOVE ID")
+			println("TEMP_DISPLAY MATCHED ABOVE ID")
+			println("TEMP_DISPLAY MATCHED ABOVE ID")
+
+			println("old depth:", term.Depth)
+			ts.TermMap[key].Depth = newZ
+			println("ts.TermMap[key].Depth:", ts.TermMap[key].Depth)
+		}
+	}
+	// println("RIGHT BEFORE SETTING DEPTH   -   ts.FocusedId:", ts.FocusedId)
+	// println("RIGHT BEFORE SETTING DEPTH   -   ts.FocusedId:", ts.FocusedId)
+	// println("RIGHT BEFORE SETTING DEPTH   -   ts.FocusedId:", ts.FocusedId)
+	// println("RIGHT BEFORE SETTING DEPTH   -   ts.FocusedId:", ts.FocusedId)
+	// ts.TermMap[ts.FocusedId].Depth = newZ
+
+	//FIXME?  NEEDED?
+	// if ts.TermMap[ts.FocusedId] != nil {
+	// }
 
 	//REST of the terms
 	theRest := []*Terminal{}
 
-	for id, t := range ts.TermMap {
-		if id != ts.FocusedId {
-			theRest = append(theRest, t)
+	for key, t := range ts.TermMap {
+		if t.TerminalId != ts.FocusedId {
+			theRest = append(theRest, ts.TermMap[key])
 		}
 	}
 
@@ -222,5 +255,4 @@ func (ts *TerminalStack) SetFocused(topmostId msg.TerminalId) {
 
 func (ts *TerminalStack) Defocus() {
 	ts.FocusedId = 0
-	ts.Focused = nil
 }
