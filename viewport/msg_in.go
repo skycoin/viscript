@@ -68,7 +68,11 @@ func onFrameBufferSize(m msg.MessageFrameBufferSize) {
 }
 
 func passOnToFocused(msgIn []byte) {
-	if t.Terms.TermMap[t.Terms.FocusedId] != nil {
-		t.Terms.TermMap[t.Terms.FocusedId].RelayToTask(msgIn)
+	for key, term := range t.Terms.TermMap {
+		if term.TerminalId == t.Terms.FocusedId {
+			t.Terms.TermMap[key].RelayToTask(msgIn)
+		} else {
+			println("ERROR!!!!   inside passOnToFocused()  -  NO MATCH!!!!!!!")
+		}
 	}
 }

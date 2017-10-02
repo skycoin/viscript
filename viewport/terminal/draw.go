@@ -38,7 +38,7 @@ func (ts *TerminalStack) Draw() {
 	for _, t := range ts.TermMap {
 		z := t.Depth
 
-		if t == ts.TermMap[ts.FocusedId] {
+		if t.TerminalId == ts.FocusedId {
 			gl.SetColor(gl.White)
 		} else {
 			gl.SetColor(gl.Gray)

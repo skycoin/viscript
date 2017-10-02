@@ -103,7 +103,7 @@ func (ts *TerminalStack) commandFocusFinalStage(receiver msg.TerminalId, cmd msg
 		}
 
 		if !ruledOutMatch {
-			matchedTerm = t.TerminalId //true
+			matchedTerm = t.TerminalId
 			break
 		}
 	}

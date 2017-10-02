@@ -141,11 +141,11 @@ func focusOnTopmostRectThatContainsPointer() {
 	var topmostZ float32
 	var topmostId msg.TerminalId
 
-	for id, t := range t.Terms.TermMap {
+	for _, t := range t.Terms.TermMap {
 		if mouse.PointerIsInside(t.Bounds) {
 			if topmostZ < t.Depth {
 				topmostZ = t.Depth
-				topmostId = id
+				topmostId = t.TerminalId
 			}
 		}
 	}

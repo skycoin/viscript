@@ -66,7 +66,8 @@ func (ts *TerminalStack) AddWithFixedSizeState(fixedSize bool) msg.TerminalId { 
 			ts.nextRect.Left}}
 	ts.TermMap[tid].Init()
 	ts.TermMap[tid].FixedSize = fixedSize
-	ts.SetFocused(tid)
+	println("AddWithFixed...... - ts.TermMap[tid].TerminalId:", ts.TermMap[tid].TerminalId)
+	ts.SetFocused(ts.TermMap[tid].TerminalId)
 
 	ts.nextRect.Top -= ts.nextOffset.Y
 	ts.nextRect.Right += ts.nextOffset.X
@@ -188,41 +189,23 @@ func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 }
 
 func (ts *TerminalStack) SetFocused(topmostId msg.TerminalId) {
-	println("int(topmostId):", int(topmostId))
-	println("topmostId:", topmostId)
-	//store the focused one and bring it to the top
 	newZ := float32(9.9) //FIXME (@ all places of this var) IF you ever want more than (about) 50 terms
 	ts.FocusedId = topmostId
-	println("ts.FocusedId:", ts.FocusedId)
 
-	//temp display of all current ids
+	//cycle through terminals
+	noneFocused := true //might be untrue ATM
 	for key, term := range ts.TermMap {
-		println("TEMP_DISPLAY ITERATION THRU ts.TermMap")
-		println("int(term.TerminalId):", int(term.TerminalId))
-		println("term.TerminalId:", term.TerminalId)
-
 		if term.TerminalId == ts.FocusedId {
-			println("TEMP_DISPLAY MATCHED ABOVE ID")
-			println("TEMP_DISPLAY MATCHED ABOVE ID")
-			println("TEMP_DISPLAY MATCHED ABOVE ID")
-			println("TEMP_DISPLAY MATCHED ABOVE ID")
-
-			println("old depth:", term.Depth)
+			noneFocused = false
 			ts.TermMap[key].Depth = newZ
-			println("ts.TermMap[key].Depth:", ts.TermMap[key].Depth)
 		}
 	}
-	// println("RIGHT BEFORE SETTING DEPTH   -   ts.FocusedId:", ts.FocusedId)
-	// println("RIGHT BEFORE SETTING DEPTH   -   ts.FocusedId:", ts.FocusedId)
-	// println("RIGHT BEFORE SETTING DEPTH   -   ts.FocusedId:", ts.FocusedId)
-	// println("RIGHT BEFORE SETTING DEPTH   -   ts.FocusedId:", ts.FocusedId)
-	// ts.TermMap[ts.FocusedId].Depth = newZ
 
-	//FIXME?  NEEDED?
-	// if ts.TermMap[ts.FocusedId] != nil {
-	// }
+	if noneFocused {
+		ts.TermMap[topmostId].Depth = newZ
+	}
 
-	//REST of the terms
+	//make list of REST of the terms (excluding currently focused term)
 	theRest := []*Terminal{}
 
 	for key, t := range ts.TermMap {

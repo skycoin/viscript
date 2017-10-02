@@ -18,6 +18,10 @@
 		* block character at end to indicate continuing on next line
 	* make it optional (if turned off, always truncate the left)
 
+* graphic indication of line breaks
+
+* get rid of nextIdsToFocus?
+
 * scan and do/fix the most important FIXME/TODO places in the code
 
 
