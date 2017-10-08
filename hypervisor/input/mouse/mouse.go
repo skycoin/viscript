@@ -15,7 +15,7 @@ var (
 	pixelSize_    app.Vec2F
 	prevPixelPos  app.Vec2F
 	canvasExtents app.Vec2F
-	nearThresh    float32 //nearness threshold (how close pointer should be to the edge)
+	nearThresh    float32 = 0.05 //nearness threshold (how close pointer should be to the edge)
 )
 
 func Update(pixelPos app.Vec2F) {
@@ -34,14 +34,6 @@ func NearRight(bounds *app.Rectangle) bool {
 func NearBottom(bounds *app.Rectangle) bool {
 	return GlPos.Y >= bounds.Bottom &&
 		GlPos.Y <= bounds.Bottom+nearThresh
-}
-
-func IncreaseNearnessThreshold() {
-	nearThresh = 10.0
-}
-
-func DecreaseNearnessThreshold() {
-	nearThresh = 0.05
 }
 
 func PointerIsInside(r *app.Rectangle) bool {

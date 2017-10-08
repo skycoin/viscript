@@ -36,10 +36,8 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 
 		if !foc.FixedSize {
 			if mouse.NearRight(foc.Bounds) && !foc.ResizingBottom {
-				mouse.IncreaseNearnessThreshold()
 				foc.ResizeHorizontally(mouse.GlPos.X)
 			} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight {
-				mouse.IncreaseNearnessThreshold()
 				foc.ResizeVertically(mouse.GlPos.Y)
 			}
 		}
@@ -68,8 +66,8 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 			// }
 		}
 	} else { // LMB NOT pressed
-		foc.SetResizingOff()
-		mouse.DecreaseNearnessThreshold()
+		foc.ResizingRight = false
+		foc.ResizingBottom = false
 	}
 }
 
