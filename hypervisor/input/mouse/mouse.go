@@ -1,8 +1,6 @@
 package mouse
 
 import (
-	"math"
-
 	"github.com/skycoin/viscript/app"
 )
 
@@ -17,7 +15,7 @@ var (
 	pixelSize_    app.Vec2F
 	prevPixelPos  app.Vec2F
 	canvasExtents app.Vec2F
-	nearThresh    float64 //nearness threshold (how close pointer should be to the edge)
+	nearThresh    float32 //nearness threshold (how close pointer should be to the edge)
 )
 
 func Update(pixelPos app.Vec2F) {
@@ -29,11 +27,13 @@ func Update(pixelPos app.Vec2F) {
 }
 
 func NearRight(bounds *app.Rectangle) bool {
-	return math.Abs(float64(GlPos.X-bounds.Right)) <= nearThresh
+	return GlPos.X <= bounds.Right &&
+		GlPos.X >= bounds.Right-nearThresh
 }
 
 func NearBottom(bounds *app.Rectangle) bool {
-	return math.Abs(float64(GlPos.Y-bounds.Bottom)) <= nearThresh
+	return GlPos.Y >= bounds.Bottom &&
+		GlPos.Y <= bounds.Bottom+nearThresh
 }
 
 func IncreaseNearnessThreshold() {
