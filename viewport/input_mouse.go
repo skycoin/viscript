@@ -11,6 +11,16 @@ import (
 	t "github.com/skycoin/viscript/viewport/terminal"
 )
 
+var currentTerminalModification int
+
+const (
+	TermMod_None = iota
+	TermMod_Moving
+	TermMod_ResizingX
+	TermMod_ResizingY
+	TermMod_ResizingBoth
+)
+
 // triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(m msg.MessageMousePos) {
 	if config.DebugPrintInputEvents() {
@@ -31,43 +41,23 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 
 	setPointerBasedOnPosition()
 
-	if mouse.LeftButtonIsDown {
-		// REFACTORME: because I made it messy i guess   -Red
+	switch currentTerminalModification {
 
-		if !foc.FixedSize {
-			if mouse.NearRight(foc.Bounds) && !foc.ResizingBottom {
-				foc.ResizeHorizontally(mouse.GlPos.X)
-			} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight {
-				foc.ResizeVertically(mouse.GlPos.Y)
-			}
-		}
+	case TermMod_Moving:
+		//high resolution delta for potentially subpixel precision resizing
+		delt := mouse.GlPos.GetDeltaFrom(mouse.PrevGlPos)
+		t.Terms.MoveFocusedTerminal(delt, &mouse.DeltaSinceLeftClick)
+		//gl.SetHandPointer()
 
-		if mouse.PointerIsInside(foc.Bounds) && !foc.IsResizing() {
-			//high resolution delta for smooth resizing
-			delt := mouse.GlPos.GetDeltaFrom(mouse.PrevGlPos)
+	case TermMod_ResizingX:
+		foc.ResizeHorizontally(mouse.GlPos.X)
+	case TermMod_ResizingY:
+		foc.ResizeVertically(mouse.GlPos.Y)
 
-			t.Terms.MoveFocusedTerminal(delt, &mouse.DeltaSinceLeftClick)
-			gl.SetHandPointer()
+	case TermMod_ResizingBoth:
+		foc.ResizeHorizontally(mouse.GlPos.X)
+		foc.ResizeVertically(mouse.GlPos.Y)
 
-			// if config.DebugPrintInputEvents() {
-			// println("\nTerminal Id:", foc.TerminalId,
-			// 	"\nTop", foc.Bounds.Top,
-			// 	"\nLeft", foc.Bounds.Left,
-			// 	"\nRight", foc.Bounds.Right,
-			// 	"\nBottom", foc.Bounds.Bottom,
-			// 	"\n\n GL MouseX:", mouse.GlPos.X,
-			// 	"\n GL MouseY:", mouse.GlPos.Y,
-			// 	"\n\n Previous GL MouseX:", mouse.PrevGlPos.X,
-			// 	"\n Previous GL MouseY:", mouse.PrevGlPos.Y,
-			// 	"\n\n delt.X:", delt.X,
-			// 	"\n delt.Y:", delt.Y,
-			// 	"\n\n Rect Center X:", foc.Bounds.CenterX(),
-			// 	"\n Rect Center Y:", foc.Bounds.CenterY())
-			// }
-		}
-	} else { // LMB NOT pressed
-		foc.ResizingRight = false
-		foc.ResizingBottom = false
 	}
 }
 
@@ -96,6 +86,7 @@ func onMouseButton(m msg.MessageMouseButton) {
 
 	if msg.Action(m.Action) == msg.Press {
 		switch msg.MouseButton(m.Button) {
+
 		case msg.MouseButtonLeft:
 			mouse.LeftButtonIsDown = true
 			mouse.DeltaSinceLeftClick = app.Vec2F{0, 0}
@@ -106,11 +97,17 @@ func onMouseButton(m msg.MessageMouseButton) {
 			// } else { // respond to any panel clicks outside of menu
 			focusOnTopmostRectThatContainsPointer()
 			// }
+
+			currentTerminalModification = getTerminalModificationByZone()
+
 		}
 	} else if msg.Action(m.Action) == msg.Release {
 		switch msg.MouseButton(m.Button) {
+
 		case msg.MouseButtonLeft:
 			mouse.LeftButtonIsDown = false
+			currentTerminalModification = TermMod_None
+
 		}
 	}
 }
@@ -236,4 +233,33 @@ func showUInt32(s string, x uint32) {
 
 func showFloat64(s string, f float64) {
 	fmt.Printf("   [%s: %.1f]", s, f)
+}
+
+func getTerminalModificationByZone() int {
+	foc := t.Terms.GetFocusedTerminal()
+
+	if foc == nil {
+		println("onMouseCursorPos()   -   foc == nil")
+		return TermMod_None
+	}
+
+	if !foc.FixedSize {
+		if mouse.NearRight(foc.Bounds) &&
+			mouse.NearBottom(foc.Bounds) {
+
+			return TermMod_ResizingBoth
+		}
+
+		if /****/ mouse.NearRight(foc.Bounds) {
+			return TermMod_ResizingX
+		} else if mouse.NearBottom(foc.Bounds) {
+			return TermMod_ResizingY
+		}
+	}
+
+	if mouse.PointerIsInside(foc.Bounds) {
+		return TermMod_Moving
+	} else {
+		return TermMod_None
+	}
 }
