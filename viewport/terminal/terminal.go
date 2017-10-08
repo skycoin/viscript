@@ -55,8 +55,6 @@ func (t *Terminal) Init() {
 	t.SetCursor(1, 1)
 	t.Curr.X = 1
 	t.Curr.Y = 1
-	t.ResizingRight = false
-	t.ResizingBottom = false
 
 	//push down window by size of id tab
 	tabOffset := t.BorderSize + t.CharSize.Y
@@ -70,15 +68,6 @@ func (t *Terminal) Tick() {
 	for len(t.InChannel) > 0 {
 		t.UnpackMessage(<-t.InChannel)
 	}
-}
-
-func (t *Terminal) IsResizing() bool {
-	return t.ResizingRight || t.ResizingBottom
-}
-
-func (t *Terminal) SetResizingOff() {
-	t.ResizingRight = false
-	t.ResizingBottom = false
 }
 
 func (t *Terminal) ResizeHorizontally(newRight float32) {
