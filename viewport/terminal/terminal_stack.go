@@ -124,8 +124,14 @@ func (ts *TerminalStack) Tick() {
 func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSinceClick *app.Vec2F) {
 	d := mouseDeltaSinceClick
 	println("MoveFocusedTerminal()   -   ts.FocusedId:", ts.FocusedId)
-	cs := ts.TermMap[ts.FocusedId].CharSize
-	fb := ts.TermMap[ts.FocusedId].Bounds
+	foc := ts.GetFocusedTerminal()
+
+	if foc == nil {
+		return
+	}
+
+	cs := foc.CharSize
+	fb := foc.Bounds
 
 	if keyboard.AltKeyIsDown { //smooth, high resolution
 		fb.MoveBy(hiResDelta)

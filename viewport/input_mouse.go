@@ -32,14 +32,16 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 	setPointerBasedOnPosition()
 
 	if mouse.LeftButtonIsDown {
-		// REFACTORME: cause I made it messy i guess   -Red
+		// REFACTORME: because I made it messy i guess   -Red
 
-		if mouse.NearRight(foc.Bounds) && !foc.ResizingBottom {
-			mouse.IncreaseNearnessThreshold()
-			foc.ResizeHorizontally(mouse.GlPos.X)
-		} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight {
-			mouse.IncreaseNearnessThreshold()
-			foc.ResizeVertically(mouse.GlPos.Y)
+		if !foc.FixedSize {
+			if mouse.NearRight(foc.Bounds) && !foc.ResizingBottom {
+				mouse.IncreaseNearnessThreshold()
+				foc.ResizeHorizontally(mouse.GlPos.X)
+			} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight {
+				mouse.IncreaseNearnessThreshold()
+				foc.ResizeVertically(mouse.GlPos.Y)
+			}
 		}
 
 		if mouse.PointerIsInside(foc.Bounds) && !foc.IsResizing() {
