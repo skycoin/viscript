@@ -123,6 +123,7 @@ func (ts *TerminalStack) Tick() {
 
 func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSinceClick *app.Vec2F) {
 	d := mouseDeltaSinceClick
+	println("MoveFocusedTerminal()   -   ts.FocusedId:", ts.FocusedId)
 	cs := ts.TermMap[ts.FocusedId].CharSize
 	fb := ts.TermMap[ts.FocusedId].Bounds
 
@@ -238,4 +239,16 @@ func (ts *TerminalStack) SetFocused(topmostId msg.TerminalId) {
 
 func (ts *TerminalStack) Defocus() {
 	ts.FocusedId = 0
+}
+
+func (ts *TerminalStack) GetFocusedTerminal() *Terminal {
+	println("GetFocusedTerminal()")
+
+	for key, t := range ts.TermMap {
+		if t.TerminalId == ts.FocusedId {
+			return ts.TermMap[key]
+		}
+	}
+
+	return nil
 }

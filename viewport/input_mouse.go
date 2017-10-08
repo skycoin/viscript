@@ -22,9 +22,10 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 
 	mouse.Update(app.Vec2F{float32(m.X), float32(m.Y)})
 
-	foc := t.Terms.TermMap[t.Terms.FocusedId]
+	foc := t.Terms.GetFocusedTerminal()
 
 	if foc == nil {
+		println("onMouseCursorPos()   -   foc == nil")
 		return
 	}
 
@@ -115,25 +116,29 @@ func onMouseButton(m msg.MessageMouseButton) {
 }
 
 func setPointerBasedOnPosition() {
-	foc := t.Terms.TermMap[t.Terms.FocusedId]
+	foc := t.Terms.GetFocusedTerminal()
 
-	if !foc.FixedSize {
-		if /****/ mouse.NearRight(foc.Bounds) && !foc.ResizingBottom {
-			gl.SetHResizePointer()
-			return
-		} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight {
-			gl.SetVResizePointer()
-			return
-		}
-	}
-
-	if mouse.PointerIsInside(foc.Bounds) {
-		gl.SetHandPointer()
-		//gl.SetIBeamPointer() //IBeam is harder to see...
-		//...and probably only makes sense when you can click to type anywhere on screen.
-		//Terminals currently limit the animated cursor position to be within the last 2 lines of onscreen text
-	} else {
+	if foc == nil {
 		gl.SetArrowPointer()
+	} else {
+		if !foc.FixedSize {
+			if /****/ mouse.NearRight(foc.Bounds) && !foc.ResizingBottom {
+				gl.SetHResizePointer()
+				return
+			} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight {
+				gl.SetVResizePointer()
+				return
+			}
+		}
+
+		if mouse.PointerIsInside(foc.Bounds) {
+			gl.SetHandPointer()
+			//gl.SetIBeamPointer() //IBeam is harder to see...
+			//...and probably only makes sense when you can click to type anywhere on screen.
+			//Terminals currently limit the animated cursor position to be within the last 2 lines of onscreen text
+		} else {
+			gl.SetArrowPointer()
+		}
 	}
 }
 

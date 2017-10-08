@@ -71,8 +71,6 @@ func passOnToFocused(msgIn []byte) {
 	for key, term := range t.Terms.TermMap {
 		if term.TerminalId == t.Terms.FocusedId {
 			t.Terms.TermMap[key].RelayToTask(msgIn)
-		} else {
-			println("ERROR!!!!   inside passOnToFocused()  -  NO MATCH!!!!!!!")
 		}
 	}
 }
