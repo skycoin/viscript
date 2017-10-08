@@ -248,8 +248,6 @@ func (ts *TerminalStack) Defocus() {
 }
 
 func (ts *TerminalStack) GetFocusedTerminal() *Terminal {
-	println("GetFocusedTerminal()")
-
 	for key, t := range ts.TermMap {
 		if t.TerminalId == ts.FocusedId {
 			return ts.TermMap[key]

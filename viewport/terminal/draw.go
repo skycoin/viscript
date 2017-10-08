@@ -97,11 +97,15 @@ func (ts *TerminalStack) Draw() {
 
 func drawIdTab(t *Terminal, z float32) {
 	//...with a rectangle whose bottom lip/edge will be covered by main window
-	id := strconv.Itoa(int(t.TerminalId))
+	text := strconv.Itoa(int(t.TerminalId))
+
+	if t.FixedSize {
+		text += " (FixedSize)"
+	}
 
 	tr := &app.Rectangle{ //text rectangle (initially used to draw whole tab background)
 		t.Bounds.Top + t.BorderSize + t.CharSize.Y,
-		t.Bounds.Left + t.BorderSize*2 + t.CharSize.X*float32(len(id)),
+		t.Bounds.Left + t.BorderSize*2 + t.CharSize.X*float32(len(text)),
 		t.Bounds.Top - t.BorderSize,
 		t.Bounds.Left}
 
@@ -115,8 +119,8 @@ func drawIdTab(t *Terminal, z float32) {
 	tr.Right = tr.Left + t.CharSize.X //....and shrink width to char size
 
 	//draw the id #
-	for i := 0; i < len(id); i++ {
-		gl.DrawCharAtRect(rune(id[i]), tr, z)
+	for i := 0; i < len(text); i++ {
+		gl.DrawCharAtRect(rune(text[i]), tr, z)
 		tr.Left += t.CharSize.X
 		tr.Right += t.CharSize.X
 	}
