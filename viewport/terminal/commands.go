@@ -9,11 +9,11 @@ func (ts *TerminalStack) OnUserCommandFinalStage(receiver msg.TerminalId, cmd ms
 	switch cmd.Command {
 
 	case "close_term":
-		ts.commandCloseTerminalFinalStage(receiver, cmd)
+		fallthrough
+	case "focus":
+		ts.actOnGivenTerminalId(cmd)
 	case "defocus":
 		ts.Defocus()
-	case "focus":
-		ts.commandFocusFinalStage(receiver, cmd)
 	case "list_terms":
 		ts.commandListTerminals(receiver, cmd)
 	case "new_term":
@@ -36,25 +36,7 @@ func (ts *TerminalStack) OnUserCommandFinalStage(receiver msg.TerminalId, cmd ms
 //
 //
 
-func (ts *TerminalStack) commandListTerminals(receiver msg.TerminalId, cmd msg.MessageTokenizedCommand) {
-	var m msg.MessageTerminalIds
-	m.Focused = receiver
-
-	for _, term := range ts.TermMap {
-		m.TermIds = append(m.TermIds, term.TerminalId)
-	}
-
-	ts.GetFocusedTerminal().RelayToTask(msg.Serialize(msg.TypeTerminalIds, m))
-}
-
-func (ts *TerminalStack) commandCloseTerminalFinalStage(receiver msg.TerminalId, cmd msg.MessageTokenizedCommand) {
-	//for simplicity, all edge cases are to be handled in the first stage, so that...
-	//THIS SHOULD NEVER BE RUN WITHOUT A VALID ID
-	termToClose, _ := strconv.Atoi(cmd.Args[0]) //(should always convert)
-	ts.Remove(msg.TerminalId(termToClose))
-}
-
-func (ts *TerminalStack) commandFocusFinalStage(receiver msg.TerminalId, cmd msg.MessageTokenizedCommand) {
+func (ts *TerminalStack) actOnGivenTerminalId(cmd msg.MessageTokenizedCommand) {
 	matchedTerm := msg.TerminalId(0)
 	for _, t := range ts.TermMap {
 		ruledOutMatch := false
@@ -83,9 +65,32 @@ func (ts *TerminalStack) commandFocusFinalStage(receiver msg.TerminalId, cmd msg
 
 	//set new focus (or show error)
 	if matchedTerm != 0 {
-		println("Found terminal starting with:", cmd.Args[0])
-		ts.SetFocused(matchedTerm)
+		println("finalStage   -   Found terminal starting with:", cmd.Args[0])
+
+		switch cmd.Command {
+
+		case "close_term":
+			ts.Remove(matchedTerm)
+
+		case "focus":
+			ts.SetFocused(matchedTerm)
+
+		}
 	} else {
+		//TODO: print feedback in Terminal
+		//TODO: print feedback in Terminal
+		//TODO: print feedback in Terminal
 		println("ERROR!!!   No terminal id matches:", cmd.Args[0])
 	}
+}
+
+func (ts *TerminalStack) commandListTerminals(receiver msg.TerminalId, cmd msg.MessageTokenizedCommand) {
+	var m msg.MessageTerminalIds
+	m.Focused = receiver
+
+	for _, term := range ts.TermMap {
+		m.TermIds = append(m.TermIds, term.TerminalId)
+	}
+
+	ts.GetFocusedTerminal().RelayToTask(msg.Serialize(msg.TypeTerminalIds, m))
 }

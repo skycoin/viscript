@@ -345,6 +345,20 @@ func (st *State) commandCloseTerminalFirstStage(args []string) {
 	}
 }
 
+func (st *State) commandFocusFirstStage(args []string) {
+	if len(args) < 1 {
+		st.PrintError("Must give me AT LEAST the 1st number of the id")
+		return
+	}
+
+	println("commandFocusFirstStage()")
+	st.SendCommand("focus", args)
+}
+
+func (st *State) commandDefocus(args []string) {
+	st.SendCommand("defocus", args)
+}
+
 func (st *State) commandMoveTerminal(args []string) {
 	errMsg := "We need exactly 2 valid numbers for the new X & Y position!"
 
@@ -371,18 +385,4 @@ func (st *State) commandMoveTerminal(args []string) {
 
 	st.publishToOut(msg.Serialize(
 		msg.TypeMoveTerminal, msg.MessageMoveTerminal{int32(x), int32(y)}))
-}
-
-func (st *State) commandFocusFirstStage(args []string) {
-	if len(args) < 1 {
-		st.PrintError("Must give me AT LEAST the 1st number of the id")
-		return
-	}
-
-	println("commandFocusFirstStage()")
-	st.SendCommand("focus", args)
-}
-
-func (st *State) commandDefocus(args []string) {
-	st.SendCommand("defocus", args)
 }
