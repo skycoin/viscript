@@ -79,11 +79,27 @@ func CreateAndSetCustomPointer() {
 
 	if img == nil {
 		img = image.NewRGBA(image.Rect(0, 0, max, max))
-		plotSlantedLine(0, 0, max, color.White)
-		plotSlantedLine(1, 0, max, color.White)
-		plotSlantedLine(0, 1, max, color.White)
-		plotSlantedLine(2, 0, max, color.Black)
-		plotSlantedLine(0, 2, max, color.Black)
+		//going up & right
+		//top left arrow head
+		plotLine(0, 2, 1, -1, max, color.White)
+		plotLine(0, 3, 1, -1, max, color.White)
+		plotLine(0, 4, 1, -1, max, color.White)
+		plotLine(0, 5, 1, -1, max, color.White)
+		plotLine(0, 6, 1, -1, max, color.Black)
+		//going down & right
+		//main shaft of arrow
+		plotLine(0, 0, 1, 1, max, color.White)
+		plotLine(1, 0, 1, 1, max, color.White)
+		plotLine(0, 1, 1, 1, max, color.White)
+		plotLine(5, 3, 1, 1, max, color.Black)
+		plotLine(3, 5, 1, 1, max, color.Black)
+		//going up & right
+		//bottom right arrow head
+		plotLine(max-3, max-1, 1, -1, max, color.White)
+		plotLine(max-4, max-1, 1, -1, max, color.White)
+		plotLine(max-5, max-1, 1, -1, max, color.White)
+		plotLine(max-6, max-1, 1, -1, max, color.White)
+		plotLine(max-7, max-1, 1, -1, max, color.Black)
 	}
 
 	//img.At(x, y) = color.Black
@@ -92,16 +108,39 @@ func CreateAndSetCustomPointer() {
 	GlfwWindow.SetCursor(GlfwCursor)
 }
 
-func plotSlantedLine(x, y, max int, col color.Color) {
-	for i := 0; i < max; i++ {
-		//for x := 0; x < max; x++ {
-		//for y := 0; y < max; y++ {
-		if x+i < max &&
-			y+i < max {
+func plotLine(xStart, yStart, xDelta, yDelta, max int, bulkColor color.Color) {
+	//bulk of the color will be as specified, but pixels along the edge will be black
 
-			img.Set(x+i, y+i, col) //.RGBA{0, 0, 0, 55}
+	if xDelta == 0 &&
+		yDelta == 0 {
+
+		s := "ERROR!!! Position change deltas can't both be 0 (would cause endless loop)!"
+		println(s)
+		println(s)
+		println(s)
+		println(s)
+		return
+	}
+
+	x := xStart
+	y := yStart
+
+	for x >= 0 && x < max &&
+		y >= 0 && y < max {
+
+		finalColor := bulkColor
+
+		if x == 0 ||
+			y == 0 ||
+			x == max-1 ||
+			y == max-1 {
+
+			finalColor = color.Black
 		}
-		//}
+
+		img.Set(x, y, finalColor) //.RGBA{0, 0, 0, 55}
+		x += xDelta
+		y += yDelta
 	}
 }
 
