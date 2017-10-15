@@ -77,42 +77,24 @@ func (ts *TerminalStack) AddWithFixedSizeState(fixedSize bool) msg.TerminalId { 
 	return tid
 }
 
-func (ts *TerminalStack) Remove(id msg.TerminalId) {
-	println("<TerminalStack>.Remove():", id)
-	//TODO: FIXME:
-	//what should happen here after deleting terminal from the stack?   -Red
-	//well BEFORE removal, we'll want to unsub/update/cleanup dsub      -CC
-
-	_, found := ts.TermMap[id]
-	if found {
-		println("checking for key's existence in map - FOUND id:", id)
-	} else {
-		println("checking for key's existence in map - COULDN'T FIND id:", id)
-	}
-
-	var trash msg.TerminalId
-	for key, term := range ts.TermMap {
-		println("key:", key)
-
-		if id == term.TerminalId {
-			trash = key
-			println("found id:", id)
-
-			if term == ts.TermMap[ts.FocusedId] {
-				ts.FocusedId = 0
-			}
-		}
-	}
-
-	println("len of TermMap:", len(ts.TermMap))
-	delete(ts.TermMap, trash)
-	println("len of TermMap:", len(ts.TermMap))
-}
-
 func (ts *TerminalStack) Tick() {
 	for _, term := range ts.TermMap {
 		term.Tick()
 	}
+}
+
+func (ts *TerminalStack) Defocus() {
+	ts.FocusedId = 0
+}
+
+func (ts *TerminalStack) GetFocusedTerminal() *Terminal {
+	for key, t := range ts.TermMap {
+		if t.TerminalId == ts.FocusedId {
+			return ts.TermMap[key]
+		}
+	}
+
+	return nil
 }
 
 func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSinceClick *app.Vec2F) {
@@ -146,6 +128,38 @@ func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSin
 			fb.MoveBy(app.Vec2F{0, -cs.Y})
 		}
 	}
+}
+
+func (ts *TerminalStack) Remove(id msg.TerminalId) {
+	println("<TerminalStack>.Remove():", id)
+	//TODO: FIXME:
+	//what should happen here after deleting terminal from the stack?   -Red
+	//BEFORE removal, we'll want to unsub/update/cleanup dsub stuff     -CC
+
+	_, found := ts.TermMap[id]
+	if found {
+		println("checking for key's existence in map - FOUND id:", id)
+	} else {
+		println("checking for key's existence in map - COULDN'T FIND id:", id)
+	}
+
+	var trash msg.TerminalId
+	for key, term := range ts.TermMap {
+		println("key:", key)
+
+		if id == term.TerminalId {
+			trash = key
+			println("found id:", id)
+
+			if term == ts.TermMap[ts.FocusedId] {
+				ts.FocusedId = 0
+			}
+		}
+	}
+
+	println("len of TermMap:", len(ts.TermMap))
+	delete(ts.TermMap, trash)
+	println("len of TermMap:", len(ts.TermMap))
 }
 
 func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
@@ -235,18 +249,4 @@ func (ts *TerminalStack) SetFocused(topmostId msg.TerminalId) {
 		newZ -= 0.2
 		t.Depth = newZ
 	}
-}
-
-func (ts *TerminalStack) Defocus() {
-	ts.FocusedId = 0
-}
-
-func (ts *TerminalStack) GetFocusedTerminal() *Terminal {
-	for key, t := range ts.TermMap {
-		if t.TerminalId == ts.FocusedId {
-			return ts.TermMap[key]
-		}
-	}
-
-	return nil
 }
