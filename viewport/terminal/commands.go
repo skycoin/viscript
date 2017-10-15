@@ -54,7 +54,7 @@ func (ts *TerminalStack) commandListTerminals(receiver msg.TerminalId, cmd msg.M
 	//a command such as "close_term"..... we were wanting to to
 	//automate this for when in graphic mode, and seeing the id's
 	//already in the terminal tabs.......
-	//..........can we conditionally do:
+	//..........can we conditionally do something like:
 	//	st.SendCommand("command_that_needed_this_first", []string{})
 	//...(when it was programmatically sent by a command that needs this list populated)
 	// if len(cmd.Args) > 0 {

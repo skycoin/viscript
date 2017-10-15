@@ -81,11 +81,22 @@ func (ts *TerminalStack) AddWithFixedSizeState(fixedSize bool) msg.TerminalId { 
 func (ts *TerminalStack) Remove(id msg.TerminalId) {
 	println("<TerminalStack>.Remove():", id)
 	//TODO: FIXME:
-	//what should happen here after deleting terminal from the stack?                       -Red
-	//well BEFORE removal, we'll want to unsub/update/cleanup dsub (not sure what else atm) -CC
+	//what should happen here after deleting terminal from the stack?   -Red
+	//well BEFORE removal, we'll want to unsub/update/cleanup dsub      -CC
 
-	for _, term := range ts.TermMap {
+	_, found := ts.TermMap[id]
+	if found {
+		println("checking for key's existence in map - FOUND id:", id)
+	} else {
+		println("checking for key's existence in map - COULDN'T FIND id:", id)
+	}
+
+	var trash msg.TerminalId
+	for key, term := range ts.TermMap {
+		println("key:", key)
+
 		if id == term.TerminalId {
+			trash = key
 			println("found id:", id)
 
 			if term == ts.TermMap[ts.FocusedId] {
@@ -94,17 +105,15 @@ func (ts *TerminalStack) Remove(id msg.TerminalId) {
 		}
 	}
 
-	_, found := ts.TermMap[id]
-	if found {
-		println("len of TermMap:", len(ts.TermMap))
-		delete(ts.TermMap, id)
-		println("len of TermMap:", len(ts.TermMap))
-	} else {
-		println("COULDN'T FIND id:", id)
-	}
+	println("len of TermMap:", len(ts.TermMap))
+	delete(ts.TermMap, trash)
+	println("len of TermMap:", len(ts.TermMap))
 
-	//TODO?			//st.SendCommand("list_terms", []string{}) //updates tasks' stored list, on any remaining terminals
-	//otherwise, since term ids can be seen on the tabs now (with no need to "list_terms"), terminal tasks could have old entries
+	//TODO?			//st.SendCommand("list_terms", []string{})
+	//to update tasks' stored list, on any remaining terminals,
+	//otherwise,  terminal tasks could have a list with old entries?
+	//(irrelevant if the list is only used by "list_terms", & always gets a new list).
+	//term ids can be seen on the tabs now in GL mode (with no need to "list_terms").
 }
 
 func (ts *TerminalStack) Tick() {
@@ -200,7 +209,7 @@ func (ts *TerminalStack) SetFocused(topmostId msg.TerminalId) {
 	ts.FocusedId = topmostId
 
 	//cycle through terminals
-	noneFocused := true //might be untrue ATM
+	noneFocused := true
 	for key, term := range ts.TermMap {
 		if term.TerminalId == ts.FocusedId {
 			noneFocused = false

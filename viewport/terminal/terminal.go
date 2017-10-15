@@ -26,10 +26,10 @@ type Terminal struct {
 	ResizingBottom bool
 
 	//int/character grid space
-	Curr     app.Vec2I //current flow insert position
-	Cursor   app.Vec2I //user controlled position (within command prompt row/s)
-	GridSize app.Vec2I //number of characters across
-	Chars    [][]uint32
+	CurrFlowPos app.Vec2I //current flow insert position
+	Cursor      app.Vec2I //user controlled position (within command prompt row/s)
+	GridSize    app.Vec2I //number of characters across
+	Chars       [][]uint32
 
 	//float/GL space
 	//(mouse pos events & frame buffer sizes are the only things that use pixels)
@@ -53,8 +53,8 @@ func (t *Terminal) Init() {
 	t.PutString(app.HelpText)
 	t.SetStringAt(0, 1, ">")
 	t.SetCursor(1, 1)
-	t.Curr.X = 1
-	t.Curr.Y = 1
+	t.CurrFlowPos.X = 1
+	t.CurrFlowPos.Y = 1
 
 	//push down window by size of id tab
 	tabOffset := t.BorderSize + t.CharSize.Y
@@ -63,8 +63,6 @@ func (t *Terminal) Init() {
 }
 
 func (t *Terminal) Tick() {
-	//println("Terminal.Tick()")
-
 	for len(t.InChannel) > 0 {
 		t.UnpackMessage(<-t.InChannel)
 	}
@@ -133,20 +131,20 @@ func (t *Terminal) RelayToTask(message []byte) {
 }
 
 func (t *Terminal) MoveRight() {
-	t.Curr.X++
+	t.CurrFlowPos.X++
 
-	if t.Curr.X >= t.GridSize.X {
+	if t.CurrFlowPos.X >= t.GridSize.X {
 		t.NewLine()
 	}
 }
 
 func (t *Terminal) NewLine() {
-	t.Curr.X = 0
-	t.Curr.Y++
+	t.CurrFlowPos.X = 0
+	t.CurrFlowPos.Y++
 
 	//reserve space along bottom to allow for max prompt size
-	if t.Curr.Y > t.GridSize.Y-NumPromptLines {
-		t.Curr.Y--
+	if t.CurrFlowPos.Y > t.GridSize.Y-NumPromptLines {
+		t.CurrFlowPos.Y--
 
 		//shift everything up by one line
 		for y := 0; y < t.GridSize.Y-1; y++ {
@@ -165,8 +163,8 @@ func (t *Terminal) GetVisualInfo() msg.MessageVisualInfo {
 	return msg.MessageVisualInfo{
 		uint32(t.GridSize.X),
 		uint32(t.GridSize.Y),
-		uint32(t.Curr.X),
-		uint32(t.Curr.Y),
+		uint32(t.CurrFlowPos.X),
+		uint32(t.CurrFlowPos.Y),
 		uint32(NumPromptLines)}
 }
 
@@ -189,7 +187,7 @@ func (t *Terminal) updateCommandPrompt(m msg.MessageCommandPrompt) {
 		var char uint32
 		x := i % t.GridSize.X
 		y := i / t.GridSize.X
-		y += int(t.Curr.Y)
+		y += int(t.CurrFlowPos.Y)
 
 		if i == int(m.CursorOffset) {
 			t.SetCursor(x, y)
@@ -222,7 +220,7 @@ func (t *Terminal) posIsValidElsePrint(X, Y int) bool { //...any errors to OS bo
 }
 
 func (t *Terminal) setupNewGrid() {
-	t.Curr = app.Vec2I{0, 0}
+	t.CurrFlowPos = app.Vec2I{0, 0}
 	t.Chars = [][]uint32{}
 
 	//allocate every grid position in the "Chars" multi-dimensional slice

@@ -24,13 +24,6 @@ func (t *Terminal) SetCursor(x, y int) {
 //			just tell what char/string to put into the current...
 //			... flow.  then Terminal manages it's placement & wrapping
 //
-func (t *Terminal) PutCharacter(char uint32) {
-	if t.posIsValidElsePrint(t.Curr.X, t.Curr.Y) {
-		t.SetCharacterAt(t.Curr.X, t.Curr.Y, char)
-		t.MoveRight()
-	}
-}
-
 func (t *Terminal) SetCharacterAt(x, y int, Char uint32) {
 	numOOB = 0
 
@@ -41,7 +34,7 @@ func (t *Terminal) SetCharacterAt(x, y int, Char uint32) {
 
 func (t *Terminal) PutString(s string) {
 	for _, c := range s {
-		t.PutCharacter(uint32(c))
+		t.putCharacter(uint32(c))
 	}
 }
 
@@ -60,6 +53,13 @@ func (t *Terminal) SetStringAt(x, y int, s string) {
 // private
 //
 //
+
+func (t *Terminal) putCharacter(char uint32) {
+	if t.posIsValidElsePrint(t.CurrFlowPos.X, t.CurrFlowPos.Y) {
+		t.SetCharacterAt(t.CurrFlowPos.X, t.CurrFlowPos.Y, char)
+		t.MoveRight()
+	}
+}
 
 func (t *Terminal) move(m msg.MessageMoveTerminal) {
 	//println("Terminal.move() - given x,y:", float32(m.X), float32(m.Y))

@@ -13,7 +13,7 @@ func (t *Terminal) UnpackMessage(message []byte) []byte {
 
 	case msg.TypeClear:
 		t.clear()
-		t.Curr.Y = 0
+		t.CurrFlowPos.Y = 0
 
 	case msg.TypeCommandPrompt:
 		var m msg.MessageCommandPrompt
@@ -28,7 +28,7 @@ func (t *Terminal) UnpackMessage(message []byte) []byte {
 	case msg.TypePutChar:
 		var m msg.MessagePutChar
 		msg.MustDeserialize(message, &m)
-		t.PutCharacter(m.Char)
+		t.putCharacter(m.Char)
 
 	case msg.TypeSetCharAt:
 		var m msg.MessageSetCharAt
