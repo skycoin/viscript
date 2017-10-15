@@ -80,8 +80,10 @@ func CreateAndSetCustomPointer() {
 	if img == nil {
 		img = image.NewRGBA(image.Rect(0, 0, max, max))
 		plotSlantedLine(0, 0, max, color.White)
-		plotSlantedLine(1, 0, max, color.Black)
-		plotSlantedLine(0, 1, max, color.Black)
+		plotSlantedLine(1, 0, max, color.White)
+		plotSlantedLine(0, 1, max, color.White)
+		plotSlantedLine(2, 0, max, color.Black)
+		plotSlantedLine(0, 2, max, color.Black)
 	}
 
 	//img.At(x, y) = color.Black

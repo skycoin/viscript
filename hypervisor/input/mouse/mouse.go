@@ -28,12 +28,18 @@ func Update(pixelPos app.Vec2F) {
 
 func NearRight(bounds *app.Rectangle) bool {
 	return GlPos.X <= bounds.Right &&
-		GlPos.X >= bounds.Right-nearThresh
+		GlPos.X >= bounds.Right-nearThresh &&
+		//also needs to be inside terminal
+		GlPos.Y <= bounds.Top &&
+		GlPos.Y >= bounds.Bottom
 }
 
 func NearBottom(bounds *app.Rectangle) bool {
 	return GlPos.Y >= bounds.Bottom &&
-		GlPos.Y <= bounds.Bottom+nearThresh
+		GlPos.Y <= bounds.Bottom+nearThresh &&
+		//also needs to be inside terminal
+		GlPos.X >= bounds.Left &&
+		GlPos.X <= bounds.Right
 }
 
 func PointerIsInside(r *app.Rectangle) bool {
