@@ -107,12 +107,6 @@ func (ts *TerminalStack) Remove(id msg.TerminalId) {
 	println("len of TermMap:", len(ts.TermMap))
 	delete(ts.TermMap, trash)
 	println("len of TermMap:", len(ts.TermMap))
-
-	//TODO?			//st.SendCommand("list_terms", []string{})
-	//to update tasks' stored list, on any remaining terminals,
-	//otherwise,  terminal tasks could have a list with old entries?
-	//(irrelevant if the list is only used by "list_terms", & always gets a new list).
-	//term ids can be seen on the tabs now in GL mode (with no need to "list_terms").
 }
 
 func (ts *TerminalStack) Tick() {
