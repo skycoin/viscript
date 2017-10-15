@@ -55,7 +55,6 @@ func (ts *TerminalStack) commandCloseTerminalFinalStage(receiver msg.TerminalId,
 }
 
 func (ts *TerminalStack) commandFocusFinalStage(receiver msg.TerminalId, cmd msg.MessageTokenizedCommand) {
-	//foundAnyTerm := false
 	matchedTerm := msg.TerminalId(0)
 	for _, t := range ts.TermMap {
 		ruledOutMatch := false
@@ -68,14 +67,8 @@ func (ts *TerminalStack) commandFocusFinalStage(receiver msg.TerminalId, cmd msg
 			arg = arg[:len(arg)-1]
 		}
 
-		println("arg:", arg)
-
-		//compare each rune of user input
-		//to leftmost runes of id
+		//compare each rune of user input to leftmost runes of id
 		for i, c := range arg {
-			println("string(c):", string(c))
-			println("string(tId[i]):", string(tId[i]))
-
 			if c != rune(tId[i]) {
 				ruledOutMatch = true
 				break
