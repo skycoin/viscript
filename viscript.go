@@ -20,8 +20,6 @@
 
 * graphic indication of line breaks
 
-* get rid of nextIdsToFocus?
-
 * scan and do/fix the most important FIXME/TODO places in the code
 
 

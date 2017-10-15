@@ -19,7 +19,6 @@ type TerminalStack struct {
 	TermMap   map[msg.TerminalId]*Terminal
 
 	//private
-	nextIdsToFocus []msg.TerminalId
 	//next/new terminal spawn vars
 	nextRect   app.Rectangle
 	nextDepth  float32
@@ -117,14 +116,6 @@ func (ts *TerminalStack) Remove(id msg.TerminalId) {
 }
 
 func (ts *TerminalStack) Tick() {
-	//focus any pending queued ids
-	for len(ts.nextIdsToFocus) > 0 {
-		println("tick() startING something")
-		ts.SetFocused(ts.nextIdsToFocus[0])
-		ts.nextIdsToFocus = ts.nextIdsToFocus[1:]
-	}
-
-	//ticks
 	for _, term := range ts.TermMap {
 		term.Tick()
 	}

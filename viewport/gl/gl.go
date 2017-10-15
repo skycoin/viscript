@@ -11,9 +11,11 @@ import (
 )
 
 var (
-	GlfwWindow     *glfw.Window // deprecate eventually
-	GlfwCursor     *glfw.Cursor // for changing cursor for example: resizing etc.
-	Texture        uint32
+	GlfwWindow *glfw.Window // deprecate eventually
+	GlfwCursor *glfw.Cursor // for changing cursor for example: resizing etc.
+	Texture    uint32
+
+	//private
 	img            *image.RGBA
 	goldenRatio    = 1.61803398875
 	goldenFraction = float32(goldenRatio / (goldenRatio + 1))
@@ -80,21 +82,21 @@ func CreateAndSetCustomPointer() {
 	if img == nil {
 		img = image.NewRGBA(image.Rect(0, 0, max, max))
 		//going up & right
-		//top left arrow head
+		//(top left arrow head)
 		plotLine(0, 2, 1, -1, max, color.White)
 		plotLine(0, 3, 1, -1, max, color.White)
 		plotLine(0, 4, 1, -1, max, color.White)
 		plotLine(0, 5, 1, -1, max, color.White)
 		plotLine(0, 6, 1, -1, max, color.Black)
 		//going down & right
-		//main shaft of arrow
+		//(main shaft of arrow)
 		plotLine(0, 0, 1, 1, max, color.White)
 		plotLine(1, 0, 1, 1, max, color.White)
 		plotLine(0, 1, 1, 1, max, color.White)
 		plotLine(5, 3, 1, 1, max, color.Black)
 		plotLine(3, 5, 1, 1, max, color.Black)
 		//going up & right
-		//bottom right arrow head
+		//(bottom right arrow head)
 		plotLine(max-3, max-1, 1, -1, max, color.White)
 		plotLine(max-4, max-1, 1, -1, max, color.White)
 		plotLine(max-5, max-1, 1, -1, max, color.White)
@@ -106,42 +108,6 @@ func CreateAndSetCustomPointer() {
 
 	GlfwCursor = glfw.CreateCursor(img, max/2, max/2)
 	GlfwWindow.SetCursor(GlfwCursor)
-}
-
-func plotLine(xStart, yStart, xDelta, yDelta, max int, bulkColor color.Color) {
-	//bulk of the color will be as specified, but pixels along the edge will be black
-
-	if xDelta == 0 &&
-		yDelta == 0 {
-
-		s := "ERROR!!! Position change deltas can't both be 0 (would cause endless loop)!"
-		println(s)
-		println(s)
-		println(s)
-		println(s)
-		return
-	}
-
-	x := xStart
-	y := yStart
-
-	for x >= 0 && x < max &&
-		y >= 0 && y < max {
-
-		finalColor := bulkColor
-
-		if x == 0 ||
-			y == 0 ||
-			x == max-1 ||
-			y == max-1 {
-
-			finalColor = color.Black
-		}
-
-		img.Set(x, y, finalColor) //.RGBA{0, 0, 0, 55}
-		x += xDelta
-		y += yDelta
-	}
 }
 
 func SetArrowPointer() {
@@ -259,4 +225,46 @@ func SwapDrawBuffer() {
 
 func ScreenTeardown() {
 	glfw.Terminate()
+}
+
+//
+//
+//private
+//
+//
+
+func plotLine(xStart, yStart, xDelta, yDelta, max int, bulkColor color.Color) {
+	//bulk of the color will be as specified, but pixels along the edge will be black
+
+	if xDelta == 0 &&
+		yDelta == 0 {
+
+		s := "ERROR!!! Position change deltas can't both be 0 (would cause endless loop)!"
+		println(s)
+		println(s)
+		println(s)
+		println(s)
+		return
+	}
+
+	x := xStart
+	y := yStart
+
+	for x >= 0 && x < max &&
+		y >= 0 && y < max {
+
+		finalColor := bulkColor
+
+		if x == 0 ||
+			y == 0 ||
+			x == max-1 ||
+			y == max-1 {
+
+			finalColor = color.Black
+		}
+
+		img.Set(x, y, finalColor) //.RGBA{0, 0, 0, 55}
+		x += xDelta
+		y += yDelta
+	}
 }

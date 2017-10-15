@@ -111,7 +111,7 @@ func (ts *TerminalStack) commandFocusFinalStage(receiver msg.TerminalId, cmd msg
 	//set new focus (or show error)
 	if matchedTerm != 0 {
 		println("Found terminal starting with:", cmd.Args[0])
-		ts.nextIdsToFocus = append(ts.nextIdsToFocus, matchedTerm)
+		ts.SetFocused(matchedTerm)
 	} else {
 		println("ERROR!!!   No terminal id matches:", cmd.Args[0])
 	}
