@@ -11,7 +11,7 @@ func (ts *TerminalStack) OnUserCommandFinalStage(receiver msg.TerminalId, cmd ms
 	case "close_term":
 		fallthrough
 	case "focus":
-		ts.actOnGivenTerminalId(cmd)
+		ts.onGivenTerminalId(cmd)
 	case "defocus":
 		ts.Defocus()
 	case "list_terms":
@@ -36,7 +36,7 @@ func (ts *TerminalStack) OnUserCommandFinalStage(receiver msg.TerminalId, cmd ms
 //
 //
 
-func (ts *TerminalStack) actOnGivenTerminalId(cmd msg.MessageTokenizedCommand) {
+func (ts *TerminalStack) onGivenTerminalId(cmd msg.MessageTokenizedCommand) {
 	matchedTerm := msg.TerminalId(0)
 	for _, t := range ts.TermMap {
 		ruledOutMatch := false
@@ -77,6 +77,8 @@ func (ts *TerminalStack) actOnGivenTerminalId(cmd msg.MessageTokenizedCommand) {
 				s := "Shouldn't close when only 1 terminal remains (UNTIL GUI IS MADE)"
 				println(s)
 				//st.PrintError("Shouldn't close when only 1 terminal remains (UNTIL GUI IS MADE)")
+				ts.TermMap[matchedTerm].PutString(s)
+				ts.TermMap[matchedTerm].NewLine()
 				return
 			}
 

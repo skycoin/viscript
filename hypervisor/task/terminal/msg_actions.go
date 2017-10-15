@@ -58,8 +58,8 @@ func (st *State) onTerminalIds(m msg.MessageTerminalIds) {
 
 	st.PrintLn(str)
 
-	for i, termID := range m.TermIds {
-		s := fmt.Sprintf("    [%d] %d", i, termID)
+	for _, termID := range m.TermIds {
+		s := fmt.Sprintf("    %d", termID)
 
 		if termID == m.Focused {
 			st.PrintLn(s + "    (FOCUSED)")
