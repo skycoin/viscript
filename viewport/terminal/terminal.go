@@ -17,13 +17,11 @@ const (
 var numOOB int //number of out of bound characters
 
 type Terminal struct {
-	TerminalId     msg.TerminalId
-	FixedSize      bool
-	AttachedTask   msg.TaskId
-	OutChannelId   uint32 //id of pubsub channel
-	InChannel      chan []byte
-	ResizingRight  bool
-	ResizingBottom bool
+	TerminalId   msg.TerminalId
+	FixedSize    bool
+	AttachedTask msg.TaskId
+	OutChannelId uint32 //id of pubsub channel
+	InChannel    chan []byte
 
 	//int/character grid space
 	CurrFlowPos app.Vec2I //current flow insert position
@@ -69,7 +67,6 @@ func (t *Terminal) Tick() {
 }
 
 func (t *Terminal) ResizeHorizontally(newRight float32) {
-	t.ResizingRight = true
 	delta := newRight - t.Bounds.Right
 	sx := t.GridSize.X
 
@@ -100,7 +97,6 @@ func (t *Terminal) ResizeHorizontally(newRight float32) {
 }
 
 func (t *Terminal) ResizeVertically(newBottom float32) {
-	t.ResizingBottom = true
 	delta := newBottom - t.Bounds.Bottom
 	sy := t.GridSize.Y
 

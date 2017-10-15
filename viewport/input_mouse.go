@@ -119,10 +119,19 @@ func setPointerBasedOnPosition() {
 		gl.SetArrowPointer()
 	} else {
 		if !foc.FixedSize {
-			if /****/ mouse.NearRight(foc.Bounds) && !foc.ResizingBottom {
+			if mouse.NearRight(foc.Bounds) &&
+				mouse.NearBottom(foc.Bounds) {
+
+				gl.SetCornerResizePointer()
+				return
+			}
+
+			if mouse.NearRight(foc.Bounds) {
 				gl.SetHResizePointer()
 				return
-			} else if mouse.NearBottom(foc.Bounds) && !foc.ResizingRight {
+			}
+
+			if mouse.NearBottom(foc.Bounds) {
 				gl.SetVResizePointer()
 				return
 			}

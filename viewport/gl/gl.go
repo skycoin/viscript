@@ -1,6 +1,8 @@
 package gl
 
 import (
+	"image"
+	"image/color"
 	"log"
 
 	"github.com/go-gl/gl/v2.1/gl"
@@ -8,13 +10,13 @@ import (
 	"github.com/skycoin/viscript/app"
 )
 
-var goldenRatio = 1.61803398875
-var goldenFraction = float32(goldenRatio / (goldenRatio + 1))
-
 var (
-	GlfwWindow *glfw.Window // deprecate eventually
-	GlfwCursor *glfw.Cursor // for changing cursor for example: resizing etc.
-	Texture    uint32
+	GlfwWindow     *glfw.Window // deprecate eventually
+	GlfwCursor     *glfw.Cursor // for changing cursor for example: resizing etc.
+	Texture        uint32
+	img            *image.RGBA
+	goldenRatio    = 1.61803398875
+	goldenFraction = float32(goldenRatio / (goldenRatio + 1))
 )
 
 //only two gfx parameters should be eliminated
@@ -57,12 +59,48 @@ func InitGlfw() {
 }
 
 func CreateAndSetPointer(cursorType glfw.StandardCursor) {
+	//FIXME? is this constantly leaking memory because it's
+	//not destroying here everytime?  i think its rarely nil
+	//(also CreateAndSetCustomPointer() below)
 	if GlfwCursor != nil {
 		GlfwCursor.Destroy()
 	}
 
 	GlfwCursor = glfw.CreateStandardCursor(cursorType)
 	GlfwWindow.SetCursor(GlfwCursor)
+}
+
+func CreateAndSetCustomPointer() {
+	if GlfwCursor != nil {
+		GlfwCursor.Destroy()
+	}
+
+	max := 16
+
+	if img == nil {
+		img = image.NewRGBA(image.Rect(0, 0, max, max))
+		plotSlantedLine(0, 0, max, color.White)
+		plotSlantedLine(1, 0, max, color.Black)
+		plotSlantedLine(0, 1, max, color.Black)
+	}
+
+	//img.At(x, y) = color.Black
+
+	GlfwCursor = glfw.CreateCursor(img, max/2, max/2)
+	GlfwWindow.SetCursor(GlfwCursor)
+}
+
+func plotSlantedLine(x, y, max int, col color.Color) {
+	for i := 0; i < max; i++ {
+		//for x := 0; x < max; x++ {
+		//for y := 0; y < max; y++ {
+		if x+i < max &&
+			y+i < max {
+
+			img.Set(x+i, y+i, col) //.RGBA{0, 0, 0, 55}
+		}
+		//}
+	}
 }
 
 func SetArrowPointer() {
@@ -75,6 +113,10 @@ func SetHResizePointer() {
 
 func SetVResizePointer() {
 	CreateAndSetPointer(glfw.VResizeCursor)
+}
+
+func SetCornerResizePointer() {
+	CreateAndSetCustomPointer()
 }
 
 func SetIBeamPointer() {
