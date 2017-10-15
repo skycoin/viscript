@@ -306,52 +306,25 @@ func (st *State) commandListRunningExternalApps(args []string) {
 	}
 }
 
-func (st *State) commandCloseTerminalFirstStage(args []string) {
-	if len(args) == 1 {
-		//handle storedTerminalIds errors
-		if /****/ len(st.storedTerminalIds) < 1 {
-			st.SendCommand("list_terms", []string{"commandCloseTerminalFirstStage"})
-			//st.PrintError("Use 'list_terms' command to see their IDs")
-			return
-		} else if len(st.storedTerminalIds) == 1 {
-			st.PrintError("Shouldn't close when only 1 terminal remains (UNTIL GUI IS MADE)")
-			return
-		}
-
-		//handle arg conversion errors
-		storedId, err := strconv.Atoi(args[0])
-		if err != nil {
-			st.PrintError("Unable to convert passed index.")
-			s := "err.Error(): \"" + err.Error() + "\""
-			st.PrintError(s)
-			return
-		}
-
-		//handle index range errors
-		if storedId < 0 ||
-			storedId >= len(st.storedTerminalIds) {
-			st.PrintError("Index not in range.")
-			return
-		}
-
-		//everything should be valid here
-		st.SendCommand("close_term", []string{strconv.Itoa(int(st.storedTerminalIds[storedId]))})
-	} else { //args failure (too many/few passed)
+func (st *State) commandCloseTerminal_FIRST_STAGE(args []string) {
+	if len(args) != 1 {
+		//args failure (too many/few passed)
 		st.PrintError("Must supply ONE valid ID argument")
 		//IDEALLY we'd use ANY VALID index at position 0,
-		//but I think you'd want us to prioritize simplicity
-		//over nitpickiness like that.
+		//but I think you'd want me to prioritize simplicity
+		//over nitpickiness to that degree.
 		return
 	}
+
+	st.SendCommand("close_term", args)
 }
 
-func (st *State) commandFocusFirstStage(args []string) {
+func (st *State) commandFocus_FIRST_STAGE(args []string) {
 	if len(args) < 1 {
 		st.PrintError("Must give me AT LEAST the 1st number of the id")
 		return
 	}
 
-	println("commandFocusFirstStage()")
 	st.SendCommand("focus", args)
 }
 

@@ -199,7 +199,7 @@ func (st *State) onUserCommand(cmd string, args []string) {
 	case "ct":
 		fallthrough
 	case "close_term":
-		st.commandCloseTerminalFirstStage(args)
+		st.commandCloseTerminal_FIRST_STAGE(args)
 
 	case "defocus":
 		st.commandDefocus(args)
@@ -207,7 +207,7 @@ func (st *State) onUserCommand(cmd string, args []string) {
 	case "foc":
 		fallthrough
 	case "focus":
-		st.commandFocusFirstStage(args)
+		st.commandFocus_FIRST_STAGE(args)
 
 	case "la":
 		fallthrough

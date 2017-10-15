@@ -70,6 +70,16 @@ func (ts *TerminalStack) actOnGivenTerminalId(cmd msg.MessageTokenizedCommand) {
 		switch cmd.Command {
 
 		case "close_term":
+			if len(ts.TermMap) < 2 {
+				//TODO: print feedback in Terminal
+				//TODO: print feedback in Terminal
+				//TODO: print feedback in Terminal
+				s := "Shouldn't close when only 1 terminal remains (UNTIL GUI IS MADE)"
+				println(s)
+				//st.PrintError("Shouldn't close when only 1 terminal remains (UNTIL GUI IS MADE)")
+				return
+			}
+
 			ts.Remove(matchedTerm)
 
 		case "focus":
@@ -80,7 +90,7 @@ func (ts *TerminalStack) actOnGivenTerminalId(cmd msg.MessageTokenizedCommand) {
 		//TODO: print feedback in Terminal
 		//TODO: print feedback in Terminal
 		//TODO: print feedback in Terminal
-		println("ERROR!!!   No terminal id matches:", cmd.Args[0])
+		println("ERROR!!!  \"" + cmd.Args[0] + "\" is not the beginning of any Terminal id.")
 	}
 }
 
