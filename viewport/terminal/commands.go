@@ -41,7 +41,7 @@ func (ts *TerminalStack) onGivenTerminalId(cmdTermId msg.TerminalId, cmd msg.Mes
 	var cmdTerm *Terminal
 
 	for _, t := range ts.TermMap {
-		if t.TerminalId = cmdTermId {
+		if t.TerminalId == cmdTermId {
 			cmdTerm = t
 		}
 
