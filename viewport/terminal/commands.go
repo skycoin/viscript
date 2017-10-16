@@ -5,27 +5,27 @@ import (
 	"strconv"
 )
 
-func (ts *TerminalStack) OnUserCommandFinalStage(receiver msg.TerminalId, cmd msg.MessageTokenizedCommand) {
+func (ts *TerminalStack) onUserCommandFinalStage(cmdTermId msg.TerminalId, cmd msg.MessageTokenizedCommand) {
 	switch cmd.Command {
 
 	case "close_term":
 		fallthrough
 	case "focus":
-		ts.onGivenTerminalId(cmd)
+		ts.onGivenTerminalId(cmdTermId, cmd)
 	case "defocus":
 		ts.Defocus()
 	case "list_terms":
-		ts.commandListTerminals(receiver, cmd)
+		ts.commandListTerminals(cmdTermId, cmd)
 	case "new_term":
 		//temporary
 		//for now, we'll be testing the difference between fixed size and dynamic terminals.
 		//the 1st/initial terminal will be dynamic.  new terms afterwards will all be fixed.
 		ts.AddWithFixedSizeState(true)
 	default:
-		println("OnUserCommandFinalStage()   UNHANDLED COMMAND!!!:", cmd.Command)
-		println("OnUserCommandFinalStage()   UNHANDLED COMMAND!!!:", cmd.Command)
-		println("OnUserCommandFinalStage()   UNHANDLED COMMAND!!!:", cmd.Command)
-		println("OnUserCommandFinalStage()   UNHANDLED COMMAND!!!:", cmd.Command)
+		println("onUserCommandFinalStage()   UNHANDLED COMMAND!!!:", cmd.Command)
+		println("onUserCommandFinalStage()   UNHANDLED COMMAND!!!:", cmd.Command)
+		println("onUserCommandFinalStage()   UNHANDLED COMMAND!!!:", cmd.Command)
+		println("onUserCommandFinalStage()   UNHANDLED COMMAND!!!:", cmd.Command)
 
 	}
 }
@@ -36,9 +36,15 @@ func (ts *TerminalStack) OnUserCommandFinalStage(receiver msg.TerminalId, cmd ms
 //
 //
 
-func (ts *TerminalStack) onGivenTerminalId(cmd msg.MessageTokenizedCommand) {
-	matchedTerm := msg.TerminalId(0)
+func (ts *TerminalStack) onGivenTerminalId(cmdTermId msg.TerminalId, cmd msg.MessageTokenizedCommand) {
+	matchId := msg.TerminalId(0)
+	var cmdTerm *Terminal
+
 	for _, t := range ts.TermMap {
+		if t.TerminalId = cmdTermId {
+			cmdTerm = t
+		}
+
 		ruledOutMatch := false
 		arg := cmd.Args[0]
 		tId := strconv.Itoa(int(t.TerminalId))
@@ -58,47 +64,44 @@ func (ts *TerminalStack) onGivenTerminalId(cmd msg.MessageTokenizedCommand) {
 		}
 
 		if !ruledOutMatch {
-			matchedTerm = t.TerminalId
+			matchId = t.TerminalId
 			break
 		}
 	}
 
 	//set new focus (or show error)
-	if matchedTerm != 0 {
+	if matchId != 0 {
 		println("finalStage   -   Found terminal starting with:", cmd.Args[0])
 
 		switch cmd.Command {
 
 		case "close_term":
 			if len(ts.TermMap) < 2 {
-				//TODO: print feedback in Terminal
-				//TODO: print feedback in Terminal
-				//TODO: print feedback in Terminal
-				s := "Shouldn't close when only 1 terminal remains (UNTIL GUI IS MADE)"
+				s := "Shouldn't close when only 1 terminal remains (UNTIL GUI IS MADE)."
 				println(s)
 				//st.PrintError("Shouldn't close when only 1 terminal remains (UNTIL GUI IS MADE)")
-				ts.TermMap[matchedTerm].PutString(s)
-				ts.TermMap[matchedTerm].NewLine()
+				cmdTerm.PutString(s)
+				cmdTerm.NewLine()
 				return
 			}
 
-			ts.Remove(matchedTerm)
+			ts.Remove(matchId)
 
 		case "focus":
-			ts.SetFocused(matchedTerm)
+			ts.SetFocused(matchId)
 
 		}
 	} else {
-		//TODO: print feedback in Terminal
-		//TODO: print feedback in Terminal
-		//TODO: print feedback in Terminal
-		println("ERROR!!!  \"" + cmd.Args[0] + "\" is not the beginning of any Terminal id.")
+		s := "ERROR!!!  \"" + cmd.Args[0] + "\" is not the beginning of any Terminal id."
+		println(s)
+		cmdTerm.PutString(s)
+		cmdTerm.NewLine()
 	}
 }
 
-func (ts *TerminalStack) commandListTerminals(receiver msg.TerminalId, cmd msg.MessageTokenizedCommand) {
+func (ts *TerminalStack) commandListTerminals(cmdTermId msg.TerminalId, cmd msg.MessageTokenizedCommand) {
 	var m msg.MessageTerminalIds
-	m.Focused = receiver
+	m.Focused = cmdTermId
 
 	for _, term := range ts.TermMap {
 		m.TermIds = append(m.TermIds, term.TerminalId)

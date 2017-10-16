@@ -33,6 +33,8 @@ func (t *Terminal) SetCharacterAt(x, y int, Char uint32) {
 }
 
 func (t *Terminal) PutString(s string) {
+	println(".PutString(" + s + ")")
+
 	for _, c := range s {
 		t.putCharacter(uint32(c))
 	}
