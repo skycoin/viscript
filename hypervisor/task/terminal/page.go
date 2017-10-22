@@ -29,26 +29,27 @@ func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 func (st *State) printVisibleRows(vi msg.MessageVisualInfo) {
 	//println("printVisibleRows()") //...and indicator if backscrolled
 
-	lvr := len(st.Cli.VisualRows)
-	//println("len of st.Cli.VisualRows:", lvr)
+	nvr := len(st.Cli.VisualRows) //number of visual rows
 
-	//(n)umber of (p)potential visible (r)ows   (that current Terminal height allows)
-	npr := int(vi.NumRows - vi.PromptRows)
+	//(n)umber of (l)eftover (r)ows
+	//(...after dedicating row/s to the prompt)
+	nlr := int(vi.NumRows - vi.PromptRows)
 
 	if st.Cli.BackscrollAmount > 0 {
-		npr--
-		st.printRowsONLY(npr, lvr)
+		nlr--
+		st.printRowsONLY(nlr, nvr)
+
 		ib /* indicator bar */ := app.GetLabeledBarOfChars(
 			" BACKSCROLLED ", "^", st.VisualInfo.NumColumns)
 		st.printLnAndMAYBELogIt(ib, false)
 	} else {
-		st.printRowsONLY(npr, lvr)
+		st.printRowsONLY(nlr, nvr)
 	}
 }
 
 var prevBackscrollAmount int
 
-func (st *State) printRowsONLY(npr, lvr int) {
+func (st *State) printRowsONLY(nlr, nvr int) {
 	if st.Cli.BackscrollAmount == 0 &&
 		prevBackscrollAmount == 0 {
 		return
@@ -57,11 +58,11 @@ func (st *State) printRowsONLY(npr, lvr int) {
 	//
 	//
 	prevBackscrollAmount = st.Cli.BackscrollAmount
-	max := lvr - st.Cli.BackscrollAmount
-	start := max - npr
+	max := nvr - st.Cli.BackscrollAmount
+	start := max - nlr
 
 	for i := start; i < max; i++ {
-		if /* index is valid */ i >= 0 && i < lvr {
+		if /* index is valid */ i >= 0 && i < nvr {
 			//println("pVL i:", i)
 			st.printLnAndMAYBELogIt(st.Cli.VisualRows[i], false)
 		}

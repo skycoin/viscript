@@ -102,7 +102,6 @@ func (st *State) commandStart(args []string) {
 	}
 
 	detached := args[0] != "-a"
-
 	if !detached {
 		args = args[1:]
 	}

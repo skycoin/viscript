@@ -4,16 +4,17 @@ import (
 	"github.com/skycoin/viscript/app"
 )
 
-// pics (cell/tile positions in atlas)
+//pics (cell/tile positions in atlas)
 var Pic_ArrowUp = app.Vec2I{8, 1}
 var Pic_GradientBorder = app.Vec2I{11, 13}
 var Pic_PixelCheckerboard = app.Vec2I{2, 11}
 var Pic_SquareInTheMiddle = app.Vec2I{14, 15}
 var Pic_DoubleLinesHorizontal = app.Vec2I{13, 12}
 var Pic_DoubleLinesVertical = app.Vec2I{10, 11}
-var Pic_DoubleLinesElbowBR = app.Vec2I{12, 11} // BR = bottom right
+var Pic_DoubleLinesElbowBR = app.Vec2I{12, 11} // BR == bottom right (corner)
+var Pic_DoubleLinesElbowTR = app.Vec2I{11, 11} // TR == top    right (corner)
 
-// colors
+//colors
 var Black = []float32{0, 0, 0, 1}
 var Blue = []float32{0, 0, 1, 1}
 var Cyan = []float32{0, 0.5, 1, 1}
