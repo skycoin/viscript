@@ -131,17 +131,8 @@ func (ts *TerminalStack) MoveFocusedTerminal(hiResDelta app.Vec2F, mouseDeltaSin
 }
 
 func (ts *TerminalStack) Remove(id msg.TerminalId) {
+	//this is only ever called after finding a valid id to remove
 	println("<TerminalStack>.Remove():", id)
-	//TODO: FIXME:
-	//what should happen here after deleting terminal from the stack?   -Red
-	//BEFORE removal, we'll want to unsub/update/cleanup dsub stuff     -CC
-
-	_, found := ts.TermMap[id]
-	if found {
-		println("checking for key's existence in map - FOUND id:", id)
-	} else {
-		println("checking for key's existence in map - COULDN'T FIND id:", id)
-	}
 
 	var trash msg.TerminalId
 	for key, term := range ts.TermMap {
@@ -149,7 +140,6 @@ func (ts *TerminalStack) Remove(id msg.TerminalId) {
 
 		if id == term.TerminalId {
 			trash = key
-			println("found id:", id)
 
 			if term == ts.TermMap[ts.FocusedId] {
 				ts.FocusedId = 0
@@ -157,9 +147,22 @@ func (ts *TerminalStack) Remove(id msg.TerminalId) {
 		}
 	}
 
-	println("len of TermMap:", len(ts.TermMap))
+	attTask := ts.TermMap[trash].AttachedTask
+	outId := hypervisor.GlobalTasks.TaskMap[attTask].GetOutChannelId()
+
+	//remove both subscriptions from dbus
+	hypervisor.DbusGlobal.RemoveSubscriber(dbus.ChannelId(outId))                          //task
+	hypervisor.DbusGlobal.RemoveSubscriber(dbus.ChannelId(ts.TermMap[trash].OutChannelId)) //terminal
+
+	//remove from GlobalTasks list
+	//println("len of TaskMap:", len(hypervisor.GlobalTasks.TaskMap))
+	delete(hypervisor.GlobalTasks.TaskMap, attTask)
+	//println("len of TaskMap:", len(hypervisor.GlobalTasks.TaskMap))
+
+	//remove from terminal stack
+	//println("len of TermMap:", len(ts.TermMap))
 	delete(ts.TermMap, trash)
-	println("len of TermMap:", len(ts.TermMap))
+	//println("len of TermMap:", len(ts.TermMap))
 }
 
 func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
@@ -179,7 +182,7 @@ func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 		fmt.Sprintf("dbus.pubsub.terminal-%d", int(termId))) //ResourceIdentifier
 
 	//task
-	pcid := hypervisor.DbusGlobal.CreatePubsubChannel( //task(process) channel id
+	pcid := hypervisor.DbusGlobal.CreatePubsubChannel( //(task/)process channel id
 		dbus.ResourceId(tskId),                         //owner id
 		dbus.ResourceTypeTask,                          //owner type
 		fmt.Sprintf("dbus.pubsub.task-%d", int(tskId))) //ResourceIdentifier

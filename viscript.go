@@ -20,6 +20,8 @@
 
 * graphic indication of line breaks
 
+* make graphical GUI lists of terminals, tasks, extApps, dbus subs or channels?
+
 * scan and do/fix the most important FIXME/TODO places in the code
 
 

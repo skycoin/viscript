@@ -56,8 +56,8 @@ func initTasks() {
 
 func teardownTasks() {
 	GlobalTasks.TaskMap = nil
-	// TODO: actually call teardown methods on all the tasks and also
-	// external apps. what about Alt+f4?
-	// upon application exit we need to terminate all the running tasks
-	// and external apps
+	//TODO: actually call teardown methods on all the tasks and also
+	//external apps. what about Alt+f4?
+	//upon application exit we need to terminate all the running tasks
+	//and external apps
 }

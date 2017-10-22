@@ -4,14 +4,15 @@ import (
 	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/config"
 	"github.com/skycoin/viscript/hypervisor"
-	//"github.com/skycoin/viscript/hypervisor/input/keyboard"
 	"github.com/skycoin/viscript/msg"
 )
 
 const (
 	NumPromptLines = 2
 	MinimumColumns = 16 //don't allow resizing smaller than this
-	path           = "viewport/terminal/terminal"
+
+	//private
+	path = "viewport/terminal/terminal"
 )
 
 var numOOB int //number of out of bound characters

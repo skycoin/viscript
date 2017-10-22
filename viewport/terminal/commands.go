@@ -5,17 +5,17 @@ import (
 	"strconv"
 )
 
-func (ts *TerminalStack) onUserCommandFinalStage(cmdTermId msg.TerminalId, cmd msg.MessageTokenizedCommand) {
+func (ts *TerminalStack) onUserCommandFinalStage(commander msg.TerminalId, cmd msg.MessageTokenizedCommand) {
 	switch cmd.Command {
 
 	case "close_term":
 		fallthrough
 	case "focus":
-		ts.onGivenTerminalId(cmdTermId, cmd)
+		ts.onGivenTerminalId(commander, cmd)
 	case "defocus":
 		ts.Defocus()
 	case "list_terms":
-		ts.commandListTerminals(cmdTermId, cmd)
+		ts.commandListTerminals(commander, cmd)
 	case "new_term":
 		//temporary
 		//for now, we'll be testing the difference between fixed size and dynamic terminals.
@@ -36,12 +36,12 @@ func (ts *TerminalStack) onUserCommandFinalStage(cmdTermId msg.TerminalId, cmd m
 //
 //
 
-func (ts *TerminalStack) onGivenTerminalId(cmdTermId msg.TerminalId, cmd msg.MessageTokenizedCommand) {
+func (ts *TerminalStack) onGivenTerminalId(commander msg.TerminalId, cmd msg.MessageTokenizedCommand) {
 	matchId := msg.TerminalId(0)
 	var cmdTerm *Terminal
 
 	for _, t := range ts.TermMap {
-		if t.TerminalId == cmdTermId {
+		if t.TerminalId == commander {
 			cmdTerm = t
 		}
 
@@ -99,9 +99,9 @@ func (ts *TerminalStack) onGivenTerminalId(cmdTermId msg.TerminalId, cmd msg.Mes
 	}
 }
 
-func (ts *TerminalStack) commandListTerminals(cmdTermId msg.TerminalId, cmd msg.MessageTokenizedCommand) {
+func (ts *TerminalStack) commandListTerminals(commander msg.TerminalId, cmd msg.MessageTokenizedCommand) {
 	var m msg.MessageTerminalIds
-	m.Focused = cmdTermId
+	m.Focused = commander
 
 	for _, term := range ts.TermMap {
 		m.TermIds = append(m.TermIds, term.TerminalId)

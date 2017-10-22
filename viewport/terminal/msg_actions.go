@@ -73,7 +73,7 @@ func (t *Terminal) move(m msg.MessageMoveTerminal) {
 	//FIXME?  positioning in desktop space by the size of Terminal's characters
 	//seems a bit wonky.  they could be any size for any given terminal, in theory.
 	//but i'm assuming the given coords should be similar
-	//to 80x25, so that it's like text mode positioning, in such a grid.
+	//to 80x25, so that it's similar to text mode positioning, in such a grid.
 	t.Bounds.Left = -gl.CanvasExtents.X + float32(m.X)*t.CharSize.X
 	t.Bounds.Top = gl.CanvasExtents.Y - float32(m.Y)*t.CharSize.Y
 	t.pushDownByTabHeight(&t.Bounds.Top)

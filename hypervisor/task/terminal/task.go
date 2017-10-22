@@ -99,6 +99,10 @@ func (ta *Task) GetIncomingChannel() chan []byte {
 	return ta.InChannel
 }
 
+func (ta *Task) GetOutChannelId() uint32 {
+	return ta.OutChannelId
+}
+
 func (ta *Task) Tick() {
 	ta.State.HandleMessages()
 

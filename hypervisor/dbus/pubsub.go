@@ -1,6 +1,8 @@
 package dbus
 
-func (di *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType ResourceType, ResourceIdentifier string) ChannelId {
+func (di *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType ResourceType,
+	ResourceIdentifier string) ChannelId {
+
 	n := PubsubChannel{}
 	n.ChannelId = GetChannelId()
 	n.Owner = Owner
@@ -14,7 +16,9 @@ func (di *DbusInstance) CreatePubsubChannel(Owner ResourceId, OwnerType Resource
 	return n.ChannelId
 }
 
-func (di *DbusInstance) AddPubsubChannelSubscriber(chanId ChannelId, resourceId ResourceId, resourceType ResourceType, channelIn chan []byte) {
+func (di *DbusInstance) AddPubsubChannelSubscriber(chanId ChannelId,
+	resourceId ResourceId, resourceType ResourceType, channelIn chan []byte) {
+
 	psc := di.PubsubChannels[chanId] //pubsub channel
 	ns := PubsubSubscriber{}         //new subscriber
 	ns.SubscriberId = resourceId
@@ -38,12 +42,17 @@ func (di *DbusInstance) PublishTo(chanId uint32, msg []byte) {
 }
 
 func (di *DbusInstance) RemoveSubscriber(chanId ChannelId) {
+	//println("len of di.PubsubChannels:", len(di.PubsubChannels))
 	delete(di.PubsubChannels, chanId)
+	//println("len of di.PubsubChannels:", len(di.PubsubChannels))
 }
 
 //
 //
 //private
+//
+//
+
 func (di *DbusInstance) prefixMessageWithChanId(id ChannelId, msg *[]byte) {
 	prefix := make([]byte, 4)
 	prefix[0] = (uint8)((id & 0x000000ff) >> 0)
