@@ -151,8 +151,8 @@ func (ts *TerminalStack) Remove(id msg.TerminalId) {
 	outId := hypervisor.GlobalTasks.TaskMap[attTask].GetOutChannelId()
 
 	//remove both subscriptions from dbus
-	hypervisor.DbusGlobal.RemoveSubscriber(dbus.ChannelId(outId))                          //task
-	hypervisor.DbusGlobal.RemoveSubscriber(dbus.ChannelId(ts.TermMap[trash].OutChannelId)) //terminal
+	hypervisor.DbusGlobal.RemoveChannel(dbus.ChannelId(outId))                          //task
+	hypervisor.DbusGlobal.RemoveChannel(dbus.ChannelId(ts.TermMap[trash].OutChannelId)) //terminal
 
 	//remove from GlobalTasks list
 	//println("len of TaskMap:", len(hypervisor.GlobalTasks.TaskMap))

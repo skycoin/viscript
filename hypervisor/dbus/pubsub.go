@@ -41,7 +41,7 @@ func (di *DbusInstance) PublishTo(chanId uint32, msg []byte) {
 	}
 }
 
-func (di *DbusInstance) RemoveSubscriber(chanId ChannelId) {
+func (di *DbusInstance) RemoveChannel(chanId ChannelId) {
 	//println("len of di.PubsubChannels:", len(di.PubsubChannels))
 	delete(di.PubsubChannels, chanId)
 	//println("len of di.PubsubChannels:", len(di.PubsubChannels))

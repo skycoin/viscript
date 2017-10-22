@@ -13,6 +13,7 @@ import (
 	Incoming messages from tasks to hypervisor come in anytime
 	- on input dispatch
 	- we check each task channel for outgoing messages to the hypervisor
+
 	Each task has a tick() method
 	- tick method, input messages are digested, output messages created
 */
