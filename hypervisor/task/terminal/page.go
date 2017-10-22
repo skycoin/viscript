@@ -39,10 +39,10 @@ func (st *State) printVisibleRows(vi msg.MessageVisualInfo) {
 	nlr := int(vi.NumRows - vi.PromptRows)
 
 	if st.Cli.BackscrollAmount <= 0 {
-		st.printRowsONLY(nlr, nvr)
+		st.printLeftoverRows(nlr, nvr)
 	} else {
 		nlr--
-		st.printRowsONLY(nlr, nvr)
+		st.printLeftoverRows(nlr, nvr)
 
 		//print indicator bar
 		ib := app.GetLabeledBarOfChars(" BACKSCROLLED ", "^", st.VisualInfo.NumColumns)
@@ -50,7 +50,7 @@ func (st *State) printVisibleRows(vi msg.MessageVisualInfo) {
 	}
 }
 
-func (st *State) printRowsONLY(nlr, nvr int) {
+func (st *State) printLeftoverRows(nlr, nvr int) {
 	if st.Cli.BackscrollAmount == 0 &&
 		prevBackscrollAmount == 0 {
 		return

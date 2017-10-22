@@ -62,6 +62,7 @@ func (st *State) printLnAndMAYBELogIt(s string, addToLog bool) {
 	}
 
 	s = strings.Replace(s, "<bar>", app.GetBarOfChars("-", int(num)), -1)
+	s = strings.Replace(s, "<br>", string(rune(31 /* down triangle */)), -1)
 
 	for _, c := range s {
 		st.sendChar(uint32(c))
@@ -75,6 +76,9 @@ func (st *State) printLnAndMAYBELogIt(s string, addToLog bool) {
 func (st *State) sendChar(c uint32) {
 	var s string
 
+	//Red added this code that would prevent sending certain characters.
+	//I didn't see any need for it yet, but left his code & a few examples
+	//that are probably fine to ignore.
 	switch c {
 	case msg.EscNewLine:
 		st.NewLine()
@@ -85,8 +89,6 @@ func (st *State) sendChar(c uint32) {
 		s = "Carriage Return"
 	case msg.EscBackSpace:
 		s = "BackSpace"
-		// case msg.EscBackSlash:
-		// 	s = "BackSlash"
 	}
 
 	if s != "" {
@@ -95,7 +97,7 @@ func (st *State) sendChar(c uint32) {
 	}
 
 	m := msg.Serialize(msg.TypePutChar, msg.MessagePutChar{0, c})
-	st.publishToOut(m) // EVERY publish action prefixes another chan id
+	st.publishToOut(m) //EVERY publish action prefixes another chan id
 }
 
 func (st *State) publishToOut(message []byte) {

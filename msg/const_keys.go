@@ -313,14 +313,14 @@ const (
 
 /*
 
-escape sequence chars
+escape chars (added by Red, to avoid sending these to Terminal)
 
 */
 
 const (
-	EscBackSlash      = 92
+	//EscBackSlash    = 92 //probably a bad idea to ever use this one
 	EscNewLine        = 10
-	EscCarriageReturn = 13
+	EscCarriageReturn = 13 //we handle the key press detection
 	EscTab            = 9
 	EscBackSpace      = 8
 )

@@ -41,22 +41,7 @@ func NewCli() *Cli {
 
 func (c *Cli) AddEntriesForLogAndVisualRowsCache(s string, numColumns uint32) {
 	c.Log = append(c.Log, s)
-	c.breakLogEntry(s, numColumns)
-}
-
-func (c *Cli) breakLogEntry(entry string, numColumns uint32) {
-	//'entry' shrinks as we cut out fitting fragments
-	for len(entry) > int(numColumns) {
-		lff := "" /* largest fitting fragment */
-		lff, entry = c.breakStringIn2(entry, int(numColumns))
-		c.VisualRows = append(c.VisualRows, lff)
-	}
-
-	//last fragment is less than .NumColumns
-	if /* something remains */ len(entry) > 0 {
-		//println("what's left of current log entry:", entry)
-		c.VisualRows = append(c.VisualRows, entry) //add last fragment
-	}
+	c.breakdownLogEntry(s, numColumns)
 }
 
 func (c *Cli) RebuildVisualRowsFromLogEntryFragments(vi msg.MessageVisualInfo) {
@@ -64,7 +49,7 @@ func (c *Cli) RebuildVisualRowsFromLogEntryFragments(vi msg.MessageVisualInfo) {
 	c.VisualRows = []string{}
 
 	for _, entry := range c.Log {
-		c.breakLogEntry(entry, vi.NumColumns)
+		c.breakdownLogEntry(entry, vi.NumColumns)
 	}
 
 	c.printLogInOsBox(vi)
@@ -154,6 +139,21 @@ func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
 //
 //
 
+func (c *Cli) breakdownLogEntry(entry string, numColumns uint32) {
+	//'entry' shrinks as we cut out fitting fragments
+	for len(entry) > int(numColumns) {
+		lff := "" /* largest fitting fragment */
+		lff, entry = c.breakStringIn2(entry, int(numColumns))
+		c.VisualRows = append(c.VisualRows, lff)
+	}
+
+	//last fragment is less than .NumColumns
+	if /* something remains */ len(entry) > 0 {
+		//println("what's left of current log entry:", entry)
+		c.VisualRows = append(c.VisualRows, entry) //add last fragment
+	}
+}
+
 //num == number of columns
 //a == leftmost fragment that fits num columns
 //b == remaining fragment which still may need breaking
@@ -181,6 +181,8 @@ func (c *Cli) breakStringIn2(s string, num int) (a, b string) {
 	if foundSpaceChar {
 		a = s[:x]
 		b = s[x+1:] //eliminate space between final 2 pieces
+
+		a += "<br>"
 	} else {
 		a = s[:num]
 		b = s[num:]
