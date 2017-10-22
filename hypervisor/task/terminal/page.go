@@ -5,6 +5,8 @@ import (
 	"github.com/skycoin/viscript/msg"
 )
 
+var prevBackscrollAmount int
+
 func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 	//app.At("task/terminal/msg_action", "makePageOfLog")
 
@@ -32,22 +34,21 @@ func (st *State) printVisibleRows(vi msg.MessageVisualInfo) {
 	nvr := len(st.Cli.VisualRows) //number of visual rows
 
 	//(n)umber of (l)eftover (r)ows
-	//(...after dedicating row/s to the prompt)
+	//(...after dedicating row/s to the prompt
+	//		& possibly the backscroll indicator)
 	nlr := int(vi.NumRows - vi.PromptRows)
 
-	if st.Cli.BackscrollAmount > 0 {
+	if st.Cli.BackscrollAmount <= 0 {
+		st.printRowsONLY(nlr, nvr)
+	} else {
 		nlr--
 		st.printRowsONLY(nlr, nvr)
 
-		ib /* indicator bar */ := app.GetLabeledBarOfChars(
-			" BACKSCROLLED ", "^", st.VisualInfo.NumColumns)
+		//print indicator bar
+		ib := app.GetLabeledBarOfChars(" BACKSCROLLED ", "^", st.VisualInfo.NumColumns)
 		st.printLnAndMAYBELogIt(ib, false)
-	} else {
-		st.printRowsONLY(nlr, nvr)
 	}
 }
-
-var prevBackscrollAmount int
 
 func (st *State) printRowsONLY(nlr, nvr int) {
 	if st.Cli.BackscrollAmount == 0 &&
