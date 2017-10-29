@@ -34,18 +34,6 @@ func (ts *TerminalStack) DrawTextMode() { //for running headless mode
 	}
 }
 
-func (ts *TerminalStack) DrawTaskBarButtons() {
-	for _, t := range ts.TermMap {
-		if t.TerminalId == ts.FocusedId {
-			gl.SetColor(gl.White)
-		} else {
-			gl.SetColor(gl.Gray)
-		}
-
-		//drawIdTab(t, taskBarDepth)
-	}
-}
-
 func (ts *TerminalStack) Draw() {
 	for _, t := range ts.TermMap {
 		z := t.Depth
