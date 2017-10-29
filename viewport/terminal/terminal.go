@@ -116,12 +116,16 @@ func (t *Terminal) ResizeVertically(newBottom float32) {
 	// } else {
 	for delta > t.CharSize.Y {
 		delta -= t.CharSize.Y
-		t.Bounds.Bottom += t.CharSize.Y
-		t.GridSize.Y--
+
+		if t.GridSize.Y > NumPromptLines+2 {
+			t.Bounds.Bottom += t.CharSize.Y
+			t.GridSize.Y--
+		}
 	}
 
 	for delta < -t.CharSize.Y {
 		delta += t.CharSize.Y
+
 		t.Bounds.Bottom -= t.CharSize.Y
 		t.GridSize.Y++
 	}
