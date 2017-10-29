@@ -105,7 +105,7 @@ func drawIdTab(t *Terminal, z float32) {
 			t.TabText += " (FixedSize)"
 		}
 
-		t.TabText += " X"
+		t.TabText += "  " //for tab size calculations (allowing space for close button)
 	}
 
 	tr := t.GetTabBounds() //text rectangle (initially used to draw whole tab background)
@@ -136,6 +136,7 @@ func drawIdTab(t *Terminal, z float32) {
 		tr.Right += t.CharSize.X
 	}
 
+	//close button char
 	tr.Left += t.CharSize.X
 	tr.Right += t.CharSize.X
 	gl.DrawCharAtRect('X', tr, z)
