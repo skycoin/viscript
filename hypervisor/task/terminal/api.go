@@ -76,19 +76,23 @@ func (st *State) printLnAndMAYBELogIt(s string, addToLog bool) {
 func (st *State) sendChar(c uint32) {
 	var s string
 
-	//Red added this code that would prevent sending certain characters.
-	//I didn't see any need for it yet, but left his code & a few examples
-	//that are probably fine to ignore.
+	//Red added this code & enums that would prevent sending certain characters.
+	//I didn't see any need for it yet, but left most of his code
+	//& a few examples that are probably fine
 	switch c {
+
 	case msg.EscNewLine:
 		st.NewLine()
 		return
+
+	//the following cases bypass sending to term
 	case msg.EscTab:
 		s = "Tab"
 	case msg.EscCarriageReturn:
 		s = "Carriage Return"
 	case msg.EscBackSpace:
 		s = "BackSpace"
+
 	}
 
 	if s != "" {

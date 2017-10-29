@@ -5,7 +5,7 @@ import (
 	"github.com/skycoin/viscript/msg"
 )
 
-var prevBackscrollAmount int
+//var prevBackscrollAmount int
 
 func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 	//app.At("task/terminal/msg_action", "makePageOfLog")
@@ -18,8 +18,11 @@ func (st *State) makePageOfLog(m msg.MessageVisualInfo) {
 		st.VisualInfo = m
 		st.Cli.RebuildVisualRowsFromLogEntryFragments(m)
 		println("makePageOfLog()   VisualInfo changed   -   .NumRows/Columns:", st.VisualInfo.NumRows, st.VisualInfo.NumColumns)
-	} else {
+	} else { //must be backscroll changes?
 		//println("VisualInfo UNchanged  -  st.VisualInfo.NumRows:", st.VisualInfo.NumRows)
+		if st.Cli.BackscrollAmount < 1 {
+			return
+		}
 	}
 
 	st.printVisibleRows(m)
@@ -51,14 +54,14 @@ func (st *State) printVisibleRows(vi msg.MessageVisualInfo) {
 }
 
 func (st *State) printLeftoverRows(nlr, nvr int) {
-	if st.Cli.BackscrollAmount == 0 &&
-		prevBackscrollAmount == 0 {
-		return
-	}
+	// if st.Cli.BackscrollAmount == 0 &&
+	// 	prevBackscrollAmount == 0 {
+	// 	return
+	// }
 
-	//
-	//
-	prevBackscrollAmount = st.Cli.BackscrollAmount
+	// //
+	// //
+	// prevBackscrollAmount = st.Cli.BackscrollAmount
 	max := nvr - st.Cli.BackscrollAmount
 	start := max - nlr
 
