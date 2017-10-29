@@ -175,7 +175,7 @@ func closeOrFocusOnTopmostTermThatPointerTouches() {
 		if mouse.PointerIsInside(term.Bounds) ||
 			mouse.PointerIsInside(tb) {
 
-			if mouse.PointerIsInside(upperRightQuadrantOfLastChar(term, tb)) {
+			if mouse.PointerIsInside(getLastCharRect(term, tb)) {
 				clickedCloseButton = true
 			}
 
@@ -195,9 +195,9 @@ func closeOrFocusOnTopmostTermThatPointerTouches() {
 	}
 }
 
-func upperRightQuadrantOfLastChar(term *t.Terminal, tabRect *app.Rectangle) *app.Rectangle {
-	tabRect.Left = tabRect.Right - term.BorderSize - term.CharSize.X/2
-	tabRect.Bottom = tabRect.Top - term.BorderSize - term.CharSize.Y/2
+func getLastCharRect(term *t.Terminal, tabRect *app.Rectangle) *app.Rectangle {
+	tabRect.Left = tabRect.Right - term.BorderSize - term.CharSize.X
+	tabRect.Bottom = tabRect.Top - term.BorderSize - term.CharSize.Y
 	return tabRect
 }
 
