@@ -19,6 +19,7 @@ var numOOB int //number of out of bound characters
 
 type Terminal struct {
 	TerminalId   msg.TerminalId
+	TabText      string
 	FixedSize    bool
 	AttachedTask msg.TaskId
 	OutChannelId uint32 //id of pubsub channel
@@ -65,6 +66,14 @@ func (t *Terminal) Tick() {
 	for len(t.InChannel) > 0 {
 		t.UnpackMessage(<-t.InChannel)
 	}
+}
+
+func (t *Terminal) GetTabBounds() *app.Rectangle {
+	return &app.Rectangle{
+		t.Bounds.Top + t.CharSize.Y + t.BorderSize,
+		t.Bounds.Left + t.BorderSize*2 + t.CharSize.X*float32(len(t.TabText)),
+		t.Bounds.Top - t.BorderSize, //letting it overlap bounds for simpler drawing
+		t.Bounds.Left}
 }
 
 func (t *Terminal) ResizeHorizontally(newRight float32) {

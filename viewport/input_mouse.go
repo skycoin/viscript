@@ -72,7 +72,7 @@ func onMouseScroll(m msg.MessageMouseScroll) {
 	}
 }
 
-// apparently every time this is fired, a mouse position event is ALSO fired
+//apparently every time this is fired, a mouse position event is ALSO fired
 func onMouseButton(m msg.MessageMouseButton) {
 	if config.DebugPrintInputEvents() {
 		fmt.Print("msg.TypeMouseButton")
@@ -84,31 +84,45 @@ func onMouseButton(m msg.MessageMouseButton) {
 
 	convertClickToTextCursorPosition(m.Button, m.Action)
 
-	if msg.Action(m.Action) == msg.Press {
-		switch msg.MouseButton(m.Button) {
+	//
+	//
 
-		case msg.MouseButtonLeft:
-			mouse.LeftButtonIsDown = true
-			mouse.DeltaSinceLeftClick = app.Vec2F{0, 0}
+	switch msg.Action(m.Action) {
 
-			// // detect clicks in rects
-			// if mouse.PointerIsInside(ui.MainMenu.Rect) {
-			// 	respondToAnyMenuButtonClicks()
-			// } else { // respond to any panel clicks outside of menu
-			focusOnTopmostRectThatContainsPointer()
-			// }
+	case msg.Press:
+		actOnPress(m)
+	case msg.Release:
+		actOnRelease(m)
 
-			currentTerminalModification = getTerminalModificationByZone()
+	}
+}
 
-		}
-	} else if msg.Action(m.Action) == msg.Release {
-		switch msg.MouseButton(m.Button) {
+func actOnPress(m msg.MessageMouseButton) {
+	switch msg.MouseButton(m.Button) {
 
-		case msg.MouseButtonLeft:
-			mouse.LeftButtonIsDown = false
-			currentTerminalModification = TermMod_None
+	case msg.MouseButtonLeft:
+		mouse.LeftButtonIsDown = true
+		mouse.DeltaSinceLeftClick = app.Vec2F{0, 0}
 
-		}
+		// // detect clicks in rects
+		// if mouse.PointerIsInside(ui.MainMenu.Rect) {
+		// 	respondToAnyMenuButtonClicks()
+		// } else { // respond to any panel clicks outside of menu
+		focusOnTopmostRectThatContainsPointer()
+		// }
+
+		currentTerminalModification = getTerminalModificationByZone()
+
+	}
+}
+
+func actOnRelease(m msg.MessageMouseButton) {
+	switch msg.MouseButton(m.Button) {
+
+	case msg.MouseButtonLeft:
+		mouse.LeftButtonIsDown = false
+		currentTerminalModification = TermMod_None
+
 	}
 }
 
@@ -153,7 +167,9 @@ func focusOnTopmostRectThatContainsPointer() {
 	var topmostId msg.TerminalId
 
 	for _, t := range t.Terms.TermMap {
-		if mouse.PointerIsInside(t.Bounds) {
+		if mouse.PointerIsInside(t.Bounds) ||
+			mouse.PointerIsInside(t.GetTabBounds()) {
+
 			if topmostZ < t.Depth {
 				topmostZ = t.Depth
 				topmostId = t.TerminalId
