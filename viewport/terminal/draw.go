@@ -113,6 +113,14 @@ func drawIdTab(t *Terminal, z float32) {
 	//id tab background
 	gl.Draw9SlicedRect(gl.Pic_GradientBorder, tr, z)
 
+	//close button background
+	cbb := &app.Rectangle{
+		tr.Top,
+		tr.Right,
+		tr.Bottom,
+		tr.Right - t.CharSize.X - t.BorderSize*2}
+	gl.Draw9SlicedRect(gl.Pic_GradientBorder, cbb, z)
+
 	//push in edges to encompass ONLY the text (leaving a border visible)
 	tr.Top -= t.BorderSize
 	tr.Bottom += t.BorderSize
@@ -120,9 +128,15 @@ func drawIdTab(t *Terminal, z float32) {
 	tr.Right = tr.Left + t.CharSize.X //....and shrink width to char size
 
 	//draw the id #
-	for i := 0; i < len(t.TabText); i++ {
+	max := len(t.TabText) - 2
+
+	for i := 0; i < max; i++ {
 		gl.DrawCharAtRect(rune(t.TabText[i]), tr, z)
 		tr.Left += t.CharSize.X
 		tr.Right += t.CharSize.X
 	}
+
+	tr.Left += t.CharSize.X
+	tr.Right += t.CharSize.X
+	gl.DrawCharAtRect('X', tr, z)
 }
