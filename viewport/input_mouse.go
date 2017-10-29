@@ -108,7 +108,7 @@ func actOnPress(m msg.MessageMouseButton) {
 		// if mouse.PointerIsInside(ui.MainMenu.Rect) {
 		// 	respondToAnyMenuButtonClicks()
 		// } else { // respond to any panel clicks outside of menu
-		focusOnTopmostRectThatContainsPointer()
+		closeOrFocusOnTopmostTermThatPointerTouches()
 		// }
 
 		currentTerminalModification = getTerminalModificationByZone()
@@ -164,24 +164,41 @@ func setPointerBasedOnPosition() {
 	}
 }
 
-func focusOnTopmostRectThatContainsPointer() {
+func closeOrFocusOnTopmostTermThatPointerTouches() {
 	var topmostZ float32
 	var topmostId msg.TerminalId
+	clickedCloseButton := false
 
-	for _, t := range t.Terms.TermMap {
-		if mouse.PointerIsInside(t.Bounds) ||
-			mouse.PointerIsInside(t.GetTabBounds()) {
+	for _, term := range t.Terms.TermMap {
+		tb := term.GetTabBounds()
 
-			if topmostZ < t.Depth {
-				topmostZ = t.Depth
-				topmostId = t.TerminalId
+		if mouse.PointerIsInside(term.Bounds) ||
+			mouse.PointerIsInside(tb) {
+
+			if mouse.PointerIsInside(upperRightQuadrantOfLastChar(term, tb)) {
+				clickedCloseButton = true
+			}
+
+			if topmostZ < term.Depth {
+				topmostZ = term.Depth
+				topmostId = term.TerminalId
 			}
 		}
 	}
 
 	if topmostZ > 0 {
-		t.Terms.SetFocused(topmostId)
+		if clickedCloseButton {
+			t.Terms.Remove(topmostId)
+		} else {
+			t.Terms.SetFocused(topmostId)
+		}
 	}
+}
+
+func upperRightQuadrantOfLastChar(term *t.Terminal, tabRect *app.Rectangle) *app.Rectangle {
+	tabRect.Left = tabRect.Right - term.BorderSize - term.CharSize.X/2
+	tabRect.Bottom = tabRect.Top - term.BorderSize - term.CharSize.Y/2
+	return tabRect
 }
 
 func convertClickToTextCursorPosition(button, action uint8) {

@@ -104,6 +104,8 @@ func drawIdTab(t *Terminal, z float32) {
 		if t.FixedSize {
 			t.TabText += " (FixedSize)"
 		}
+
+		t.TabText += "  "
 	}
 
 	tr := t.GetTabBounds() //text rectangle (initially used to draw whole tab background)
@@ -123,4 +125,9 @@ func drawIdTab(t *Terminal, z float32) {
 		tr.Left += t.CharSize.X
 		tr.Right += t.CharSize.X
 	}
+
+	tr.Right = tr.Left
+	tr.Left -= t.CharSize.X / 2
+	tr.Bottom += t.CharSize.X / 2
+	gl.DrawCharAtRect('X', tr, z)
 }
