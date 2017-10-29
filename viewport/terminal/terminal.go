@@ -56,7 +56,7 @@ func (t *Terminal) Init() {
 	t.CurrFlowPos.X = 1
 	t.CurrFlowPos.Y = 1
 
-	//push down window by size of id tab
+	//push down window (in y dimension) by size of id tab
 	tabOffset := t.BorderSize + t.CharSize.Y
 	t.Bounds.Top -= tabOffset
 	t.Bounds.Bottom -= tabOffset

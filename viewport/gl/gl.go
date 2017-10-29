@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	GlfwWindow *glfw.Window // deprecate eventually
-	GlfwCursor *glfw.Cursor // for changing cursor for example: resizing etc.
+	GlfwWindow *glfw.Window //deprecate eventually
+	GlfwCursor *glfw.Cursor
 	Texture    uint32
 
 	//private
@@ -56,7 +56,7 @@ func InitGlfw() {
 		panic(err)
 	}
 
-	// initialize cursor
+	//initialize cursor
 	CreateAndSetPointer(glfw.ArrowCursor)
 }
 

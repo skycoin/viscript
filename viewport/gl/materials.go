@@ -6,6 +6,7 @@ import (
 
 //pics (cell/tile positions in atlas)
 var Pic_ArrowUp = app.Vec2I{8, 1}
+var Pic_TriangleUp = app.Vec2I{14, 1}
 var Pic_GradientBorder = app.Vec2I{11, 13}
 var Pic_PixelCheckerboard = app.Vec2I{2, 11}
 var Pic_SquareInTheMiddle = app.Vec2I{14, 15}
