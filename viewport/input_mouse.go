@@ -151,7 +151,9 @@ func setPointerBasedOnPosition() {
 			}
 		}
 
-		if mouse.PointerIsInside(foc.Bounds) {
+		if mouse.PointerIsInside(foc.Bounds) ||
+			mouse.PointerIsInside(foc.GetTabBounds()) {
+
 			gl.SetHandPointer()
 			//gl.SetIBeamPointer() //IBeam is harder to see...
 			//...and probably only makes sense when you can click to type anywhere on screen.
@@ -282,7 +284,9 @@ func getTerminalModificationByZone() int {
 		}
 	}
 
-	if mouse.PointerIsInside(foc.Bounds) {
+	if mouse.PointerIsInside(foc.Bounds) ||
+		mouse.PointerIsInside(foc.GetTabBounds()) {
+
 		return TermMod_Moving
 	} else {
 		return TermMod_None
