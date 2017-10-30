@@ -11,7 +11,8 @@ var (
 	taskBarHeight     float32 = 0.1
 	taskBarBorderSpan float32 = taskBarHeight / 12
 	taskBarCurrX      float32
-	taskBarBounds     *app.Rectangle
+	buttonBounds      *app.Rectangle
+	charBounds        *app.Rectangle
 )
 
 func drawTaskBar() {
@@ -22,7 +23,7 @@ func drawTaskBar() {
 }
 
 func drawTaskBarBackground() {
-	taskBarBounds = &app.Rectangle{
+	buttonBounds = &app.Rectangle{
 		-gl.CanvasExtents.Y + taskBarHeight,
 		gl.CanvasExtents.X,
 		-gl.CanvasExtents.Y,
@@ -30,42 +31,70 @@ func drawTaskBarBackground() {
 
 	gl.Draw9SlicedRect(
 		gl.Pic_GradientBorder,
-		taskBarBounds,
+		buttonBounds,
 		taskBarDepth)
 }
 
 func drawStartButton() {
-	taskBarBounds.Top -= taskBarBorderSpan
-	taskBarBounds.Bottom += taskBarBorderSpan
-	taskBarBounds.Left += taskBarBorderSpan
-	taskBarBounds.Right = taskBarBounds.Left + taskBarBounds.Height()
+	buttonBounds.Top -= taskBarBorderSpan
+	buttonBounds.Bottom += taskBarBorderSpan
+	buttonBounds.Left += taskBarBorderSpan
+	buttonBounds.Right = buttonBounds.Left + buttonBounds.Height()
 
-	taskBarCurrX = taskBarBounds.Right
+	taskBarCurrX = buttonBounds.Right
 
 	gl.Draw9SlicedRect(
 		gl.Pic_GradientBorder,
-		taskBarBounds,
+		buttonBounds,
 		taskBarDepth)
 
-	taskBarBounds.Left += taskBarBorderSpan
-	taskBarBounds.Right -= taskBarBorderSpan
-	taskBarBounds.Top -= taskBarBorderSpan
-	taskBarBounds.Bottom += taskBarBorderSpan
+	charBounds = &app.Rectangle{
+		buttonBounds.Top - taskBarBorderSpan,
+		buttonBounds.Right - taskBarBorderSpan,
+		buttonBounds.Bottom + taskBarBorderSpan,
+		buttonBounds.Left + taskBarBorderSpan}
+
+	buttonBounds.Left += buttonBounds.Height()
+	buttonBounds.Right += buttonBounds.Height()
 
 	gl.Draw9SlicedRect(
 		gl.Pic_TriangleUp,
-		taskBarBounds,
+		charBounds,
 		taskBarDepth)
+
+	charBounds.Left += charBounds.Height()
+	charBounds.Right += charBounds.Height()
 }
 
 func drawTerminalButtons() {
 	for _, term := range terminal.Terms.TermMap {
+		charBounds.Left += taskBarBorderSpan * 10  //2
+		charBounds.Right += taskBarBorderSpan * 10 //2
+
 		if term.TerminalId == terminal.Terms.FocusedId {
-			//gl.SetColor(gl.White)
+			gl.SetColor(gl.White)
 		} else {
-			//gl.SetColor(gl.Gray)
+			gl.SetColor(gl.Gray)
 		}
 
-		//drawIdTab(term, taskBarDepth)
+		max := len(term.TabText)
+		currTextWid := charBounds.Width()*float32(max) + taskBarBorderSpan*2
+		buttonBounds.Right = buttonBounds.Left + currTextWid
+
+		//draw button background
+		gl.Draw9SlicedRect(
+			gl.Pic_GradientBorder,
+			buttonBounds,
+			taskBarDepth)
+
+		//draw the id # text
+		// for i := 0; i < max; i++ {
+		// 	gl.DrawCharAtRect(rune(term.TabText[i]), charBounds, taskBarDepth)
+		// 	charBounds.Left += term.CharSize.X
+		// 	charBounds.Right += term.CharSize.X
+		// }
+
+		buttonBounds.Left += currTextWid
+		buttonBounds.Right += currTextWid
 	}
 }
