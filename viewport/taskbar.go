@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	taskBarDepth      float32 = 10.1
+	taskBarDepth      float32 = 11
 	taskBarHeight     float32 = 0.1
 	taskBarBorderSpan float32 = taskBarHeight / 12
 	taskBarCurrX      float32
@@ -15,6 +15,7 @@ var (
 )
 
 func drawTaskBar() {
+	gl.SetColor(gl.Gray)
 	drawTaskBarBackground()
 	drawStartButton()
 	drawTerminalButtons()
@@ -60,9 +61,9 @@ func drawStartButton() {
 func drawTerminalButtons() {
 	for _, term := range terminal.Terms.TermMap {
 		if term.TerminalId == terminal.Terms.FocusedId {
-			gl.SetColor(gl.White)
+			//gl.SetColor(gl.White)
 		} else {
-			gl.SetColor(gl.Gray)
+			//gl.SetColor(gl.Gray)
 		}
 
 		//drawIdTab(term, taskBarDepth)
