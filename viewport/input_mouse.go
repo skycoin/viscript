@@ -82,7 +82,8 @@ func onMouseButton(m msg.MessageMouseButton) {
 		println()
 	}
 
-	convertClickToTextCursorPosition(m.Button, m.Action)
+	convertClickToTextCursorPosition(m.Button, m.Action) //unused atm
+	//(was for the old text editor mode)
 
 	//
 	//
@@ -104,14 +105,23 @@ func actOnPress(m msg.MessageMouseButton) {
 		mouse.LeftButtonIsDown = true
 		mouse.DeltaSinceLeftClick = app.Vec2F{0, 0}
 
-		// // detect clicks in rects
-		// if mouse.PointerIsInside(ui.MainMenu.Rect) {
-		// 	respondToAnyMenuButtonClicks()
-		// } else { // respond to any panel clicks outside of menu
-		closeOrFocusOnTopmostTermThatPointerTouches()
-		// }
+		tb := &app.Rectangle{ //taskbar rect
+			-gl.CanvasExtents.Y + app.TaskBarHeight,
+			gl.CanvasExtents.X,
+			-gl.CanvasExtents.Y,
+			-gl.CanvasExtents.X}
 
-		currentTerminalModification = getTerminalModificationByZone()
+		//detect clicks in taskbar
+		if mouse.PointerIsInside(tb) {
+			for _, term := range t.Terms.TermMap {
+				if mouse.PointerIsInside(term.TaskBarButton) {
+					t.Terms.SetFocused(term.TerminalId)
+				}
+			}
+		} else { //respond to any desktop  clicks
+			closeOrFocusOnTopmostTermThatPointerTouches()
+			currentTerminalModification = getTerminalModificationByZone()
+		}
 
 	}
 }
@@ -133,6 +143,7 @@ func setPointerBasedOnPosition() {
 		gl.SetArrowPointer()
 	} else {
 		if !foc.FixedSize {
+			//at bottom right corner
 			if mouse.NearRight(foc.Bounds) &&
 				mouse.NearBottom(foc.Bounds) {
 
@@ -140,11 +151,13 @@ func setPointerBasedOnPosition() {
 				return
 			}
 
+			//at right edge
 			if mouse.NearRight(foc.Bounds) {
 				gl.SetHResizePointer()
 				return
 			}
 
+			//at bottom edge
 			if mouse.NearBottom(foc.Bounds) {
 				gl.SetVResizePointer()
 				return
