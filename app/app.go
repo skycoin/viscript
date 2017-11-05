@@ -8,9 +8,17 @@ However, newcomers COULD confuse it with "package viewport"?
 
 */
 
-const Name = "V I S C R I P T"
-const UvSpan = float32(1.0) / 16 //span of a tile/cell in uv space
-const HelpText = "? for help"
+const (
+	Name     = "V I S C R I P T"
+	UvSpan   = float32(1.0) / 16 //span of a tile/cell in uv space
+	HelpText = "? for help"
+
+	//taskbar (share values between viewport & terminal packages)
+	TaskBarHeight     float32 = 0.1
+	TaskBarDepth      float32 = 11
+	TaskBarBorderSpan float32 = TaskBarHeight / 12
+	TaskBarCharWid    float32 = TaskBarHeight/2 - TaskBarBorderSpan*2
+)
 
 func At(path, s string) { //report the func location of currently running code
 	//centering assumes 80 columns
@@ -36,7 +44,7 @@ func At(path, s string) { //report the func location of currently running code
 	println(bar + s + "()")
 }
 
-// params: float value, negativemost, & positivemost bounds
+//params: float value, negativemost, & positivemost bounds
 func Clamp(f, negBoundary, posBoundary float32) float32 {
 	if f < negBoundary {
 		f = negBoundary
@@ -49,7 +57,7 @@ func Clamp(f, negBoundary, posBoundary float32) float32 {
 	return f
 }
 
-// params: Rectangle, negativemost, & positivemost bounds
+//params: Rectangle, negativemost, & positivemost bounds
 func ClampLeftAndRightOf(r *Rectangle, negBoundary, posBoundary float32) *Rectangle {
 	if r.Left < negBoundary {
 		r.Left = negBoundary
@@ -61,7 +69,7 @@ func ClampLeftAndRightOf(r *Rectangle, negBoundary, posBoundary float32) *Rectan
 	return r
 }
 
-// WARNING: given arguments must be in range
+//WARNING: given arguments must be in range
 func Insert(slice []string, index int, value string) []string {
 	slice = slice[0 : len(slice)+1]      // grow the slice by one element
 	copy(slice[index+1:], slice[index:]) // move the upper part of the slice out of the way and open a hole
@@ -69,8 +77,8 @@ func Insert(slice []string, index int, value string) []string {
 	return slice
 }
 
-// i believe JUSTIN created this, when he attempted to implement autoscroll
-// ("similar to insert method, instead moves current slice element and appends to one above")
+//i believe JUSTIN created this, when he attempted to implement autoscroll
+//("similar to insert method, instead moves current slice element and appends to one above")
 func Remove(slice []string, index int, value string) []string {
 	slice = append(slice[:index], slice[index+1:]...)
 	slice[index-1] = slice[index-1] + value

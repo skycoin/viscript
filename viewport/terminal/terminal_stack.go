@@ -62,7 +62,8 @@ func (ts *TerminalStack) AddWithFixedSizeState(fixedSize bool) msg.TerminalId { 
 			ts.nextRect.Top,
 			ts.nextRect.Right,
 			ts.nextRect.Bottom,
-			ts.nextRect.Left}}
+			ts.nextRect.Left},
+		TaskBarButton: &app.Rectangle{}}
 	ts.TermMap[tid].Init()
 	ts.TermMap[tid].FixedSize = fixedSize
 	println("AddWithFixed...... - ts.TermMap[tid].TerminalId:", ts.TermMap[tid].TerminalId)
@@ -74,13 +75,8 @@ func (ts *TerminalStack) AddWithFixedSizeState(fixedSize bool) msg.TerminalId { 
 	ts.nextRect.Left += ts.nextOffset.X
 
 	ts.SetupTerminal(tid)
+	ts.setTaskbarButtonRectangles()
 	return tid
-}
-
-func (ts *TerminalStack) Tick() {
-	for _, term := range ts.TermMap {
-		term.Tick()
-	}
 }
 
 func (ts *TerminalStack) Defocus() {
@@ -163,6 +159,8 @@ func (ts *TerminalStack) Remove(id msg.TerminalId) {
 	//println("len of TermMap:", len(ts.TermMap))
 	delete(ts.TermMap, trash)
 	//println("len of TermMap:", len(ts.TermMap))
+
+	ts.setTaskbarButtonRectangles()
 }
 
 func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
@@ -251,5 +249,30 @@ func (ts *TerminalStack) SetFocused(topmostId msg.TerminalId) {
 	for _, t := range theRest {
 		newZ -= 0.2
 		t.Depth = newZ
+	}
+}
+
+func (ts *TerminalStack) Tick() {
+	for _, term := range ts.TermMap {
+		term.Tick()
+	}
+}
+
+//
+//
+//private
+//
+//
+
+func (ts *TerminalStack) setTaskbarButtonRectangles() {
+	x := -gl.CanvasExtents.X + app.TaskBarHeight
+	//TODO!!!
+	//USE THIS TO SHRINK BUTTONS TO FIT canvas width      gl.CanvasExtents.X
+
+	for _, term := range ts.TermMap {
+		currTextWid := app.TaskBarCharWid*float32(len(term.TabText)) + app.TaskBarBorderSpan*2
+		term.TaskBarButton.Left = x
+		term.TaskBarButton.Right = x + currTextWid
+		x += currTextWid
 	}
 }

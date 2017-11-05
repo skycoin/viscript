@@ -33,10 +33,11 @@ type Terminal struct {
 
 	//float/GL space
 	//(mouse pos events & frame buffer sizes are the only things that use pixels)
-	BorderSize float32
-	CharSize   app.Vec2F
-	Bounds     *app.Rectangle
-	Depth      float32 //0 for lowest
+	BorderSize    float32
+	CharSize      app.Vec2F
+	Bounds        *app.Rectangle
+	TaskBarButton *app.Rectangle //(...bounds)
+	Depth         float32        //0 for lowest/furthest
 }
 
 func (t *Terminal) Init() {
