@@ -265,14 +265,18 @@ func (ts *TerminalStack) Tick() {
 //
 
 func (ts *TerminalStack) setTaskbarButtonRectangles() {
-	x := -gl.CanvasExtents.X + app.TaskBarHeight
+	x := -gl.CanvasExtents.X + app.TaskBarHeight - app.TaskBarBorderSpan
 	//TODO!!!
-	//USE THIS TO SHRINK BUTTONS TO FIT canvas width      gl.CanvasExtents.X
+	//SHRINK BUTTONS TO FIT canvas width
 
 	for _, term := range ts.TermMap {
-		currTextWid := app.TaskBarCharWid*float32(len(term.TabText)) + app.TaskBarBorderSpan*2
+		currButtonWid := app.TaskBarCharWid*float32(len(term.TabText)) + app.TaskBarBorderSpan*2
 		term.TaskBarButton.Left = x
-		term.TaskBarButton.Right = x + currTextWid
-		x += currTextWid
+		//term.TaskBarButton.Right = x + currButtonWid
+		//(actually, we can't know the .TabText width until drabTabId() sets it,
+		//...so we set it per frame in drawTerminalButtons() )
+		term.TaskBarButton.Bottom = -gl.CanvasExtents.Y + app.TaskBarBorderSpan
+		term.TaskBarButton.Top = -gl.CanvasExtents.Y - app.TaskBarBorderSpan + app.TaskBarHeight
+		x += currButtonWid
 	}
 }

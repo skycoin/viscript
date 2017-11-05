@@ -72,14 +72,16 @@ func drawTerminalButtons() {
 			gl.SetColor(gl.Gray)
 		}
 
+		max := len(term.TabText)
+		term.TaskBarButton.Right = charBounds.Left + float32(max)*app.TaskBarCharWid + app.TaskBarBorderSpan
+
 		//draw button background
 		gl.Draw9SlicedRect(
 			gl.Pic_GradientBorder,
-			buttonBounds,
+			term.TaskBarButton,
 			app.TaskBarDepth)
 
 		//draw the id # text
-		max := len(term.TabText)
 		for i := 0; i < max; i++ {
 			gl.DrawCharAtRect(rune(term.TabText[i]), charBounds, app.TaskBarDepth)
 			charBounds.Left += app.TaskBarCharWid
