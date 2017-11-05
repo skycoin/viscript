@@ -18,8 +18,9 @@ type TerminalStack struct {
 	FocusedId msg.TerminalId
 	TermMap   map[msg.TerminalId]*Terminal
 
-	//private
-	//next/new terminal spawn vars
+	//private (next/new terminal spawn vars)
+	w          float32 //default width
+	h          float32 //default height
 	nextRect   app.Rectangle
 	nextDepth  float32
 	nextOffset app.Vec2F //how far from previous terminal
@@ -28,17 +29,17 @@ type TerminalStack struct {
 func (ts *TerminalStack) Init() {
 	top := gl.CanvasExtents.Y
 	left := -gl.CanvasExtents.X
-	w := gl.CanvasExtents.X * 1.5 //width of terminal window
-	h := gl.CanvasExtents.Y * 1.5 //height " " "
+	ts.w = gl.CanvasExtents.X * 1.5
+	ts.h = gl.CanvasExtents.Y * 1.5
 
 	ts.TermMap = make(map[msg.TerminalId]*Terminal)
-	ts.nextOffset.X = (gl.CanvasExtents.X*2 - w) / 2
-	ts.nextOffset.Y = (gl.CanvasExtents.Y*2 - h) / 2
+	ts.nextOffset.X = (gl.CanvasExtents.X*2 - ts.w) / 2
+	ts.nextOffset.Y = (gl.CanvasExtents.Y*2 - ts.h) / 2
 
 	ts.nextRect = app.Rectangle{
 		top,
-		left + w,
-		top - h,
+		left + ts.w,
+		top - ts.h,
 		left}
 
 	//initial terminal window
@@ -69,11 +70,24 @@ func (ts *TerminalStack) AddWithFixedSizeState(fixedSize bool) msg.TerminalId { 
 	println("AddWithFixed...... - ts.TermMap[tid].TerminalId:", ts.TermMap[tid].TerminalId)
 	ts.SetFocused(ts.TermMap[tid].TerminalId)
 
+	//set next Terminal rectangle
 	ts.nextRect.Top -= ts.nextOffset.Y
 	ts.nextRect.Right += ts.nextOffset.X
 	ts.nextRect.Bottom -= ts.nextOffset.Y
 	ts.nextRect.Left += ts.nextOffset.X
 
+	//wrap it around when outside visible range
+	if ts.nextRect.Top < -gl.CanvasExtents.Y+app.TaskBarHeight {
+		ts.nextRect.Top = gl.CanvasExtents.Y
+		ts.nextRect.Bottom = gl.CanvasExtents.Y - ts.h
+	}
+
+	if ts.nextRect.Left > gl.CanvasExtents.X {
+		ts.nextRect.Left = -gl.CanvasExtents.X
+		ts.nextRect.Right = -gl.CanvasExtents.X + ts.w
+	}
+
+	//finalize
 	ts.SetupTerminal(tid)
 	ts.setTaskbarButtonRectangles()
 	return tid
