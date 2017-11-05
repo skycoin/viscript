@@ -78,10 +78,18 @@ func drawTerminalButtons() {
 			term.TaskBarButton,
 			app.TaskBarDepth)
 
-		//draw the id # text
+		//prepare for id text
+		var textMax float32
 		//when abbreviating text, append "..." chars...
 		dotWid := app.TaskBarCharWid / 2 //...but at half width
-		textMax := term.TaskBarButton.Right - app.TaskBarBorderSpan - 3*dotWid
+
+		if term.TaskBarButton.Width() < float32(len(term.TaskBarButtonText))*app.TaskBarCharWid {
+			textMax = term.TaskBarButton.Right - app.TaskBarBorderSpan - 3*dotWid
+		} else {
+			textMax = term.TaskBarButton.Right
+		}
+
+		//draw id text
 		max := len(term.TaskBarButtonText)
 		for i := 0; i < max; i++ {
 			if charBounds.Right <= textMax {

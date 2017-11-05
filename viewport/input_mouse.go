@@ -35,7 +35,6 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 	foc := t.Terms.GetFocusedTerminal()
 
 	if foc == nil {
-		println("onMouseCursorPos()   -   foc == nil")
 		return
 	}
 
@@ -296,7 +295,6 @@ func getTerminalModificationByZone() int {
 	foc := t.Terms.GetFocusedTerminal()
 
 	if foc == nil {
-		println("onMouseCursorPos()   -   foc == nil")
 		return TermMod_None
 	}
 

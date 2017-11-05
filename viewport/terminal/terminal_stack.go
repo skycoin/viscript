@@ -271,6 +271,7 @@ func (ts *TerminalStack) setTaskbarButtonRectangles() {
 	x := -gl.CanvasExtents.X + app.TaskBarHeight - app.TaskBarBorderSpan
 	//leftover width for taskbar buttons
 	lWid := gl.CanvasExtents.X - x
+	lWid -= app.TaskBarBorderSpan //for right edge of taskbar border
 	maxWid /* per Terminal button */ := lWid / float32(len(ts.TermMap))
 
 	for _, term := range ts.TermMap {
