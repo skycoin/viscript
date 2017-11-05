@@ -265,18 +265,28 @@ func (ts *TerminalStack) Tick() {
 //
 
 func (ts *TerminalStack) setTaskbarButtonRectangles() {
+	//TODO: FIXME:  call this when app window size changes
+
+	//skip start button, then plot positions going right
 	x := -gl.CanvasExtents.X + app.TaskBarHeight - app.TaskBarBorderSpan
-	//TODO!!!
-	//SHRINK BUTTONS TO FIT canvas width
+	//leftover width for taskbar buttons
+	lWid := gl.CanvasExtents.X - x
+	maxWid /* per Terminal button */ := lWid / float32(len(ts.TermMap))
+	println("gl.CanvasExtents.X: ", gl.CanvasExtents.X)
+	println("lWid: ", lWid)
 
 	for _, term := range ts.TermMap {
 		currButtonWid := app.TaskBarCharWid*float32(len(term.TaskBarButtonText)) + app.TaskBarBorderSpan*2
-		term.TaskBarButton.Left = x
-		//term.TaskBarButton.Right = x + currButtonWid
-		//(actually, we can't know the .TabText width until drabTabId() sets it,
-		//...so we set it per frame in drawTerminalButtons() )
 		term.TaskBarButton.Bottom = -gl.CanvasExtents.Y + app.TaskBarBorderSpan
 		term.TaskBarButton.Top = -gl.CanvasExtents.Y - app.TaskBarBorderSpan + app.TaskBarHeight
-		x += currButtonWid
+		term.TaskBarButton.Left = x
+
+		if currButtonWid > maxWid {
+			x += maxWid
+		} else {
+			x += currButtonWid
+		}
+
+		term.TaskBarButton.Right = x
 	}
 }
