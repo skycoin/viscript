@@ -64,8 +64,8 @@ func (ts *TerminalStack) AddWithFixedSizeState(fixedSize bool) msg.TerminalId { 
 			ts.nextRect.Bottom,
 			ts.nextRect.Left},
 		TaskBarButton: &app.Rectangle{}}
-	ts.TermMap[tid].Init()
 	ts.TermMap[tid].FixedSize = fixedSize
+	ts.TermMap[tid].Init()
 	println("AddWithFixed...... - ts.TermMap[tid].TerminalId:", ts.TermMap[tid].TerminalId)
 	ts.SetFocused(ts.TermMap[tid].TerminalId)
 
@@ -270,7 +270,7 @@ func (ts *TerminalStack) setTaskbarButtonRectangles() {
 	//SHRINK BUTTONS TO FIT canvas width
 
 	for _, term := range ts.TermMap {
-		currButtonWid := app.TaskBarCharWid*float32(len(term.TabText)) + app.TaskBarBorderSpan*2
+		currButtonWid := app.TaskBarCharWid*float32(len(term.TaskBarButtonText)) + app.TaskBarBorderSpan*2
 		term.TaskBarButton.Left = x
 		//term.TaskBarButton.Right = x + currButtonWid
 		//(actually, we can't know the .TabText width until drabTabId() sets it,

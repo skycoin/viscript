@@ -3,7 +3,6 @@ package terminal
 import (
 	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/viewport/gl"
-	"strconv"
 )
 
 func (ts *TerminalStack) DrawTextMode() { //for running headless mode
@@ -98,17 +97,7 @@ func (ts *TerminalStack) Draw() {
 func drawIdTab(t *Terminal, z float32) {
 	//...with a rectangle whose bottom lip/edge will be covered by main window
 
-	if t.TabText == "" {
-		t.TabText = strconv.Itoa(int(t.TerminalId))
-
-		if t.FixedSize {
-			t.TabText += " (FixedSize)"
-		}
-
-		t.TabText += "  " //for tab size calculations (allowing space for close button)
-	}
-
-	tr := t.GetTabBounds() //text rectangle (initially used to draw whole tab background)
+	tr := t.GetTabBounds() //text rectangle (but used to draw whole tab background 1st)
 
 	//id tab background
 	gl.Draw9SlicedRect(gl.Pic_GradientBorder, tr, z)

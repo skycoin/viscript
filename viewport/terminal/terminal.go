@@ -5,6 +5,7 @@ import (
 	"github.com/skycoin/viscript/config"
 	"github.com/skycoin/viscript/hypervisor"
 	"github.com/skycoin/viscript/msg"
+	"strconv"
 )
 
 const (
@@ -18,12 +19,13 @@ const (
 var numOOB int //number of out of bound characters
 
 type Terminal struct {
-	TerminalId   msg.TerminalId
-	TabText      string
-	FixedSize    bool
-	AttachedTask msg.TaskId
-	OutChannelId uint32 //id of pubsub channel
-	InChannel    chan []byte
+	TerminalId        msg.TerminalId
+	TabText           string
+	TaskBarButtonText string
+	FixedSize         bool
+	AttachedTask      msg.TaskId
+	OutChannelId      uint32 //id of pubsub channel
+	InChannel         chan []byte
 
 	//int/character grid space
 	CurrFlowPos app.Vec2I //current flow insert position
@@ -47,10 +49,12 @@ func (t *Terminal) Init() {
 	t.InChannel = make(chan []byte, msg.ChannelCapacity)
 	t.BorderSize = 0.013
 	t.GridSize = app.Vec2I{80, 32}
+	t.setTabAndTaskBarButtonText()
 	t.setupNewGrid()
 	t.CharSize.X = (t.Bounds.Width() - t.BorderSize*2) / float32(t.GridSize.X)
 	t.CharSize.Y = (t.Bounds.Height() - t.BorderSize*2) / float32(t.GridSize.Y)
 
+	//set grid's initial data
 	t.PutString(app.HelpText)
 	t.SetStringAt(0, 1, ">")
 	t.SetCursor(1, 1)
@@ -228,6 +232,18 @@ func (t *Terminal) posIsValidElsePrint(X, Y int) bool { //...any errors to OS bo
 	}
 
 	return true
+}
+
+func (t *Terminal) setTabAndTaskBarButtonText() {
+	s := strconv.Itoa(int(t.TerminalId))
+	t.TaskBarButtonText = s
+
+	if t.FixedSize {
+		s += " (FixedSize)"
+	}
+
+	s += "  " //for tab size calculations (allowing space for close button)
+	t.TabText = s
 }
 
 func (t *Terminal) setupNewGrid() {
