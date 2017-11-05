@@ -79,10 +79,23 @@ func drawTerminalButtons() {
 			app.TaskBarDepth)
 
 		//draw the id # text
+		//when abbreviating text, append "..." chars...
+		dotWid := app.TaskBarCharWid / 2 //...but at half width
+		textMax := term.TaskBarButton.Right - app.TaskBarBorderSpan - 3*dotWid
 		max := len(term.TaskBarButtonText)
 		for i := 0; i < max; i++ {
-			if charBounds.Right <= term.TaskBarButton.Right-app.TaskBarBorderSpan {
+			if charBounds.Right <= textMax {
 				gl.DrawCharAtRect(rune(term.TaskBarButtonText[i]), charBounds, app.TaskBarDepth)
+			} else { //draw 3 dots
+				charBounds.Right = charBounds.Left + dotWid
+
+				for i := 0; i < 3; i++ {
+					gl.DrawCharAtRect('.', charBounds, app.TaskBarDepth)
+					charBounds.Left += dotWid
+					charBounds.Right += dotWid
+				}
+
+				break
 			}
 
 			charBounds.Left += app.TaskBarCharWid
