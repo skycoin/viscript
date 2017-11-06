@@ -1,3 +1,5 @@
+![viscript logo](https://user-images.githubusercontent.com/26845312/32426766-38b1291e-c282-11e7-8688-1223864e88dc.png)
+
 # viscript
 
 [![GoDoc](
