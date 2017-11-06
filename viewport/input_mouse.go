@@ -110,12 +110,32 @@ func actOnPress(m msg.MessageMouseButton) {
 			-gl.CanvasExtents.Y,
 			-gl.CanvasExtents.X}
 
+		//detect clicks in start menu
+		if startMenuOpen {
+			//detect clicks on option buttons
+			for _, option := range startMenu {
+				if mouse.PointerIsInside(&option.Bounds) {
+					switch option.Name {
+
+					case "New Terminal":
+						t.Terms.Add()
+
+					}
+
+					startMenuOpen = false
+					break
+				}
+			}
+
+			startMenuOpen = false
+		}
+
 		//detect clicks in taskbar
 		if mouse.PointerIsInside(cr) {
 			cr.Right = cr.Left + app.TaskBarHeight - app.TaskBarBorderSpan //shrink to start button size
 
 			if mouse.PointerIsInside(cr) { //(start button)
-				startMenuOpen = true
+				startMenuOpen = !startMenuOpen
 				break
 			}
 
