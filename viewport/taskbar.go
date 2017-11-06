@@ -7,14 +7,23 @@ import (
 )
 
 var (
+	startMenuOpen bool
+	startMenu     []MenuOption
+	//current (iterators)
 	buttonBounds *app.Rectangle
 	charBounds   *app.Rectangle
 )
+
+type MenuOption struct {
+	Name   string
+	Bounds app.Rectangle
+}
 
 func drawTaskBar() {
 	gl.SetColor(gl.Gray)
 	drawTaskBarBackground()
 	drawStartButton()
+	drawStartMenu()
 	drawTerminalButtons()
 }
 
@@ -32,6 +41,10 @@ func drawTaskBarBackground() {
 }
 
 func drawStartButton() {
+	if startMenuOpen {
+		gl.SetColor(gl.White)
+	}
+
 	//now make buttons inset from task bar
 	buttonBounds.Top -= app.TaskBarBorderSpan
 	buttonBounds.Bottom += app.TaskBarBorderSpan
@@ -59,6 +72,36 @@ func drawStartButton() {
 
 	charBounds.Left += app.TaskBarCharWid
 	charBounds.Right += app.TaskBarCharWid
+}
+
+func drawStartMenu() {
+	gl.SetColor(gl.Gray)
+
+	if startMenuOpen {
+		if len(startMenu) < 1 {
+			maxOptionWid := gl.CanvasExtents.X //FIX this temp insanity
+			y := -gl.CanvasExtents.Y + app.TaskBarHeight
+			rect := app.Rectangle{
+				y + app.TaskBarHeight,
+				-gl.CanvasExtents.X + maxOptionWid,
+				y,
+				-gl.CanvasExtents.X}
+			startMenu = append(startMenu, MenuOption{"New Terminal", rect})
+			rect.Top += app.TaskBarHeight
+			rect.Bottom += app.TaskBarHeight
+			startMenu = append(startMenu, MenuOption{"Unimplemented", rect})
+		}
+
+		for _, option := range startMenu {
+			//draw option background
+			gl.Draw9SlicedRect(
+				gl.Pic_GradientBorder,
+				&option.Bounds,
+				app.TaskBarDepth)
+
+		}
+	}
+
 }
 
 func drawTerminalButtons() {

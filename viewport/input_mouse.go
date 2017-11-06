@@ -104,20 +104,28 @@ func actOnPress(m msg.MessageMouseButton) {
 		mouse.LeftButtonIsDown = true
 		mouse.DeltaSinceLeftClick = app.Vec2F{0, 0}
 
-		tb := &app.Rectangle{ //taskbar rect
+		cr := &app.Rectangle{ //current rect (starting with ENTIRE taskbar)
 			-gl.CanvasExtents.Y + app.TaskBarHeight,
 			gl.CanvasExtents.X,
 			-gl.CanvasExtents.Y,
 			-gl.CanvasExtents.X}
 
 		//detect clicks in taskbar
-		if mouse.PointerIsInside(tb) {
+		if mouse.PointerIsInside(cr) {
+			cr.Right = cr.Left + app.TaskBarHeight - app.TaskBarBorderSpan //shrink to start button size
+
+			if mouse.PointerIsInside(cr) { //(start button)
+				startMenuOpen = true
+				break
+			}
+
+			//detect clicks in Terminal buttons
 			for _, term := range t.Terms.TermMap {
 				if mouse.PointerIsInside(term.TaskBarButton) {
 					t.Terms.SetFocused(term.TerminalId)
 				}
 			}
-		} else { //respond to any desktop  clicks
+		} else { //respond to any desktop clicks
 			closeOrFocusOnTopmostTermThatPointerTouches()
 			currentTerminalModification = getTerminalModificationByZone()
 		}
