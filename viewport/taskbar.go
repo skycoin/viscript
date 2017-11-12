@@ -23,8 +23,8 @@ func drawTaskBar() {
 	gl.SetColor(gl.Gray)
 	drawTaskBarBackground()
 	drawStartButton()
-	drawStartMenu()
 	drawTerminalButtons()
+	drawStartMenu()
 }
 
 func drawTaskBarBackground() {
@@ -56,12 +56,7 @@ func drawStartButton() {
 		buttonBounds,
 		app.TaskBarDepth)
 
-	charBounds = &app.Rectangle{
-		buttonBounds.Top - app.TaskBarBorderSpan,
-		buttonBounds.Right - app.TaskBarBorderSpan,
-		buttonBounds.Bottom + app.TaskBarBorderSpan,
-		buttonBounds.Left + app.TaskBarBorderSpan}
-
+	charBounds = getCharBoundsInsetFrom(buttonBounds)
 	buttonBounds.Left += buttonBounds.Width()
 	buttonBounds.Right += buttonBounds.Width()
 
@@ -75,9 +70,9 @@ func drawStartButton() {
 }
 
 func drawStartMenu() {
-	gl.SetColor(gl.Gray)
-
 	if startMenuOpen {
+		gl.SetColor(gl.Gray)
+
 		if len(startMenu) < 1 {
 			maxOptionWid := gl.CanvasExtents.X //FIX this temp insanity
 			y := -gl.CanvasExtents.Y + app.TaskBarHeight
@@ -99,6 +94,15 @@ func drawStartMenu() {
 				&option.Bounds,
 				app.TaskBarDepth)
 
+			//draw text
+			charBounds = getCharBoundsInsetFrom(&option.Bounds)
+			charBounds.Right = charBounds.Left + app.TaskBarCharWid
+
+			for i := 0; i < len(option.Name); i++ {
+				gl.DrawCharAtRect(rune(option.Name[i]), charBounds, app.TaskBarDepth)
+				charBounds.Left += app.TaskBarCharWid
+				charBounds.Right += app.TaskBarCharWid
+			}
 		}
 	}
 
@@ -153,4 +157,12 @@ func drawTerminalButtons() {
 			charBounds.Right += app.TaskBarCharWid
 		}
 	}
+}
+
+func getCharBoundsInsetFrom(bounds *app.Rectangle) *app.Rectangle {
+	return &app.Rectangle{
+		bounds.Top - app.TaskBarBorderSpan,
+		bounds.Right - app.TaskBarBorderSpan,
+		bounds.Bottom + app.TaskBarBorderSpan,
+		bounds.Left + app.TaskBarBorderSpan}
 }
