@@ -16,8 +16,9 @@ var (
 )
 
 type MenuOption struct {
-	Name   string
-	Bounds *app.Rectangle
+	Name        string
+	Highlighted bool
+	Bounds      *app.Rectangle
 }
 
 func drawTaskBar() {
@@ -72,32 +73,16 @@ func drawStartButton() {
 
 func drawStartMenu() {
 	if startMenuOpen {
-		gl.SetColor(gl.Gray)
-
-		if len(startMenu) < 1 {
-			startMenu = append(startMenu, &MenuOption{Name: "New Terminal"})
-			startMenu = append(startMenu, &MenuOption{Name: "Unimplemented"})
-
-			//ensure longest label length is stored
-			for _, option := range startMenu {
-				if startMenuOptionNameMax < len(option.Name) {
-					startMenuOptionNameMax = len(option.Name)
-				}
-			}
-
-			//set option button bounds
-			y := -gl.CanvasExtents.Y + app.TaskBarHeight
-			left := -gl.CanvasExtents.X
-			right := float32(startMenuOptionNameMax) * app.TaskBarCharWid
-			right += left + app.TaskBarBorderSpan*2
-
-			for _, option := range startMenu {
-				option.Bounds = &app.Rectangle{y + app.TaskBarHeight, right, y, left}
-				y += app.TaskBarHeight
-			}
-		}
+		setupMenuIfNeeded()
 
 		for _, option := range startMenu {
+			if option.Highlighted {
+				gl.SetColor(gl.White)
+
+			} else {
+				gl.SetColor(gl.Gray)
+			}
+
 			//draw option background
 			gl.Draw9SlicedRect(
 				gl.Pic_GradientBorder,
@@ -115,7 +100,31 @@ func drawStartMenu() {
 			}
 		}
 	}
+}
 
+func setupMenuIfNeeded() {
+	if len(startMenu) < 1 {
+		startMenu = append(startMenu, &MenuOption{Name: "New Terminal"})
+		startMenu = append(startMenu, &MenuOption{Name: "Unimplemented"})
+
+		//ensure longest label length is stored
+		for _, option := range startMenu {
+			if startMenuOptionNameMax < len(option.Name) {
+				startMenuOptionNameMax = len(option.Name)
+			}
+		}
+
+		//set option button bounds
+		y := -gl.CanvasExtents.Y + app.TaskBarHeight
+		left := -gl.CanvasExtents.X
+		right := float32(startMenuOptionNameMax) * app.TaskBarCharWid
+		right += left + app.TaskBarBorderSpan*2
+
+		for _, option := range startMenu {
+			option.Bounds = &app.Rectangle{y + app.TaskBarHeight, right, y, left}
+			y += app.TaskBarHeight
+		}
+	}
 }
 
 func drawTaskButtons() {

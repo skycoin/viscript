@@ -32,8 +32,18 @@ func onMouseCursorPos(m msg.MessageMousePos) {
 
 	mouse.Update(app.Vec2F{float32(m.X), float32(m.Y)})
 
-	foc := t.Terms.GetFocusedTerminal()
+	//detect hovering over start menu options
+	if startMenuOpen {
+		for _, option := range startMenu {
+			if mouse.PointerIsInside(option.Bounds) {
+				option.Highlighted = true
+			} else {
+				option.Highlighted = false
+			}
+		}
+	}
 
+	foc := t.Terms.GetFocusedTerminal()
 	if foc == nil {
 		return
 	}
