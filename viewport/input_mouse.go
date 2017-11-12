@@ -128,7 +128,10 @@ func actOnPress(m msg.MessageMouseButton) {
 				if mouse.PointerIsInside(option.Bounds) {
 					switch option.Name {
 
-					case "New Terminal":
+					case START_MENU_OPTION_Defocus:
+						t.Terms.Defocus()
+
+					case START_MENU_OPTION_NewTerminal:
 						t.Terms.Add()
 
 					}

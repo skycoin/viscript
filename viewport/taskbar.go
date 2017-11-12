@@ -6,6 +6,11 @@ import (
 	"github.com/skycoin/viscript/viewport/terminal"
 )
 
+const (
+	START_MENU_OPTION_Defocus     = "Defocus"
+	START_MENU_OPTION_NewTerminal = "New Terminal"
+)
+
 var (
 	startMenuOpen          bool
 	startMenuOptionNameMax int //the longest option label/text
@@ -104,8 +109,8 @@ func drawStartMenu() {
 
 func setupMenuIfNeeded() {
 	if len(startMenu) < 1 {
-		startMenu = append(startMenu, &MenuOption{Name: "New Terminal"})
-		startMenu = append(startMenu, &MenuOption{Name: "Unimplemented"})
+		startMenu = append(startMenu, &MenuOption{Name: START_MENU_OPTION_Defocus})
+		startMenu = append(startMenu, &MenuOption{Name: START_MENU_OPTION_NewTerminal})
 
 		//ensure longest label length is stored
 		for _, option := range startMenu {

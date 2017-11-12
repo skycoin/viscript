@@ -25,7 +25,7 @@ func (st *State) commandHelp() {
 	st.PrintLn("list_terms:            List all terminal ids.")
 	st.PrintLn("focus <id>:            Changes terminal & input focus.")
 	st.PrintLn("defocus:               Defocus the current terminal.")
-	st.PrintLn("move_term:             Move terminal to given X & Y values")
+	st.PrintLn("move_term:             Move/offset terminal by given X & Y values")
 	st.PrintLn("new_term:              Add new terminal.")
 	st.PrintLn("------ Apps -----------")
 	st.PrintLn("apps:                  Display all available apps with descriptions.")
@@ -218,7 +218,6 @@ func (st *State) commandShutDown(args []string) {
 }
 
 func (st *State) commandResourceUsage(args []string) {
-	app.At(cp, "commandResourceUsage")
 	if len(args) < 1 {
 		st.PrintError("No task id passed! e.g. res_usage 1")
 		return
