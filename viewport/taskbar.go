@@ -125,8 +125,9 @@ func setupMenuIfNeeded() {
 		right := float32(startMenuOptionNameMax) * app.TaskBarCharWid
 		right += left + app.TaskBarBorderSpan*2
 
-		for _, option := range startMenu {
-			option.Bounds = &app.Rectangle{y + app.TaskBarHeight, right, y, left}
+		//start with the last option, which borders the taskbar
+		for i := len(startMenu) - 1; i >= 0; i-- {
+			startMenu[i].Bounds = &app.Rectangle{y + app.TaskBarHeight, right, y, left}
 			y += app.TaskBarHeight
 		}
 	}
