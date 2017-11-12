@@ -115,7 +115,7 @@ func actOnPress(m msg.MessageMouseButton) {
 		if startMenuOpen {
 			//detect clicks on option buttons
 			for _, option := range startMenu {
-				if mouse.PointerIsInside(&option.Bounds) {
+				if mouse.PointerIsInside(option.Bounds) {
 					switch option.Name {
 
 					case "New Terminal":

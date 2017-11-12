@@ -7,8 +7,9 @@ import (
 )
 
 var (
-	startMenuOpen bool
-	startMenu     []MenuOption
+	startMenuOpen          bool
+	startMenuOptionNameMax int //the longest option label/text
+	startMenu              []*MenuOption
 	//current (iterators)
 	buttonBounds *app.Rectangle
 	charBounds   *app.Rectangle
@@ -16,14 +17,14 @@ var (
 
 type MenuOption struct {
 	Name   string
-	Bounds app.Rectangle
+	Bounds *app.Rectangle
 }
 
 func drawTaskBar() {
 	gl.SetColor(gl.Gray)
 	drawTaskBarBackground()
 	drawStartButton()
-	drawTerminalButtons()
+	drawTaskButtons()
 	drawStartMenu()
 }
 
@@ -74,28 +75,37 @@ func drawStartMenu() {
 		gl.SetColor(gl.Gray)
 
 		if len(startMenu) < 1 {
-			maxOptionWid := gl.CanvasExtents.X //FIX this temp insanity
+			startMenu = append(startMenu, &MenuOption{Name: "New Terminal"})
+			startMenu = append(startMenu, &MenuOption{Name: "Unimplemented"})
+
+			//ensure longest label length is stored
+			for _, option := range startMenu {
+				if startMenuOptionNameMax < len(option.Name) {
+					startMenuOptionNameMax = len(option.Name)
+				}
+			}
+
+			//set option button bounds
 			y := -gl.CanvasExtents.Y + app.TaskBarHeight
-			rect := app.Rectangle{
-				y + app.TaskBarHeight,
-				-gl.CanvasExtents.X + maxOptionWid,
-				y,
-				-gl.CanvasExtents.X}
-			startMenu = append(startMenu, MenuOption{"New Terminal", rect})
-			rect.Top += app.TaskBarHeight
-			rect.Bottom += app.TaskBarHeight
-			startMenu = append(startMenu, MenuOption{"Unimplemented", rect})
+			left := -gl.CanvasExtents.X
+			right := float32(startMenuOptionNameMax) * app.TaskBarCharWid
+			right += left + app.TaskBarBorderSpan*2
+
+			for _, option := range startMenu {
+				option.Bounds = &app.Rectangle{y + app.TaskBarHeight, right, y, left}
+				y += app.TaskBarHeight
+			}
 		}
 
 		for _, option := range startMenu {
 			//draw option background
 			gl.Draw9SlicedRect(
 				gl.Pic_GradientBorder,
-				&option.Bounds,
+				option.Bounds,
 				app.TaskBarDepth)
 
 			//draw text
-			charBounds = getCharBoundsInsetFrom(&option.Bounds)
+			charBounds = getCharBoundsInsetFrom(option.Bounds)
 			charBounds.Right = charBounds.Left + app.TaskBarCharWid
 
 			for i := 0; i < len(option.Name); i++ {
@@ -108,7 +118,7 @@ func drawStartMenu() {
 
 }
 
-func drawTerminalButtons() {
+func drawTaskButtons() {
 	for _, term := range terminal.Terms.TermMap {
 		charBounds.Left = term.TaskBarButton.Left + app.TaskBarBorderSpan
 		charBounds.Right = charBounds.Left + app.TaskBarCharWid
