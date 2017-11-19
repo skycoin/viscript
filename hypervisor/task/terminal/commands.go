@@ -214,6 +214,7 @@ func (st *State) commandShutDown(args []string) {
 		st.PrintError(err.Error())
 		return
 	}
+
 	st.PrintLn(fmt.Sprintf("shutdown pid %d", resp.Pid))
 }
 

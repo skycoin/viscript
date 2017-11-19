@@ -1,3 +1,11 @@
+/*
+
+IF START BUTTON EVER NEEDS TO CHANGE ITS OPTIONS AT RUNTIME,
+THESE "STARTMENU" IDENTIFIERS (and all related code)
+WILL NEED TO EXAMINED & EXTENDED
+
+*/
+
 package viewport
 
 import (
@@ -15,6 +23,7 @@ var (
 	startMenuOpen          bool
 	startMenuOptionNameMax int //the longest option label/text
 	startMenu              []*MenuOption
+	previousCanvasExtents  app.Vec2F
 	//current (iterators)
 	buttonBounds *app.Rectangle
 	charBounds   *app.Rectangle
@@ -118,18 +127,24 @@ func setupMenuIfNeeded() {
 				startMenuOptionNameMax = len(option.Name)
 			}
 		}
+	}
 
-		//set option button bounds
-		y := -gl.CanvasExtents.Y + app.TaskBarHeight
-		left := -gl.CanvasExtents.X
-		right := float32(startMenuOptionNameMax) * app.TaskBarCharWid
-		right += left + app.TaskBarBorderSpan*2
+	if previousCanvasExtents != gl.CanvasExtents {
+		previousCanvasExtents = gl.CanvasExtents
+		setOptionButtonsBounds()
+	}
+}
 
-		//start with the last option, which borders the taskbar
-		for i := len(startMenu) - 1; i >= 0; i-- {
-			startMenu[i].Bounds = &app.Rectangle{y + app.TaskBarHeight, right, y, left}
-			y += app.TaskBarHeight
-		}
+func setOptionButtonsBounds() {
+	y := -gl.CanvasExtents.Y + app.TaskBarHeight
+	left := -gl.CanvasExtents.X
+	right := float32(startMenuOptionNameMax) * app.TaskBarCharWid
+	right += left + app.TaskBarBorderSpan*2
+
+	//start with the last option, which borders the taskbar
+	for i := len(startMenu) - 1; i >= 0; i-- {
+		startMenu[i].Bounds = &app.Rectangle{y + app.TaskBarHeight, right, y, left}
+		y += app.TaskBarHeight
 	}
 }
 
