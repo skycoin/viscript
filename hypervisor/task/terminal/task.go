@@ -95,11 +95,11 @@ func (ta *Task) GetText() string {
 	return ta.Text
 }
 
-func (ta *Task) GetIncomingChannel() chan []byte {
+func (ta *Task) GetInputChannel() chan []byte {
 	return ta.InChannel
 }
 
-func (ta *Task) GetOutChannelId() uint32 {
+func (ta *Task) GetOutputChannelId() uint32 {
 	return ta.OutChannelId
 }
 

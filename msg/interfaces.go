@@ -5,8 +5,8 @@ const ChannelCapacity = 4096 // FIXME?  might only need capacity of 2?
 
 type TaskInterface interface {
 	GetId() TaskId
-	GetIncomingChannel() chan []byte
-	GetOutChannelId() uint32
+	GetInputChannel() chan []byte
+	GetOutputChannelId() uint32
 	GetText() string
 	GetType() TaskType
 	Tick()

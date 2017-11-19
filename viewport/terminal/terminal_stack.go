@@ -158,7 +158,7 @@ func (ts *TerminalStack) Remove(id msg.TerminalId) {
 	}
 
 	attTask := ts.TermMap[trash].AttachedTask
-	outId := hypervisor.GlobalTasks.TaskMap[attTask].GetOutChannelId()
+	outId := hypervisor.GlobalTasks.TaskMap[attTask].GetOutputChannelId()
 
 	//remove both subscriptions from dbus
 	hypervisor.DbusGlobal.RemoveChannel(dbus.ChannelId(outId))                          //task
@@ -215,7 +215,7 @@ func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
 		pcid,
 		dbus.ResourceId(termId),
 		dbus.ResourceTypeTerminal,
-		tskIF.GetIncomingChannel())
+		tskIF.GetInputChannel())
 }
 
 func (ts *TerminalStack) SetFocused(topmostId msg.TerminalId) {
