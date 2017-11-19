@@ -89,7 +89,7 @@ func (ts *TerminalStack) AddWithFixedSizeState(fixedSize bool) msg.TerminalId { 
 
 	//finalize
 	ts.SetupTerminal(tid)
-	ts.setTaskbarButtonRectangles()
+	ts.SetTaskBarButtonBounds()
 	return tid
 }
 
@@ -174,7 +174,7 @@ func (ts *TerminalStack) Remove(id msg.TerminalId) {
 	delete(ts.TermMap, trash)
 	//println("len of TermMap:", len(ts.TermMap))
 
-	ts.setTaskbarButtonRectangles()
+	ts.SetTaskBarButtonBounds()
 }
 
 func (ts *TerminalStack) SetupTerminal(termId msg.TerminalId) {
@@ -272,13 +272,7 @@ func (ts *TerminalStack) Tick() {
 	}
 }
 
-//
-//
-//private
-//
-//
-
-func (ts *TerminalStack) setTaskbarButtonRectangles() {
+func (ts *TerminalStack) SetTaskBarButtonBounds() {
 	//TODO: FIXME:  call this when app window size changes
 
 	//skip start button, then plot positions going right

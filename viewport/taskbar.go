@@ -35,8 +35,15 @@ type MenuOption struct {
 	Bounds      *app.Rectangle
 }
 
-func drawTaskBar() {
+func drawTaskBarStartButtonAndMenu() {
 	gl.SetColor(gl.Gray)
+
+	if previousCanvasExtents != gl.CanvasExtents {
+		previousCanvasExtents = gl.CanvasExtents
+		setOptionButtonsBounds()
+		terminal.Terms.SetTaskBarButtonBounds()
+	}
+
 	drawTaskBarBackground()
 	drawStartButton()
 	drawTaskBarTerminalButtons()
@@ -127,10 +134,7 @@ func setupMenuIfNeeded() {
 				startMenuOptionNameMax = len(option.Name)
 			}
 		}
-	}
 
-	if previousCanvasExtents != gl.CanvasExtents {
-		previousCanvasExtents = gl.CanvasExtents
 		setOptionButtonsBounds()
 	}
 }

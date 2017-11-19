@@ -66,7 +66,7 @@ func Tick() {
 func UpdateDrawBuffer() {
 	igl.DrawBegin()
 	term.Terms.Draw()
-	drawTaskBar()
+	drawTaskBarStartButtonAndMenu()
 	igl.DrawEnd()
 }
 
