@@ -30,7 +30,7 @@ func drawTaskBar() {
 	gl.SetColor(gl.Gray)
 	drawTaskBarBackground()
 	drawStartButton()
-	drawTaskButtons()
+	drawTaskBarTerminalButtons()
 	drawStartMenu()
 }
 
@@ -133,7 +133,7 @@ func setupMenuIfNeeded() {
 	}
 }
 
-func drawTaskButtons() {
+func drawTaskBarTerminalButtons() {
 	for _, term := range terminal.Terms.TermMap {
 		charBounds.Left = term.TaskBarButton.Left + app.TaskBarBorderSpan
 		charBounds.Right = charBounds.Left + app.TaskBarCharWid

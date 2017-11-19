@@ -37,6 +37,7 @@ func (st *State) UnpackMessage(msgType uint16, message []byte) []byte {
 		var m msg.MessageTokenizedCommand
 		msg.MustDeserialize(message, &m)
 		st.onUserCommand(m.Command, m.Args)
+
 		app.At("hypervisor/task/terminal/msg_in", "TypeTokenizedCommand")
 
 	default:

@@ -105,7 +105,7 @@ func (c *Cli) CurrentCommandLineInLowerCase() string {
 
 func (c *Cli) CurrentCommandAndArgsInLowerCase() (string, []string) {
 	tokens := strings.Split(c.CurrentCommandLineInLowerCase(), " ")
-	return tokens[0], tokens[1:]
+	return tokens[0], tokens[len(c.Prompt):]
 }
 
 func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
