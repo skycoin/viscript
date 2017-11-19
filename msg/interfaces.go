@@ -15,14 +15,14 @@ type TaskInterface interface {
 type ExternalAppInterface interface {
 	//shared vars (with task ^^^)
 	GetId() ExternalAppId
-	GetTaskInChannel() chan []byte
+	GetInputChannel() chan []byte
 	Tick()
 	//unique vars
 	Attach() error
 	Detach()
 	GetFullCommandLine() string
-	GetTaskOutChannel() chan []byte
-	GetTaskExitChannel() chan struct{}
+	GetOutputChannel() chan []byte
+	GetExitChannel() chan struct{}
 	Start() error
 	TearDown()
 }

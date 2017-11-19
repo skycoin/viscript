@@ -99,13 +99,14 @@ func (c *Cli) EchoWholeCommand(outChanId uint32) {
 	hypervisor.DbusGlobal.PublishTo(outChanId, m) //EVERY publish action prefixes another chan id
 }
 
-func (c *Cli) CurrentCommandLineInLowerCase() string {
-	return strings.ToLower(c.Commands[c.CurrCmd][len(c.Prompt):])
+func (c *Cli) CurrentCommandLineTrimmedAndLowered() string {
+	s := strings.TrimSpace(c.Commands[c.CurrCmd][len(c.Prompt):])
+	return strings.ToLower(s)
 }
 
-func (c *Cli) CurrentCommandAndArgsInLowerCase() (string, []string) {
-	tokens := strings.Split(c.CurrentCommandLineInLowerCase(), " ")
-	return tokens[0], tokens[len(c.Prompt):]
+func (c *Cli) SanitizedAndTokenizedCommandPlusArgs() (string, []string) {
+	tokens := strings.Split(c.CurrentCommandLineTrimmedAndLowered(), " ")
+	return tokens[0], tokens[1:]
 }
 
 func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
@@ -126,7 +127,7 @@ func (c *Cli) OnEnter(st *State, serializedMsg []byte) {
 	c.Commands = append(c.Commands, c.Prompt)
 
 	//action
-	st.onUserCommand(c.CurrentCommandAndArgsInLowerCase())
+	st.onUserCommand(c.SanitizedAndTokenizedCommandPlusArgs())
 
 	//reset prompt & position
 	c.CurrCmd = len(c.Commands) - 1

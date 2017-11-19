@@ -67,14 +67,14 @@ func (ea *ExternalApp) GetFullCommandLine() string {
 	return ea.CommandLine
 }
 
-func (ea *ExternalApp) GetTaskInChannel() chan []byte {
+func (ea *ExternalApp) GetInputChannel() chan []byte {
 	return ea.TaskIn
 }
 
-func (ea *ExternalApp) GetTaskOutChannel() chan []byte {
+func (ea *ExternalApp) GetOutputChannel() chan []byte {
 	return ea.TaskOut
 }
 
-func (ea *ExternalApp) GetTaskExitChannel() chan struct{} {
+func (ea *ExternalApp) GetExitChannel() chan struct{} {
 	return ea.TaskExit
 }

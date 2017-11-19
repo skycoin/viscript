@@ -160,8 +160,8 @@ func (st *State) onUserCommand(cmd string, args []string) {
 	println(s)
 
 	if st.task.HasExternalAppAttached() {
-		ic := st.task.attachedExternalApp.GetTaskInChannel()
-		ic <- []byte(st.Cli.CurrentCommandLineInLowerCase())
+		ic := st.task.attachedExternalApp.GetInputChannel()
+		ic <- []byte(st.Cli.CurrentCommandLineTrimmedAndLowered())
 		return
 	}
 

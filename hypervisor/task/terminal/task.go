@@ -111,14 +111,14 @@ func (ta *Task) Tick() {
 	}
 
 	select {
-	//case exit := <-ta.attachedExternalApp.GetTaskExitChannel():
+	//case exit := <-ta.attachedExternalApp.GetExitChannel():
 	// if exit {
 	// 	println("Got the exit in task, task is finished.")
 	// 	//TODO: still not working yet. looking for the best way to finish
 	// 	//multiple goroutines at the same time to avoid any side effects
 	// 	ta.ExitExternalApp()
 	// }
-	case data := <-ta.attachedExternalApp.GetTaskOutChannel():
+	case data := <-ta.attachedExternalApp.GetOutputChannel():
 		println("Received data from external app, sending to term.")
 		ta.State.PrintLn(string(data))
 	default:

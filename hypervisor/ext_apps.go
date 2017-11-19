@@ -71,7 +71,7 @@ func TickExternalApps() {
 	// }
 
 	// select {
-	// case <-p.GetTaskExitChannel():
+	// case <-p.GetExitChannel():
 	// 	println("Got the exit (in TickExternalApps)")
 	// default:
 	// }
