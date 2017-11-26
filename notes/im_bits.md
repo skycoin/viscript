@@ -1218,14 +1218,11 @@ do the mesh api
 
 
 
+
+
 run the meshnet cli and meshnet daemon.  we need to get cli like this.  working in viscript
 
 
-
-
-
-Terminal might even store its own character of text array or have DOM so that it can do
-back scroll through history
 
 
 
@@ -1236,11 +1233,6 @@ command-line client - the manual for it is in skycoin/src/mesh/README.md and it 
 run web interface on port 9999.
 
 
-
-
-
-
-for scrolling the terminal task needs to store internal redundant text backlog etc.
 
 
 
@@ -1259,13 +1251,6 @@ it might only need one packet type.  for receiving text and another for respondi
 
 
 
-do we have library for task to get user input and printf to terminal and
-maintaining a back buffer and scroll in terminal etc.
-
-
-
-
-
 
 what about a meshnet process
 have list of task types which is a process interface implementation
@@ -1275,7 +1260,9 @@ then do task implementation for meshnet CLI
 
 
 
+
 how would we share printf library implementation between different task implementations?
+
 
 
 
@@ -1485,14 +1472,6 @@ not sure how to use interface for this
 
 
 
-[re: CorpusC's command-prompt-scrolling related questions]
-You can generally put character for carriage return on end of line and go to next line
-
-
-
-
-
-
 
 there is supposed to be thing for managing open gl window.
 and thing for managing input
@@ -1539,6 +1518,7 @@ the hypervisor could in theory, run without a viewport
 larger than the visualization device"
 
 it means specific thing in virtualization
+
 
 
 
@@ -1607,7 +1587,7 @@ as in tickets, right now commented all the additional functionalities like ctrl+
 running in background ctrl+c for stopping process and also it doesn't stop automatically
 when it sees EOF from running process, cleaned up a bit and I'll work more tomorrow.
 Main thing is that it works for now. We might even need to remove that State variable
-from external process and have TaskOut and have Process to watch that for output
+from external app and have TaskOut and have Process to watch that for output
 sequentially and printing it to viscript terminal.
 
 
@@ -1764,17 +1744,7 @@ maybe write smalle wrapper library for terminal control over dbus
 HaltingState:
 after signal is working, you are going to make a demo game app; that communicates back set terminal command and takes mouse/keyboard input and is displayed on viscript (but possibly running on another machine)
 HaltingState:
-like snake or ticktac toe or dwarf fortress 2d or something
-
-
-
-
-
-
-
-
-if you print a line and it runs over to next line, then you must put a block character
-at the end of the line.  To visually indicate that.
+like snake or tic tac toe or dwarf fortress 2d or something
 
 
 
@@ -1784,7 +1754,6 @@ at the end of the line.  To visually indicate that.
 
 
 who is working on moving the task launching and monitoring into the signal library
-
 
 
 
