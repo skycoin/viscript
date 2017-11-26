@@ -5,9 +5,13 @@ import (
 	"github.com/skycoin/viscript/msg"
 )
 
-var InputEvents = make(chan []byte, 256) //event channel
+//resizing pushes an event for almost each pixel change.
+//if the user keeps dragging the window edge back and forth it
+//is easy to fill up this channel (thus crashing the app).
+//because the events don't get popped until user stops resizing.
+var InputEvents = make(chan []byte, 11000) //event channel
 
-// push events to the event queue
+//push events to the event queue
 func PollEvents() {
 	glfw.PollEvents() //move to gl
 }
@@ -31,7 +35,7 @@ func onClose(w *glfw.Window) {
 		msg.MessageKey{Key: msg.KeyEscape})
 }
 
-// apparently every time this is fired, a mouse position event is ALSO fired
+//apparently every time this is fired, a mouse position event is ALSO fired
 func onMouseButton(
 	w *glfw.Window,
 	bt glfw.MouseButton,
@@ -44,7 +48,7 @@ func onMouseButton(
 		msg.MessageMouseButton{uint8(bt), uint8(action), uint8(mod)})
 }
 
-// triggered both by moving **AND*** by pressing buttons
+//triggered both by moving **AND*** by pressing buttons
 func onMouseCursorPos(w *glfw.Window, x float64, y float64) {
 	msg.SerializeAndDispatch(
 		InputEvents,

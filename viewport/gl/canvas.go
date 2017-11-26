@@ -39,11 +39,11 @@ var (
 
 func Init() {
 	println("<gl/canvas>.Init()")
-	// one-time setup
+	//one-time setup
 	PrevColor = GrayDark
 	CurrColor = GrayDark
 
-	// things that are resized later
+	//things that are resized later
 	CanvasExtents.X = DistanceFromOrigin * longerDimension
 	CanvasExtents.Y = DistanceFromOrigin
 	CharWid = float32(CanvasExtents.X*2) / float32(NumChars.X)
@@ -51,17 +51,8 @@ func Init() {
 	PixelSize.X = CanvasExtents.X * 2 / float32(CurrAppWidth)
 	PixelSize.Y = CanvasExtents.Y * 2 / float32(CurrAppHeight)
 
-	// MORE one-time setup
-	MainMenu.SetSize(GetTaskbarRect())
+	//MORE one-time setup
 	mouse.SetSizes(CanvasExtents, PixelSize)
-}
-
-func GetTaskbarRect() *app.Rectangle {
-	return &app.Rectangle{
-		CanvasExtents.Y,
-		CanvasExtents.X,
-		CanvasExtents.Y - CharHei,
-		-CanvasExtents.X}
 }
 
 func SetSize(x, y int32) {
@@ -79,7 +70,6 @@ func SetSize(x, y int32) {
 	CanvasExtents.X = DistanceFromOrigin * CurrFrustum.Right
 	CanvasExtents.Y = DistanceFromOrigin * CurrFrustum.Top
 
-	// things that weren't initialized in this func
-	MainMenu.SetSize(GetTaskbarRect())
+	//things that weren't initialized in this func
 	mouse.SetSizes(CanvasExtents, PixelSize)
 }

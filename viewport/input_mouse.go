@@ -284,42 +284,7 @@ func convertClickToTextCursorPosition(button, action uint8) {
 	// }
 }
 
-func respondToAnyMenuButtonClicks() {
-	// for _, bu := range ui.MainMenu.Buttons {
-	// 	if mouse.PointerIsInside(bu.Rect.Rectangle) {
-	// 		bu.Activated = !bu.Activated
-
-	// 		switch bu.Name {
-	// 		case "Run":
-	// 			if bu.Activated {
-	// 				//script.Digest(true)
-	// 			}
-	// 			break
-	// 		case "Testing Tree":
-	// 			if bu.Activated {
-	// 				//script.Digest(true)
-	// 				//script.MakeTree()
-	// 			} else { // deactivated
-	// 				// remove all terminals with trees
-	// 				b := t.Terms[:0]
-	// 				for _, t := range t.Terms {
-	// 					if len(t.Trees) < 1 {
-	// 						b = append(b, t)
-	// 					}
-	// 				}
-	// 				t.Terms = b
-	// 				//fmt.Printf("len of b (from Terms) after removing ones with trees: %d\n", len(b))
-	// 				//fmt.Printf("len of Terms: %d\n", len(Terms))
-	// 			}
-	// 			break
-	// 		}
-
-	// 		app.Con.Add(fmt.Sprintf("%s toggled\n", bu.Name))
-	// 	}
-	// }
-}
-
-// the rest of these funcs are almost identical, just top 2 vars customized (and string format)
+//the rest of these funcs are almost identical, just top 2 vars customized (and string format)
 func showBool(s string, x bool) {
 	fmt.Printf("   [%s: %t]", s, x)
 }

@@ -47,7 +47,7 @@ func UnpackMessage(msgIn []byte) []byte {
 	case msg.TypeFrameBufferSize:
 		var m msg.MessageFrameBufferSize
 		msg.MustDeserialize(msgIn, &m)
-		onFrameBufferSize(m)
+		actOnFrameBufferSize(m)
 
 	default:
 		app.At("viewport/msg_in", "************ UNHANDLED MESSAGE TYPE! ************")
@@ -56,7 +56,7 @@ func UnpackMessage(msgIn []byte) []byte {
 	return msgIn
 }
 
-func onFrameBufferSize(m msg.MessageFrameBufferSize) {
+func actOnFrameBufferSize(m msg.MessageFrameBufferSize) {
 	if config.DebugPrintInputEvents() {
 		print("msg.TypeFrameBufferSize")
 		showUInt32("X", m.X)
