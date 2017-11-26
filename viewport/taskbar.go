@@ -10,11 +10,13 @@ package viewport
 
 import (
 	"github.com/skycoin/viscript/app"
+	"github.com/skycoin/viscript/config"
 	"github.com/skycoin/viscript/viewport/gl"
 	"github.com/skycoin/viscript/viewport/terminal"
 )
 
 const (
+	START_MENU_OPTION_Divider     = "----------------"
 	START_MENU_OPTION_Defocus     = "Defocus"
 	START_MENU_OPTION_NewTerminal = "New Terminal"
 )
@@ -125,6 +127,11 @@ func drawStartMenu() {
 
 func setupMenuIfNeeded() {
 	if len(startMenu) < 1 {
+		for name, _ := range config.Global.Apps {
+			startMenu = append(startMenu, &MenuOption{Name: "Start " + name})
+		}
+
+		startMenu = append(startMenu, &MenuOption{Name: START_MENU_OPTION_Divider})
 		startMenu = append(startMenu, &MenuOption{Name: START_MENU_OPTION_Defocus})
 		startMenu = append(startMenu, &MenuOption{Name: START_MENU_OPTION_NewTerminal})
 

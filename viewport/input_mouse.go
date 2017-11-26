@@ -2,6 +2,7 @@ package viewport
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/config"
@@ -128,14 +129,33 @@ func actOnPress(m msg.MessageMouseButton) {
 				if mouse.PointerIsInside(option.Bounds) {
 					switch option.Name {
 
+					case START_MENU_OPTION_Divider:
+						//just ignore it
+
 					case START_MENU_OPTION_Defocus:
 						t.Terms.Defocus()
 
 					case START_MENU_OPTION_NewTerminal:
 						t.Terms.Add()
 
+					default: //must be a [start app] button
+						//make sure at least 1 terminal exists
+						if len(t.Terms.TermMap) < 1 {
+							t.Terms.Add()
+						}
+
+						//pipe the [start app] command to focused terminal
+						s := strings.TrimSpace(option.Name)
+						s = strings.ToLower(s)
+						tokens := strings.Split(s, " ")
+						tc := msg.MessageTokenizedCommand{tokens[0], tokens[1:]}
+						m := msg.Serialize(msg.TypeTokenizedCommand, tc)
+						t.Terms.GetFocusedTerminal().RelayToTask(m)
+						t.Terms.GetFocusedTerminal().NewLine()
+
 					}
 
+					//after all cases...
 					startMenuOpen = false
 					break
 				}
