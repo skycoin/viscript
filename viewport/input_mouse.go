@@ -151,7 +151,6 @@ func actOnPress(m msg.MessageMouseButton) {
 						tc := msg.MessageTokenizedCommand{tokens[0], tokens[1:]}
 						m := msg.Serialize(msg.TypeTokenizedCommand, tc)
 						t.Terms.GetFocusedTerminal().RelayToTask(m)
-						t.Terms.GetFocusedTerminal().NewLine()
 
 					}
 

@@ -3,6 +3,7 @@ package task
 import (
 	"github.com/skycoin/viscript/app"
 	"github.com/skycoin/viscript/msg"
+	"strings"
 )
 
 func (st *State) UnpackMessage(msgType uint16, message []byte) []byte {
@@ -33,11 +34,16 @@ func (st *State) UnpackMessage(msgType uint16, message []byte) []byte {
 		msg.MustDeserialize(message, &m)
 		st.onTerminalIds(m)
 
-	case msg.TypeTokenizedCommand:
+	case msg.TypeTokenizedCommand: //headless mode input & [start app] start menu shortcuts send this
+		println("GOT msg.TypeTokenizedCommand:", msg.TypeTokenizedCommand)
+
 		var m msg.MessageTokenizedCommand
 		msg.MustDeserialize(message, &m)
-		st.onUserCommand(m.Command, m.Args)
 
+		st.Cli.Commands[st.Cli.CurrCmd] =
+			st.Cli.Prompt + m.Command + " " + strings.Join(m.Args, " ")
+		st.Cli.CursPos = len(st.Cli.Commands[st.Cli.CurrCmd])
+		st.Cli.OnEnter(st, []byte{0}) //the byte array parameter seems to be never used ATM
 		app.At("hypervisor/task/terminal/msg_in", "TypeTokenizedCommand")
 
 	default:
